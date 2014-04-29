@@ -1,12 +1,7 @@
 *.classpath
-graphene-parent/graphene-export/.project
 *.project
-*.classpath
-graphene-parent/graphene-export/.settings/org.eclipse.wst.common.project.facet.core.xml
-graphene-parent/graphene-rest/.settings/org.eclipse.wst.common.project.facet.core.xml
 *.component
 *.project
-graphene-parent/graphene-rest/.classpath
-graphene-parent/graphene-memorydb/.project
-graphene-parent/graphene-memorydb/.classpath
+*.settings
 *.prefs
+*.facet.core.xml
