@@ -1,6 +1,5 @@
 package graphene.web.services;
 
-import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 

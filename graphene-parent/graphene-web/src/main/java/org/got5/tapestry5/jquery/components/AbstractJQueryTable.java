@@ -7,7 +7,6 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.got5.tapestry5.jquery.internal.DataTableModel;
-import org.got5.tapestry5.jquery.internal.TableInformation;
 
 /**
  * @tapestrydoc

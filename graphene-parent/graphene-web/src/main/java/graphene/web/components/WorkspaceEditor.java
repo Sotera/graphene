@@ -3,7 +3,6 @@ package graphene.web.components;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
-import graphene.model.idl.UnauthorizedActionException;
 import graphene.util.ExceptionUtil;
 import graphene.util.time.JodaTimeUtil;
 

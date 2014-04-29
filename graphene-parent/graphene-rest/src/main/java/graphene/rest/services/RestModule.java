@@ -5,7 +5,6 @@ import graphene.dao.neo4j.DAONeo4JEModule;
 import graphene.dao.sql.DAOSQLModule;
 import graphene.rest.ws.EntitySearchRS;
 import graphene.rest.ws.EntitySearchRSImpl;
-import graphene.rest.ws.EventSearchRS;
 import graphene.rest.ws.GraphDemo;
 import graphene.rest.ws.GraphDemoImpl;
 import graphene.rest.ws.MetaSearchRS;

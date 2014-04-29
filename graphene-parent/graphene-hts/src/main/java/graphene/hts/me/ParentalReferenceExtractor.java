@@ -10,7 +10,6 @@ import graphene.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class ParentalReferenceExtractor {
 

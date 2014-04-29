@@ -1,6 +1,5 @@
 package graphene.web.pages;
 
-import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.util.ExceptionUtil;

@@ -1,9 +1,6 @@
 package org.got5.tapestry5.jquery.services.messages;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.runtime.Component;
 
 public class MessageProviderImpl implements MessageProvider {
 	

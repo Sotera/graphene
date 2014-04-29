@@ -4,7 +4,6 @@ import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
