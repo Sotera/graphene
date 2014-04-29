@@ -1,0 +1,48 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<!-- SHORTCUT AREA : With large tiles (activated via clicking user name 
+		tag) Note: These tiles are completely responsive, you can add as many as 
+		you like -->
+	<t:content>
+		<div id="shortcut">
+			<ul>
+				<li>
+					<a t:type="pagelink" t:page="graphene/workspaces"
+						class="jarvismetro-tile big-cubes bg-color-blue">
+						<span class="iconbox">
+							<i class="fa fa-folder fa-4x"></i>
+							<span>
+								New Workspace
+								<span class="label pull-right bg-color-darken">14</span>
+							</span>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a t:type="pagelink" t:page="graphene/workspaces"
+						class="jarvismetro-tile big-cubes bg-color-blueDark">
+						<span class="iconbox">
+							<i class="fa fa-book fa-4x"></i>
+							<span>
+								My Workspaces
+								<span class="label pull-right bg-color-darken">99</span>
+							</span>
+						</span>
+					</a>
+				</li>
+				
+				<li>
+					<a t:type="pagelink" t:page="graphene/settings"
+						class="jarvismetro-tile big-cubes selected bg-color-pinkDark">
+						<span class="iconbox">
+							<i class="fa fa-user fa-4x"></i>
+							<span>My Profile </span>
+						</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</t:content><!-- END SHORTCUT AREA -->
+</html>

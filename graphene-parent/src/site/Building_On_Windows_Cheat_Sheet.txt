@@ -1,0 +1,12 @@
+
+Sometimes maven clean fails.. a lot.  Especially if the package it's trying to delete has many files in it.
+1: it may be the IDE trying to rebuild files in that directory while maven on the command line is running
+or
+2: it may be the Windows Search service is on and is holding on to file handles, preventing the clean from completing.
+
+You can try running mvn clean from your IDE, which should help (you may need to cancel any outstanding rebuilds)
+A last resort is to try:
+mvn clean -Dmaven.clean.failOnError=false && mvn clean -Dmaven.clean.failOnError=false
+
+http://stackoverflow.com/questions/1615352/why-doesnt-mavens-mvn-clean-ever-work-the-first-time
+http://www.howtogeek.com/howto/10246/how-to-disable-search-in-windows-7/

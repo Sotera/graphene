@@ -1,0 +1,22 @@
+Add tagging project
+	Implementation for sensitive tags (admin)
+	Implementation for writing tags back to server
+
+Free text search
+	Solr backed
+	
+Combine Entity and Interaction graph/drill down
+
+Bake in more data in the entity list
+
+Stress testing
+
+QBE
+
+Text Analytics
+Entity Extraction
+	Pull in google refine and other EE projects
+	
+Server side graph rendering
+Graph precalculation, and persisting to DB
+

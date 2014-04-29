@@ -1,0 +1,120 @@
+Installing Maven in Windows 7:
+
+navigate in explorer to the Maven directory
+go to a dir IN the bin
+copy the address in the address bar(must end with bin)
+go to Start and type in "env"
+Select "edit the system evironment variables"
+find the PATH variable which must also have an existing value for Java as Maven needs Java.
+append a ; + paste the path.
+restart to update system
+run "mvn install" in the cli.
+
+========================================================
+
+
+
+
+
+
+
+
+
+
+Debugging maven:
+$ mvn dependency:tree
+$ mvn help:effective-pom
+$ mvn dependency:copy-dependencies
+Run:
+
+mvn dependency:list
+and read carefully if there are any warning messages indicating that for some dependencies there will be no transitive dependencies available.
+
+If yes, re-run it with -X flag:
+
+mvn dependency:list -X
+to see detailed info what is maven complaining about (there might be a lot of output for -X flag)
+
+====================================================
+To skip tests add this to the end of your command:
+
+-DskipTests=true
+====================================================
+
+To disable the "Terminate Batch Job Y/N" prompt when canceling a running mvn command from the command line (like mvn jetty:run), add 
+< nul
+
+to the end of the command.
+
+e.g. mvn jetty:run < nul
+====================================================
+To grab all dependencies and sources:
+mvn dependency:go-offline dependency:sources
+or
+GetDependecies.bat from the parent.
+
+
+Of course, this only works when you're online, which you are not allowed to be.  
+The hack is to copy the project structure and the pom files (sans source) to 
+an area on your computer that is accessible when you do go online.  Running it 
+that way will grab the dependencies.
+
+====================================================
+To install a 3rd party jar (i.e. the SQL driver) into your local repo:
+
+mvn install:install-file -Dfile=sqljdbc4.jar -Dpackaging=jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0
+
+====================================================
+To sort your pom files (making them easier to read and find bugs):
+https://code.google.com/p/sortpom/
+
+If you want to run the SortPom plugin from commandline, it will be more convenient if you add a Plugin group to your general Maven Settings. To do this, open up ~/.m2/settings.xml and add the following plugin group:
+
+<settings>
+        ...
+        <pluginGroups>
+                <pluginGroup>com.google.code.sortpom</pluginGroup>
+        </pluginGroups>
+        ...
+</settings>
+
+You can then omit the full specification for the plugin and run
+
+mvn sortpom:sort
+mvn sortpom:verify
+
+If you run this on the parent package, it will also run it on all child projects.
+
+====================================================
+
+To generate Tapestry component reports through a JavaDoc plugin, use
+http://blog.tapestry5.de/index.php/2011/11/09/javadoc-plugin-for-component-reference-documentation/
+
+====================================================
+ (plugins) is used to specify the build process of your project (and all of the child projects that inherit from the parent project). If you include some plugin into this section, it will be executed in each of the child projects regardless of its type.
+
+ (pluginManagement) is used to specify common plugin settings for all of the projects that inherit from the parent project (for example, plugin version and configuration).
+
+
+Maven tests:
+
+The Maven build lifecycle now includes the "integration-test" phase for running integration tests, which are run separately from the unit tests run during the "test" phase. It runs after "package", so if you run "mvn verify", "mvn install", or "mvn deploy", integration tests will be run along the way.
+
+By default, integration-test runs test classes named **/IT*.java, **/*IT.java, and **/*ITCase.java, but this can be configured.
+
+
+====================================================
+HELP My Project won't build!
+
+Problems cleaning your project:
+Do you have the target directory open anywhere? (File explorer, Zip program, 
+Command Line, etc)  If so Maven might fail when trying to delete the target folder contents.
+
+Note, even running mvn clean repeatedly may fail a few times before succeeding.  
+This is a windows issue that comes up sometimes, especially when there are many 
+files. Some people have mentioned turning indexing off, or even excluding the build 
+directory from virus scanners--basically try to eliminate the other services that 
+could have open file handles on the target files you are trying to delete.
+
+
+If maven clean still fails, it may be a Windows issue.  Try executing mvn clean on it's own, there are times when this works better than doing mvn clean install ... all in one fell swoop.

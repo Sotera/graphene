@@ -1,0 +1,21 @@
+
+Rebuild ingest into Neo4J 2
+Merge Entity and Transactional graphs
+
+
+Store user data in MySQL or Neo4J
+Search History
+Graph results
+Manipulated graphs
+User notes
+Hash Tags  i.e. #InterestingB, #TopicA
+
+Allow users to share workspaces with others in their groups
+
+Simultaneous shared workspaces
+
+Snapshot of workspaces (like version control, but entire snapshots per save date)
+
+
+
+

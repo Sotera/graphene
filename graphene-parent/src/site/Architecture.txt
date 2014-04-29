@@ -1,0 +1,28 @@
+Java 7
+Maven 3
+Tomcat 7 or 8
+BoneCP 8
+
+
+Neo4j 2.0
+
+
+To install Microsoft SQL driver into your local repo, do this after you've downloaded the jar file:
+
+mvn install:install-file -Dfile=sqljdbc4.jar -Dpackaging=jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0
+
+To consider:
+ehcache
+neo4j vs hypergraphdb
+	using hgdb we still are doing manual graph traversals and bundling to get the right view
+	the hypergraphs get flattened to normal graphs in order to view, since visualizing hypergraphs is non trivial (venn diagrams)
+	
+	neo4j can also run embedded
+	neo4j has a very powerful query language built in (cypher)
+	
+	
+	
+Maven Module usage
+The core application uses a technical oriented module layout (model,dao, rest, ingest, etc)
+The customer modules use a business orient layout (customer1, customer2, etc)
+The customer submodules are split between ingest and web.  This is only to keep ingest specific code from being housed on a servlet container.

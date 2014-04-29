@@ -1,0 +1,1 @@
+mvn dependency:go-offline dependency:sources

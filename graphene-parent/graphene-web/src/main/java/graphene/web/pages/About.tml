@@ -1,0 +1,20 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="About ${appName}"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="row-fluid">
+		<div class="col-sm-12">
+			<p>About ${appName} ${appVersion}</p>
+			<p>Sign up and Sign in!</p>
+			<p>Create a workspace, or choose from a previous one</p>
+			<p>Make changes to your workspace. Changes are saved automatically.</p>
+			<p></p>
+			Coming soon!
+			<p>Share your workspace with others</p>
+			<p>Explore other analysts' workspaces in your group. You can ask them
+				for permission to join their workspace as a collaborator!</p>
+			<p>Create scenarios in your workspace</p>
+			<p>See other workspaces that your targets are in</p>
+			<p>Export your workspace to popular formats!</p>
+		</div>
+	</div>
+</html>

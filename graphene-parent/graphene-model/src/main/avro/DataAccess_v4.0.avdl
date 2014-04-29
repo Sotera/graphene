@@ -1,0 +1,211 @@
+/**
+ * With credits to Oculus Info Inc for the influence of this document. 
+ * Released under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+/**
+*/
+protocol G_DataAccess {
+	import idl "DataTypes_v4.0.avdl";
+
+	/**
+	 Sort type for temporal data with a numeric payload
+    */
+	enum G_SortBy {
+		DATE,
+		AMOUNT
+	}
+	
+	/**
+	 * Sort orders
+	 * 
+	 */
+	enum G_SortOrder {
+		ASC, // Ascending
+		DESC, // Descending
+		UNSORTED //Unsorted
+	}
+	
+	/**
+	 * Sort Criterion
+	 * 
+	 */
+	record G_SortCriterion {
+	
+		/** the order of the sorting */
+		G_SortOrder sortDirection;
+		
+		/**
+		 * the name of the property we are sorting on
+		 */
+		string propertyName;
+	}
+	
+	/**
+	 Direction of desired links
+	 */
+	enum G_DirectionFilter {
+		SOURCE,
+		DESTINATION,
+		BOTH
+	}
+	
+	/**
+	 Type of entity associated with desired links
+	 
+	 ADDED IN 4.0
+	 
+	 */
+	enum G_LinkEntityTypeFilter {
+		ACCOUNT_OWNER,
+		ACCOUNT,
+		CLUSTER_SUMMARY,
+		ANY
+	}
+
+	/**
+	 Amount of detail requested
+	 
+	 
+	 */
+	enum G_LevelOfDetail {
+		SUMMARY,
+		FULL
+	}
+	
+	/**
+	 The set of transactions from a single call to getAllTransactions.
+		  
+	 */
+	record G_TransactionResults {
+		/** total number of results FOUND, which may be more than the number returned. */
+		long total = 0;
+		
+		/** an array of transactions */
+		array<G_Link> results;
+	}
+
+	/**
+	 Returns a set of entities by uid. Typically requested with a summary level of detail,
+	 appropriate for card display and clustering. Full details are requested for 
+	 detailed display views.
+	 
+	 Service URL: /entity/list
+	 HTTP Method: POST and GET
+	 
+	 @param entities 	uids of entities to retrieve
+	 @return 			entities	
+	 */
+	array<G_Entity> getEntities(array<string> entities, G_LevelOfDetail levelOfDetail);
+	
+	/**
+	 Returns a set of accounts for each given entity. Typically requested with a summary level of detail,
+	 appropriate for card display and cluster summarization. Full details are requested for 
+	 detailed display views.
+	 
+	 Service URL: /entity/accounts
+	 HTTP Method: POST and GET
+	 
+	 @param entities 		uids of entities to retrieve
+	 @return 				map of input entity IDs to an array of the accounts for that entity	
+	 */
+	map<array<G_Entity>> getAccounts(array<string> entities);
+		
+	/**
+	 Returns links to other entities related to specify entities. Each Link returned should
+	 represent multiple records, used for displaying flow.
+	 
+	 See the specification for the Flow Data View.
+	 See the specification for the Time Series Data View.
+	 
+	 Service URL: /link/flow
+	 HTTP Method: POST and GET
+	 
+	 @param entities 		uids of entities to retrieve links for
+	 @param focusEntities 	uids of focus entities (may be null)
+	 @param direction 		one of: SOURCE, DESTINATION, BOTH
+	 @param entityType		one of: ACCOUNT_OWNER, ACCOUNT, CLUSTER_SUMMARY, ANY
+	 @param tag 			one of: FINANCIAL, SOCIAL, COMMUNICATION
+	 @param date 			in the given date range
+	 @return 				map of input entity IDs to an array of the links for that entity	
+	 */
+	map<array<G_Link>> getFlowAggregation(
+		array<string> entities,
+		union {array<string>, null} focusEntities,
+		G_DirectionFilter direction,
+		G_LinkEntityTypeFilter entityType,
+		union {G_LinkTag, null} tag,
+		union {G_DateRange, null} date);
+	
+	/**
+	 Returns links to other entities related to specify entities.  Each Link returned should
+	 represent multiple records, used for displaying time series.
+	 
+	 See the specification for the Time Series Data View.
+	 
+	 Service URL: /link/series
+	 HTTP Method: POST and GET
+	 
+	 @param entities 		uids of entities to retrieve links for
+	 @param focusEntities 	uids of focus entities (may be null)
+	 @param tag 			one of: FINANCIAL, SOCIAL, COMMUNICATION
+	 @param date 			in the given date range
+	 @return 				map of input entity IDs to an array of the links for that entity	
+	 */
+	map<array<G_Link>> getTimeSeriesAggregation(
+		array<string> entities,
+		union {array<string>, null} focusEntities,
+		union {G_LinkTag, null} tag,
+		G_DateRange date);
+	
+	/**
+	 Returns links to other entities related to specify entities. Each link returned should
+	 represent one raw transaction.  For financial data, these transactions will form a ledger.
+	 For communications or social data, these are un-aggregated links for drill down by the user.
+	 
+	 CHANGED IN 4.0
+	 	- return value type changed
+	 	- added start index
+	 
+	 Service URL: /link/transactions
+	 HTTP Method: POST and GET
+	 
+	 @param entities 		uids of entities to retrieve links for
+	 @param direction 		one of: SOURCE, DESTINATION, BOTH
+	 @param tag 			one of: FINANCIAL, SOCIAL, COMMUNICATION
+	 @param date 			in the given date range
+	 @param sort			Sort order for transactions
+	 @param linkFilter		If provided, only return transactions where the "other side" is in this list
+	 @param start			0-based index of first result to return
+	 @param max				Trim the number of results this this value.
+	 @return 				transactions for the set of entities	
+	 */
+	G_TransactionResults getAllTransactions(
+			array<string> entities,
+			union {G_LinkTag, null} tag,
+			union {G_DateRange, null} date,
+			union {G_SortBy, null} sort,
+			union {array<string>, null} linkFilter, // ADDED IN 1.4
+			long start = 0, 
+			long max = -1
+	);
+}

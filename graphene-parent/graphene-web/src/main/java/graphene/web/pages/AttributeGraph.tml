@@ -1,0 +1,91 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html  t:type="graphene/layout" title="Attribute Graph"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"
+	lang="en">
+
+	<!-- Most of the page content, including <head>, <body>, etc. tags, comes 
+		from Layout.tml -->
+	<!-- This is a span 10 in the bootstrap layout. You just need to add one 
+		or more fluid rows here. -->
+
+	<div class="row-fluid">
+		<div class="box span12">
+			<div class="box-header">
+				<h2>
+					<i class="icon-edit"></i>
+					Attribute Graph Search
+				</h2>
+				<div class="box-icon">
+					<a href="#" class="btn-setting">
+						<i class="icon-wrench"></i>
+					</a>
+					<a href="#" class="btn-minimize">
+						<i class="icon-chevron-up"></i>
+					</a>
+					<a href="#" class="btn-close">
+						<i class="icon-remove"></i>
+					</a>
+				</div>
+			</div>
+			<div class="box-content">
+				<t:zone t:id="formZone" id="formZone" t:update="prop:zoneUpdateFunction">
+					<form class="form-horizontal" t:type="form" t:id="filterForm"
+						t:zone="formZone">
+						<fieldset>
+							<div class="control-group">
+								<label class="control-label" for="typeahead">Auto complete </label>
+								<div class="controls">
+									<input type="text" class="span6 typeahead" t:id="partialName"
+										t:type="TextField" size="15" t:validate="maxLength=15"
+										t:value="prop:partialName" />
+									<p class="help-block">Enter part of an attribute</p>
+								</div>
+							</div>
+							<div class="form-actions">
+								<button type="submit" class="btn btn-primary">Search</button>
+								<button type="reset" class="btn">Cancel</button>
+							</div>
+							
+						</fieldset>
+					</form>
+				</t:zone>
+				<a id="linkId">Load Sample</a>
+			</div>
+		</div><!--/span -->
+	</div><!--/row -->
+
+	<div class="row-fluid">
+		<div class="box span12">
+
+			<div class="box-header" data-original-title="">
+				<h2>
+					<i class="icon-user"></i>
+					<span class="break"></span>
+					<div id="log"></div>
+				</h2>
+				<div class="box-icon">
+					<a href="#" class="btn-setting">
+						<i class="icon-wrench"></i>
+					</a>
+					<a href="#" class="btn-minimize">
+						<i class="icon-chevron-up"></i>
+					</a>
+					<a href="#" class="btn-close">
+						<i class="icon-remove"></i>
+					</a>
+				</div>
+
+			</div>
+			<div class="box-content">
+				<div class="span9" id="center-container">
+					<div id="infovis"></div>
+				</div>
+				<div class="span3" id="right-container">
+					<div id="inner-details"></div>
+				</div>
+				
+			</div>
+		</div><!--/span -->
+	</div>
+	<!--/row -->
+</html>

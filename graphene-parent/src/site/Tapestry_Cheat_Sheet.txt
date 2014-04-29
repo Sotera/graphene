@@ -1,0 +1,69 @@
+Quickstart:
+
+Tapestry (T5) has two main parts: the IOC, which can be used on it's own, 
+and Tapestry core, which is a web application framework.
+
+We use T5 IOC as the main IOC framework across all modules in graphene-parent and customer modules.
+It is very similar to guice (the authors borrowed from each other) but has some enhancements that make it great for web application use.
+
+By default, all the injected services managed by T5 IOC are spun up as thread safe singletons.  There are options available if we need an instance per injection, but I haven't come across the need yet.
+
+T5 core (the web application portion, which acts as a ServletFilter) has 
+some special packages names it looks for (convention over configuration).
+
+These packages can be overridden but it is usually not worth having a weird 
+setup--it may mean you should think critically about the design before you 
+start adding more configuration than is necessary.
+
+if your application package tree (as listed in the web.xml) is 
+
+com.mycompany.myproduct.mywebapp
+
+Then tapestry looks for special package names like:
+services
+pages
+components
+mixins
+
+
+In addition, the T5 RESTEasy integration looks for the package
+rest
+
+and tries to auto-build any classes there (this can be disabled)
+This is the reason why in 3.x we had our rest services under a package 
+called 'ws', because we wanted to manually build them.  
+We may need to revisit this to see if we can't eliminate some configuration in 4.x.
+
+Likewise T5 Hibernate integration would look for an entities package to do some 
+hibernate autoconfiguration.  (not using it currently)
+
+
+=================================================
+Debugging:
+
+Error on tomcat plugin launch:
+org.apache.tapestry5.TapestryFilter cannot be cast to javax.servlet.Filter
+
+It means you have a servlet api jar on your dev loader classpath.  
+Servlet APIs are generally included with test frameworks and Avro, 
+and some embeddable projects like Neo4J might use them.  
+
+In the tomcat devloader, it makes no attempt to distinguish between 
+test scope dependencies and the regular ones-- so we have to deselect 
+any jars that we don't want Tomcat to see.
+
+
+Error on tomcat plugin launch:
+java.lang.ClassNotFoundException: org.apache.tapestry5.TapestryFilter
+1) Make sure the tapestry-core jar is on the class path.
+2) Do you have more than one module listed as a Tomcat application?  Uncheck offending modules, or modules not being used.
+
+Error on accessing a rest endpoint:
+org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure: Could not find MessageBodyWriter for response object of type ...
+
+This is not really a Tapestry error.  It points to missing jars.
+You'll need at least these on the classpath:
+jaxrs-api.jar
+resteasy-jaxrs.jar
+jboss-seam-resteasy.jar
+resteasy-jackson-provider.jar

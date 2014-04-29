@@ -1,0 +1,39 @@
+code generation
+
+Starting with a DDL of a db table
+
+Create an Enum of constants, with lowercase values
+Create a hibernate object representing a row of data
+	Represents a row of data
+	For some queries, it may be ideal to create smaller hibernate objects
+		less data for the db to worry about
+		less data to return over the wire
+		less RAM, smaller lists to iterate over
+Create view object(s) which are tailored to being returned as json responses
+	These are mostly dumb pojos, possibly with xml annotations
+	These can have just a few columns, or all the columns of the hibernate object
+	
+Create query object(s) with the ability to handle all columns
+	For dates, we allow a date range or specific
+	For amounts, we allow an amount range or specific
+	For text, we allow boolean search string
+	For id numbers we allow specific 
+
+Create a DAO
+	returns a list of db objects given a query object
+	returns a count integer given a query object
+	returns a single object given a query object? (could just be a list of one)
+	
+Create a REST service
+	named after data source (matched to dao)
+	parameters are names of query parameters
+	query params are stuffed into a query object
+	the dao is called with the query object, and results are transformed into a view object
+	REST end points are matched to a query object and view object (view object optionally tied to a scaled down hibernate obj)
+	
+	
+
+Tied together: DDL:Enum:DAO:REST Service
+Loosely tied (multiple implementations): Hibernate Object:QueryObject:View Object:REST endpoint
+
+

@@ -1,0 +1,208 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<!--  At runtime the page will supply the stylesheet. The link here is to enable preview. -->
+<link rel="stylesheet" type="text/css" href="../../../css/examples/ajaxgracefulcomponentscrud.css"/>
+
+<t:content>
+
+	<t:if test="modeCreate">
+		<h1>Create</h1>
+		
+		<form t:type="graphene/CustomForm" t:id="createForm" t:zone="^">
+			<t:errors/>
+	
+			<table>
+				<tr>
+					<th><t:label for="firstName"/>:</th>
+					<td><input t:type="TextField" t:id="firstName" value="person.firstName" t:validate="required, maxlength=10" size="10"/></td>
+					<td>(required)</td>
+				</tr>
+				<tr class="err">
+					<th></th>
+					<td colspan="2"><t:graphene.CustomError for="firstName"/></td>
+				</tr>
+				<tr>
+					<th><t:label for="lastName"/>:</th>
+					<td><input t:type="TextField" t:id="lastName" t:clientid="clastname" value="person.lastName" t:validate="required, maxlength=10" size="10"/></td>
+					<td>(required)</td>
+				</tr>
+				<tr class="err">
+					<th></th>
+					<td colspan="2"><t:graphene.CustomError for="lastName"/></td>
+				</tr>
+				<tr>
+					<th><t:label for="region"/>:</th>
+					<td><input t:type="Select" t:id="region" value="person.region" t:validate="required" t:blankOption="ALWAYS"/></td>
+					<td>(required)</td>
+				</tr>
+				<tr class="err">
+					<th></th>
+					<td colspan="2"><t:graphene.CustomError for="region"/></td>
+				</tr>
+				<tr>
+					<th><t:label for="startDate"/>:</th>
+					<td><input t:type="DateField" t:id="startDate" t:clientid="cstartdate" value="person.startDate" t:format="prop:dateFormat" t:validate="required" size="10"/></td>
+					<td>(required, ${datePattern})</td>
+				</tr>
+				<tr class="err">
+					<th></th>
+					<td colspan="2"><t:graphene.CustomError for="startDate"/></td>
+				</tr>
+			</table>
+
+			<div class="buttons">
+		 		<a t:type="eventLink" t:event="cancelCreate" t:zone="^" href="#">Cancel</a>
+				<input type="submit" value="Save"/>
+			</div>
+		</form>
+
+	</t:if>
+
+	<t:if test="modeReview">
+		<h1>Review</h1>
+		
+		<t:if test="person">
+			<div t:type="if" t:test="deleteMessage" class="error">
+				${deleteMessage}
+			</div>
+
+			<table>
+				<tr>
+					<th>Id:</th>
+					<td>${person.id}</td>
+				</tr>
+				<tr>
+					<th>Version:</th>
+					<td>${person.version}</td>
+				</tr>
+				<tr>
+					<th>Name:</th>
+					<td>${person.firstName} ${person.lastName}</td>
+				</tr>
+				<tr>
+					<th>Region:</th>
+					<td>${personRegion}</td>
+				</tr>
+				<tr>
+					<th>Start Date:</th>
+					<td><t:output value="person.startDate" format="prop:dateFormat"/></td>
+				</tr>
+			</table>
+
+			<div class="buttons">
+			 	<a t:type="eventLink" t:event="toUpdate" t:context="person.id" t:zone="^" href="#">Update...</a>
+				<a t:type="eventLink" t:event="delete" t:context="[person.id,person.version]" t:zone="^" href="#">
+					<!-- The Confirm mixin can't cancel an EventLink that specifies a Zone, so we put the Confirm inside the EventLink. -->
+					<!-- See http://tapestry-users.832.n2.nabble.com/Confirm-mixin-won-t-cancel-when-in-zone-td5048950.html#a5048950 -->
+					<span t:type="any" t:mixins="Confirm" t:message="Delete ${person.firstName} ${person.lastName}?">
+						Delete...
+					</span>
+				</a>
+			</div>
+
+		</t:if>
+		<t:if negate="true" test="person">
+			Person ${personId} does not exist.<br/><br/>
+		</t:if>
+		
+	</t:if>
+
+	<t:if test="modeUpdate">
+		<h1>Update</h1>
+		
+		<form t:type="form" t:id="updateForm" t:context="personId" t:zone="^">
+			<t:errors/>
+		
+			<t:if test="person">
+				<!-- If optimistic locking is not needed then comment out this next line. It works because Hidden fields are part of the submit. -->
+		 		<t:hidden value="person.version"/>
+		
+				<table>
+					<tr>
+						<th><t:label for="updFirstName"/>:</th>
+						<td><input t:type="TextField" t:id="updFirstName" value="person.firstName" t:validate="required, maxlength=10" size="10"/></td>
+						<td>(required)</td>
+					</tr>
+					<tr class="err">
+						<th></th>
+						<td colspan="2"><t:graphene.CustomError for="updFirstName"/></td>
+					</tr>
+					<tr>
+						<th><t:label for="updLastName"/>:</th>
+						<td><input t:type="TextField" t:id="updLastName" value="person.lastName" t:validate="required, maxlength=10" size="10"/></td>
+						<td>(required)</td>
+					</tr>
+					<tr class="err">
+						<th></th>
+						<td colspan="2"><t:graphene.CustomError for="updLastName"/></td>
+					</tr>
+					<tr>
+						<th><t:label for="updRegion"/>:</th>
+						<td><input t:type="Select" t:id="updRegion" value="person.region" t:validate="required"/></td>
+						<td>(required)</td>
+					</tr>
+					<tr class="err">
+						<th></th>
+						<td colspan="2"><t:graphene.CustomError for="updRegion"/></td>
+					</tr>
+					<tr>
+						<th><t:label for="updStartDate"/>:</th>
+						<td><input t:type="DateField" t:id="updStartDate" value="person.startDate" t:format="prop:dateFormat" t:validate="required" size="10"/></td>
+						<td>(required, ${datePattern})</td>
+					</tr>
+					<tr class="err">
+						<th></th>
+						<td colspan="2"><t:graphene.CustomError for="updStartDate"/></td>
+					</tr>
+				</table>
+
+				<div class="buttons">
+			 		<a t:type="eventLink" t:event="cancelUpdate" t:context="personId" t:zone="^" href="#">Cancel</a>
+				 	<input t:type="submit" value="Save"/>
+				</div>
+			</t:if>
+	
+			<t:if negate="true" test="person">
+				Person ${personId} does not exist.<br/><br/>
+			</t:if>
+						
+		</form>
+		
+	</t:if>
+
+	<t:if test="modeConfirmDelete">
+		<h1>Delete</h1>
+		
+		<form t:type="form" t:id="confirmDeleteForm" t:zone="^">
+			<t:errors/>
+		
+			<t:if test="person">
+				<!-- If optimistic locking is not needed then comment out this next line. It works because Hidden fields are part of the submit. -->
+		 		<t:hidden value="person.version"/>
+		
+
+				<div class="buttons">
+					Delete ${person.firstName} ${person.lastName}?<br/><br/>
+					
+			 		<a t:type="eventLink" t:event="cancelConfirmDelete" t:context="person.id" t:zone="^" href="#">Cancel</a>
+					<input type="submit" value="Delete"/>
+				</div>
+			</t:if>
+	
+			<t:if negate="true" test="person">
+				Person ${personId} does not exist.<br/><br/>
+			</t:if>
+						
+		</form>
+		
+	</t:if>
+
+	<!-- This is needed to clear the zone. -->
+	<t:if test="modeNull">
+		<!-- The space character is needed only to make the zone update highlight visible. -->
+		&nbsp;
+	</t:if>
+		
+</t:content>
+</html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/unauthenticatedlayout" title="Forgot username or password"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="row-fluid">
+		<div class="col-sm-12">
+			<p>You've forgotten your email or password</p>
+			<p>Email us: someemail@somedomain.tld</p>
+		</div>
+	</div>
+</html>

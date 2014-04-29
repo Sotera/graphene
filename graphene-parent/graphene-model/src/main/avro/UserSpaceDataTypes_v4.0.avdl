@@ -1,0 +1,72 @@
+@namespace("graphene.model.idl")
+/**
+*/
+protocol G_UserSpaceDataTypes {
+	import idl "DataTypes_v4.0.avdl";
+	enum G_UserFields {
+		active,username,avatar,email,fullname,hashedpassword,lastlogin,lastmodified,accountcreated,numberlogins,provenance,uncertainty
+	}
+	
+	
+	record G_User {
+		/** */
+		boolean active = true;
+		
+		string username = "notset";
+		/**
+		 * some id of an avatar (could be a file name or other string to look
+		 * up)
+		 */
+		union {string, null} avatar = null;
+		
+		/** user's email */
+		union {string, null} email = null;
+		
+		/** user's full name */
+		union {string, null} fullname = null;
+		
+		/** user's hashed password */
+		union {string, null} hashedpassword = null;
+		
+		/** user's lastlogin datetime */
+		union { long, null} lastlogin = 0;
+		
+		/** user's modified datetime */
+		union { long, null} lastmodified = 0;
+		
+		/** user's account created datetime */
+		union { long, null} accountcreated = 0;
+		
+		/** user's numberlogins */
+		int numberlogins = 0;
+		
+	}
+	enum G_GroupFields {
+		groupname
+	}
+	record G_Group {
+		string groupname = "notset";
+	}
+	enum G_WorkspaceFields {
+		active,creatorusername,json,title,workspaceid,lastmodified,createddate
+	}
+	
+	record G_Workspace {
+		boolean active =true;
+
+		union {string, null} creatorusername = null;
+		
+		union {string, null} json=null;
+		
+		string title="untitled";
+		
+		string workspaceid;
+			
+		 /** workspace's modified datetime */
+		union { long, null} lastmodified = 0;
+		 /** workspace's created datetime */
+		union { long, null} createddate = 0;
+			
+		
+	}
+}

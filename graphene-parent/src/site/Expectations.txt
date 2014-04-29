@@ -1,0 +1,20 @@
+A quick list of comments from a customer.
+
+geospatial was done manually--we should automate this as much as possible.
+
+They commonly use print outs of large anb charts in their daily work (poster size)
+
+reports (pdf generation) is important.  They should also include provenance of each
+ piece of data (for suopenas) as well as any search queries used to get to the data.
+   (I think we should also include a description of any algorithms used for 
+   scoring/weighting, and all of this should be included as part of an appendix to
+    keep it from cluttering up the report.) 
+
+graphically represent call activity (weighted edges, histograms, etc)
+
+building graphs incrementally
+
+
+
+
+

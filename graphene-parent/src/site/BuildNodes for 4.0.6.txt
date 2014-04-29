@@ -1,0 +1,19 @@
+kepler EE version 
+Modify eclipse.ini to use -Xmx2048m  (makes builds and tomcat launching faster)
+
+Install tomcat if needed and set up CATALINA_HOME system variable.
+Setup a tomcat profile to point to your tomcat
+Delete anything in your tomcat webapps directory that has 
+
+Clone repo 
+Switch to githubable branch
+
+Run build all on graphene-parent
+Run build all on each graphene-CUSTOMER
+
+
+Import existing maven projects
+	(if using an Eclipse EE version, it should recognize the war projects and import them as Dynamic Web Module Facets)
+	
+	
+Disable the Java

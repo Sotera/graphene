@@ -1,0 +1,9 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="Contact ${contact}"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="row-fluid">
+		<div class="col-sm-12">
+			<p>Contact ${contact}</p>
+		</div>
+	</div>
+</html>

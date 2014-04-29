@@ -1,0 +1,174 @@
+@namespace("graphene.model.idl")
+
+/**
+*/
+protocol G_UserDataAccess {
+	import idl "UserSpaceDataTypes_v4.0.avdl";
+	error AuthenticationException {
+		string message;
+	}
+	error UnauthorizedActionException {
+		string message;
+	}
+	/**
+	 * The user has created a new, unattached workspace and wishes to save it.
+	 * This will save the workspace as it is passed in, and create relationships
+	 * showing the user is the creator and an editor of the workspace.
+	 * 
+	 * @param username
+	 * @param workspace
+	 * @return
+	 */
+	G_Workspace addNewWorkspaceForUser(string username, G_Workspace workspace);
+
+	 int countUsers(string partialUsername);
+
+	 int countWorkspaces(string username, string partialWorkspaceTitle);
+
+	/**
+	 * Creates a new workspace for the user, saves it, and sets the user as the
+	 * editor and creator of it.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	G_Workspace createFirstWorkspaceForUser(string username);
+
+	/**
+	 * Gets the workspaces for the user.  If no workspaces were found, create a first workspace for the user and return the one element list.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	array<G_Workspace> getWorkspacesOrCreateNewForUser(string username);
+	/**
+	 * Creates a blank workspace for the user, but it is not saved to the
+	 * database yet.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	G_Workspace createTempWorkspaceForUser(string username);
+
+	 boolean deleteUser(string username);
+
+	/**
+	 * Deletes the workspace if the user is the creator of the workspace.
+	 * 
+	 * @param username
+	 * @param workspaceId
+	 * @return
+	 * @throws UnauthorizedActionException
+	 */
+	 boolean deleteWorkspace(string username, string workspaceId)
+			throws UnauthorizedActionException;
+
+	/**
+	 * Deletes the workspace if there are no relationships
+	 * 
+	 * @param workspaceid
+	 * @return
+	 * @throws UnauthorizedActionException
+	 */
+	boolean deleteWorkspaceIfUnused(string username, string workspaceId)
+			throws UnauthorizedActionException;
+
+	/**
+	 * Find workspaces for the username where the partialName matches the workspace title.
+	 */
+	array<G_Workspace> findWorkspaces(string username, string partialWorkspaceTitle,
+			int offset, int limit);
+
+	/**
+	 * Return the user specified by the username
+	 */
+	 G_User getUser(string username);
+
+	/**
+	 * Retrieves the workspace.
+	 * 
+	 * @param username
+	 * @param workspaceId
+	 * @return The workspace.
+	 * @throws UnauthorizedActionException
+	 *             if the user is not a creator, editor or reviewer of the
+	 *             workspace. (also if the workspace or user ids supplied were
+	 *             not valid)
+	 */
+	G_Workspace getWorkspace(string username, string workspaceId)
+			throws UnauthorizedActionException;
+
+	array<G_Workspace> getWorkspacesForUser(string username);
+
+	/**
+	 * Finds the user and checks to see if the password hashes match. If the
+	 * user is not found or the hashes don't match, then an exception is thrown
+	 * 
+	 * @param username
+	 * @param password
+	 * @return a non null user.
+	 * @throws AuthenticationException
+	 */
+	 G_User loginUser(string username, string password)
+			throws AuthenticationException;
+
+	/**
+	 * Performs the creation of a new user.
+	 * 
+	 * @param d
+	 * @return
+	 */
+	 G_User registerUser(G_User d);
+
+	 /**
+	  * Remove all relationships between the supplied username and the supplied workspace id
+	  * 
+	  * Return true if permissions existed and were removed.
+	  */
+	boolean removeUserFromWorkspace(string username, string workspaceId);
+	 /**
+	  * Remove the specified permission between the supplied username and the supplied workspace id
+	  * 
+	  * Return true if the permission existed and was removed.
+	  */
+	boolean removeUserPermissionFromWorkspace(string username, string permission, string workspaceId);
+	/**
+	 * Save the provided group and return the saved group object (which may have been updated with business logic.)
+	 */
+	G_Group saveGroup(G_Group user);
+
+	/**
+	 * Save the provided user and return the saved user object (which may have been updated with business logic.)
+	 */
+	G_User saveUser(G_User user);
+
+	/**
+	 * Saves the workspace if the user is allowed to save.
+	 * 
+	 * TODO: Revisit the business logic to see if returning a null is better
+	 * than throwing and catching exceptions (slow)
+	 * 
+	 * @param username
+	 * @param workspace
+	 * @return The workspace if the save was performed, null if unable to save.
+	 * @throws UnauthorizedActionException
+	 */
+	G_Workspace saveWorkspace(string username, G_Workspace workspace)
+			throws UnauthorizedActionException;
+	/**
+	 * Return true if the password was able to be set.
+	 */
+	 boolean setUserPassword(string username, string newPassword);
+
+	 /**
+	  * Return true if the username exists, false otherwise
+	  */
+	 boolean userExists(string username);
+
+	 /**
+	  * Given a partial username, return results between offset and offset+limit
+	  */
+	 array<G_User> getByPartialUsername(string partialUsername, int offset,
+			int limit);
+	
+}

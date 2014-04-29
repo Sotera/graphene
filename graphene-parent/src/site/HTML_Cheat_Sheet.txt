@@ -1,0 +1,51 @@
+To get around Eclipse validation errors on HTML entity codes you have to declare 
+them as part of the doc type, by putting this at the top of the page.
+
+e.g for &nbsp;, use this:
+
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+
+to include several entity declarations, do it like this:
+
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> ]>
+
+
+There are other examples out there, like copyright symbols, currencies, etc.
+
+	&nbsp;	 	&#160;	non-breaking space	ISO8559-1
+©	&copy;	©	&#169;	copyright sign	ISO8559-1
+®	&reg;	®	&#174;	registered trade mark sign	ISO8559-1
+²	&sup2;	²	&#178;	superscript 2 (squared)	ISO8559-1
+³	&sup3;	³	&#179;	superscript 3 (cubed)	ISO8559-1
+"	&quot;	"	&#34;	quotation mark	ISO10646
+&	&amp;	&	&#38;	ampersand sign	ISO10646
+<	&lt;	<	&#60;	less than sign	ISO10646
+>	&gt;	>	&#62;	greater than sign	ISO10646
+–	&ndash;	–	&#8211;	en dash	ISO10646
+—	&mdash;	—	&#8212;	em dash	ISO10646
+‘	&lsquo;	‘	&#8216;	left single quote	ISO10646
+’	&rsquo;	’	&#8217;	right single quote, apostrophe	ISO10646
+“	&ldquo;	“	&#8220;	left double quotation mark	ISO10646
+”	&rdquo;	”	&#8221;	right double quotation mark	ISO10646
+•	&bull;	•	&#8226;	small black circle, bullet	ISO10646
+†	&dagger;	†	&#8224;	dagger sign	ISO10646
+‡	&Dagger;	‡	&#8225;	double dagger sign	ISO10646
+′	&prime;	′	&#8242;	prime = minutes = feet	ISO10646
+″	&Prime;	″	&#8243;	double prime = seconds = inches	ISO10646
+‹	&lsaquo;	‹	&#8249;	single left pointing angle quote	ISO10646
+›	&rsaquo;	›	&#8250;	single right pointing angle quote	ISO10646
+€	&euro;	€	&#8364;	euro sign	ISO10646
+™	&trade;	™	&#8482;	Registered Trademark sign	ISO10646
+˜	&tilde;	˜	&#732;	tilde sign	ISO10646
+ˆ	&circ;	ˆ	&#710;	circumflex (or caret) sign	ISO10646
+♠	&spades;	♠	&#9824;	black spade suit	ISO10646
+♣	&clubs;	♣	&#9827;	black clubs suit	ISO10646
+♥	&hearts;	♥	&#9829;	black heart suit	ISO10646
+♦	&diams;	♦	&#9830;	black diamonds suit	ISO10646
+◊	&loz;	◊	&#9674;	lozenge	ISO10646
+←	&larr;	←	&#8592;	left arrow	ISO10646
+→	&rarr;	→	&#8594;	right arrow	ISO10646
+↑	&uarr;	↑	&#8593;	up arrow	ISO10646
+↓	&darr;	↓	&#8595;	down arrow	ISO10646
+↔	&harr;	↔	&#8596;	right-left arrow	ISO10646
+¬	&not;	¬	&#172;	NOT sign

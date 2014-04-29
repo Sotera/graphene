@@ -1,0 +1,53 @@
+{
+  "type": "network",
+  "version": "1.0",
+  "data": "/neo_sigma/data/searchable_vis.json",
+  "logo": {
+    "text": "SigmaJS Open Source Sample Data",
+    "file": "./ico/logo_01_032.png",
+    "link": "/index"
+  },
+  "text": {
+    "title": "Sample Data for SigmaJS tests",
+    "more": "Connections between a sector and a bill represent the amount that organizations within that sector lobbied on that bill. Size of sector circles represents the amount that sector lobbied relative to the other sectors in our sample, and the size of the bill circles represent the amount that bill was lobbied on relative to other bills in our sample. Clicking on a circle reveals an informational side panel about the organization that circle represents, and filters the overall network to display only those other groups, which are connected to the highlighted group. <br><br><strong>Methodology</strong><br> We began our analysis with all bills mentioned in lobbying disclosure forms under the category of immigration during the 109th – 112th congresses. We then excluded the top two percent of most lobbied bills – generally omnibus bills - leaving a corpus of more specific single-issue immigration reform bills. We also excluded bills for which no CRS summary could be found. The remaining 915 bills were classified into sub-categories based on the text of their CRS produced summaries. To create these issue categories we used Latent Semantic Analysis (LSA), a form of natural language processing commonly used for text comparison, to measure the conceptual similarity of the bills. When then clustered the most similar bills together with hierarchical agglomerative clustering. This process ensured that the most conceptually similar bills – at least according to the content of their CRS summaries – were treated as similar issues areas, like H-2A visa reform, or the Dream Act, under the umbrella of immigration reform. We manually labeled the resulting 43 clusters based on their contents. <br>We then applied the labels (denoted by color) from this clustering to the bills in the network representation of lobbying activity shown above. The nodes in this bipartite network represent specific bills and the sectors (based on Center for Responsive Politics sector classifications) that lobbied on them. The weighted directed edges are based on the number of lobbying reports filed by the given sector that mentioned the given bill. To highlight significant activity, we filtered the network visualization to show only the subgraph with a k-core of 3. The graph layout was done using the Gephi implementation of the OpenOrd algorithm, which employs aggressive edge-cutting to promote clustering.",
+    "intro": "The network connects sectors with the specific immigration bills on which they’ve lobbied. It is based on 7,814 lobbying reports filed by organizations in 170 different sectors. Those sectors mentioned 987 unique bills under the issue classification of immigration between 2007-2012. White circles represent sectors that lobbied on immigration issues; all other circles represent specific bills. The color of those circles denotes the (Sunlight assigned) sub-issue group that we have assigned to that bill. Connections between a sector and a bill represent the volume of lobbying on that bill by organizations within that sector. Size of sector circles represents the volume of sector lobbying relative to the other sectors in our sample. The size of the bill circles represents the volume of lobbying on that bill, relative to other bills in our sample. <strong>You can navigate by clicking and dragging. Click the magnifying glass at the bottom or scrolling. Click individual circles for more details about that organization or bill.</strong> To read our analysis of this network, click <a href = \"http://sunlightfoundation.com/blog/2013/03/25/immigration/\"> here</a>. For detailed instructions in exploring this visualization, and our methodology click below."
+  },
+  "legend": {
+    "edgeLabel": "Lobbying",
+    "colorLabel": "Immigration sub-issue classification",
+    "nodeLabel": "Sector or Bill"
+  },
+  "features": {
+    "search": true,
+    "groupSelectorAttribute": false,
+    "hoverBehavior": "Dim"
+  },
+  "informationPanel": {
+    "imageAttribute": false,
+    "groupByEdgeDirection": false
+  },
+  "sigma": {
+    "graphProperties": {
+      "minEdgeSize": 0.2,
+      "maxNodeSize": 15,
+      "maxEdgeSize": 30,
+      "minNodeSize": 1
+    },
+    "drawingProperties": {
+      "labelThreshold": 15,
+      "hoverFontStyle": "bold",
+      "defaultEdgeType": "curve",
+      "defaultLabelColor": "#000",
+      "defaultLabelHoverColor": "#fff",
+      "defaultLabelSize": 14,
+      "activeFontStyle": "bold",
+      "fontStyle": "bold",
+      "defaultHoverLabelBGColor": "#002147",
+      "defaultLabelBGColor": "#ddd"
+    },
+    "mouseProperties": {
+      "minRatio": 0.75,
+      "maxRatio": 20
+    }
+  }
+}

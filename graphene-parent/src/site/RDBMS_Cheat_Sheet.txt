@@ -1,0 +1,31 @@
+===============================================================
+Case Sensitivity in MSSQL
+
+This can be an issue which causes non deterministic results between the same sets of data on separate database instances.
+
+http://stackoverflow.com/questions/1411161/sql-server-check-case-sensitivity
+
+Collation can be set at various levels:
+
+Server
+Database
+Column
+So you could have a Case Sensitive Column in a Case Insensitive database. I have not yet come across a situation where a business case could be made for case senstivity of a single column of data, but I suppose there could be.
+
+Check Server Collation
+
+SELECT SERVERPROPERTY('COLLATION')
+Check Database Collation
+
+SELECT DATABASEPROPERTYEX('AdventureWorks', 'Collation') SQLCollation;
+Check Column Collation
+
+select table_name, column_name, collation_name
+from information_schema.columns
+where table_name = @table_name
+
+
+Sometimes the database must be rebuilt during an upgrade, and this may change case sensitivity settings.
+
+
+===============================================================

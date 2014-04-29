@@ -1,0 +1,19 @@
+<t:container xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+	<t:block id="dateTime">
+		<t:graphene.jodatimeoutput value="context.propertyValue" style="LL"/>
+	</t:block>
+
+	<t:block id="localDateTime">
+		<t:graphene.jodatimeoutput value="context.propertyValue" style="LL"/>
+	</t:block>
+
+	<t:block id="localDate">
+		<t:graphene.jodatimeoutput value="context.propertyValue" style="L-"/>
+	</t:block>
+
+	<t:block id="localTime">
+		<t:graphene.jodatimeoutput value="context.propertyValue" style="-L"/>
+	</t:block>
+
+</t:container>

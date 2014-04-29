@@ -1,0 +1,10 @@
+Imputing missing values
+By Daniel Jue
+Sr. Software Engineer
+Sotera Defense Solutions DF&A
+
+
+Data can be categorical or quantitative (scale or continuous).  We can estimate statistics and impute missing data only for the quantitative vars.
+
+User-Missing vs System Missing
+Use User-Missing for data we want to treat as missing, use System Missing if the data was actually not provided.

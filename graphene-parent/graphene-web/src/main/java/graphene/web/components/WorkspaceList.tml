@@ -1,0 +1,134 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<t:content>
+
+		<div class="well">
+			<form t:type="form" t:id="filterForm" t:zone="listZone">
+				<div class="input-group">
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-default dropdown-toggle"
+							data-toggle="dropdown">
+							My Workspaces
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li class="active">
+								<a href="javascript:void(0)">
+									<i class="fa fa-check"></i>
+									All
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="javascript:void(0)">Only Active</a>
+							</li>
+							<li>
+								<a href="javascript:void(0)">Only Inactive</a>
+							</li>
+							<li>
+								<a href="javascript:void(0)">Only Created by Me</a>
+							</li>
+						</ul>
+					</div>
+					<input class="form-control" type="text" placeholder="Search..." />
+					<div class="input-group-btn">
+						<button class="btn btn-default btn-primary" type="button">
+							<i class="fa fa-search"></i>
+							Search
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<t:if test="partialName">
+			<div class="row">
+				<h1 class="font-md">
+					Search Results for
+					<span class="semi-bold">${partialName}</span>
+					<small class="text-danger"> &nbsp;&nbsp;(${workspaces.availableRows}
+						results)
+					</small>
+				</h1>
+			</div>
+		</t:if>
+
+		<!-- row -->
+		<div class="row">
+
+			<!-- NEW WIDGET START -->
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID) -->
+				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-0"
+					data-widget-editbutton="false">
+					<!-- widget options: usage: <div class="jarviswidget" id="wid-id-0" 
+						data-widget-editbutton="false"> data-widget-colorbutton="false" data-widget-editbutton="false" 
+						data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" 
+						data-widget-custombutton="false" data-widget-collapsed="true" data-widget-sortable="false" -->
+					<header>
+						<span class="widget-icon">
+							<i class="fa fa-table"></i>
+						</span>
+						<h2>My Workspaces </h2>
+
+					</header>
+
+					<t:zone t:id="listZone" id="listZone" t:update="show">
+						<t:if test="workspaces">
+							<!-- widget div -->
+							<div>
+
+								<!-- widget edit box -->
+								<div class="jarviswidget-editbox">
+									<!-- This area used as dropdown edit box -->
+
+								</div>
+								<!-- end widget edit box -->
+
+								<!-- widget content -->
+								<div class="widget-body no-padding">
+									<div class="widget-body-toolbar">
+										<!-- start table content -->
+									</div>
+									<t:jquery.datatable t:id="list"
+										class="table table-striped table-bordered table-hover"
+										t:source="workspaces" t:row="workspace" t:rowsPerPage="20"
+										t:options="options" t:model="model" t:exclude="json"
+										t:empty="block:emptyWorkspaces" t:inplace="ajax">
+										[Grid here]
+										<p:titleCell>
+											<a t:type="eventLink" t:event="selected" t:context="workspace.workspaceId"
+												class="prop:linkCSSClass" t:zone="^" href="#">
+												${workspace.title}
+											</a>
+										</p:titleCell>
+									</t:jquery.datatable>
+									<!-- end table content -->
+								</div>
+								<!-- end widget content -->
+
+							</div>
+							<!-- end widget div -->
+						</t:if><!-- end if not displaying widget -->
+						<t:block t:id="emptyWorkspaces">
+							<div id="noWorkspaces">
+								(No workspaces found)
+							</div>
+						</t:block>
+					</t:zone>
+				</div>
+				<!-- end widget -->
+
+			</article>
+			<!-- WIDGET END -->
+
+		</div>
+
+		<!-- end row -->
+	</t:content>
+
+
+</html>

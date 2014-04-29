@@ -1,0 +1,359 @@
+
+/*
+ * Based on demo_table_jui.css from http://datatables.net
+ */
+body, td        { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: normal; color: #333;
+                    line-height: 17px; }
+h1              { font-size: 26px; line-height: 20px; } /* For IE 7 */
+
+.eg             { margin: 20px 0; padding: 20px; 
+                    border: 1px solid #ddd; border-radius: 4px; -webkit-border-radius: 4px; -mox-border-radius: 4px; }
+
+a               { text-decoration: none; color: #3D69B6; }
+a:hover         { text-decoration: underline; }
+
+.js-required    { color: red; display: block; margin-bottom: 14px; }
+
+#personsdt tfoot    { display: none; }
+
+/*
+ * jQuery UI specific styling
+ */
+
+.paging_two_button .ui-button {
+    float: left;
+    cursor: pointer;
+    * cursor: hand;
+}
+
+.paging_full_numbers .ui-button {
+    padding: 2px 6px;
+    margin: 0;
+    cursor: pointer;
+    * cursor: hand;
+    color: #333 !important;
+}
+
+.dataTables_paginate .ui-button {
+    margin-right: -0.1em !important;
+}
+
+.paging_full_numbers {
+    width: 350px !important;
+}
+
+.dataTables_wrapper .ui-toolbar {
+    padding: 5px;
+}
+
+.dataTables_paginate {
+    width: auto;
+}
+
+.dataTables_info {
+    padding-top: 3px;
+}
+
+#personsdt thead th {
+    padding: 3px 0px 3px 10px;
+    cursor: pointer;
+    * cursor: hand;
+}
+
+div.dataTables_wrapper .ui-widget-header {
+    font-weight: normal;
+}
+
+
+/*
+ * Sort arrow icon positioning
+ */
+#personsdt thead th div.DataTables_sort_wrapper {
+    position: relative;
+    padding-right: 20px;
+}
+
+#personsdt thead th div.DataTables_sort_wrapper span {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    right: 0;
+}
+
+
+/*
+ * Sort arrow icon positioning
+ */
+#personsdt thead th div.DataTables_sort_wrapper {
+    position: relative;
+    padding-right: 20px;
+}
+
+#personsdt thead th div.DataTables_sort_wrapper span {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    right: 0;
+}
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * Everything below this line is the same as demo_table.css. This file is
+ * required for 'cleanliness' of the markup
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * DataTables features
+ */
+
+.dataTables_wrapper {
+    position: relative;
+    clear: both;
+}
+
+.dataTables_processing {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    width: 250px;
+    margin-left: -125px;
+    border: 1px solid #ddd;
+    text-align: center;
+    color: #999;
+    font-size: 11px;
+    padding: 2px 0;
+}
+
+.dataTables_length {
+    width: 40%;
+    float: left;
+}
+
+.dataTables_filter {
+    width: 50%;
+    float: right;
+    text-align: right;
+}
+
+.dataTables_info {
+    width: 50%;
+    float: left;
+}
+
+.dataTables_paginate {
+    float: right;
+    text-align: right;
+}
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * DataTables display
+ */
+#personsdt {
+    margin: 0 auto;
+    width: 100%;
+    clear: both;
+    border-collapse: collapse;
+}
+
+#personsdt tfoot th {
+    padding: 3px 0px 3px 10px;
+    font-weight: bold;
+    font-weight: normal;
+}
+
+#personsdt tr.heading2 td {
+    border-bottom: 1px solid #aaa;
+}
+
+#personsdt td {
+    padding: 3px 10px;
+}
+
+#personsdt td.center {
+    text-align: center;
+}
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * DataTables sorting
+ */
+
+.sorting_asc {
+    background: url('../images/jquerydatatables/sort_asc.png') no-repeat center right;
+}
+
+.sorting_desc {
+    background: url('../images/jquerydatatables/sort_desc.png') no-repeat center right;
+}
+
+.sorting {
+    background: url('../images/jquerydatatables/sort_both.png') no-repeat center right;
+}
+
+.sorting_asc_disabled {
+    background: url('../images/jquerydatatables/sort_asc_disabled.png') no-repeat center right;
+}
+
+.sorting_desc_disabled {
+    background: url('../images/jquerydatatables/sort_desc_disabled.png') no-repeat center right;
+}
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * DataTables row classes
+ */
+
+#personsdt tr.odd {
+    background-color: #ddffdd;
+}
+
+#personsdt tr.even {
+    background-color: #eeffee;
+}
+
+tr.odd {
+    background-color: #E2E4FF;
+}
+
+tr.even {
+    background-color: white;
+}
+
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Misc
+ */
+.dataTables_scroll {
+    clear: both;
+}
+
+.dataTables_scrollBody {
+    -webkit-overflow-scrolling: touch;
+}
+
+.top, .bottom {
+    padding: 15px;
+    background-color: #F5F5F5;
+    border: 1px solid #CCCCCC;
+}
+
+.top .dataTables_info {
+    float: none;
+}
+
+.clear {
+    clear: both;
+}
+
+.dataTables_empty {
+    text-align: center;
+}
+
+tfoot input {
+    margin: 0.5em 0;
+    width: 100%;
+    color: #444;
+}
+
+tfoot input.search_init {
+    color: #999;
+}
+
+td.group {
+    background-color: #d1cfd0;
+    border-bottom: 2px solid #A19B9E;
+    border-top: 2px solid #A19B9E;
+}
+
+td.details {
+    background-color: #d1cfd0;
+    border: 2px solid #A19B9E;
+}
+
+
+.example_alt_pagination div.dataTables_info {
+    width: 40%;
+}
+
+.paging_full_numbers a.paginate_button,
+    .paging_full_numbers a.paginate_active {
+    border: 1px solid #aaa;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    padding: 2px 5px;
+    margin: 0 3px;
+    cursor: pointer;
+    *cursor: hand;
+    color: #333 !important;
+}
+
+.paging_full_numbers a.paginate_button {
+    background-color: #ddd;
+}
+
+.paging_full_numbers a.paginate_button:hover {
+    background-color: #ccc;
+    text-decoration: none !important;
+}
+
+.paging_full_numbers a.paginate_active {
+    background-color: #99B3FF;
+}
+
+#personsdt tr.even.row_selected td {
+    background-color: #B0BED9;
+}
+
+#personsdt tr.odd.row_selected td {
+    background-color: #9FAFD1;
+}
+
+
+tr.odd td.sorting_1 {
+    background-color: #c4ffc4;
+}
+
+tr.odd td.sorting_2 {
+    background-color: #d1ffd1;
+}
+
+tr.odd td.sorting_3 {
+    background-color: #d1ffd1;
+}
+
+tr.even td.sorting_1 {
+    background-color: #d5ffd5;
+}
+
+tr.even td.sorting_2 {
+    background-color: #e2ffe2;
+}
+
+tr.even td.sorting_3 {
+    background-color: #e2ffe2;
+}
+
+/*
+ * Row highlighting example
+ */
+.ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted {
+    background-color: #ECFFB3;
+}
+
+.ex_highlight #example tbody tr.odd:hover, #example tbody tr.odd td.highlighted {
+    background-color: #E6FF99;
+}

@@ -1,0 +1,44 @@
+   
+   Ext.define("DARPA.CSFrame",  {
+    	extend:'Ext.panel.Panel',
+    	border: false,
+    	xtype: 'container',
+    	layout:{
+    		type:'vbox',
+    		align:'stretch'
+	},
+	items:[
+    		{
+			xtype:'component',
+			flex:1
+		},
+		{
+			xtype:'container',
+			layout:'hbox',
+			items: [
+				{
+					xtype:'component',
+					flex:1
+				},
+				Ext.create("DARPA.CSSearch", {width:'auto'}),
+				{
+					xtype:'component',
+					flex:1
+				}
+			]
+		},
+		{
+			xtype:'component',
+			flex:1
+		}
+            ],
+        getSearch: function()
+        {
+        	var self=this;
+        	return self.items.items[0];
+        }
+   });
+    
+    
+
+ 

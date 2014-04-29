@@ -1,0 +1,42 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+	 
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<!--  At runtime the page will supply the stylesheet. The link here is to enable preview. -->
+<link rel="stylesheet" type="text/css" href="../../../css/examples/ajaxgracefulcomponentscrud.css"/>
+
+<t:content>
+
+	<!-- We can't use the form's id in the css because the Zone messes with it, so we add a div with its own id. -->
+	<div id="personFilter">
+		<form t:type="form" t:id="filterForm" t:zone="^">
+			<div>
+				User
+			</div>
+			<div>
+				<input t:id="partialName" t:type="TextField" size="15" t:validate="maxLength=15"/>
+				<input type="submit" value="Filter" title="Filter"/>
+			</div>
+		</form>
+	</div>
+	
+	<div id="personList">
+		<table t:type="grid" t:id="list" t:source="persons" t:row="person"
+			t:exclude="id,version,firstName,lastName,region,startDate" t:add="name"
+			t:rowsPerPage="4" t:pagerPosition="bottom"
+			t:class="personGrid" t:empty="block:emptyPersons" t:inplace="ajax">[Grid here]
+			<p:nameCell>
+				<a t:type="eventLink" t:event="selected" t:context="person.id" class="prop:linkCSSClass" t:zone="^" href="#">
+					${person.username} (${person.fullname})
+				</a>
+			</p:nameCell>
+		</table>
+	</div>
+		
+	<t:block t:id="emptyPersons">
+		<div id="noPersons">
+			(No users found)
+		</div>
+	</t:block>
+
+</t:content>
+</html>

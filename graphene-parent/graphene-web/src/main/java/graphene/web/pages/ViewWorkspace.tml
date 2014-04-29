@@ -1,0 +1,17 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="View Workspace"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<t:if test="currentWorkspace">
+		<h2>${currentWorkspace?.title}</h2>
+		<div>
+			Last Modified:
+			<t:graphene.jodatimeoutput value="currentWorkspace?.lastmodified"
+				style="LL" />
+		</div>
+		<div t:type="outputraw" value="currentWorkspace?.json" />
+	</t:if>
+	<t:if test="currentWorkspace" negate="true">
+		Sorry, that workspace is not
+		available.
+	</t:if>
+</html>

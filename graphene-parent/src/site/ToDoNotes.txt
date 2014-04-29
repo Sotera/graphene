@@ -1,0 +1,38 @@
+google overriding toString on enums to get all the fields
+@Override
+    public String toString() {
+        return this.getValue();
+    }
+    //ok so nothing really special, just use name()
+    
+how to get a list of rest services and methods
+
+
+//use google guava's immutable map instead of looping through the enums looking for stuff.
+public enum RandomEnum {
+
+    StartHere("Start Here"),
+    StopHere("Stop Here");
+
+    private final String strVal;
+    private RandomEnum(String strVal) {
+        this.strVal = strVal;
+    }
+
+    public static RandomEnum getEnum(String strVal) {
+        if(!strValMap.containsKey(strVal)) {
+            throw new IllegalArgumentException("Unknown String Value: " + strVal);
+        }
+        return strValMap.get(strVal);
+    }
+
+    private static final Map<String, RandomEnum> strValMap;
+    static {
+        final Map<String, RandomEnum> tmpMap = Maps.newHashMap();
+        for(final RandomEnum en : RandomEnum.values()) {
+            tmpMap.put(en.strVal, en);
+        }
+        strValMap = ImmutableMap.copyOf(tmpMap);
+    }
+}
+

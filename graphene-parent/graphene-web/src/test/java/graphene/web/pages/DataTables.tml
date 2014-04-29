@@ -1,0 +1,21 @@
+<html t:type="graphene/layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<table t:type="jquery/datatable" t:source="celebritySource"
+		rowsPerPage="5" exclude="id, biography, birthDateVerified,dateOfBirth"
+		reorder="link,lastName,firstName,occupation" t:options="options"
+		t:mode="false" t:model="model" t:row="current" t:add="link"
+		t:tableInformation="information" t:rowClass="css" t:rowIndex="index"
+		t:id="datatable" id="datatable">
+
+		<p:firstNameHeader>Prénom Header</p:firstNameHeader>
+
+		<p:firstNameFooter>Prénom Footer</p:firstNameFooter>
+
+		<p:firstNameCell>${current?.firstName}</p:firstNameCell>
+
+		<p:linkCell>${current?.lastName}</p:linkCell>
+
+	</table>
+
+</html>

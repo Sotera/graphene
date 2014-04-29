@@ -1,0 +1,31 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" 
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"
+	lang="en">
+	<div class="row-fluid">
+		<div class="col-sm-12">
+			<div id="cy-title">
+				<pre class="content"> ${title}</pre>
+			</div>
+			<div id="cy" style="height:100%;width:100%;border:1px solid #777;"></div>
+			<div id="cy-refresh" style="display: block;">
+				<span class="icon-refresh"></span>
+			</div>
+
+			<div id="cy-show" style="display: none;">
+				<span class="icon-plus"></span>
+			</div>
+
+			<div id="cy-hide" style="display: block;">
+				<span class="icon-minus"></span>
+			</div>
+		</div>
+	</div>
+	<script src="${jsApp1}" />
+	<script src="${jsApp2}" />
+	<script src="${jsApp3}" />
+	<script src="${jsApp4}" />
+	<script src="${jsApp5}" />
+	<script src="${jsApp6}" />
+	<script src="${jsApp7}" />
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<!-- 
+	CustomForm simply wraps a Form while introducing our own custom validation decorator ahead of the default one.
+	If autofocus="true" then Form will introduce another decorator, so let's use autofocus="false".
+ -->
+<t:content>
+	<t:form t:id="form">
+		<t:body/>
+	</t:form>
+</t:content>
+</html>

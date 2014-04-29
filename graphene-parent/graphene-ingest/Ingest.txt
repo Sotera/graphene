@@ -1,0 +1,15 @@
+Scanner for parts of data to be done during ingest.
+
+Example, find communication ids
+We'd need a communication id pattern to apply to some kind of data (probably a string)
+We'd have a function to call when the pattern matched (The function may clean the data, or create nodes in a graph, etc)
+We'd need the data to be accessible through a stream or iterable interface. (ie. something.next())
+
+The entire process needs to be pluggable as part of a script (probably ordered)
+For instance:
+findCommunicationIds()
+findAddresses()
+findFamilialRelations()
+findCustomerIds()
+findCars()
+etc

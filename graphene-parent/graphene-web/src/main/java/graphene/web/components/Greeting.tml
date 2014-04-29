@@ -1,0 +1,41 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html t:type="graphene/unauthenticatedLayout" title="Greeting"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<t:content>
+		<h1 class="txt-color-red login-header-big">${appName}</h1>
+		<div class="hero">
+
+			<div class="pull-left login-desc-box-l">
+				<h4 class="paragraph-header">Experience the
+					power and simplicity of ${appName}
+				</h4>
+				<div class="login-app-icons">
+					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Shared Attribute Graphs</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Event Graphs</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Geo-Temporal Events</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Drill Down Behavior</a>
+				</div>
+			</div>
+
+			<img src="${imgSample}" class="pull-right display-image"
+				width="210px" />
+
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<h5 class="about-heading">About ${appName} - Are you up to date?</h5>
+				<p>
+					Log in to see the new features in ${appName} ${appVersion}!
+				</p>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<h5 class="about-heading">Not just your average application!</h5>
+				<p>
+					Graph export, Persistent workspaces and more!
+				</p>
+			</div>
+		</div>
+	</t:content>
+</html>

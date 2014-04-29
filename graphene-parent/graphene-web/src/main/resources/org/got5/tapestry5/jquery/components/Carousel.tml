@@ -1,0 +1,13 @@
+<t:container xml:space="default"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+      xmlns:p="tapestry:parameter"
+      xmlns:j="tapestry-library:jquery">
+    
+	
+	<div id="${clientId}" class="${className}">
+		<ul>
+        	<t:body />
+		</ul>
+	</div>
+	
+</t:container>

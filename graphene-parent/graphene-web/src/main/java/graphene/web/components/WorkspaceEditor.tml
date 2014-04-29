@@ -1,0 +1,416 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<t:content>
+
+		<t:if test="modeCreate">
+			<div class="jarviswidget jarviswidget-sortable" id="wid-id-2"
+				data-widget-colorbutton="false" data-widget-editbutton="false" role="widget"
+				style="position: relative; opacity: 1;">
+				<!-- widget options: usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false"> 
+					data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" 
+					data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" 
+					data-widget-collapsed="true" data-widget-sortable="false" -->
+				<header role="heading">
+					<div class="jarviswidget-ctrls" role="menu">
+						<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip"
+							title="" data-placement="bottom" data-original-title="Collapse">
+							<i class="fa fa-minus "></i>
+						</a>
+						<a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn"
+							rel="tooltip" title="" data-placement="bottom"
+							data-original-title="Fullscreen">
+							<i class="fa fa-resize-full "></i>
+						</a>
+						<a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn"
+							rel="tooltip" title="" data-placement="bottom"
+							data-original-title="Delete">
+							<i class="fa fa-times"></i>
+						</a>
+					</div>
+					<span class="widget-icon">
+						<i class="fa fa-eye"></i>
+					</span>
+					<h2>Create</h2>
+
+					<span class="jarviswidget-loader">
+						<i class="fa fa-refresh fa-spin"></i>
+					</span>
+				</header>
+
+				<!-- widget div -->
+				<div role="content">
+
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox">
+						<!-- This area used as dropdown edit box -->
+
+					</div>
+					<!-- end widget edit box -->
+
+					<!-- widget content -->
+					<div class="widget-body">
+						<form t:type="graphene/CustomForm" t:id="createForm" t:zone="^">
+							<fieldset>
+								<input name="authenticity_token" type="hidden" />
+								<div class="form-group">
+									<t:label for="title" />
+									<input class="form-control" t:type="TextField" t:id="title"
+										placeholder="Workspace Title" value="workspace.title"
+										t:validate="required ,minlength= 3, maxlength=200" />
+								</div>
+								<div class="form-group">
+									<t:label for="creatorusername" />
+									<input class="form-control" t:type="TextField" t:id="creatorusername"
+										t:clientid="cCreatorUsername" value="workspace.creatorusername"
+										t:validate="required, maxlength=50" size="30" />
+								</div>
+								<div class="form-group">
+									<t:label for="json" />
+									<input class="form-control" t:type="textarea" rows="5"
+										placeholder="JSON" t:id="json" t:clientid="cCreatorUsername"
+										value="workspace.json" />
+								</div>
+								<div class="form-group">
+									<label>Readonly Test</label>
+									<span class="form-control">Some Read Only Value</span>
+								</div>
+
+								<div class="form-group">
+									<t:label for="lastmodified" />
+									<input class="form-control" t:type="DateField" t:id="lastmodified"
+										t:clientid="clastmodified" placeholder="(required, ${datePattern})"
+										value="workspace.lastmodified" t:format="prop:dateFormat"
+										t:validate="required" />
+								</div>
+
+
+							</fieldset>
+							<div class="form-actions">
+
+								<div class="btn-group">
+									<button type="submit" class="btn btn-labeled btn-success">
+										<span class="btn-label">
+											<i class="glyphicon glyphicon-ok"></i>
+										</span>
+										Save
+									</button>
+								  &nbsp;
+									<a t:type="eventLink" t:event="cancelCreate" t:zone="^" href="#">
+										<div class="btn btn-labeled btn-danger">
+											<span class="btn-label">
+												<i class="glyphicon glyphicon-remove"></i>
+											</span>
+											Cancel
+										</div>
+									</a>
+								</div>
+							</div>
+						</form>
+
+					</div>
+					<!-- end widget content -->
+
+				</div>
+				<!-- end widget div -->
+
+			</div>
+		</t:if>
+
+		<t:if test="modeReview">
+			<div class="jarviswidget jarviswidget-sortable" id="wid-id-2"
+				data-widget-colorbutton="false" data-widget-editbutton="false" role="widget"
+				style="position: relative; opacity: 1;">
+				<!-- widget options: usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false"> 
+					data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" 
+					data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" 
+					data-widget-collapsed="true" data-widget-sortable="false" -->
+				<header role="heading">
+					<div class="jarviswidget-ctrls" role="menu">
+						<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip"
+							title="" data-placement="bottom" data-original-title="Collapse">
+							<i class="fa fa-minus "></i>
+						</a>
+						<a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn"
+							rel="tooltip" title="" data-placement="bottom"
+							data-original-title="Fullscreen">
+							<i class="fa fa-resize-full "></i>
+						</a>
+						<a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn"
+							rel="tooltip" title="" data-placement="bottom"
+							data-original-title="Delete">
+							<i class="fa fa-times"></i>
+						</a>
+					</div>
+					<span class="widget-icon">
+						<i class="fa fa-eye"></i>
+					</span>
+					<h2>Review</h2>
+
+					<span class="jarviswidget-loader">
+						<i class="fa fa-refresh fa-spin"></i>
+					</span>
+				</header>
+				<!-- widget div -->
+				<div role="content">
+
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox">
+						<!-- This area used as dropdown edit box -->
+
+					</div>
+					<!-- end widget edit box -->
+
+					<!-- widget content -->
+					<div class="widget-body">
+						<t:if test="workspace">
+							<div t:type="if" t:test="deleteMessage" class="error">
+								${deleteMessage}
+							</div>
+
+							<table>
+								<tr>
+									<th>Id:</th>
+									<td>${workspace.workspaceid}</td>
+								</tr>
+								<tr>
+									<th>Title:</th>
+									<td>${workspace.title} by ${workspace.creatorusername}</td>
+								</tr>
+								<tr>
+									<th>Json:</th>
+									<td>${workspace.json}</td>
+								</tr>
+								<tr>
+									<th>Last Updated:</th>
+									<td>
+										<t:graphene.jodatimeoutput value="workspace?.lastmodified"
+											style="LL" />
+									</td>
+								</tr>
+							</table>
+
+							<div class="buttons">
+								<a t:type="eventLink" t:event="toUpdate" t:context="workspace.workspaceid"
+									t:zone="^" href="#">Update...</a>
+								<a t:type="eventLink" t:event="delete"
+									t:context="[workspace.workspaceid,workspace.creatorusername]"
+									t:zone="^" href="#">
+									<!-- The Confirm mixin can't cancel an EventLink that specifies 
+										a Zone, so we put the Confirm inside the EventLink. -->
+									<!-- See http://tapestry-users.832.n2.nabble.com/Confirm-mixin-won-t-cancel-when-in-zone-td5048950.html#a5048950 -->
+									<span t:type="any" t:mixins="jquery/Confirm"
+										t:message="Delete ${workspace.title} ${workspace.creatorusername}?">
+										Delete...
+									</span>
+								</a>
+							</div>
+
+						</t:if>
+						<t:if negate="true" test="workspace">
+							Workspace ${workspaceId} does not exist.
+							<br />
+							<br />
+						</t:if>
+					</div>
+				</div>	<!-- end widget content -->
+			</div><!-- end widget div -->
+		</t:if>
+
+		<t:if test="modeUpdate">
+			<div class="jarviswidget jarviswidget-sortable" id="wid-id-2"
+				data-widget-colorbutton="false" data-widget-editbutton="false" role="widget"
+				style="position: relative; opacity: 1;">
+				<!-- widget options: usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false"> 
+					data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" 
+					data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" 
+					data-widget-collapsed="true" data-widget-sortable="false" -->
+				<header role="heading">
+					<div class="jarviswidget-ctrls" role="menu">
+						<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip"
+							title="" data-placement="bottom" data-original-title="Collapse">
+							<i class="fa fa-minus "></i>
+						</a>
+						<a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn"
+							rel="tooltip" title="" data-placement="bottom"
+							data-original-title="Fullscreen">
+							<i class="fa fa-resize-full "></i>
+						</a>
+						<a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn"
+							rel="tooltip" title="" data-placement="bottom"
+							data-original-title="Delete">
+							<i class="fa fa-times"></i>
+						</a>
+					</div>
+					<span class="widget-icon">
+						<i class="fa fa-eye"></i>
+					</span>
+					<h2>Update</h2>
+
+					<span class="jarviswidget-loader">
+						<i class="fa fa-refresh fa-spin"></i>
+					</span>
+				</header>
+
+				<!-- widget div -->
+				<div role="content">
+
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox">
+						<!-- This area used as dropdown edit box -->
+
+					</div>
+					<!-- end widget edit box -->
+
+					<!-- widget content -->
+					<div class="widget-body">
+
+						<form t:type="form" t:id="updateForm" t:context="workspaceId"
+							t:zone="^">
+							<t:errors />
+
+							<t:if test="workspace">
+								<!-- If optimistic locking is not needed then comment out this next 
+									line. It works because Hidden fields are part of the submit. -->
+								<!-- <t:hidden value="workspace.version"/> -->
+
+								<table>
+									<tr>
+										<th>
+											<t:label for="updTitle" />
+											:
+										</th>
+										<td>
+											<input t:type="TextField" t:id="updTitle" value="workspace.title"
+												t:validate="required, maxlength=200" />
+										</td>
+										<td>(required)</td>
+									</tr>
+									<tr class="err">
+										<th></th>
+										<td colspan="2">
+											<t:graphene.CustomError for="updTitle" />
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<t:label for="updCreatorUsername" />
+											:
+										</th>
+										<td>
+											<input t:type="TextField" t:id="updCreatorUsername"
+												value="workspace.creatorusername" t:validate="required, maxlength=10"
+												size="10" />
+										</td>
+										<td>(required)</td>
+									</tr>
+									<tr class="err">
+										<th></th>
+										<td colspan="2">
+											<t:graphene.CustomError for="updCreatorUsername" />
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<t:label for="updJson" />
+											:
+										</th>
+										<td>
+											<input t:type="textarea" rows="20" t:id="updJson"
+												value="workspace.json" />
+										</td>
+										<td>(required)</td>
+									</tr>
+									<tr class="err">
+										<th></th>
+										<td colspan="2">
+											<t:graphene.CustomError for="updJson" />
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<t:label for="updlastmodified" />
+											:
+										</th>
+										<td>
+											<input t:type="DateField" t:id="updlastmodified" value="workspace.lastmodified"
+												t:format="prop:dateFormat" t:validate="required" />
+										</td>
+										<td>(required, ${datePattern})</td>
+									</tr>
+									<tr class="err">
+										<th></th>
+										<td colspan="2">
+											<t:graphene.CustomError for="updlastmodified" />
+										</td>
+									</tr>
+								</table>
+
+								<div class="buttons">
+									<a t:type="eventLink" t:event="cancelUpdate" t:context="workspaceId"
+										t:zone="^" href="#">Cancel</a>
+									<input t:type="submit" value="Save" />
+								</div>
+							</t:if>
+
+							<t:if negate="true" test="workspace">
+								Workspace ${workspaceId} does not exist.
+								<br />
+								<br />
+							</t:if>
+
+						</form>
+
+					</div>
+					<!-- end widget content -->
+
+				</div>
+				<!-- end widget div -->
+
+			</div>
+		</t:if>
+
+		<t:if test="modeConfirmDelete">
+			<h1>Delete</h1>
+
+			<form t:type="form" t:id="confirmDeleteForm" t:zone="^">
+				<t:errors />
+
+				<t:if test="workspace">
+					<!-- If optimistic locking is not needed then comment out this next 
+						line. It works because Hidden fields are part of the submit. -->
+					<!-- <t:hidden value="workspace.version"/> -->
+
+
+					<div class="buttons">
+						Delete ${workspace.title} by ${workspace.creatorusername}?
+						<br />
+						<br />
+
+						<a t:type="eventLink" t:event="cancelConfirmDelete" t:context="workspace.workspaceid"
+							t:zone="^" href="#">Cancel</a>
+						<input type="submit" value="Delete" />
+					</div>
+				</t:if>
+
+				<t:if negate="true" test="workspace">
+					Workspace ${workspaceId} does not exist.
+					<br />
+					<br />
+				</t:if>
+
+			</form>
+
+		</t:if>
+
+		<!-- This is needed to clear the zone. -->
+		<t:if test="modeNull">
+			<!-- The space character is needed only to make the zone update highlight 
+				visible. -->
+		&nbsp;
+		</t:if>
+
+	</t:content>
+</html>

@@ -1,0 +1,50 @@
+Graph Design Guidance
+-djue
+
+
+==========================
+Fine-Grained versus Generic Relationships
+
+When designing relationship types we should be mindful of the trade-offs between using
+fine-grained relationship labels versus generic relationships qualified with properties.
+It’s the difference between using DELIVERY_ADDRESS and HOME_ADDRESS versus ADDRESS
+{type: 'delivery'} and ADDRESS {type: 'home'}.
+Relationships are the royal road into the graph. Differentiating by relationship type is
+the best way of eliminating large swathes of the graph from a traversal. Using one or
+more property values to decide whether or not to follow a relationship incurs extra IO
+the first time those properties are accessed because the properties reside in a separate
+store file from the relationships (after that, however, they’re cached).
+We use fine-grained relationships whenever we have a closed set of relationship types.
+In contrast, weightings—as required by a shortest-weighted-path algorithm—rarely
+comprise a closed set, and these are usually best represented as properties on
+relationships.
+
+Sometimes, however, we have a closed set of relationships, but in some traversals we
+want to follow specific kinds of relationships within that set, whereas in others we want
+to follow all of them, irrespective of type. Addresses are a good example. Following the
+closed-set principle, we might choose to create HOME_ADDRESS, WORK_ADDRESS, and DE
+LIVERY_ADDRESS relationships. This allows us to follow specific kinds of address relationships
+(DELIVERY_ADDRESS, for example) while ignoring all the rest. But what do we
+do if we want to find all addresses for a user? There are a couple of options here. First,
+we can encode knowledge of all the different relationship types in our queries: e.g.,
+MATCH user-[:HOME_ADDRESS|WORK_ADDRESS|DELIVERY_ADDRESS]->address. This,
+however, quickly becomes unwieldy when there are lots of different kinds of relationships.
+Alternatively, we can add a more generic ADDRESS relationship to our model, in
+addition to the fine-grained relationships. Every node representing an address is then
+connected to a user using two relationships: a fined-grained relationship (e.g., DELIV
+ERY_ADDRESS) and the more generic ADDRESS {type: 'delivery'} relationship.
+As we discussed in “Describe the Model in Terms of the Application’s Needs” on page
+63, the key here is to let the questions we want to ask of our data guide the kinds of
+relationships we introduce into the model.
+
+==========================
+Model Facts as Nodes
+
+When two or more domain entities interact for a period of time, a fact emerges. We
+represent these facts as separate nodes, with connections to each of the entities engaged
+in that fact. Modeling an action in terms of its product—that is, in terms of the thing
+that results from the action—produces a similar structure: an intermediate node that
+represents the outcome of an interaction between two or more entities. We can use
+timestamp properties on this intermediate node to represent start and end times.
+The following examples show how we might model facts and actions using intermediate
+nodes.

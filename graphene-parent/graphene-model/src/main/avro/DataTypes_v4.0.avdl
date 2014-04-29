@@ -1,0 +1,778 @@
+/**
+ * With credits to Oculus Info Inc for the influence of this document. Released
+ * under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+protocol G_DataTypes {
+	/**
+	 * Tags are defined by the application layer as a taxonomy of user and
+	 * application concepts, independent of the data sources. This allows
+	 * application semantics to be re-used with new data, with a minimum of new
+	 * software design and development. Data layer entity types, link types and
+	 * properties should be mapped into the list of tags. The application layer
+	 * must be able to search by native field name or by tag interchangeably,
+	 * and properties returned must contain both native field names as well as
+	 * tags.
+	 * 
+	 * The list of tags may change as application features evolve, though that
+	 * will require collaboration with the data layer providers. Evolving the
+	 * tag list should not change the Data Access or Search APIs.
+	 * 
+	 * This is the current list of tags for Properties:
+	 * 
+	 * 
+	 */
+	enum G_PropertyTag {
+		ID, 		 	// Underlying identifier in data set (not necessary a
+						// UID)
+		TYPE,		 	// Data set specific account type (e.g. in Kiva: Lender,
+						// Borrower, Partner, etc).
+					 	// Shown to the user for context, and used in
+						// segmentation and clustering of data.
+		ENTITY_TYPE, 	// Data set specific entity type (e.g. person,
+						// organization).
+		ACCOUNT_OWNER,	// The account owner for an entity
+		CLUSTER_SUMMARY,// The associated cluster summary for an entity
+		NAME,		 	// A name, often also used in the label.
+		LABEL,		 	// A text label suitable for displaying to a user.
+		STAT,		 	// A text label containing aggregate or statistical
+						// summaries of numeric data.
+		TEXT,		 	// Comment or other arbitrarily long text field
+		STATUS,		 	// Status indication in the form of a text field
+		ANNOTATION,	 	// A generic annotation in the form of a text field
+		WARNING,	 	// Warning annotation in the form of a text field
+		LINKED_DATA, 	// A LinkedData resource, with URL and a MIME type
+		IMAGE,		 	// A LinkedData image that could be embedded in the app
+						// (e.g. person's picture, corporate logo, etc).
+		VIDEO, 		// A LinkedData video that could be embedded in the app
+					// (e.g. an interview, tv footage, etc).
+		AUDIO,		// A LinkedData audio that could be embedded in the app
+					// (e.g. a speech recording, slide audio, etc).
+		GEO,		 	// A GeoData object
+		COUNTRY_CODE,	// An ISO 3 digit country code
+		DATE,		 	// Date in Long format
+		AMOUNT,		 	// A numeric quantity of something, financial (any
+						// unit) or otherwise
+		INFLOWING,	 	// Amount flowing in (incoming messages, credits, etc)
+		OUTFLOWING,	 	// Amount flowing out (outgoing messages, debits, etc)
+		COUNT,		 	// When returned an aggregated Link (see below), this is
+						// the number of records.
+		SERIES,		 	// Timeseries or other series data suitable for building
+						// charts
+		CONSTRUCTED, 	// This property was not in the original data, but was
+						// constructed by algorithms.
+				     	// See Provenance and/or Uncertainty fields for more
+						// information.
+		RAW,	 	 	// This property was present in the original data. See
+						// Provenance for more information.
+		USD,		 	// flags an amount as being USD (for formatting
+						// purposes),
+		DURATION,	 	// A G_Duration object
+		REDACTED	 	// The 21st century meaning, "conceal from unauthorized
+						// view; censor but do not destroy"
+	}
+
+	
+	/**
+	 * Industry types are for classifying datasets, data sources, or individual
+	 * datum.
+	 * 
+	 * 
+	 */
+	enum G_CanonicalIndustryType {
+		REDACTED,				// The 21st century meaning, "conceal from
+								// unauthorized view; censor but do not destroy"
+		UNKNOWN_OR_UNSURE,		// For when the data has no description of what
+								// industry it came from
+		BANKING,  				// banks, mortgage, commercial, savings and
+								// loans.
+		FINANCIAL_SERVICES, 	// exchanges, other lending organizations,
+								// crowdfunding, insurance, etc
+		FOOD_RESTAURANT,
+		COMMODITY_PROVIDER,		// Oil, gas, textile
+		ISP,					// Internet service provider
+		TELCO,					// Telephone companies
+		TELEVISION,				// Television content providers like cable,
+								// satellite, etc.
+		EMAIL_PROVIDER,			// A company that provides email hosting
+								// services
+		MULTI,					// Legacy. Used for anything too hard to
+								// categorize with a few types.
+		TRANSPORT,				// Transportation, such as public or commercial
+								// transit
+		LOGISTICS,				// Logistics companies
+		ADVERTISEMENT_AGENCY,	// a service business dedicated to creating,
+								// planning and handling advertising for its
+								// clients
+		EMPLOYMENT_AGENCY,		// a business that serves as a representative,
+								// acting on behalf of another
+		GOVERNMENT_AGENCY,		// a department of a local or national
+								// government responsible for the oversight and
+								// administration of a specific function
+		INTERNATIONAL_AGENCY,	// an inter-governmental body
+		NEWS_AGENCY,			// an organization that gathers news reports and
+								// sells them to subscribing news organizations,
+								// such as newspapers, magazines, and radio and
+								// television broadcasters. A news agency may
+								// also be referred to as a wire service,
+								// newswire, or news service.
+		POSTAL,
+		REAL_ESTATE,
+		EDUCATION,
+		HEALTHCARE,
+		CHARITY
+	
+	}
+	
+	
+	/**
+	 * This is the current list of tags for Entities:
+	 * 
+	 */
+	enum G_EntityTag {
+		ACCOUNT_OWNER,		/** an owner of accounts */
+		ACCOUNT,			/**
+							 * a financial/communications/social account
+							 * (regardless of owner: person, corporate, shared
+							 * or otherwise)
+							 */
+		GROUP, 				/** a social group */
+		CLUSTER,			/** group of entities (system-generated) */
+		CLUSTER_SUMMARY,	/**
+							 * summarizes a group of entities (does not allow
+							 * drill-down to group members)
+							 */
+		FILE,				/**
+							 * group of entities (user-created) e.g. in the
+							 * sense of a "case file"
+							 */
+		ANONYMOUS,			/**
+							 * This entity does not have a globally unique ID,
+							 * and represents only a class of underlying data.
+							 * The ID contains only sufficient information to
+							 * perform searches, not to retrieve exact matches.
+							 * For example, in Kiva, a Borrower has no UID, but
+							 * is represented as a FirstName&LastName&Gender
+							 * query in the Loans table.
+							 */
+		OTHER,
+		REDACTED	 	/**
+						 * The 21st century meaning, "conceal from unauthorized
+						 * view; censor but do not destroy"
+						 */
+	}
+
+	/**
+	 * This is the current list of tags for Links (aka edges):
+	 */
+	enum G_LinkTag {
+		FINANCIAL,
+		SOCIAL,
+		COMMUNICATION,
+		EVENT,
+		OTHER,
+		REDACTED,	 	/**
+						 * The 21st century meaning, "conceal from unauthorized
+						 * view; censor but do not destroy"
+						 */
+		FATHER_OF,
+		SON_OF,
+		MOTHER_OF,
+		DAUGHTER_OF,
+		BROTHER_OF,
+		SISTER_OF,
+		GUARDIAN_OF,
+		KIN_OF,
+		COUSIN_OF,
+		WIFE_OF,
+		HUSBAND_OF,
+		EMPLOYEE_OF,
+		OWNER_OF,
+		SELLER_OF,
+		BUYER_OF,
+		CREATOR_OF,
+		FRIEND_OF,
+		ENEMY_OF,
+		KNOWS
+		
+	}
+	
+	/**
+	 * Allowed types for Property values.
+	 * 
+	 */
+	enum G_PropertyType {
+		DOUBLE,		// double precision floating-point
+		LONG,		// 64-bit signed integer
+		BOOLEAN,	// true or false
+		STRING,		// UTF-8 Unicode string
+		DATE, 		// Long, representing the number of milliseconds since 1
+					// January 1970 00:00:00 UTC
+		GEO,		// GeoData
+		IMAGE,
+		URI,
+		OTHER,
+		REDACTED	 	/**
+						 * The 21st century meaning, "conceal from unauthorized
+						 * view; censor but do not destroy"
+						 */
+	}
+	
+	
+	/**
+	 * A set of canonical tags for visual components. This is mostly for helping
+	 * with menu selection, menu organization and styling with css or icons.
+	 * 
+	 * Later on, a user might be able to search for a particular type of visual
+	 * display, and we would show a list of pages that support that display.
+	 * 
+	 * Can suggest multiple per page/component.
+	 * 
+	 * HIDDEN will cause a page to not be displayed in automatically generated
+	 * menus.
+	 * 
+	 * @author djue
+	 */
+	enum G_VisualTag {
+		CHOROPLETH,
+		CARTOGRAM,
+		DOT_DISTRIBUTION,
+		PROPORTIONAL_SYMBOL,
+		CONTOUR_MAP,
+		DASYMETRIC,
+		FLOW_MAP,
+		SOM,
+		TIME_LINE,
+		TIME_SERIES,
+		GANTT,
+		STREAM_GRAPH,
+		ARC_DIAGRAM,
+		POLAR_AREA,
+		SANKEY,
+		ALLUVIAL,
+		PIE_CHART,
+		HISTOGRAM,
+		TAG_CLOUD,
+		BUBBLE_CHART,
+		BAR_CHART,
+		TREE_MAP,
+		SCATTER_PLOT,
+		LINE_CHART,
+		STEP_CHART,
+		AREA_CHART,
+		HEAT_MAP,
+		SPIDER_CHART,
+		CANDLESTICK,
+		TREE_REGULAR,
+		TREE_RADIAL,
+		TREE_HYPERBOLIC,
+		RADIAL_HIERARCHY,
+		MATRIX,
+		NODE_LINK_DIAGRAM,
+		NODE_LINK_DIAGRAM3D,
+		CIRCULAR_HIERARCHY,
+		HIVE_PLOT,
+		SUBWAY_MAP,
+		DEFAULT,
+		HIDDEN,
+		IMAGE,
+		VIDEO,
+		INFINITE_SCROLL,
+		LIST, 			/** 1D or linear data items */
+		PLUGIN,			/** Something requiring a browser plugin */
+		REDACTED	 	/**
+						 * The 21st century meaning, "conceal from unauthorized
+						 * view; censor but do not destroy"
+						 */
+	}
+	/**
+	 * This is a placeholder for future modeling of provenance. It is not a
+	 * required field in any service calls.
+	 */
+	record G_Provenance {
+		/** Placeholder for now. Express provenance as a single URI. */
+		string uri;
+	}
+	
+	/**
+	 * This is a placeholder for future modeling of uncertainty. It is not a
+	 * required field in any service calls.
+	 * 
+	 */
+	record G_Uncertainty {
+		/**
+		 * Placeholder for now. Express original source confidence as a single
+		 * number from 0 to 1.
+		 */
+		double confidence = 1;
+		
+		/**
+		 * For describing the nature of the uncertainty (source data, algorithm,
+		 * unit, etc)
+		 */
+		union {string, null} type = null;
+
+	}
+	
+	/**
+	 * A URL and MIME type representing a pointer to text, image or other
+	 * external resource.
+	 */
+	record G_LinkedData {
+		/** URL of the resource */
+		string url;
+		
+		/** MIME type of the resource */
+		union {string, null} mimeType = null;
+		
+		/**
+		 * description of the linked resource (suitable for display to the user
+		 * in an hypertext link)
+		 */
+		union {string, null} title = null;
+	}
+	
+	/**
+	 * Structured representation of geo-spatial data.
+	 */
+	record G_GeoData {
+		/** an address or other place reference; unstructured text field */
+		union {string, null} text = null;
+		
+		/** latitude */
+		union {double, null} lat = null;
+		
+		/** longitude */
+		union {double, null} lon = null;
+		
+		/** ISO 3 digit country code */
+		union {string, null} cc = null;
+	}
+
+	/**
+	 * Standard two letter continent code
+	 * 
+	 */
+	enum G_ContinentCode {
+		AF, // Africa
+		AS, // Asia
+		EU, // Europe
+		NA, // North America
+		SA, // South America
+		OC, // Oceania
+		AN  // Antarctica
+	}
+	
+	
+	
+	/**
+	 * Structured representation of country data, which includes geo-spatial
+	 * data.
+	 * 
+	 */
+	record G_Country {
+	
+		/** country geo data, including the name as text */
+		G_GeoData country;
+		
+		/**
+		 * the name of the global region to which the country belongs; any
+		 * common classification here is acceptable
+		 */
+		string region;
+
+		/** continent */
+		G_ContinentCode continent;
+	}
+
+	/**
+	 * Temporal resolution of a duration
+	 * 
+	 */
+	enum G_DateInterval {
+		SECONDS, 
+		HOURS,   
+		DAYS,
+		WEEKS,
+		MONTHS,
+		QUARTERS,
+		YEARS
+	}
+	
+	/**
+	 * A temporal duration
+	 * 
+	 */
+	record G_Duration {
+		/** time aggregation level, e.g. use monthly data */
+		G_DateInterval interval;
+		
+		/** number of intervals, e.g. 12 monthly intervals is a 1 year duration */
+		long numIntervals;
+	}
+
+	/**
+	 * Describes a date range at a specific resolution.
+	 * 
+	 */
+	record G_DateRange {
+		long startDate;
+		
+		/** number of bins to return, e.g. 12 monthly bins for 1 year of data */
+		long numBins;
+		
+		/**
+		 * number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2
+		 * years of data
+		 */
+		G_Duration durationPerBin;  
+	}
+
+	/**
+	 * Allowed types for Ranges of values.
+	 * 
+	 */
+	enum G_RangeType {
+		SINGLETON,
+		LIST,
+		BOUNDED,
+		DISTRIBUTION 
+	}
+	
+	/**
+	 * Allowed types for Gender values.
+	 * 
+	 */
+	enum G_Gender {
+		REDACTED,
+		MALE,
+		FEMALE,
+		UKNOWN,
+		OTHER 
+	}
+	
+	
+	/**
+	 * Single value
+	 * 
+	 */
+	record G_SingletonRange {
+		union {string, int, float, double, long, boolean, G_GeoData} value;
+		
+		/** One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER */
+		G_PropertyType type;
+	}
+
+	/**
+	 * List of values
+	 * 
+	 */
+	record G_ListRange {
+		array<union {string, int, float, double, long, boolean, G_GeoData}> values;
+		
+		/** One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER */
+		G_PropertyType type;
+	}
+	
+	/**
+	 * Bounded or unbounded range values
+	 * 
+	 */
+	record G_BoundedRange {
+		/** start of range, or null if unbounded start */
+		union {string, int, float, double, long, boolean, G_GeoData, null} start;
+		
+		/** end of range, or null if unbounded start */
+		union {string, int, float, double, long, boolean, G_GeoData, null} end;
+		
+		/**
+		 * If true, range includes specified endpoint. If false, range is
+		 * exclusive.
+		 */
+		boolean inclusive;
+		
+		/** One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER */
+		G_PropertyType type;
+	}
+	
+	/**
+	 * A frequency or probability element of a distribution.
+	 * 
+	 */
+	record G_Frequency {
+		/** the value range which occurs with some specified frequency */
+		union {string, int, float, double, long, boolean, G_GeoData, G_ListRange, G_BoundedRange} range;
+		
+		/** frequency as a count, or probability as a value from 0-1. */
+		double frequency;
+	}
+
+	/**
+	 * Describes a distribution of values.
+	 * 
+	 */
+	record G_DistributionRange {
+		array<G_Frequency> distribution;
+
+		/** Describes how the values in the distribution are summarized */	
+		G_RangeType rangeType;
+		
+		/**
+		 * The type of value that the distribution describes. One of DOUBLE,
+		 * LONG, BOOLEAN, STRING, DATE, GEO, OTHER
+		 */
+		G_PropertyType type;
+		
+		/** True if a probability distribution, false if a frequency distribution */
+		boolean isProbability = false;
+	}
+		
+	/**
+	 * Each property on an Entity or Link is a name-value pair, with data type
+	 * information, as well as optional provenance. Tags provide a way for the
+	 * data provider to associate semantic annotations to each property in terms
+	 * of the semantics of the application.
+	 * 
+	 */
+	record G_Property {
+		/** the field name in the underlying data source */
+		string key;
+		
+		/** user-friendly short-text for key (displayable) */
+		union {string, null} friendlyText = null;
+		
+		/** range of values */
+		union {G_SingletonRange, G_ListRange, G_BoundedRange, G_DistributionRange} range = null; 
+		
+		union {G_Provenance, null} provenance = null;
+		
+		union {G_Uncertainty, null} uncertainty = null;
+		
+		/**
+		 * one or more tags from the Tag list, used to map this source-specific
+		 * field into the semantics of applications
+		 */
+		array<G_PropertyTag> tags;
+	}
+	
+	/**
+	 * A field within a DataSet, which in turn is a real or virtual table within
+	 * a DataSource. From Non Avro version by PWG.
+	 */
+	record G_DataSetField {
+		/** name of the field */
+		string name;
+		
+		/** user-friendly short-text for key (displayable) */
+		union {string, null} friendlyName = null;
+		
+		/** One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER */
+		G_PropertyType type;
+		
+		boolean sortable = true;
+		
+		boolean searchable = true;
+		
+		boolean reportable = true;
+	}
+	
+	record G_DataSet{
+		/** name of the dataset */
+		string name;
+		boolean isEntity = true;
+		boolean isTransaction = true;
+		array<G_DataSetField> fields;
+	}
+	
+	record G_DataSource{
+		/** id of the data source */
+		string id;
+		/** name of the data source */
+		string name;
+		/** user-friendly short-text for key (displayable) */
+		union {string, null} friendlyName = null;
+		
+		
+		boolean isEntity = true;
+		boolean isTransaction = true;
+		array<G_DataSet> dataSets;
+	}
+	
+	record G_DataSourceList{
+		array<G_DataSource> dataSources;
+	}
+	/**
+	 * The nodes in the social, financial, communications or other graphs. May
+	 * represent concrete individuals or organizations, specific proxies such as
+	 * accounts, or the implicit individuals or groups behind those other
+	 * entities.
+	 */
+	record G_Entity {
+		/**
+		 * This uid must represent either (1) a globally unique identifier that
+		 * can be used to retrieve data for an explicit entity, or (2) encoded
+		 * query information that can be used to find a set of associated record
+		 * notionally representing an implicit entity (e.g.
+		 * Loans&FirstName&LastName&Gender). Must not be used for IDs that
+		 * aren't globally unique. For example, in Kiva, "Lenders" has a UID
+		 * ("L12345") while "Borrowers" have an encoded search in the Loans
+		 * table for uid ("B{loan:23456;name=Daniel}"). The encoded information
+		 * is data layer-specific, may be different from entity to entity or
+		 * data set to data set, and should be considered opaque to the
+		 * consumers of the entities. Entities of type 2 should always have the
+		 * Entity Tag ANONYMOUS to help distinguish them when required.
+		 */
+		string uid;
+		
+		/** Entity Tags (see above, e.g. "ACCOUNT") */
+		array<G_EntityTag> tags;
+		
+		union {G_Provenance, null} provenance = null;
+		
+		union {G_Uncertainty, null} uncertainty = null;
+		
+		array<G_Property> properties;
+	}
+	/**
+	 * The links in the social, financial, communications or other graphs. May
+	 * represent communication events, financial transactions or social
+	 * connections.
+	 */
+	record G_Link {
+		
+		/** source entity uid */
+		union {string, null} source = null;
+		
+		/** target entity uid */
+		union {string, null} target = null;
+		
+		/** true if directed, false if undirected */
+		boolean directed = true;
+		
+		union {G_Provenance, null} provenance = null;
+		
+		union {G_Uncertainty, null} uncertainty = null;
+		
+		array<G_Property> properties;
+		
+		/** Link Tags */
+		array<G_LinkTag> tags;
+	}
+	/**
+	 * Cluster of nodes in the social, financial, communications or other
+	 * graphs.
+	 */
+	record G_Cluster {
+		/**
+		 * A unique identifier use to retrieve data about this cluster. Should
+		 * not be used for non-global identifiers.
+		 */
+		string uid;
+		
+		/** Entity Tags (see DataTypes, e.g. "CLUSTER") */
+		array<G_EntityTag> tags;
+		
+		union {G_Provenance, null} provenance = null;
+		
+		union {G_Uncertainty, null} uncertainty = null;
+		
+		array<G_Property> properties;
+		
+		/** List of id's of the members of this cluster */
+		array<string> members;
+		
+		/**
+		 * List of id's of the subclusters of this cluster - empty if this is a
+		 * leaf cluster in cluster hierarchy
+		 */
+		array<string> subclusters;
+		
+		/**
+		 * The id of the parent cluster if this is a cluster in a hierarchy -
+		 * Can be null if this is a root cluster *
+		 */
+		union {string, null} parent = null;
+		
+		/**
+		 * The id of the root cluster (top level cluster) if this is a cluster
+		 * in a hierarchy - Can be null if this is a root cluster *
+		 */
+		union {string, null} root = null;
+		
+		/**
+		 * The degree from the root this cluster is in the hierarchy - level = 0
+		 * if this is a root cluster *
+		 */
+		int level = 0;
+	}
+	
+	/**
+	 * Represents the future results of an asynchronous task. Can be passed into
+	 * the FutureResults service API
+	 */
+	record G_Future {
+		/** unique id of this task */
+		string uid;
+		
+		/** short human-readable description of task for display */
+		string label;
+		
+		/** uid of the service task is running on */
+		union {string, null} service = null;
+		
+		/** date/time task was started */
+		long started;
+		
+		/** date/time task was completed (negative if not completed yet) */
+		long completed = -1;
+	}
+
+	/**
+	 * Selectable services, returned by getServices() in various APIs
+	 */
+	record G_Service {
+		/** unique id of this service */
+		string uid;
+		
+		/** short human-readable description of service for display */
+		string label;
+	}
+	
+	
+		/**
+		 * Selectable services, returned by getAppInfo() in various meta APIs
+		 */
+	record G_AppInfo {
+		/** unique id of this application */
+		string appName;
+		
+		/** version of this application */
+		string appVersion;
+		
+		/** version of this application */
+		long serverTime;
+
+	}
+	
+	
+	
+}

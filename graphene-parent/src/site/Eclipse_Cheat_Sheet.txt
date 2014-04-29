@@ -1,0 +1,32 @@
+============================================================
+Error in xml file:  "content is not allowed in prolog"
+Seen in xml files once used by Bericos Snagl (sample files)
+For some reason line 644 of import_sample.xml referred to a 
+png image that was being decoded as Chinese in UTF-16. Has since been fixed.
+============================================================
+To speed up eclipse:
+
+Give it more memory in your eclipse.ini.
+
+Add -Xverify:none to your eclipse.ini.
+
+============================================================
+Dan's Keybindings
+
+Here are keybindings that I use every day:
+CTRL+SHIFT+F formats your code to a standard style (indentions, bracket placement, line wrapping, comments etc)
+ALT+SHIFT+S -> Sort Members will sort your fields and methods alphabetically, making them much easier to read.
+F3 on any class name to go to the class (as long as the source code is available)
+F4 on any class name to show the hierarchy of that class
+
+CTRL+SHIFT+G on any class name to find all references
+ALT+SHIFT+R to refactor a field or class's name, and change it throughout the source code (note will not affect closed projects/modules!!  So be sure to open all of them.)
+CTRL + left click on a @link in comments to go to the class
+
+============================================================
+Dan's Eclipse UI Tips
+
+Double clicking on a tab will full screen it, as best it can.
+
+If you're using multiple monitors you can use Window->New Window 
+or just drag a tab to another screen

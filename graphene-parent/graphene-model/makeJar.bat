@@ -1,0 +1,1 @@
+mvn jar -DskipTests=true

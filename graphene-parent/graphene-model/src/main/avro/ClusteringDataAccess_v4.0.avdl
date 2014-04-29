@@ -1,0 +1,194 @@
+/**
+ * With credits to Oculus Info Inc for the influence of this document. 
+ * Released under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+/**
+ Data Access for clusters
+*/
+protocol G_ClusteringDataAccess {
+	import idl "DataTypes_v4.0.avdl";
+
+	/**
+	 Sort type for transactions
+	 */
+	enum G_SortBy {
+		DATE, // date, in ascending order
+		AMOUNT // amount, in descending order
+	}
+
+	/**
+	 Direction of desired links
+	 */
+	enum G_DirectionFilter {
+		SOURCE,
+		DESTINATION,
+		BOTH
+	}
+
+	/**
+	 Returns a set of clusters by uid.
+	 
+	 Service URL: /cluster/list
+	 HTTP Method: POST and GET
+	 
+	 @param entities 	uids of clusters to retrieve
+	 @param contextId	the context to retrieve the clusters from
+	 @param sessionId	the user session the clusters are associated with
+	 @return 			cluster entities	
+	 */
+	array<G_Cluster> getClusters(array<string> entities, string contextId, string sessionId);
+	
+	/**
+	 Returns a set of cluster summaries by uid.
+	 
+	 Service URL: /clustersummary/list
+	 HTTP Method: POST and GET
+	 
+	 @param entities 	uids of clusters to retrieve
+	 @return 			cluster entities
+	 */
+	array<G_Cluster> getClusterSummary(array<string> entities);
+	
+	/**
+	 Removes entities from a cluster
+	 
+	 Service URL: /cluster/remove
+	 HTTP Method: POST and GET
+	 
+	 @param entities 	uids of entities to remove
+	 @param contextId	the context of the cluster to remove entities from
+	 @param sessionId	the user session the clusters are associated with
+	 @return 			number of entities removed
+	 */
+	long removeMembers(array<string> entities, string contextId, string sessionId);
+	
+	
+	/**
+	 Returns all clusters in a context.
+	 
+	 Service URL: /cluster/context
+	 HTTP Method: POST and GET
+	 
+	 @param contextId			the context to retrieve the clusters fr	om
+	 @param computeSummaries 	specifies whether to calculate summary properties for each cluster
+	 @param sessionId	the user session the clusters are associated with
+	 @return 					cluster entities	
+	 */
+	array<G_Cluster> getContext(string contextId, string sessionId, boolean computeSummaries);
+	
+	/**
+	 Deletes all clusters in a context.
+	 
+	 Service URL: /cluster/context/remove
+	 HTTP Method: POST or GET
+	 
+	 @param contextId	the context to retrieve the clusters from
+	 @param sessionId	the user session the clusters are associated with
+	 @return 			boolean indicating if any clusters were deleted	
+	 */
+	boolean clearContext(string contextId, string sessionId);
+		
+	/**
+	 Returns links to other entities related to specify entities. Each Link returned should
+	 represent multiple records, used for displaying flow.
+	 
+	 See the specification for the Flow Data View.
+	 
+	 @param entities 			uids of entities to retrieve links for
+	 @param focusEntities 		uids of focus entities (may be null)
+	 @param direction 			one of: SOURCE, DESTINATION, BOTH
+	 @param tag 				one of: FINANCIAL, SOCIAL, COMMUNICATION
+	 @param date 				in the given date range
+	 @param entitiesContextId	the context to compute flow from entities
+	 @param focusContextId		the context to compute flow from focus entities (if null a new context is created for dst)
+	 @param sessionId			the user session the clusters are associated with
+	 @return 					map of input entity IDs to an array of the links for that cluster entity	
+	 */
+	map<array<G_Link>> getFlowAggregation(
+		array<string> entities,
+		union {array<string>, null} focusEntities,
+		G_DirectionFilter direction,
+		union {G_LinkTag, null} tag,
+		union {G_DateRange, null} date,
+		string entitiesContextId,
+		union {string, null} focusContextId,
+		string sessionId);
+	
+	/**
+	 Returns links to other entities related to specify entities.  Each Link returned should
+	 represent multiple records, used for displaying time series.
+	 
+	 See the specification for the Time Series Data View.
+	 
+	 Service URL: /cluster/link/series
+	 HTTP Method: POST and GET
+	 
+	 @param entities 			uids of entities to retrieve links for
+	 @param focusEntities 		uids of focus entities (may be null)
+	 @param tag 				one of: FINANCIAL, SOCIAL, COMMUNICATION
+	 @param date 				in the given date range
+	 @param entitiesContextId	the context to compute flow between clusters from
+	 @param focusContextId		the context to compute flow between clusters from (if null a new context is created for dst)
+	 @param sessionId	the user session the clusters are associated with
+	 @return 					map of input entity IDs to an array of the links for that cluster entity	
+	 */
+	map<array<G_Link>> getTimeSeriesAggregation(
+		array<string> entities,
+		union {array<string>, null} focusEntities,
+		union {G_LinkTag, null} tag,
+		G_DateRange date,
+		string entitiesContextId,
+		union {string, null} focusContextId,
+		string sessionId);
+	
+	/**
+	 Returns links to other entities related to specify entities. Each link returned should
+	 represent one raw transaction.  For financial data, these transactions will form a ledger.
+	 For communications or social data, these are un-aggregated links for drill down by the user.
+	 
+	 CHANGED IN 1.4
+	 
+	 Service URL: /link/transactions
+	 HTTP Method: POST and GET
+	 
+	 @param entities 		uids of entities to retrieve links for
+	 @param direction 		one of: SOURCE, DESTINATION, BOTH
+	 @param tag 			one of: FINANCIAL, SOCIAL, COMMUNICATION
+	 @param date 			in the given date range
+	 @param order			Sort order for transactions
+	 @param max				Trim the number of results this this value.
+	 @param contextId		the context to retrieve the clusters from
+	 @param sessionId		the user session the clusters are associated with
+	 @return 				map of input entity IDs to an array of the transactions for that cluster entity	
+	 */
+	map<array<G_Link>> getAllTransactions(
+			array<string> entities,
+			union {G_LinkTag, null} tag,
+			union {G_DateRange, null} date,
+			union {G_SortBy, null} sort,
+			union {array<string>, null} linkFilter, 
+			long max = -1,
+			string contextId,
+			string sessionId
+	);
+}

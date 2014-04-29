@@ -1,0 +1,501 @@
+[
+  {
+        "adjacencies" : [
+      {
+        "nodeTo" : "graphnode2",
+        "nodeFrom" : "graphnode0",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode5",
+        "nodeFrom" : "graphnode0",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ],
+	"id" : "graphnode0",
+    "name" : "graphnode0",
+    "data" : {
+      "$dim" : "10",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    }
+  },
+  {
+      "adjacencies" : [
+      {
+        "nodeTo" : "graphnode0",
+        "nodeFrom" : "graphnode1",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode1",
+        "nodeFrom" : "graphnode13",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode1",
+        "nodeFrom" : "graphnode20",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ],
+    "id" : "graphnode1",
+    "name" : "graphnode1",
+    "data" : {
+      "$dim" : "11",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    }
+  },
+  {
+    "id" : "graphnode2",
+    "name" : "graphnode2",
+    "data" : {
+      "$dim" : "12",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode2",
+        "nodeFrom" : "graphnode7",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode2",
+        "nodeFrom" : "graphnode10",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode2",
+        "nodeFrom" : "graphnode13",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode2",
+        "nodeFrom" : "graphnode18",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode3",
+    "name" : "graphnode3",
+    "data" : {
+      "$dim" : "3",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode3",
+        "nodeFrom" : "graphnode16",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode3",
+        "nodeFrom" : "graphnode20",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode3",
+        "nodeFrom" : "graphnode21",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode4",
+    "name" : "graphnode4",
+    "data" : {
+      "$dim" : "4",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode3",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode5",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode6",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode7",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode10",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode16",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode4",
+        "nodeFrom" : "graphnode19",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode5",
+    "name" : "graphnode5",
+    "data" : {
+      "$dim" : "5",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode5",
+        "nodeFrom" : "graphnode6",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode5",
+        "nodeFrom" : "graphnode9",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode5",
+        "nodeFrom" : "graphnode10",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode5",
+        "nodeFrom" : "graphnode18",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode5",
+        "nodeFrom" : "graphnode19",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode6",
+    "name" : "graphnode6",
+    "data" : {
+      "$dim" : "6",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode6",
+        "nodeFrom" : "graphnode2",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode6",
+        "nodeFrom" : "graphnode7",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode6",
+        "nodeFrom" : "graphnode10",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode6",
+        "nodeFrom" : "graphnode11",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode6",
+        "nodeFrom" : "graphnode12",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode6",
+        "nodeFrom" : "graphnode18",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode7",
+    "name" : "graphnode7",
+    "data" : {
+      "$dim" : "7",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode7",
+        "nodeFrom" : "graphnode1",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode7",
+        "nodeFrom" : "graphnode9",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode7",
+        "nodeFrom" : "graphnode11",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode7",
+        "nodeFrom" : "graphnode16",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode7",
+        "nodeFrom" : "graphnode17",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode7",
+        "nodeFrom" : "graphnode21",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode8",
+    "name" : "graphnode8",
+    "data" : {
+      "$dim" : "8",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode8",
+        "nodeFrom" : "graphnode12",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode9",
+    "name" : "graphnode9",
+    "data" : {
+      "$dim" : "9",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode9",
+        "nodeFrom" : "graphnode2",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode9",
+        "nodeFrom" : "graphnode15",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode10",
+    "name" : "graphnode10",
+    "data" : {
+      "$dim" : "10",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode10",
+        "nodeFrom" : "graphnode0",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode10",
+        "nodeFrom" : "graphnode7",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode10",
+        "nodeFrom" : "graphnode15",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode10",
+        "nodeFrom" : "graphnode21",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode11",
+    "name" : "graphnode11",
+    "data" : {
+      "$dim" : "11",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode11",
+        "nodeFrom" : "graphnode0",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode11",
+        "nodeFrom" : "graphnode2",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode11",
+        "nodeFrom" : "graphnode9",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode11",
+        "nodeFrom" : "graphnode13",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode11",
+        "nodeFrom" : "graphnode14",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode11",
+        "nodeFrom" : "graphnode15",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  },
+  {
+    "id" : "graphnode12",
+    "name" : "graphnode12",
+    "data" : {
+      "$dim" : "12",
+      "$color" : "#83548B",
+      "$type" : "circle"
+    },
+    "adjacencies" : [
+      {
+        "nodeTo" : "graphnode12",
+        "nodeFrom" : "graphnode10",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      },
+      {
+        "nodeTo" : "graphnode12",
+        "nodeFrom" : "graphnode18",
+        "data" : {
+          "$color" : "#557EAA"
+        }
+      }
+    ]
+  }]

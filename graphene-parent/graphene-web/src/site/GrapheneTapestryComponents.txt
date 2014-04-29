@@ -1,0 +1,19 @@
+Graphene's graphene-web module provides several components and pages that make up the base application.
+
+Template files end in .tml and need to exist on the classpath once built into a war (this means they can go under src/main/java/a/b/c or under src/main/resouces/a/b/c, where a/b/c represents the package name of the corresponding Java class that goes with the page or component.)
+
+When referencing graphene-web's components and pages, we use a prefix of the component library namespace, currently "graphene".
+
+You may notice that a component is referenced in a tml file using two different syntax, but both are equivalent:
+
+1) <div t:type="graphene/componentname"> </div>
+
+2) <t:graphene.componentname />
+
+The only difference is that the first one may look better if you open the template in an html editor. (This is referred to as invisible instrumentation)
+Both will replace the contents of the tag with the contents of the component.
+Furthermore, the contents of anything between the start and end tag are usually discarded, except for layout type components, which wrap the contents.
+Note that in the second example, we replace any "/" with "."
+Nothing here is case sensitive.
+
+Because we provided the tapestry components as a component library with a namespace, graphene-web does not function as a self running war file, as far as Tapestry components and pages are concerned.

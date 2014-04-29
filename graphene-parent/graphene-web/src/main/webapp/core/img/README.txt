@@ -1,0 +1,1 @@
+The standard Graphene logo font is Berylium, which is available in GIMP.

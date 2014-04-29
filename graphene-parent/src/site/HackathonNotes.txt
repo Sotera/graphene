@@ -1,0 +1,9 @@
+Time Series
+	Behavioral changes observable
+	
+Account topology clustering
+	Normal accounts (What is normal for the data, and what do we know about the dataset that is not specifically listed in the data? Such as country of origin, time period, season of collection etc)
+	AMS clustering (by country, likelihood of behavioral pattern)
+	
+Geospatial
+	Does it matter?

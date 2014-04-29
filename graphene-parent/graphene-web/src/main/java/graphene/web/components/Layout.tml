@@ -1,0 +1,120 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<head>
+
+		<meta charset="utf-8" />
+		<!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> -->
+
+		<title> ${appName} ${appVersion} ${page}</title>
+		<meta name="description" content="${appName} ${appVersion}" />
+		<meta name="keyword" content="${appName}" />
+
+
+		<meta name="HandheldFriendly" content="True" />
+		<meta name="MobileOptimized" content="320" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<!-- FAVICONS -->
+		<link rel="shortcut icon" href="${themePath}img/favicon/favicon.ico"
+			type="image/x-icon" />
+		<link rel="icon" href="${themePath}img/favicon/favicon.ico" type="image/x-icon" />
+
+
+	</head>
+
+
+	<body class=""> <!-- possible classes: minified, fixed-ribbon, fixed-header, fixed-width -->
+		<noscript class="js-required">
+			${message:javascript_required}
+		</noscript>
+		<t:jquery.jgrowl />
+		<!-- HEADER -->
+		<div t:type="graphene/navigation/header" t:user="user"></div>
+		<!-- END HEADER -->
+
+		<!-- Left panel : Navigation area -->
+		<t:graphene.navigation.menu t:user="user" />
+		<!-- END NAVIGATION -->
+		<!-- SHORTCUT AREA : With large tiles (activated via clicking user name 
+			tag) Note: These tiles are completely responsive, you can add as many as 
+			you like -->
+		<div t:type="graphene/navigation/shortcutsMenu" t:user="user"></div>
+		<!-- END SHORTCUT AREA -->
+		<!-- MAIN PANEL -->
+		<div id="main" role="main">
+
+			<!-- RIBBON -->
+			<div t:type="graphene/navigation/ribbon"></div>
+			<!-- END RIBBON -->
+
+			<!-- MAIN CONTENT -->
+			<div id="content">
+
+				<t:body />
+
+			</div>
+			<!-- END MAIN CONTENT -->
+
+		</div>
+		<!-- END MAIN PANEL -->
+
+		<!--================================================== -->
+
+		<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: 
+			uses lots of memory on iDevices) <script data-pace-options='{ "restartOnRequestAfter": 
+			true }' src="js/plugin/pace/pace.min.js"></script> -->
+		<script src="${jsLibPace}" />
+
+		<script src="${jsLib1}" />
+
+		<script src="${jsLib2}" />
+
+		<!-- JS TOUCH : include this plugin for mobile drag / drop touch events 
+			<script src="js/plugin/jquery-touch/jquery.ui.touch-punch.min.js"></script> -->
+
+		<!-- BOOTSTRAP JS -->
+		<script src="${jsLib3}" />
+
+		<!-- CUSTOM NOTIFICATION -->
+		<script src="${jsLib4}" />
+
+		<!-- JARVIS WIDGETS -->
+		<script src="${jsLib5}" />
+
+		<!-- EASY PIE CHARTS -->
+		<script src="${jsLib6}" />
+
+		<!-- SPARKLINES -->
+		<script src="${jsLib7}" />
+
+		<!-- JQUERY VALIDATE -->
+		<script src="${jsLib8}" />
+
+		<!-- JQUERY MASKED INPUT -->
+		<script src="${jsLib9}" />
+
+		<!-- JQUERY SELECT2 INPUT -->
+		<script src="${jsLib10}" />
+
+		<!-- JQUERY UI + Bootstrap Slider -->
+		<script src="${jsLib11}" />
+
+		<!-- browser msie issue fix -->
+		<script src="${jsLib12}" />
+
+		<script src="${jsDemo}" />
+		<script src="${jsApp}" />
+		<script>data-pace-options='{ "restartOnRequestAfter": true }' </script>
+		<script>
+			function logout() {
+			window.location = '${LogoutEventLink}';
+			<!-- window.location = $.loginURL; -->
+			}
+		</script>
+	</body>
+
+
+</html>
