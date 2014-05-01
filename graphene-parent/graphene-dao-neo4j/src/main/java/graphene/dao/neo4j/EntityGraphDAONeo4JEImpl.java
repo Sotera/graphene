@@ -1,8 +1,6 @@
 package graphene.dao.neo4j;
 
 import graphene.dao.EntityGraphDAO;
-import graphene.model.graph.InfoVisEdge;
-import graphene.model.graph.InfoVisGraphAdjacency;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_RelationshipType;
 import graphene.model.query.EntityGraphQuery;
@@ -11,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import mil.darpa.vande.legacy.InfoVisEdge;
+import mil.darpa.vande.legacy.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;

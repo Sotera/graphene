@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import mil.darpa.vande.legacy.entity.IdProperty;
+
 /**
  * Version of Entity that contains lists of EntityAttributes 
  * - i.e. it contains lists of String properties rather than typed objects 

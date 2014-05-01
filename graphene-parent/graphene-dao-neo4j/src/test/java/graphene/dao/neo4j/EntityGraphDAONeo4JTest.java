@@ -1,10 +1,11 @@
 package graphene.dao.neo4j;
 
 import graphene.dao.EntityGraphDAO;
-import graphene.model.graph.InfoVisGraphAdjacency;
 import graphene.model.query.EntityGraphQuery;
 
 import java.util.List;
+
+import mil.darpa.vande.legacy.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;

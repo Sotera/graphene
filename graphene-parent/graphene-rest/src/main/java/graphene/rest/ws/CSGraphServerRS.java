@@ -1,8 +1,6 @@
 package graphene.rest.ws;
 
 
-import graphene.model.graph.cytoscapejs.CSGraph;
-
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
+import mil.darpa.vande.legacy.cytoscapejs.CSGraph;
 
 
 @Path("/csgraph/")

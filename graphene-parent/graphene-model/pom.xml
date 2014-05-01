@@ -20,6 +20,10 @@
 			<artifactId>graphene-util</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>vande</groupId>
+			<artifactId>vande</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>

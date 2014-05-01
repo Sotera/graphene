@@ -1,7 +1,7 @@
 package graphene.dao;
 
-import graphene.model.graphserver.DirectableObjectLoader;
-import graphene.model.graphserver.TransactionDistinctAccountPair;
+import mil.darpa.vande.legacy.graphserver.DirectableObjectLoader;
+import mil.darpa.vande.legacy.graphserver.TransactionDistinctAccountPair;
 
 
 /**

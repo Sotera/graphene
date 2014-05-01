@@ -53,6 +53,7 @@
 		<querydsl.version>3.3.1</querydsl.version>
 
 		<!-- properties for dependencies that are utilities -->
+		<vande.version>1.0.0-SNAPSHOT</vande.version>
 		<jackson2.version>2.2.1	</jackson2.version>
 		<!-- <jackson2.version>2.3.0</jackson2.version> 2.3.0 does not work with 
 			resteasy 3.0.5.Final or 3.0.6.Final. -->
@@ -148,7 +149,6 @@
 				<artifactId>graphene-dao-neo4j</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>graphene</groupId>
 				<artifactId>graphene-rest</artifactId>
@@ -177,7 +177,11 @@
 				<version>${project.version}</version>
 				<type>jar</type>
 			</dependency>
-
+			<dependency>
+				<groupId>vande</groupId>
+				<artifactId>vande</artifactId>
+				<version>${vande.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>

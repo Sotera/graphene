@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import mil.darpa.vande.legacy.entity.IdProperty;
+
 /**
  * 
  * This is a more generic replacement for the Customer

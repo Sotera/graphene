@@ -11,6 +11,8 @@ import java.util.List;
  * intersection is selected, we will only return results where the ID is on
  * all/both sides of an event.
  * 
+ * TODO: Reconcile the differences and needs between this class and V_GraphQuery of Vande.
+ * 
  * @author djue
  * 
  */
