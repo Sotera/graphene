@@ -58,15 +58,13 @@
 			group id. -->
 		<!-- <dependency> <groupId>com.trsvax</groupId> <artifactId>tapestry-bootstrap</artifactId> 
 			</dependency> -->
-	
+
 		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro-ipc</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.apache.avro</groupId> <artifactId>avro-ipc</artifactId> 
+			</dependency> -->
 		<!-- We'll eventually stop using the version with this group id, or go 
 			to T5.4, which will eliminate the need for this. -->
 		<dependency>
@@ -98,6 +96,11 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/test/conf</directory>
+				<filtering>true</filtering>
+				<targetPath>${basedir}/target/test-classes/</targetPath>
 			</resource>
 			<!-- <resource> <directory>src/main/webapp</directory> </resource> -->
 			<resource>
@@ -138,8 +141,8 @@
 				</configuration>
 			</plugin>
 			<!-- This changes the WAR file packaging so that what would normally go 
-				into WEB-INF/classes is instead packaged as WEB-INF/lib/something.jar. This is 
-				necessary for Tapestry to be able to search for page and component classes 
+				into WEB-INF/classes is instead packaged as WEB-INF/lib/something.jar. This 
+				is necessary for Tapestry to be able to search for page and component classes 
 				at startup. Only certain application servers require this configuration, 
 				please see the documentation at the Tapestry 5 project page (http://tapestry.apache.org/tapestry5/). -->
 			<plugin>

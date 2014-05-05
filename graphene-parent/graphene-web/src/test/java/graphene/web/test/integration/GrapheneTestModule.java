@@ -1,4 +1,4 @@
-package graphene.web.services;
+package graphene.web.test.integration;
 
 import java.text.ParseException;
 

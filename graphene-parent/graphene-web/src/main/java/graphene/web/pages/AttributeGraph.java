@@ -1,7 +1,6 @@
 package graphene.web.pages;
 
 import graphene.dao.EntityGraphDAO;
-import graphene.model.graph.InfoVisGraphAdjacency;
 import graphene.model.idl.G_VisualType;
 import graphene.model.query.EntityGraphQuery;
 import graphene.util.ExceptionUtil;
@@ -9,6 +8,8 @@ import graphene.web.annotations.PluginPage;
 
 import java.util.Date;
 import java.util.List;
+
+import mil.darpa.vande.legacy.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.AlertManager;

@@ -17,6 +17,6 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 public class DAOModule {
 
 	public static void bind(ServiceBinder binder) {
-		binder.bind(G_UserDataAccess.class, UserServiceImpl.class);
+		binder.bind(G_UserDataAccess.class, UserServiceImpl.class).eagerLoad();
 	}
 }

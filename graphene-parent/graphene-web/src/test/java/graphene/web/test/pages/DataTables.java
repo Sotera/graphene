@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package graphene.web.pages;
+package graphene.web.test.pages;
 
 import graphene.model.idl.G_VisualType;
 import graphene.web.annotations.PluginPage;

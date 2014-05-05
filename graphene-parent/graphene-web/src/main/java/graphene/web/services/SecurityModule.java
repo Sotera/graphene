@@ -18,6 +18,7 @@ import org.apache.tapestry5.validator.ValidatorMacro;
 public class SecurityModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(Authenticator.class, BasicAuthenticator.class);
+		binder.bind(FunnyService.class,FunnyServiceImpl.class).eagerLoad();
 	}
 
 	@Contribute(ValidatorMacro.class)

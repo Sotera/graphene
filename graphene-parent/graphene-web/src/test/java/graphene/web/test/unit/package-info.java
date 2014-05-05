@@ -5,4 +5,4 @@
  * @author djue
  *
  */
-package graphene.web.test.pages;
+package graphene.web.test.unit;

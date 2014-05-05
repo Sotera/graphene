@@ -26,7 +26,6 @@ public class UserFilteredDataSource implements GridDataSource {
 		try {
 			return (int) dao.countUsers(partialName);
 		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return 0;

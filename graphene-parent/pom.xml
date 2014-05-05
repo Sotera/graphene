@@ -29,18 +29,16 @@
 
 	<distributionManagement>
 		<repository>
-			<id>deployment</id>
-			<name>Internal Releases</name>
-			<url>http://localhost:8081/nexus/content/repositories/releases/</url>
+			<id>internal.repo</id>
+			<name>Temporary Staging Repository</name>
+			<url>file://${project.build.directory}/mvn-repo</url>
 		</repository>
-		<snapshotRepository>
-			<id>deployment</id>
-			<name>Internal Releases</name>
-			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
 	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<license-text.header>GPL-3-header.txt</license-text.header>
+		<github.global.server>github</github.global.server>
+
 		<!-- properties for dependencies for web frameworks -->
 		<resteasy.version>3.0.1.Final</resteasy.version>
 		<tapestry-release-version>5.3.7</tapestry-release-version>
@@ -80,6 +78,7 @@
 		<maven.dependency.plugin.version>2.1</maven.dependency.plugin.version>
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
 	</properties>
+
 	<dependencies>
 		<!-- This section sets dependencies for all child modules. Note that version 
 			numbers are not used here. -->
@@ -644,6 +643,39 @@
 				version and configuration). -->
 			<plugins>
 				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.1</version>
+					<configuration>
+						<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.github</groupId>
+					<artifactId>site-maven-plugin</artifactId>
+					<version>0.8</version>
+					<configuration>
+						<message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+						<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+						<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+						<branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+						<includes>
+							<include>**/*</include>
+						</includes>
+						<repositoryName>batch-import-graphene</repositoryName>      <!-- github repo name -->
+						<repositoryOwner>danieljue</repositoryOwner>    <!-- github username -->
+					</configuration>
+					<executions>
+						<!-- run site-maven-plugin's 'site' target as part of the build's normal 
+							'deploy' phase -->
+						<execution>
+							<goals>
+								<goal>site</goal>
+							</goals>
+							<phase>deploy</phase>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven.compiler.plugin.version}</version>
@@ -794,4 +826,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 </project>
