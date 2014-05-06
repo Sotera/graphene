@@ -10,6 +10,11 @@
 				The current time is:
 				<strong>${currentTime}</strong>
 			</p>
+			<p>
+				Main search screen is here: 
+				<strong><a href="index.html">HERE</a></strong>
+			</p>
+			
 			<p>Available Workspaces:</p>
 
 			<ul t:type="loop" source="workspaces" value="currentWorkspace">
