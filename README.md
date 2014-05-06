@@ -19,12 +19,13 @@ Building Graphene
  
  Graphene overview
  ------
- * Graphene expects that you are familiar with some modern Java concepts:
- ..*Interfaces and Implementations
-..*Knowledge of Maven, or a knowledge of how to search for answers to your questions
- ..*Dependency Injection (aka Inversion of Control or IOC or DI)
-....*Graphene uses [Apache Tapestry](http://tapestry.apache.org/) to provide the IOC framework.  It is very similar to Guice, but also allows distributed configuration and can act as a light weight OSGI alternative.  We may use the term 'wiring' and 'binding' interchangeably.  Essentially a registry is created and lives throughout the life of your program, which defines which implementation services will get when they ask for the interface. The IOC 'wiring' is mostly done at the customer implementation level, although basic shared services are wired in modules within graphene-parent.  For consistency's sake, any class that performs IOC wiring we suffix with the word "Module", i.e. AppModule.java or DAOModule.java.
-..*Graphene currently requires you to implement an ExtJS UI, although the Kiva and Enron demos should be helpful in setting up the application for your own dataset.
+* Graphene expects that you are familiar with some modern Java concepts:
+<li>Interfaces and Implementations</li>
+<li>Knowledge of Maven, or a knowledge of how to search for answers to your questions</li>
+<li>Dependency Injection (aka Inversion of Control or IOC or DI)
+<ul><li>Graphene uses [Apache Tapestry](http://tapestry.apache.org/) to provide the IOC framework.  It is very similar to Guice, but also allows distributed configuration and can act as a light weight OSGI alternative.  We may use the term 'wiring' and 'binding' interchangeably.  Essentially a registry is created and lives throughout the life of your program, which defines which implementation services will get when they ask for the interface. The IOC 'wiring' is mostly done at the customer implementation level, although basic shared services are wired in modules within graphene-parent.  For consistency's sake, any class that performs IOC wiring we suffix with the word "Module", i.e. AppModule.java or DAOModule.java.</li>
+</ul></li>
+<li>Graphene currently requires you to implement an ExtJS UI, although the Kiva and Enron demos should be helpful in setting up the application for your own dataset.</li>
 
 
  * Graphene is structured as a multi module maven project.
