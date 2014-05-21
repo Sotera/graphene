@@ -38,7 +38,7 @@ public class ResteasyIntegrationTest extends AbstractContainerTest
 		ClientRequest request = new ClientRequest(BASEURI + "rest/echo/Hellow World!");
 		ClientResponse<String> response = request.get(String.class);
 		Assert.assertEquals(response.getStatus(), 200);
-		Assert.assertEquals(response.getEntity(), "Hellow World!");
+		Assert.assertEquals(response.getEntity(), "Hello World!");
 	}
 
 }

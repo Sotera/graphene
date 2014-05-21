@@ -8,6 +8,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+
+import org.apache.tapestry5.annotations.Log;
 /**
  * NOTE:  This class will be superseded by EventSearchRS.
  * @author djue
@@ -31,6 +33,7 @@ public interface TransferServerRS {
 	 * @param sortColumn
 	 * @return
 	 */
+	@Log
 	@Produces("application/json")
 	@GET
 	@Path("/getEvents")
@@ -51,6 +54,7 @@ public interface TransferServerRS {
 	 * @param account
 	 * @return
 	 */
+	@Log
 	@Produces("application/json")
 	@GET
 	@Path("/getPairMonthlyStatistics")
@@ -65,6 +69,7 @@ public interface TransferServerRS {
 	 * @param month
 	 * @return
 	 */
+	@Log
 	@Produces("application/json")
 	@GET
 	@Path("/getPairDailyStatistics")

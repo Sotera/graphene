@@ -1,6 +1,7 @@
 package graphene.util.validator;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -147,6 +148,27 @@ public class ValidationUtils {
 	public static boolean isValid(Object t) {
 		boolean isvalid = true;
 		if (t == null) {
+			isvalid = false;
+		}
+		return isvalid;
+	}
+
+	/**
+	 * 
+	 * @param t
+	 * @return false if the collection was null or empty.
+	 */
+	public static boolean isValid(Collection t) {
+		boolean isvalid = true;
+		if (t == null || t.size() == 0) {
+			isvalid = false;
+		}
+		return isvalid;
+	}
+
+	public static boolean isValid(Iterable t) {
+		boolean isvalid = true;
+		if (t == null || t.iterator() == null || !t.iterator().hasNext()) {
 			isvalid = false;
 		}
 		return isvalid;

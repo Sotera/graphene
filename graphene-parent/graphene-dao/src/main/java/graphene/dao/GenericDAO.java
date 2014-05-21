@@ -1,6 +1,6 @@
 package graphene.dao;
 
-import graphene.util.CallBack;
+import graphene.util.G_CallBack;
 
 import java.util.List;
 
@@ -30,6 +30,11 @@ public interface GenericDAO<T, QUERYOBJECT> {
 	public abstract long count(QUERYOBJECT q) throws Exception;
 
 	/**
+	 * 
+	 * @return true if this DAO is ready to be queried.
+	 */
+	public boolean isReady();
+	/**
 	 * TODO: I see the need for having a separate version of this that can take
 	 * a Tuple as T. This is so that during ingest and other large loads, we
 	 * only work with the columns that are needed, which means less data over
@@ -42,6 +47,6 @@ public interface GenericDAO<T, QUERYOBJECT> {
 	 * @return
 	 */
 	public abstract boolean performCallback(long offset, long maxResults,
-			CallBack<T> cb, QUERYOBJECT q);
+			G_CallBack<T> cb, QUERYOBJECT q);
 
 }

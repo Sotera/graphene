@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import mil.darpa.vande.legacy.entity.IdProperty;
+import mil.darpa.vande.generic.V_IdProperty;
 
 /**
  * Version of Entity that contains lists of EntityAttributes 
@@ -40,11 +40,11 @@ public class EntityLight {
 		}
 		for (CommunicationId p: e.getCommunicationIdList())
 			attributes.add(new EntityAttribute("CommunicationId", "", p.getValue()));
-		for (Address p: e.getAddressList())
+		for (Identifier p: e.getAddressList())
 			attributes.add(new EntityAttribute("Address", "", p.getFullAddress()));
 		for (EmailAddress p: e.getEmailList())
 			attributes.add(new EntityAttribute("Email", "", p.getFullAddress()));
-		for (IdProperty p:e.getIdentList()) {
+		for (V_IdProperty p:e.getIdentList()) {
 			attributes.add(new EntityAttribute("Identifier", p.getIdName(), p.getIdValue()));
 		}
 		for (Account ac:e.getAccountList()) {

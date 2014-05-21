@@ -99,9 +99,9 @@ public class SolrService {
 			logger.debug("using URL: " + url);
 			defaultSolrParams = new SolrRequestParameters();
 
-			defaultSolrParams.setStartRow(Integer.parseInt(props.getProperty(
+			defaultSolrParams.setStartRow(FastNumberUtils.parseIntWithCheck(props.getProperty(
 					"STARTING_ROW", "0")));
-			defaultSolrParams.setNumberOfRows(Integer.parseInt(props
+			defaultSolrParams.setNumberOfRows(FastNumberUtils.parseIntWithCheck(props
 					.getProperty("NUMBER_OF_ROWS_PER_QUERY", "10")));
 
 			String defaultFields = props.getProperty("DEFAULT_RETURN_FIELDS");

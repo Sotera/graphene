@@ -3,6 +3,8 @@ package graphene.dao;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EntityRefQuery;
+import graphene.model.query.EventQuery;
+import graphene.util.G_CallBack;
 
 import java.util.List;
 import java.util.Set;
@@ -20,6 +22,29 @@ import java.util.Set;
 public interface EntityRefDAO<T, Q> extends GenericDAO<T, Q> {
 
 	/**
+	 * Use the version that accepts a query object instead, and if you don't
+	 * have a query object just pass in null.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@Deprecated
+	public abstract long count() throws Exception;
+
+	long countEdges(String id) throws Exception;
+
+	Set<String> entityIDsByAdvancedSearch(AdvancedSearch srch);
+
+	Set<String> getAccountsForCustomer(String cust) throws Exception;
+
+	Set<T> getRowsForCustomer(String cust) throws Exception;
+
+	boolean performThrottlingCallback(long offset, long maxResults,
+			G_CallBack<T> cb, EventQuery q);
+
+	Set<String> regexSearch(String name, String family, boolean caseSensitive);
+
+	/**
 	 * The primary access point for searching the entityref database. <BR/>
 	 * Used for the initial search (from web services) and for graph traversal. <BR/>
 	 * Making the search values Sets is helpful as we can use "in" parameters to
@@ -32,10 +57,7 @@ public interface EntityRefDAO<T, Q> extends GenericDAO<T, Q> {
 	 */
 	List<T> rowSearch(EntityRefQuery q) throws Exception;
 
-	public abstract long count() throws Exception;
-
-	Set<String> getAccountsForCustomer(String cust) throws Exception;
-
+	Set<String> soundsLikeSearch(String src, String family);
 
 	/**
 	 * Used to search for unique identifier names and values matching the
@@ -55,13 +77,4 @@ public interface EntityRefDAO<T, Q> extends GenericDAO<T, Q> {
 	 */
 
 	Set<String> valueSearch(Q q) throws Exception;
-
-	Set<String> regexSearch(String name, String family, boolean caseSensitive);
-
-	Set<String> soundsLikeSearch(String src, String family);
-
-	Set<String> entityIDsByAdvancedSearch(AdvancedSearch srch);
-
-	Set<T> getRowsForCustomer(String cust) throws Exception;
-
 }

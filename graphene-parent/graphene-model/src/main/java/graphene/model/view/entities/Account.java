@@ -1,12 +1,7 @@
 package graphene.model.view.entities;
 
-import java.util.Properties;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 
@@ -22,13 +17,6 @@ public class Account {
 	private String accountNumber;
 	private String datasource_id = null;
 	private String id; // can be the same as accountNumber dep on platform
-	@XmlTransient
-	@JsonIgnore
-	private Entity owner = null;
-	@JsonIgnore
-	private String ownerId; // can use for navigation
-	@JsonIgnore
-	private Properties properties = null;
 
 	public Account() {
 	}
@@ -39,16 +27,9 @@ public class Account {
 		this.accountNumber = accountNumber;
 	}
 
-	/**
-	 * Can use for adding properties such as average balance etc.
-	 * 
-	 * @param name
-	 * @param value
-	 */
-	public void addProperty(String name, String value) {
-		if (properties == null)
-			properties = new Properties();
-		properties.put(name, value);
+	@Override
+	public boolean equals(Object o) {
+		return accountNumber.equals(((Account) o).getAccountNumber());
 	}
 
 	public String getAccountNumber() {
@@ -63,18 +44,9 @@ public class Account {
 		return id;
 	}
 
-	@JsonIgnore
-	@XmlTransient
-	public Entity getOwner() {
-		return owner;
-	}
-
-	public String getOwnerId() {
-		return ownerId;
-	}
-
-	public Properties getProperties() {
-		return properties;
+	@Override
+	public int hashCode() {
+		return accountNumber.hashCode();
 	}
 
 	public void setAccountNumber(String accountNumber) {
@@ -87,30 +59,6 @@ public class Account {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	@JsonIgnore
-	@XmlTransient
-	public void setOwner(Entity owner) {
-		this.owner = owner;
-	}
-
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
-	}
-
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		return accountNumber.equals(((Account) o).getAccountNumber());
-	}
-
-	@Override
-	public int hashCode() {
-		return accountNumber.hashCode();
 	}
 
 }

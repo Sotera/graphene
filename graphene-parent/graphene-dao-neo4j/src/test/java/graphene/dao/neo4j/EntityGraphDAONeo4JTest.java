@@ -5,7 +5,7 @@ import graphene.model.query.EntityGraphQuery;
 
 import java.util.List;
 
-import mil.darpa.vande.legacy.InfoVisGraphAdjacency;
+import mil.darpa.vande.converters.infovis.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;

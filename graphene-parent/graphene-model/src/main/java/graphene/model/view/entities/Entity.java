@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import mil.darpa.vande.legacy.entity.IdProperty;
+import mil.darpa.vande.generic.V_IdProperty;
 
 /**
  * 
@@ -21,14 +21,14 @@ import mil.darpa.vande.legacy.entity.IdProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Entity {
 	private Set<Account> accountList = null;
-	private Set<Address> addressList = null;
+	private Set<Identifier> addressList = null;
 	private String datasourceId = null;
 	private Set<EmailAddress> emailList = null;
 	// as can have multiple values for a
 	// key
 	private boolean fullyLoaded = false;
 	private String id = null;
-	public Set<IdProperty> identList = null;// cannot use java.util.Properties
+	public Set<V_IdProperty> identList = null;// cannot use java.util.Properties
 	private Set<Name> nameList = null;
 	private Set<CommunicationId> communicationIds = null;
 
@@ -49,9 +49,9 @@ public class Entity {
 		this.id = id;
 	}
 
-	public void addAddress(final Address e) {
+	public void addAddress(final Identifier e) {
 		if (addressList == null)
-			addressList = new HashSet<Address>();
+			addressList = new HashSet<Identifier>();
 		addressList.add(e);
 	}
 
@@ -82,7 +82,7 @@ public class Entity {
 		return accountList;
 	}
 
-	public Set<Address> getAddressList() {
+	public Set<Identifier> getAddressList() {
 		return addressList;
 	}
 
@@ -98,7 +98,7 @@ public class Entity {
 		return id;
 	}
 
-	public Set<IdProperty> getIdentList() {
+	public Set<V_IdProperty> getIdentList() {
 		return identList;
 	}
 
@@ -118,7 +118,7 @@ public class Entity {
 		this.accountList = set;
 	}
 
-	public void setAddressList(final Set<Address> addressList) {
+	public void setAddressList(final Set<Identifier> addressList) {
 		this.addressList = addressList;
 	}
 
@@ -138,7 +138,7 @@ public class Entity {
 		this.id = id;
 	}
 
-	public void setIdentList(final Set<IdProperty> identList) {
+	public void setIdentList(final Set<V_IdProperty> identList) {
 		this.identList = identList;
 	}
 

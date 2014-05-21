@@ -28,9 +28,13 @@ package graphene.util.crypto;
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+import graphene.util.FastNumberUtils;
+
 import java.security.SecureRandom;
+
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
+
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -111,7 +115,7 @@ public class PasswordHash {
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		// Decode the hash into its parameters
 		String[] params = correctHash.split(":");
-		int iterations = Integer.parseInt(params[ITERATION_INDEX]);
+		int iterations = FastNumberUtils.parseIntWithCheck(params[ITERATION_INDEX]);
 		byte[] salt = fromHex(params[SALT_INDEX]);
 		byte[] hash = fromHex(params[PBKDF2_INDEX]);
 		// Compute the hash of the provided password, using the same salt,

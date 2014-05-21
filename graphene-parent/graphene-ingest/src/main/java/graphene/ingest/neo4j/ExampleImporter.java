@@ -2,6 +2,7 @@ package graphene.ingest.neo4j;
 
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.EXACT_CONFIG;
 import static org.neo4j.index.impl.lucene.LuceneIndexImplementation.FULLTEXT_CONFIG;
+import graphene.util.FastNumberUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -204,7 +205,7 @@ public class ExampleImporter {
 	}
 
 	private long id(Object id) {
-		return Long.parseLong(id.toString());
+		return FastNumberUtils.parseLongWithCheck(id.toString());
 	}
 
 	private void importIndex(String elementType, String indexName,

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import mil.darpa.vande.legacy.InfoVisEdge;
-import mil.darpa.vande.legacy.InfoVisGraphAdjacency;
+import mil.darpa.vande.converters.infovis.InfoVisEdge;
+import mil.darpa.vande.converters.infovis.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;

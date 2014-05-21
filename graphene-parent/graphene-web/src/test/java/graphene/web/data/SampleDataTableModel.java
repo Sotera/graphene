@@ -1,6 +1,8 @@
 package graphene.web.data;
 
 
+import graphene.util.FastNumberUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +123,7 @@ public class SampleDataTableModel implements DataTableModel {
 		
 		String sortingCols = request.getParameter(DataTableConstants.SORTING_COLS);
 	    
-		int nbSortingCols = Integer.parseInt(sortingCols);
+		int nbSortingCols = FastNumberUtils.parseIntWithCheck(sortingCols);
 	    
 		String sord = request.getParameter(DataTableConstants.SORT_DIR+"0");
 	    
@@ -131,7 +133,7 @@ public class SampleDataTableModel implements DataTableModel {
 	    {
 	    	List<String> names = model.getPropertyNames();
 	    	
-	    	int indexProperty = Integer.parseInt(sidx);
+	    	int indexProperty = FastNumberUtils.parseIntWithCheck(sidx);
 	    	
 	    	String propName = names.get(indexProperty);
 	    	 
@@ -156,11 +158,11 @@ public class SampleDataTableModel implements DataTableModel {
 		response.put("iTotalRecords", records);
 	    
 	    String displayStart = request.getParameter(DataTableConstants.DISPLAY_START);
-	     int startIndex=Integer.parseInt(displayStart);
+	     int startIndex=FastNumberUtils.parseIntWithCheck(displayStart);
 	     
 	     String displayLength = request.getParameter(DataTableConstants.DISPLAY_LENGTH);
 	     
-	     int rowsPerPage=Integer.parseInt(displayLength);
+	     int rowsPerPage=FastNumberUtils.parseIntWithCheck(displayLength);
 	     
 	     int endIndex= startIndex + rowsPerPage -1;
 	     if(endIndex>records-1) endIndex= records-1;

@@ -1,11 +1,7 @@
 package graphene.model.view.entities;
 
-import java.util.Properties;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Note that some platforms have a EmailAddress table, which can be used to
@@ -15,16 +11,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Address {
+public class Identifier {
 
 	private String datasource_id;
 	private String fulladdress = null;
 	private String id;
-	// Following transients are for future use
-	@JsonIgnore
-	private Properties properties;
 
-	public Address() {
+
+	public Identifier() {
 	}
 
 	/**
@@ -36,19 +30,13 @@ public class Address {
 	 * @param address
 	 *            String the address
 	 */
-	public Address(final String source, final String id, final String address) {
+	public Identifier(final String source, final String id, final String address) {
 		this.datasource_id = source;
 		this.id = id;
 		this.fulladdress = address;
 	}
 
-	/**
-	 * @param name
-	 * @param value
-	 */
-	public void addProperty(final String name, final String value) {
-		properties.put(name, value);
-	}
+
 
 	public String getDatasource_id() {
 		return datasource_id;
@@ -62,9 +50,7 @@ public class Address {
 		return id;
 	}
 
-	public Properties getProperties() {
-		return properties;
-	}
+	
 
 	public void setDatasource_id(String datasource_id) {
 		this.datasource_id = datasource_id;
@@ -80,7 +66,7 @@ public class Address {
 	@Override
 	public boolean equals(Object o)
 	{
-		return this.fulladdress.equals(((Address) o).fulladdress);
+		return this.fulladdress.equals(((Identifier) o).fulladdress);
 	}
 	@Override
 	public int hashCode()

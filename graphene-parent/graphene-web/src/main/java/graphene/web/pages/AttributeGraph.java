@@ -9,7 +9,7 @@ import graphene.web.annotations.PluginPage;
 import java.util.Date;
 import java.util.List;
 
-import mil.darpa.vande.legacy.InfoVisGraphAdjacency;
+import mil.darpa.vande.converters.infovis.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.AlertManager;

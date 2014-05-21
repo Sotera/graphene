@@ -1,5 +1,17 @@
 package graphene.model.enumeration;
 
+/**
+ * This is mostly used for manually defining data properties for sources which
+ * are not in an RDBMS, or are not covered by QueryDSL code generation. (i.e.
+ * Solr). Here you can define an implementation of an Enum which contains a
+ * value, and the enum field which can be properly named. Then you can construct
+ * queries using string concatenation. The idea here is to keep misspellings out
+ * of the query by having a hard type to reference. It is not required to use
+ * this class or implementations of it.
+ * 
+ * @author djue
+ * 
+ */
 public abstract interface ValueEnum {
 
 	/**

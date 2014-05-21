@@ -1,6 +1,6 @@
 package graphene.util.fs;
 
-import graphene.util.CallBack;
+import graphene.util.G_CallBack;
 import graphene.util.stats.TimeReporter;
 
 import java.io.File;
@@ -23,7 +23,7 @@ import org.slf4j.Logger;
  *            The class of object you are serializing, usually a POJO based on a
  *            DB call.
  */
-public class DiskCache<T> implements CallBack<T> {
+public class DiskCache<T> implements G_CallBack<T> {
 
 	private FileOutputStream f_out;
 	@Inject

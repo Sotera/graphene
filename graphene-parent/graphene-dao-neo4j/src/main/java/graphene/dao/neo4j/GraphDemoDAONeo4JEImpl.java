@@ -5,6 +5,7 @@ import graphene.model.view.sample.DisplayNode;
 import graphene.model.view.sample.GraphDemoObject;
 import graphene.model.view.sample.NodeAttribute;
 import graphene.model.view.sample.NodeData;
+import graphene.util.FastNumberUtils;
 
 import java.util.HashMap;
 
@@ -44,7 +45,7 @@ public class GraphDemoDAONeo4JEImpl implements GraphDemoDAO {
 	public GraphDemoObject getNode(String id) {
 		Node startNode = null;
 		try {
-			long longId = Long.parseLong(id);
+			long longId = FastNumberUtils.parseLongWithCheck(id);
 
 			if (id == null)
 				return new GraphDemoObject();

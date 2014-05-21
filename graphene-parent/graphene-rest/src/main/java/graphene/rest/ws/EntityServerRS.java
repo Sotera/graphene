@@ -10,15 +10,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.tapestry5.annotations.Log;
+
 @Path("/EntitySearch")
 public interface EntityServerRS {
-	
+	@Log
 	@GET
 	@Path("/advancedSearch")
 	@Produces("application/json")
 	public EntitySearchResults advancedSearch(
 			@QueryParam("jsonSearch") String jsonSearch);
-	
+	@Log
 	@GET
 	@Path("/getEntityByID/{ID}")
 	@Produces("application/json")

@@ -352,6 +352,26 @@ public class StringUtils {
 		return split;
 	}
 
+	/**
+	 * A version of the splitter commonly used by rest services in Graphene. We
+	 * use some other parameter to see if the splitting should be enabled.
+	 * 
+	 * @param enable
+	 * @param value
+	 * @param delimiter
+	 * @return
+	 */
+	public static String[] split(boolean enable, String value, char delimiter) {
+		String[] values;
+		// Something like valueType.contains("list")
+		if (enable) {
+			values = split(value,delimiter);
+		} else {
+			values = new String[] { value };
+		}
+		return values;
+	}
+
 	public static String[] split(String line) {
 		return split(line, DEFAULT_DELIMITER_CHAR);
 	}

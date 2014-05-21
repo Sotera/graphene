@@ -1,13 +1,13 @@
 package graphene.util;
 
-import graphene.util.CallBack;
+import graphene.util.G_CallBack;
 
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 public class CallbackTest {
 
-	public class ExampleCallback implements CallBack {
+	public class ExampleCallback implements G_CallBack {
 
 		@Override
 		public boolean callBack(Object t) {

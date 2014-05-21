@@ -1,10 +1,7 @@
 package graphene.model.view.entities;
 
-import java.util.Properties;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Note that some platforms have a EmailAddress table, which can be used to
@@ -20,9 +17,6 @@ public class EmailAddress {
 	private String datasource_id;
 	private String fulladdress = null;
 	private String id;
-	// Following transients are for future use
-	@XmlTransient
-	private Properties properties;
 
 	public EmailAddress() {
 	}
@@ -42,12 +36,11 @@ public class EmailAddress {
 		this.fulladdress = address;
 	}
 
-	/**
-	 * @param name
-	 * @param value
-	 */
-	public void addProperty(final String name, final String value) {
-		properties.put(name, value);
+
+	@Override
+	public boolean equals(final Object o)
+	{
+		return this.fulladdress.equals(((EmailAddress) o).fulladdress);
 	}
 
 	public String getDatasource_id() {
@@ -62,29 +55,20 @@ public class EmailAddress {
 		return id;
 	}
 
-	public Properties getProperties() {
-		return properties;
+
+	@Override
+	public int hashCode()
+	{
+		return this.fulladdress.hashCode();
 	}
 
 	public void setDatasource_id(final String datasource_id) {
 		this.datasource_id = datasource_id;
 	}
-
 	public void setFullAddress(final String address) {
 		this.fulladdress = address;
 	}
-
 	public void setId(final String id) {
 		this.id = id;
-	}
-	@Override
-	public boolean equals(final Object o)
-	{
-		return this.fulladdress.equals(((EmailAddress) o).fulladdress);
-	}
-	@Override
-	public int hashCode()
-	{
-		return this.fulladdress.hashCode();
 	}
 }

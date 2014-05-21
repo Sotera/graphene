@@ -1,5 +1,7 @@
 package graphene.rest.ws;
 
+import graphene.util.FastNumberUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -628,11 +630,8 @@ public class UDSessionRSImpl implements UDSessionRS {
                 //response = Response.serverError();
                 response = Response.status(Response.Status.BAD_REQUEST).entity(errormsg);
             }
-            Long fromDateL = Long.parseLong(fromdt);
-            long fromDatems = fromDateL.longValue();
-            
-            Long toDateL = Long.parseLong(todt);
-            long toDatems = toDateL.longValue();
+            long fromDatems = FastNumberUtils.parseLongWithCheck(fromdt);
+            long toDatems = FastNumberUtils.parseLongWithCheck(todt);
 
             if (toDatems < fromDatems) {
                 String errormsg = "getSessionsByDate: The To date must be greater than or equal to the From date";

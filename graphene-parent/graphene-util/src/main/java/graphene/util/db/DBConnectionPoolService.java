@@ -113,7 +113,7 @@ public class DBConnectionPoolService {
 		initialized = enableDatabase(config);
 		// We no longer have access to the server name to ping.
 		// if (NetworkUtils
-		// .isServerAlive(serverName, Integer.parseInt(serverPort))) {
+		// .isServerAlive(serverName, FastNumberUtils.parseIntWithCheck(serverPort))) {
 		// initialized = enableDatabase(config);
 		// } else {
 		// initialized = false;

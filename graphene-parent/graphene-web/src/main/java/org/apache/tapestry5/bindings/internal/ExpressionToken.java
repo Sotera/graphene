@@ -1,5 +1,7 @@
 package org.apache.tapestry5.bindings.internal;
 
+import graphene.util.FastNumberUtils;
+
 public class ExpressionToken {
 
     private final String property;
@@ -27,7 +29,7 @@ public class ExpressionToken {
             final String[] arrayParts = property.split("\\[");
 
             property = arrayParts[0];
-            arrayIndex = Integer.parseInt(arrayParts[1].split("\\]")[0]);
+            arrayIndex = FastNumberUtils.parseIntWithCheck(arrayParts[1].split("\\]")[0]);
         }
 
         this.property = property;

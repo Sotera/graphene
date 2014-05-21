@@ -1,7 +1,7 @@
 package graphene.model.memorydb;
 
 import graphene.dao.DataSourceListDAO;
-
+import graphene.util.FastNumberUtils;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.stats.TimeReporter;
 
@@ -90,7 +90,7 @@ public class PreLoaderImpl implements PreLoader {
 				.equalsIgnoreCase("true"));
 		indexPhones = (settings.get("indexPhones").equalsIgnoreCase("true"));
 		indexAll = (settings.get("indexAll").equalsIgnoreCase("true"));
-		maxEntries = Integer.parseInt(settings.get("maxIndexRecords"));
+		maxEntries = FastNumberUtils.parseIntWithCheck(settings.get("maxIndexRecords"));
 
 		useMemDB = true; // overridden below if property found in web.xml as
 							// substituted by Maven

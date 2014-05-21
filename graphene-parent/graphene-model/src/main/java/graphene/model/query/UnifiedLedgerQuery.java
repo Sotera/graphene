@@ -290,7 +290,7 @@ public class UnifiedLedgerQuery extends BasicQuery {
 	 */
 	// public void setFromdtSecs(String fromdtSecsStr) {
 	// if (fromdtSecsStr != null && fromdtSecsStr.length() > 0)
-	// minSecs = Long.parseLong(fromdtSecsStr);
+	// minSecs = FastNumberUtils.parseLongWithCheck(fromdtSecsStr);
 	//
 	// }
 
@@ -392,7 +392,7 @@ public class UnifiedLedgerQuery extends BasicQuery {
 	 */
 	// public void setTodtSecs(String todtSecsStr) {
 	// if (todtSecsStr != null && todtSecsStr.length() > 0)
-	// maxSecs = Long.parseLong(todtSecsStr);
+	// maxSecs = FastNumberUtils.parseLongWithCheck(todtSecsStr);
 	// }
 
 	@Override

@@ -2,7 +2,7 @@ package graphene.dao.sql;
 
 import graphene.dao.GenericDAO;
 import graphene.model.query.BasicQuery;
-import graphene.util.CallBack;
+import graphene.util.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
@@ -60,12 +60,21 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 		return cps.getConnection();
 	}
 
+	@Override
+	public boolean isReady() {
+		boolean ready = false;
+		if (cps != null && cps.isInitialized()) {
+			ready = true;
+		}
+		return ready;
+	}
+
 	/**
 	 * This is now a default, but it is intended that implementaitons will
 	 * override and use a different callback if they want to.
 	 */
 	public boolean performCallback(long offset, long maxResults,
-			CallBack<T> cb, Q q) {
+			G_CallBack<T> cb, Q q) {
 		return basicCallback(offset, maxResults, cb, q);
 	}
 
@@ -115,7 +124,7 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	 * @return true if successful, false otherwise.
 	 */
 	public boolean throttlingCallback(long initialOffset, long maxResults,
-			CallBack<T> cb, Q q) {
+			G_CallBack<T> cb, Q q) {
 		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
 		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10,
 				250000);
@@ -151,7 +160,7 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	 * @return
 	 */
 	public boolean throttlingCallback(long initialOffset, long maxResults,
-			CallBack<T> cb, Q q, long initialChunkSize, long minChunkSize,
+			G_CallBack<T> cb, Q q, long initialChunkSize, long minChunkSize,
 			long maxChunkSize) {
 		logger.debug("Performing throttling callback performer");
 		logger.debug("initialOffset = " + initialOffset);
@@ -193,6 +202,9 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 							+ chunkSize);
 					results = getAll(offset, chunkSize);
 				} else {
+					logger.debug("getAll(offset=" + offset + ", chunksize="
+							+ chunkSize + " query=" + q);
+					
 					results = findByQuery(offset, chunkSize, q);
 
 				}
@@ -348,7 +360,7 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	 * @return
 	 */
 	public boolean throttlingCallbackOnValues(long initialOffset,
-			long maxResults, CallBack<T> cb, Q q, long initialChunkSize,
+			long maxResults, G_CallBack<T> cb, Q q, long initialChunkSize,
 			long minChunkSize, long maxChunkSize, long minValue, long maxValue) {
 		logger.debug("Performing throttling callback performer against values");
 		logger.debug("initialOffset = " + initialOffset);
@@ -528,7 +540,7 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	 * @return
 	 */
 	public boolean basicCallback(long initialOffset, long maxResults,
-			CallBack<T> cb, Q q) {
+			G_CallBack<T> cb, Q q) {
 		if (initialOffset == 0) {
 			// For SQL offsets, it is one based.
 			initialOffset = 1;
@@ -601,15 +613,19 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	/**
 	 * This is a safe way of adding the offset and limit. We can encapsulate
 	 * validation and error correction here to prevent duplicate code and reduce
-	 * maintenance.
+	 * maintenance. 
+	 * 
+	 * XXX: This is not quite what we want, maybe. For throttling
+	 * callbacks we would have to modify Q each time for the offset, but we
+	 * don't want any side effects from modifying the original query.
 	 * 
 	 * @param q
 	 * @param sq
 	 * @return
 	 */
-	protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
-		return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
-	}
+//	protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
+//		return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
+//	}
 
 	/**
 	 * A safe way of adding offset and limit, directly using long values.

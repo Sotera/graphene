@@ -1,5 +1,7 @@
 package org.got5.tapestry5.jquery.internal;
 
+import graphene.util.FastNumberUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -238,7 +240,7 @@ public class DefaultDataTableModel implements DataTableModel {
         String sortingCols = request.getParameter(DataTableConstants.SORTING_COLS);
 
         if(InternalUtils.isNonBlank(sortingCols)){
-            int nbSortingCols = Integer.parseInt(sortingCols);
+            int nbSortingCols = FastNumberUtils.parseIntWithCheck(sortingCols);
 
             String sord = request.getParameter(DataTableConstants.SORT_DIR+"0");
 
@@ -248,7 +250,7 @@ public class DefaultDataTableModel implements DataTableModel {
             {
                 List<String> names = model.getPropertyNames();
 
-                int indexProperty = Integer.parseInt(sidx);
+                int indexProperty = FastNumberUtils.parseIntWithCheck(sidx);
 
                 String propName = names.get(indexProperty);
 
@@ -278,11 +280,11 @@ public class DefaultDataTableModel implements DataTableModel {
         }
 
         String displayStart = request.getParameter(DataTableConstants.DISPLAY_START);
-        int startIndex=Integer.parseInt(displayStart);
+        int startIndex=FastNumberUtils.parseIntWithCheck(displayStart);
 
         String displayLength = request.getParameter(DataTableConstants.DISPLAY_LENGTH);
 
-        int rowsPerPage=Integer.parseInt(displayLength);
+        int rowsPerPage=FastNumberUtils.parseIntWithCheck(displayLength);
 
         int endIndex= startIndex + rowsPerPage -1;
         if(endIndex>records-1) endIndex= records-1;

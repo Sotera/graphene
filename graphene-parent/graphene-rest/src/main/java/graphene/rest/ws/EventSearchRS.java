@@ -9,6 +9,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+
+import org.apache.tapestry5.annotations.Log;
 /**
  * This generalized rest service will eventually replace most other rest services that have a narrow focus.
  * 
@@ -39,6 +41,7 @@ public interface EventSearchRS {
 	 * @param sortColumn
 	 * @return
 	 */
+	@Log
 	@Produces("application/json")
 	@GET
 	@Path("/any")
@@ -51,6 +54,7 @@ public interface EventSearchRS {
 			@QueryParam("comments") @DefaultValue(value = "") String comments,
 			@QueryParam("intersection") @DefaultValue(value = "false") boolean intersection);
 
+	@Log
 	@Produces("application/json")
 	@GET
 	@Path("/between")
