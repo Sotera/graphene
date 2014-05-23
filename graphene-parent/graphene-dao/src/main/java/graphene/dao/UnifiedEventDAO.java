@@ -1,9 +1,6 @@
 package graphene.dao;
 
-import graphene.model.idl.G_Link;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import graphene.model.query.BasicQuery;
 
 /**
  * For use with tables that have a from and a to id.
@@ -11,9 +8,7 @@ import java.util.HashMap;
  * @author djue
  * 
  */
-public interface UnifiedEventDAO<S, Q> extends GenericDAO<S, Q> {
+public interface UnifiedEventDAO<S, Q extends BasicQuery> extends GenericDAO<S, Q> {
 
-	public HashMap<String, ArrayList<String>> getRelatedEntities(Q q);
 
-	public HashMap<String, ArrayList<G_Link>> getRelatedLinks(Q q);
 }

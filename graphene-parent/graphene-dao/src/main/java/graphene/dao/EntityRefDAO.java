@@ -2,9 +2,8 @@ package graphene.dao;
 
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
+import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityRefQuery;
-import graphene.model.query.EventQuery;
-import graphene.util.G_CallBack;
 
 import java.util.List;
 import java.util.Set;
@@ -19,32 +18,54 @@ import java.util.Set;
  * 
  */
 
-public interface EntityRefDAO<T, Q> extends GenericDAO<T, Q> {
+public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 
 	/**
-	 * Use the version that accepts a query object instead, and if you don't
-	 * have a query object just pass in null.
 	 * 
+	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	@Deprecated
-	public abstract long count() throws Exception;
-
 	long countEdges(String id) throws Exception;
 
+	/**
+	 * 
+	 * @param srch
+	 * @return
+	 */
 	Set<String> entityIDsByAdvancedSearch(AdvancedSearch srch);
 
+	/**
+	 * 
+	 * @param cust
+	 * @return
+	 * @throws Exception
+	 */
 	Set<String> getAccountsForCustomer(String cust) throws Exception;
 
+	/**
+	 * 
+	 * @param cust
+	 * @return
+	 * @throws Exception
+	 */
 	Set<T> getRowsForCustomer(String cust) throws Exception;
 
-	boolean performThrottlingCallback(long offset, long maxResults,
-			G_CallBack<T> cb, EventQuery q);
-
+	/**
+	 * 
+	 * @param name
+	 * @param family
+	 * @param caseSensitive
+	 * @return
+	 */
 	Set<String> regexSearch(String name, String family, boolean caseSensitive);
 
 	/**
+	 * 
+	 * This is deprecated because it was just findByQuery with a hook for
+	 * memorydb usage. You should use findByQuery from now on, and it will use
+	 * the MemoryDB if it's available.
+	 * 
 	 * The primary access point for searching the entityref database. <BR/>
 	 * Used for the initial search (from web services) and for graph traversal. <BR/>
 	 * Making the search values Sets is helpful as we can use "in" parameters to
@@ -55,8 +76,15 @@ public interface EntityRefDAO<T, Q> extends GenericDAO<T, Q> {
 	 * @return
 	 * @throws Exception
 	 */
+	@Deprecated
 	List<T> rowSearch(EntityRefQuery q) throws Exception;
 
+	/**
+	 * 
+	 * @param src
+	 * @param family
+	 * @return
+	 */
 	Set<String> soundsLikeSearch(String src, String family);
 
 	/**
@@ -75,6 +103,7 @@ public interface EntityRefDAO<T, Q> extends GenericDAO<T, Q> {
 	 * @return Set<String> of matching values
 	 * @throws Exception
 	 */
-
 	Set<String> valueSearch(Q q) throws Exception;
+
+
 }

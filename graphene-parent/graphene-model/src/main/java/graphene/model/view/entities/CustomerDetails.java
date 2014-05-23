@@ -21,16 +21,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerDetails implements Cloneable {
 
-	// string that
-	// matched the query as it is sorted this way
 	private Set<String> accountSet = new HashSet<String>();
 	private String address = null;
 	private String customerName = "";
 	private String customerNumber = null;
 	private String email = "";
 	private String erm = "";
-	private String expandedName = ""; // includes the S/O, D/O
-	private String matchString = null; // used in search results. We show the
+	/**
+	 * Might have additional information
+	 */
+	private String expandedName = "";
+	/**
+	 * used in search results. We show the string that matched the query as it
+	 * is sorted this way
+	 */
+	private String matchString = null;
 	private int status;
 
 	public CustomerDetails() {

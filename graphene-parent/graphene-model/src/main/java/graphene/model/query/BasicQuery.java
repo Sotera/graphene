@@ -20,9 +20,9 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * For use when multiple datasources are available
 	 */
 	private String dataSource;
-	private int firstResult = 0;
+	private long firstResult = 0;
 
-	private int maxResult = 0;
+	private long maxResult = 0;
 
 	/*
 	 * end date, in seconds since epoch
@@ -44,17 +44,14 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	private boolean sortAscending = true;
 	private String sortColumn;
 	private ValueEnum sortField;
+
 	/**
 	 * 
 	 */
 	public BasicQuery() {
 		// TODO Auto-generated constructor stub
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -64,6 +61,11 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 		if (getClass() != obj.getClass())
 			return false;
 		BasicQuery other = (BasicQuery) obj;
+		if (dataSource == null) {
+			if (other.dataSource != null)
+				return false;
+		} else if (!dataSource.equals(other.dataSource))
+			return false;
 		if (firstResult != other.firstResult)
 			return false;
 		if (maxResult != other.maxResult)
@@ -71,6 +73,11 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 		if (maxSecs != other.maxSecs)
 			return false;
 		if (minSecs != other.minSecs)
+			return false;
+		if (schema == null) {
+			if (other.schema != null)
+				return false;
+		} else if (!schema.equals(other.schema))
 			return false;
 		if (sortAscending != other.sortAscending)
 			return false;
@@ -97,7 +104,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.PageableQuery#getFirstResult()
 	 */
 	@Override
-	public int getFirstResult() {
+	public long getFirstResult() {
 		// TODO Auto-generated method stub
 		return firstResult;
 	}
@@ -108,7 +115,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.PageableQuery#getMaxResult()
 	 */
 	@Override
-	public int getMaxResult() {
+	public long getMaxResult() {
 		return maxResult;
 	}
 
@@ -148,19 +155,17 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 		return sortField;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + firstResult;
-		result = prime * result + maxResult;
+		result = prime * result
+				+ ((dataSource == null) ? 0 : dataSource.hashCode());
+		result = prime * result + (int) (firstResult ^ (firstResult >>> 32));
+		result = prime * result + (int) (maxResult ^ (maxResult >>> 32));
 		result = prime * result + (int) (maxSecs ^ (maxSecs >>> 32));
 		result = prime * result + (int) (minSecs ^ (minSecs >>> 32));
+		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
 		result = prime * result + (sortAscending ? 1231 : 1237);
 		result = prime * result
 				+ ((sortColumn == null) ? 0 : sortColumn.hashCode());
@@ -190,8 +195,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.PageableQuery#setFirstResult(int)
 	 */
 	@Override
-	public void setFirstResult(int firstResult) {
-		// TODO Auto-generated method stub
+	public void setFirstResult(long firstResult) {
 		this.firstResult = firstResult;
 	}
 
@@ -201,8 +205,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.PageableQuery#setMaxResult(int)
 	 */
 	@Override
-	public void setMaxResult(int maxResult) {
-		// TODO Auto-generated method stub
+	public void setMaxResult(long maxResult) {
 		this.maxResult = maxResult;
 	}
 
@@ -229,10 +232,9 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	public void setSortAndDirection(String sortColumnWithDirection) {
 		if (sortColumnWithDirection.contains(DisplayUtil.DESCENDING_FLAG)) {
 			this.sortAscending = false;
+		} else {
+			this.sortAscending = true; // MFM
 		}
-                else {
-                    this.sortAscending = true;  // MFM
-                }
 		sortColumn = sortColumnWithDirection.replace(
 				DisplayUtil.DESCENDING_FLAG, "");
 	}
@@ -240,8 +242,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * grapheneweb.services.common.SortableQuery#setSortAscending(boolean)
+	 * @see grapheneweb.services.common.SortableQuery#setSortAscending(boolean)
 	 */
 	@Override
 	public void setSortAscending(boolean sortAscending) {
@@ -252,8 +253,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * grapheneweb.services.common.SortableQuery#setSortColumn(java.lang
+	 * @see grapheneweb.services.common.SortableQuery#setSortColumn(java.lang
 	 * .String)
 	 */
 	/**

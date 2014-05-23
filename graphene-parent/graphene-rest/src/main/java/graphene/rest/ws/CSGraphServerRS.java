@@ -33,7 +33,7 @@ public interface CSGraphServerRS {
 	@Path("/{type}/{value}")
 	@Produces("application/json")
 	public abstract V_CSGraph getByIdentifier(@PathParam("type") String type,
-			@PathParam("value") String value,
+			@PathParam("value") String[] value,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,
 			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
@@ -94,7 +94,7 @@ public interface CSGraphServerRS {
 	@Produces("application/json")
 	public abstract V_CSGraph getInteractions(
 			@PathParam("objectType") String objectType, // Dataset name etc
-			@PathParam("value") String value,
+			@PathParam("value") String[] value,
 			@QueryParam("Type") String valueType,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,

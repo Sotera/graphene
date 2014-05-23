@@ -10,8 +10,40 @@ public class EntityRefQuery extends BasicQuery {
 	private boolean caseSensitive = false;
 	private boolean customerQueryFlag = true;
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityRefQuery other = (EntityRefQuery) obj;
+		if (attributeList == null) {
+			if (other.attributeList != null)
+				return false;
+		} else if (!attributeList.equals(other.attributeList))
+			return false;
+		if (caseSensitive != other.caseSensitive)
+			return false;
+		if (customerQueryFlag != other.customerQueryFlag)
+			return false;
+		return true;
+	}
+
 	public List<EntitySearchTuple<String>> getAttributeList() {
 		return attributeList;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((attributeList == null) ? 0 : attributeList.hashCode());
+		result = prime * result + (caseSensitive ? 1231 : 1237);
+		result = prime * result + (customerQueryFlag ? 1231 : 1237);
+		return result;
 	}
 
 	/**
@@ -53,38 +85,6 @@ public class EntityRefQuery extends BasicQuery {
 		return "EntityRefQuery [attributeList=" + attributeList
 				+ ", caseSensitive=" + caseSensitive + ", customerQueryFlag="
 				+ customerQueryFlag + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ ((attributeList == null) ? 0 : attributeList.hashCode());
-		result = prime * result + (caseSensitive ? 1231 : 1237);
-		result = prime * result + (customerQueryFlag ? 1231 : 1237);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EntityRefQuery other = (EntityRefQuery) obj;
-		if (attributeList == null) {
-			if (other.attributeList != null)
-				return false;
-		} else if (!attributeList.equals(other.attributeList))
-			return false;
-		if (caseSensitive != other.caseSensitive)
-			return false;
-		if (customerQueryFlag != other.customerQueryFlag)
-			return false;
-		return true;
 	}
 
 }

@@ -1,6 +1,7 @@
 package graphene.dao;
 
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.query.BasicQuery;
 import graphene.model.view.entities.IdType;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
  * @param <T>
  * @param <Q>
  */
-public interface IdTypeDAO<T, Q> extends GenericDAO<T, Q> {
+public interface IdTypeDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 
 	public abstract void createFamilyMap();
 

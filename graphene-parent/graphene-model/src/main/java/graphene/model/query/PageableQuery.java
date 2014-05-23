@@ -5,23 +5,23 @@ public interface PageableQuery {
 	/**
 	 * @return the firstResult
 	 */
-	public abstract int getFirstResult();
+	public abstract long getFirstResult();
 
 	/**
 	 * @return the maxResult
 	 */
-	public abstract int getMaxResult();
+	public abstract long getMaxResult();
 
 	/**
 	 * @param firstResult
 	 *            the firstResult to set
 	 */
-	public abstract void setFirstResult(int firstResult);
+	public abstract void setFirstResult(long firstResult);
 
 	/**
 	 * @param maxResult
 	 *            the maxResult to set
 	 */
-	public abstract void setMaxResult(int maxResult);
+	public abstract void setMaxResult(long maxResult);
 
 }

@@ -1,19 +1,27 @@
 package graphene.dao;
 
+import graphene.model.query.BasicQuery;
 import graphene.util.G_CallBack;
 
 import java.util.List;
 
-public interface GenericDAO<T, QUERYOBJECT> {
+/**
+ * 
+ * @author djue
+ * 
+ * @param <T>
+ * @param <QUERYOBJECT>
+ */
+public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
+
 	/**
+	 * This version assumes the offset and max results have been stored properly
+	 * in the query object.
 	 * 
-	 * @param offset
-	 * @param maxResults
-	 * @param q
-	 * @return
+	 * @param pq
+	 * @return a list of T
 	 */
-	List<T> findByQuery(long offset, long maxResults, QUERYOBJECT q)
-			throws Exception;
+	List<T> findByQuery(QUERYOBJECT pq) throws Exception;
 
 	/**
 	 * TODO: This could be replaced by putting offset and maxresults inside a
@@ -22,31 +30,42 @@ public interface GenericDAO<T, QUERYOBJECT> {
 	 * 
 	 * @param offset
 	 * @param maxResults
-	 * @return
+	 * @return a list of T
 	 * @throws Exception
 	 */
 	List<T> getAll(long offset, long maxResults) throws Exception;
 
-	public abstract long count(QUERYOBJECT q) throws Exception;
+	long count(QUERYOBJECT q) throws Exception;
 
 	/**
 	 * 
 	 * @return true if this DAO is ready to be queried.
 	 */
-	public boolean isReady();
+	boolean isReady();
+
 	/**
-	 * TODO: I see the need for having a separate version of this that can take
-	 * a Tuple as T. This is so that during ingest and other large loads, we
-	 * only work with the columns that are needed, which means less data over
-	 * the wire and less heap space to take up.
+	 * This method is an expansion of the isReady system status. Individual
+	 * implementations can declare what their readiness state is, and methods
+	 * calling those implementations can decide whether the system is ready
+	 * enough the be queried. This is good for multi layered DAOs, such as those
+	 * backed by an InMemory portion. Depending on how much performance would be
+	 * lost if the In Memory portion was not available, the implementation can
+	 * adjust the strength of it's readiness accordingly.
+	 * 
+	 * @return a value between 0 (not ready) and 1 (fully operational)
+	 */
+	double getReadiness();
+
+	/**
+	 * Within this method, the callback cb will be executed
 	 * 
 	 * @param offset
 	 * @param maxResults
 	 * @param cb
 	 * @param q
-	 * @return
+	 * @return true if the callback succeeded, or did not find any errors.
 	 */
-	public abstract boolean performCallback(long offset, long maxResults,
-			G_CallBack<T> cb, QUERYOBJECT q);
+	boolean performCallback(long offset, long maxResults, G_CallBack<T> cb,
+			QUERYOBJECT q);
 
 }

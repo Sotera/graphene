@@ -158,7 +158,18 @@ public class SearchFilter {
 
 	@Override
 	public String toString() {
-		return fieldName + " : " + operator + " " + value;
+		return "SearchFilter [caseSensitive="
+				+ caseSensitive
+				+ ", "
+				+ (compareType != null ? "compareType=" + compareType + ", "
+						: "")
+				+ (dmcomp != null ? "dmcomp=" + dmcomp + ", " : "")
+				+ (field != null ? "field=" + field + ", " : "")
+				+ (fieldName != null ? "fieldName=" + fieldName + ", " : "")
+				+ (fieldType != null ? "fieldType=" + fieldType + ", " : "")
+				+ (operator != null ? "operator=" + operator + ", " : "")
+				+ (pattern != null ? "pattern=" + pattern + ", " : "")
+				+ (value != null ? "value=" + value : "") + "]";
 	}
 
 }

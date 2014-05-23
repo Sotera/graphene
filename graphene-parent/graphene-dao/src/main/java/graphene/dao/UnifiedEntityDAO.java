@@ -1,5 +1,7 @@
 package graphene.dao;
 
+import graphene.model.query.BasicQuery;
+
 /**
  * 
  * The UnifiedEntity class reflects a denormalized entity table made from the
@@ -15,6 +17,6 @@ package graphene.dao;
  * @param <T>
  * @param <Q>
  */
-public interface UnifiedEntityDAO<T, Q> extends GenericDAO<T, Q> {
+public interface UnifiedEntityDAO<T,  Q extends BasicQuery> extends GenericDAO<T, Q> {
 
 }

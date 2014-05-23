@@ -26,7 +26,8 @@ import com.mysema.query.sql.SQLServer2012Templates;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.types.EntityPath;
 
-public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
+public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
+		GenericDAO<T, Q> {
 
 	/**
 	 * If you need to change the database that is used, set it in the
@@ -70,9 +71,19 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	}
 
 	/**
+	 * The default implementation of this relies solely on the isReady() being
+	 * true.
+	 */
+	@Override
+	public double getReadiness() {
+		return isReady() ? 1.0d : 0;
+	}
+
+	/**
 	 * This is now a default, but it is intended that implementaitons will
 	 * override and use a different callback if they want to.
 	 */
+	@Override
 	public boolean performCallback(long offset, long maxResults,
 			G_CallBack<T> cb, Q q) {
 		return basicCallback(offset, maxResults, cb, q);
@@ -204,9 +215,11 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 				} else {
 					logger.debug("getAll(offset=" + offset + ", chunksize="
 							+ chunkSize + " query=" + q);
-					
-					results = findByQuery(offset, chunkSize, q);
 
+					// results = findByQuery(offset, chunkSize, q);
+					q.setFirstResult(offset);
+					q.setMaxResult(chunkSize);
+					results = findByQuery(q);
 				}
 			} catch (Exception e) {
 				logger.error("Problem in throttling callback: "
@@ -413,8 +426,10 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 					// chunk size, it's the maximum value for this window.
 					results = getAll(offset, chunkSize + offset);
 				} else {
-					results = findByQuery(offset, chunkSize, q);
-
+					// results = findByQuery(offset, chunkSize, q);
+					q.setFirstResult(offset);
+					q.setMaxResult(chunkSize);
+					results = findByQuery(q);
 				}
 			} catch (Exception e) {
 				logger.error("Problem in throttling callback: "
@@ -562,7 +577,13 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 					results = getAll(offset, maxResults);
 				} else {
 					// We have some sort of query object.
-					results = findByQuery(offset, maxResults, q);
+					// XXX: We may need to replace Q with ? extends Generic
+					// Query Object, so we have access to setting limits and
+					// offset.
+					// results = findByQuery(offset, maxResults, q);
+					q.setFirstResult(offset);
+					q.setMaxResult(maxResults);
+					results = findByQuery(q);
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -613,19 +634,19 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	/**
 	 * This is a safe way of adding the offset and limit. We can encapsulate
 	 * validation and error correction here to prevent duplicate code and reduce
-	 * maintenance. 
+	 * maintenance.
 	 * 
-	 * XXX: This is not quite what we want, maybe. For throttling
-	 * callbacks we would have to modify Q each time for the offset, but we
-	 * don't want any side effects from modifying the original query.
+	 * XXX: This is not quite what we want, maybe. For throttling callbacks we
+	 * would have to modify Q each time for the offset, but we don't want any
+	 * side effects from modifying the original query.
 	 * 
 	 * @param q
 	 * @param sq
 	 * @return
 	 */
-//	protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
-//		return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
-//	}
+	// protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
+	// return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
+	// }
 
 	/**
 	 * A safe way of adding offset and limit, directly using long values.
@@ -635,6 +656,7 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 	 * @param sq
 	 * @return
 	 */
+	@Deprecated
 	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
 			@Nonnegative long limit, SQLQuery sq) {
 		if (ValidationUtils.isValid(offset)) {
@@ -642,6 +664,24 @@ public abstract class GenericDAOJDBCImpl<T, Q> implements GenericDAO<T, Q> {
 		}
 		if (ValidationUtils.isValid(limit)) {
 			sq = sq.limit(limit);
+		}
+		return sq;
+	}
+
+	/**
+	 * 
+	 * @param q
+	 * @param sq
+	 * @return
+	 */
+	protected SQLQuery setOffsetAndLimit(Q q, SQLQuery sq) {
+		if (ValidationUtils.isValid(q)) {
+			if (ValidationUtils.isValid(q.getFirstResult())) {
+				sq = sq.offset(q.getFirstResult());
+			}
+			if (ValidationUtils.isValid(q.getMaxResult())) {
+				sq = sq.limit(q.getMaxResult());
+			}
 		}
 		return sq;
 	}

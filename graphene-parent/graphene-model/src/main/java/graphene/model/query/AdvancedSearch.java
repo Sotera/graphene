@@ -29,7 +29,8 @@ public class AdvancedSearch {
 	 * Call this after parsing the request string so that the field definition
 	 * can be retrieved for each filter
 	 * 
-	 * @param dataSourceListDAO
+	 * 
+	 * @param dataSourceList
 	 */
 	public void setFieldsIntoFilters(DataSourceList dataSourceList) {
 		if (dataSourceList == null) {
@@ -40,6 +41,14 @@ public class AdvancedSearch {
 						f.getFieldName()));
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "AdvancedSearch ["
+				+ (dataSet != null ? "dataSet=" + dataSet + ", " : "")
+				+ (source != null ? "source=" + source + ", " : "")
+				+ (filters != null ? "filters=" + filters : "") + "]";
 	}
 
 	public String getDataSet() {

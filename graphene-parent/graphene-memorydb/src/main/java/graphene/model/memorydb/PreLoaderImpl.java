@@ -30,7 +30,7 @@ import org.slf4j.Logger;
  * @author PWG for DARPA
  * 
  */
-
+@Deprecated
 public class PreLoaderImpl implements PreLoader {
 	boolean isLoaded = false;
 	// The following apply to loading an index only. We now load the whole

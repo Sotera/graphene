@@ -8,7 +8,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-
+/**
+ * This is legacy.  We should not have to have a separate rest service for free text searches.
+ * 
+ * @author djue
+ *
+ */
 
 @Path("/FreeText")
 public interface LedgerFreeTextRS {

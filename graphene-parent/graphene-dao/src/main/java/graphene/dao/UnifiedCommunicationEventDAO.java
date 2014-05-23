@@ -1,5 +1,7 @@
 package graphene.dao;
 
+import graphene.model.query.BasicQuery;
+
 /**
  * Put anything here that you'd want this DAO to do differently than the generic
  * one (Such as methods returning view objects instead of model objects)
@@ -9,6 +11,6 @@ package graphene.dao;
  * @param <T>
  * @param <Q>
  */
-public interface UnifiedCommunicationEventDAO<T, Q> extends GenericDAO<T,Q>{
+public interface UnifiedCommunicationEventDAO<T,  Q extends BasicQuery> extends GenericDAO<T,Q>{
 
 }
