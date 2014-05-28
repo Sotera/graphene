@@ -32,4 +32,11 @@ public class G_SearchTuple<T> {
 	public void setValue(T value) {
 		this.value = value;
 	}
+
+	@Override
+	public String toString() {
+		return "G_SearchTuple ["
+				+ (searchType != null ? "searchType=" + searchType + ", " : "")
+				+ (value != null ? "value=" + value : "") + "]";
+	}
 }

@@ -100,4 +100,14 @@ public class EntitySearchTuple<T> extends G_SearchTuple<T> {
 		this.specificPropertyType = specificPropertyType;
 	}
 
+	@Override
+	public String toString() {
+		return "EntitySearchTuple ["
+				+ (family != null ? "family=" + family + ", " : "")
+				+ (specificPropertyType != null ? "specificPropertyType="
+						+ specificPropertyType + ", " : "")
+				+ (searchType != null ? "searchType=" + searchType + ", " : "")
+				+ (value != null ? "value=" + value : "") + "]";
+	}
+
 }

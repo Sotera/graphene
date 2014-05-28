@@ -1,5 +1,7 @@
 package graphene.model.memorydb;
 
+import java.util.Arrays;
+
 /**
  * Used to encapsulate a row from the database table in compressed format, where
  * custno etc are offsets into an array of strings for the respective entity.
@@ -105,6 +107,20 @@ public class MemRow {
 		int result = 1;
 		result = prime * result + offset;
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "MemRow [offset="
+				+ offset
+				+ ", "
+				+ (entries != null ? "entries=" + Arrays.toString(entries)
+						+ ", " : "")
+				+ "idType="
+				+ idType
+				+ ", "
+				+ (nextrows != null ? "nextrows=" + Arrays.toString(nextrows)
+						: "") + "]";
 	}
 
 	/*
