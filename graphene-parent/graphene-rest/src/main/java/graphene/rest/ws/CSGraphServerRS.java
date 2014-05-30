@@ -32,7 +32,7 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/json")
-	public abstract V_CSGraph getByIdentifier(@PathParam("type") String type,
+	public abstract V_CSGraph getPropertyGraph(@PathParam("type") String type,
 			@PathParam("value") String[] value,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,
@@ -41,37 +41,6 @@ public interface CSGraphServerRS {
 			@QueryParam("showLeafNodes") boolean leafNodes,
 			@QueryParam("showNameNodes") boolean showNameNodes,
 			@QueryParam("showIcons") boolean showIcons);
-
-	/**
-	 * REST service to return a transaction-type graph.
-	 * 
-	 * @param objectType
-	 * @param value
-	 * @param valueType
-	 * @param degree
-	 * @param maxNodes
-	 * @param maxEdgesPerNode
-	 * @param showIcons
-	 * @param minSecs
-	 * @param maxSecs
-	 * @param minimumWeight
-	 * @return
-	 */
-	// @Log
-	// @GET
-	// @Path("/directed/{objectType}/{value}")
-	// @Produces("application/json")
-	// public abstract V_CSGraph getDirected(
-	// @PathParam("objectType") String objectType, // Dataset name etc
-	// @PathParam("value") String value,
-	// @QueryParam("Type") String valueType,
-	// @QueryParam("degree") String degree,
-	// @QueryParam("maxNodes") String maxNodes,
-	// @QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-	// @QueryParam("showIcons") boolean showIcons,
-	// @QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
-	// @QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
-	// @QueryParam("minWeight") String minimumWeight);
 
 	/**
 	 * REST service to return a interaction-type graph.
@@ -92,7 +61,7 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/directed/{objectType}/{value}")
 	@Produces("application/json")
-	public abstract V_CSGraph getInteractions(
+	public abstract V_CSGraph getInteractionGraph(
 			@PathParam("objectType") String objectType, // Dataset name etc
 			@PathParam("value") String[] value,
 			@QueryParam("Type") String valueType,
@@ -108,6 +77,8 @@ public interface CSGraphServerRS {
 	 * 
 	 * Version that uses the new Vande graph generator supporting temporal
 	 * bucketing.
+	 * 
+	 * Not all the implementations use the temporal settings.
 	 * 
 	 * @param objectType
 	 *            Dataset name etc
@@ -133,8 +104,8 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/interactiongraph/{objectType}")
 	@Produces("application/json")
-	public V_CSGraph getInteractionGraph(
-			@PathParam("objectType") String objectType, 
+	public V_CSGraph getTemporalInteractionGraph(
+			@PathParam("objectType") String objectType,
 			@QueryParam("ids") String[] ids,
 			@QueryParam("Type") String valueType,
 			@QueryParam("maxHops") String maxHops,

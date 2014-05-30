@@ -40,7 +40,7 @@ public interface GraphmlServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/xml")
-	public abstract GraphmlContainer getByIdentifier(
+	public abstract GraphmlContainer getPropertyGraph(
 			@PathParam("type") String type, @PathParam("value") String value,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,

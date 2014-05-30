@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class MemIndex {
 
+	private static final boolean DEBUG = false;
 	private String[] values;
 	String name = "new";
 	private int[] heads; // the first row in the grid for each value
@@ -60,21 +61,22 @@ public class MemIndex {
 		if (result < 0) {
 			logger.debug("Index " + name + " could not find Id for " + value
 					+ " using binary search");
-			// Try direct search - just for debugging
-			for (String s : getValues()) {
-				if (s.equals(value)) {
-					logger.error("Bsearch for " + value
-							+ " failed but found by array search");
-					break;
-				}
-				if (s.equalsIgnoreCase(value)) {
-					logger.error("Bsearch for "
-							+ value
-							+ " failed but found by array search using ignore case");
-					break;
+			if (DEBUG) {
+				// Try direct search - just for debugging
+				for (String s : getValues()) {
+					if (s.equals(value)) {
+						logger.error("Bsearch for " + value
+								+ " failed but found by array search");
+						break;
+					}
+					if (s.equalsIgnoreCase(value)) {
+						logger.error("Bsearch for "
+								+ value
+								+ " failed but found by array search using ignore case");
+						break;
+					}
 				}
 			}
-
 		}
 		return result;
 		// return bSearch(values, value);

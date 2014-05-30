@@ -1,6 +1,8 @@
 package graphene.util;
 
 import graphene.util.fs.DiskCache;
+import graphene.util.fs.JavaDiskCache;
+import graphene.util.fs.KryoDiskCache;
 
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.slf4j.Logger;
@@ -12,7 +14,8 @@ public class UtilModule {
 		// Use service builder methods (example below) when the implementation
 		// is provided inline, or requires more initialization than simply
 		// invoking the constructor.
-		binder.bind(DiskCache.class);
+		//binder.bind(JavaDiskCache.class);
+		binder.bind(DiskCache.class,KryoDiskCache.class);
 
 	}
 

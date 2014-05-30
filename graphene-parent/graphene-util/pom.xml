@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-	<version>4.0.6-SNAPSHOT</version>
+		<version>4.0.6-SNAPSHOT</version>
 	</parent>
 	<groupId>graphene</groupId>
 	<artifactId>graphene-util</artifactId>
@@ -23,6 +23,11 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.esotericsoftware.kryo</groupId>
+			<artifactId>kryo</artifactId>
+			<version>2.24.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

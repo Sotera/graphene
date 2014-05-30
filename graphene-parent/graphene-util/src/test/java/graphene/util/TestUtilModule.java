@@ -1,7 +1,7 @@
 package graphene.util;
 
-import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.fs.DiskCache;
+import graphene.util.fs.KryoDiskCache;
 
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class TestUtilModule {
 	public static void bind(ServiceBinder binder) {
-		binder.bind(DiskCache.class);
+		binder.bind(DiskCache.class, KryoDiskCache.class);
 
 	}
 
@@ -32,7 +32,8 @@ public class TestUtilModule {
 	public PropertiesFileSymbolProvider buildFilesystemPropertiesFileSymbolProvider(
 			Logger logger) {
 		return new PropertiesFileSymbolProvider(logger,
-				"src/test/resources/some/path/to/a/file/test2.properties", false);
+				"src/test/resources/some/path/to/a/file/test2.properties",
+				false);
 	}
 
 	public static void contributeSymbolSource(
