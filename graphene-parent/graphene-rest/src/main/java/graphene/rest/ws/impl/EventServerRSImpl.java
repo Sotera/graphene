@@ -1,11 +1,11 @@
 package graphene.rest.ws.impl;
 
+import graphene.dao.EventServer;
 import graphene.model.query.EventQuery;
 import graphene.model.view.events.DirectedEventRow;
 import graphene.model.view.events.DirectedEvents;
 import graphene.model.view.events.EventStatistics;
-import graphene.rest.ws.TransferServerRS;
-import graphene.services.TransactionServer;
+import graphene.rest.ws.EventServerRS;
 import graphene.util.FastNumberUtils;
 import graphene.util.stats.TimeReporter;
 
@@ -26,7 +26,7 @@ import org.slf4j.Logger;
  * 
  */
 
-public class TransferServerRSImpl implements TransferServerRS {
+public class EventServerRSImpl implements EventServerRS {
 
 	@Inject
 	private Logger logger;
@@ -41,7 +41,8 @@ public class TransferServerRSImpl implements TransferServerRS {
 	@Persist
 	private EventStatistics prevStatistics;
 
-	private TransactionServer transactionServer;
+	@Inject
+	private EventServer eventServer;
 
 	@Override
 	public DirectedEvents getEvents(String[] account, int start, int limit,
@@ -66,7 +67,7 @@ public class TransferServerRSImpl implements TransferServerRS {
 		q.setComments(comments);
 		q.setSortAndDirection(sortColumn);
 
-		return transactionServer.getEvents(q);
+		return eventServer.getEvents(q);
 	}
 
 	public EventStatistics getPairMonthlyStatistics(

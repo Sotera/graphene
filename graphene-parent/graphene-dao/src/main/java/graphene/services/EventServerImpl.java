@@ -1,5 +1,6 @@
 package graphene.services;
 
+import graphene.dao.EventServer;
 import graphene.dao.TransactionDAO;
 import graphene.model.query.EventQuery;
 import graphene.model.view.events.DirectedEventRow;
@@ -36,7 +37,7 @@ import org.slf4j.Logger;
  * @author djue
  * 
  */
-public class TransactionServer {
+public class EventServerImpl implements EventServer {
 
 	@Inject
 	private Logger logger;
@@ -44,7 +45,7 @@ public class TransactionServer {
 	private TransactionDAO transferDAO;
 
 	@Inject
-	public TransactionServer(TransactionDAO dao) {
+	public EventServerImpl(TransactionDAO dao) {
 		this.transferDAO = dao;
 	}
 
@@ -69,7 +70,15 @@ public class TransactionServer {
 		return newRows;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * graphene.services.EventServer#getEvents(graphene.model.query.EventQuery)
+	 */
+	@Override
 	public DirectedEvents getEvents(EventQuery q) {
+		logger.debug("q=" + q.toString());
 		DirectedEvents transactions = new DirectedEvents();
 		List<DirectedEventRow> allRows = null;
 		try {
@@ -77,17 +86,24 @@ public class TransactionServer {
 				allRows = processIntersections(q);
 			} else if (q.isSingleId()
 					&& ValidationUtils.isValid(q.getComments())) {
+				logger.debug("Processing single account");
 				transactions = processSingleAccount(q);
 				// updateBalances(allRows);
 			}
 			// Note that multi account means searching across multiple accounts
 			// Showing the intersection of multiple accounts is
 			else {
+				logger.debug("Processing multiple accounts");
 				transactions = processMultiAccount(q);
 			}
+			if (transactions.getRows() != null) {
+				logger.debug("Returning " + transactions.getRows().size()
+						+ " rows");
+			}
 
-			logger.debug("Returning " + transactions.getRows().size() + " rows");
-			logger.debug("Out of total count " + allRows.size());
+			if (allRows != null) {
+				logger.debug("Out of total count " + allRows.size());
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

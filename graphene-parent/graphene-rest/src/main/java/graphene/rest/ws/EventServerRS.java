@@ -16,7 +16,7 @@ import org.apache.tapestry5.annotations.Log;
  *
  */
 @Path("/")
-public interface TransferServerRS {
+public interface EventServerRS {
 
 	/**
 	 * The main resource path for this rest endpoint.

@@ -14,8 +14,6 @@ import mil.darpa.vande.converters.graphml.GraphmlContainer;
 import mil.darpa.vande.converters.graphml.GraphmlGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
-import mil.darpa.vande.interactions.InteractionFinder;
-import mil.darpa.vande.interactions.InteractionGraphBuilder;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;

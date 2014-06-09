@@ -11,16 +11,7 @@ public class FederatedEventGraphImpl implements FederatedEventGraph {
 		this.singletons = singletons;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see graphene.dea.contribute.FederatedGraph#toString()
-	 */
+
 	@Override
 	public String toString() {
 		return "FederatedGraph ["

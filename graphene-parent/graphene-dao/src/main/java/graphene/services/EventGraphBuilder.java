@@ -5,7 +5,6 @@ import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntitySearchTuple;
 import graphene.model.query.EventQuery;
-import graphene.util.G_CallBack;
 
 import java.util.HashMap;
 import java.util.HashSet;
