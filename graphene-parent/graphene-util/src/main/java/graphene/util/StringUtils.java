@@ -268,7 +268,6 @@ public class StringUtils {
 	 * @see java.util.StringTokenizer
 	 * @see java.lang.String#trim()
 	 */
-	@SuppressWarnings({ "unchecked" })
 	public static String[] tokenizeToStringArray(String str, String delimiters,
 			boolean trimTokens, boolean ignoreEmptyTokens) {
 
@@ -302,7 +301,6 @@ public class StringUtils {
 	 * @return the String array (<code>null</code> if the passed-in Collection
 	 *         was <code>null</code>)
 	 */
-	@SuppressWarnings({ "unchecked" })
 	public static String[] toStringArray(Collection<String> collection) {
 		if (collection == null) {
 			return null;

@@ -12,7 +12,7 @@ public class SearchMatcher {
 	List<SearchCriterion> search;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param searchString
 	 *            the search string created by the user. Can contain multiple
@@ -22,14 +22,15 @@ public class SearchMatcher {
 	 *            * before a word means word ends with the string. <BR/>
 	 *            * after a word means the word starts with the string. <BR/>
 	 *            * before and after the word must contain the string
-	 * @param caseSensitive
+	 * @param isCaseSensitive
 	 *            boolean
 	 */
-	public SearchMatcher(String searchString, boolean caseSensitive) {
+	public SearchMatcher(String searchString, boolean isCaseSensitive) {
 		this.str = searchString;
-		this.caseSensitive = caseSensitive;
-		if (!caseSensitive)
+		this.caseSensitive = isCaseSensitive;
+		if (!isCaseSensitive) {
 			str = str.toLowerCase();
+		}
 		this.searchStringWithoutQuotes = str.replace("\"", "");
 
 		search = new ArrayList<SearchCriterion>();
@@ -41,8 +42,9 @@ public class SearchMatcher {
 
 			String s = m.group(1);
 			s = s.replace("\"", "");
-			if (!caseSensitive)
+			if (!isCaseSensitive) {
 				s = s.toLowerCase();
+			}
 			search.add(new SearchCriterion(s));
 		}
 
@@ -59,17 +61,20 @@ public class SearchMatcher {
 	public int calcScore(String target) {
 		int score = 0;
 
-		if (!this.caseSensitive)
+		if (!this.caseSensitive) {
 			target = target.toLowerCase();
-
+		}
 		// Start by giving priority to complete matches
 
-		if (target.equals(searchStringWithoutQuotes))
+		if (target.equals(searchStringWithoutQuotes)) {
 			return 90;
-		if (target.startsWith(searchStringWithoutQuotes))
+		}
+		if (target.startsWith(searchStringWithoutQuotes)) {
 			return 80;
-		if (target.contains(searchStringWithoutQuotes))
+		}
+		if (target.contains(searchStringWithoutQuotes)) {
 			return 70;
+		}
 
 		// No look at it on a word by word basis
 
@@ -77,27 +82,33 @@ public class SearchMatcher {
 		List<String> words = new ArrayList<String>();
 		while (m.find()) {
 			String s = m.group(1).replace("\"", "");
-			if (!caseSensitive)
+			if (!caseSensitive) {
 				s = s.toLowerCase();
+			}
 			words.add(s);
 		}
 		for (SearchCriterion sc : search) {
 			if (sc.str.contains(" ")) { // derived from a quoted string
-				if (target.contains(str))
+				if (target.contains(str)) {
 					++score;
+				}
 				continue;
 			}
 			int count = 0;
 			for (String s : words) {
-				if (sc.match(s))
+				if (sc.match(s)) {
 					++count;
+				}
 			}
-			if (sc.isMustHave() && count == 0)
+			if (sc.isMustHave() && count == 0) {
 				return -1;
-			if (sc.isMustNotHave() && count > 0)
+			}
+			if (sc.isMustNotHave() && count > 0) {
 				return -1;
-			if (count > 0)
+			}
+			if (count > 0) {
 				++score;
+			}
 		}
 
 		return score;

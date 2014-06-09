@@ -31,6 +31,13 @@ import com.mysema.query.types.EntityPath;
 public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 		DiskCacheDAO<T, Q> implements GenericDAO<T, Q> {
 
+	private boolean ready;
+
+	@Override
+	public void setReady(boolean b) {
+		this.ready = b;
+	}
+
 	public DiskCacheDAOJDBCImpl(DiskCache<T> diskCache) {
 		super(diskCache);
 
@@ -123,7 +130,6 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 
 	@Override
 	public boolean isReady() {
-		boolean ready = false;
 		if (cps != null && cps.isInitialized()) {
 			ready = true;
 		}
@@ -518,7 +524,7 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 					}
 					p = null;
 				}
-				
+
 				results = null;
 				if (numProcessed == 0) {
 					logger.warn("No results found in this window of " + offset

@@ -49,11 +49,13 @@ public class MemoryReporter {
 	}
 
 	public void reportBytesUsed() {
-		System.out.println("Used memory in bytes: " + getBytesUsed());
+		System.out.println("Used memory in bytes for " + task + ": "
+				+ getBytesUsed());
 	}
 
 	public void reportMegabytesUsed() {
-		System.out.println("Used memory in megabytes: " + getMegabytesUsed());
+		System.out.println("Used memory in megabytes for " + task + ": "
+				+ getMegabytesUsed());
 	}
 
 	/**
@@ -111,11 +113,12 @@ public class MemoryReporter {
 	 */
 	public void logBytesUsedPerItem(String item, long numItems) {
 		if (numItems > 0) {
-			log.debug("For " + numItems + ", Used "
+			log.debug("For " + task + ": " + numItems + ", Used "
 					+ (getBytesUsed() - startBytesUsed) / (double) numItems
 					+ " bytes/" + item);
 		} else {
-			log.debug("For " + numItems + ", Used "
+			// avoid divide by zero
+			log.debug("For " + task + ": " + numItems + ", Used "
 					+ (getBytesUsed() - startBytesUsed));
 		}
 	}

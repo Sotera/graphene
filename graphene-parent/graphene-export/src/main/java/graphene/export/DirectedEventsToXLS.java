@@ -26,7 +26,8 @@ public class DirectedEventsToXLS {
 	private static Logger logger = LoggerFactory
 			.getLogger(DirectedEventsToXLS.class);
 
-	public void toXLS(DirectedEvents lt, OutputStream out, boolean rowsWithinBounds) {
+	public void toXLS(DirectedEvents lt, OutputStream out,
+			boolean rowsWithinBounds) {
 		WritableWorkbook workbook;
 		try {
 			workbook = Workbook.createWorkbook(out);
@@ -35,7 +36,8 @@ public class DirectedEventsToXLS {
 			System.out.println(e1.getMessage());
 			return;
 		}
-		int sheetNum = 1;// start at 1, to make it easier for customer to read
+		// start at 1, to make it easier for customer to read
+		int sheetNum = 1;
 		WritableSheet sheet = buildSheet(workbook, sheetNum);
 
 		DateFormat customDateFormat = new DateFormat("yyyy MMM dd");
@@ -50,8 +52,9 @@ public class DirectedEventsToXLS {
 		jxl.write.Number debit;
 		jxl.write.Number credit;
 		jxl.write.DateTime dt;
-		int row = 2;// already built the sheet with headers on row 1, so start
-					// on row 2
+		// already built the sheet with headers on row 1, so start
+		// on row 2
+		int row = 2;
 		if (rowsWithinBounds) {
 			// Rows
 			for (DirectedEventRow r : lt.getRows()) {
@@ -78,20 +81,25 @@ public class DirectedEventsToXLS {
 				dt = new DateTime(0, row, testd.toDate(), dateFormat);
 				account = new Label(1, row, r.getSenderAccountasString());
 
-				deb = r.getDebitAsDouble();
+				//deb = r.getDebitAsDouble();
+				//TODO: Unit test this to make sure the Money format is parseable as a Double
+				deb = Double.valueOf(r.getCredit());
 				debit = new jxl.write.Number(2, row, deb, moneyFormat);
-				cred = r.getCreditAsDouble();
+				cred = Double.valueOf(r.getDebit());
+				//cred = r.getCreditAsDouble();
 				credit = new jxl.write.Number(3, row, cred, moneyFormat);
-				// TODO: Finish this convesion to pairs
+				// TODO: Finish this conversion to pairs
 				partics = new jxl.write.Label(4, row, r.getComments());
 
 				try {
 					sheet.addCell(dt);
 					sheet.addCell(account);
-					if (deb != 0)
+					if (deb != 0) {
 						sheet.addCell(debit);
-					if (cred != 0)
+					}
+					if (cred != 0) {
 						sheet.addCell(credit);
+					}
 					sheet.addCell(partics);
 				} catch (RowsExceededException e) {
 					logger.error(

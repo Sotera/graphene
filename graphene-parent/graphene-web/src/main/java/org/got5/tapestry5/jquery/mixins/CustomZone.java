@@ -18,9 +18,9 @@ import org.got5.tapestry5.jquery.services.WidgetParams;
 import org.got5.tapestry5.jquery.utils.JQueryUtils;
 
 /**
- * This mixin allows you to override the default configuration parameters of the Effect method,
- * used by the Tapestry Zone component.
- *
+ * This mixin allows you to override the default configuration parameters of the
+ * Effect method, used by the Tapestry Zone component.
+ * 
  * @since 2.6.0
  * @see <a href="http://jqueryui.com/docs/effect/</a>
  * 
@@ -38,17 +38,17 @@ public class CustomZone {
 	/**
 	 * The jQuery selector for calling the tapestryZone widget
 	 */
-	@Parameter(defaultPrefix=BindingConstants.LITERAL)
+	@Parameter(defaultPrefix = BindingConstants.LITERAL)
 	private String selector;
 
 	@Property
 	private JSONObject defaultParamsObject;
 
 	@InjectContainer
-    private ClientElement element;
+	private ClientElement element;
 
 	@Environmental
-    private JavaScriptSupport javaScriptSupport;
+	private JavaScriptSupport javaScriptSupport;
 
 	@Inject
 	private WidgetParams widgetParams;
@@ -64,34 +64,40 @@ public class CustomZone {
 	@Symbol(SymbolConstants.COMPACT_JSON)
 	private boolean compact;
 
-	 /**
-     * Mixin afterRender phrase occurs after the component itself.
-     * We will :
-     * 		- set the jQuery Selector
-     *      - the JSON parameter
-     *      - call the widget in order to change the parameter
-     */
-	void afterRender()
-    {
-    	/*
-    	 * If the Selector parameter is not bound, we use the clientId of element using the mixin
-    	 */
-    	String theSelector = componentResources.isBound("selector") ? selector : "#"+element.getClientId();
+	/**
+	 * Mixin afterRender phrase occurs after the component itself. We will : -
+	 * set the jQuery Selector - the JSON parameter - call the widget in order
+	 * to change the parameter
+	 */
+	void afterRender() {
+		/*
+		 * If the Selector parameter is not bound, we use the clientId of
+		 * element using the mixin
+		 */
+		String theSelector = componentResources.isBound("selector") ? selector
+				: "#" + element.getClientId();
 
-    	/*
-    	 * We will call the WidgetParams in order to get the default JSON object for the CustomZone mixin
-    	 */
-		defaultParamsObject = widgetParams.paramsForWidget(this.getClass().getSimpleName().toLowerCase());
+		/*
+		 * We will call the WidgetParams in order to get the default JSON object
+		 * for the CustomZone mixin
+		 */
+		defaultParamsObject = widgetParams.paramsForWidget(this.getClass()
+				.getSimpleName().toLowerCase());
 
 		/*
 		 * We will merge the default JSON Object with the params parameter
 		 */
-		if(defaultParamsObject!=null) JQueryUtils.merge(defaultParamsObject,params);
-		else defaultParamsObject = params;
+		if (defaultParamsObject != null) {
+			JQueryUtils.merge(defaultParamsObject, params);
+		} else {
+			defaultParamsObject = params;
+		}
 
 		/*
 		 * We call the tapestryZone widget, in order to override the options
 		 */
-        javaScriptSupport.addScript(InitializationPriority.LATE,"%s('%s').tapestryZone('option',{opt: %s});", jQueryAlias, theSelector, defaultParamsObject.toString(compact));
-    }
+		javaScriptSupport.addScript(InitializationPriority.LATE,
+				"%s('%s').tapestryZone('option',{opt: %s});", jQueryAlias,
+				theSelector, defaultParamsObject.toString(compact));
+	}
 }

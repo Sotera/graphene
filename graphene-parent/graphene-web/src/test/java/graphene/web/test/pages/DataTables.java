@@ -48,8 +48,9 @@ public class DataTables {
 	private Celebrity current;
 
 	public GridDataSource getCelebritySource() {
-		if (celebritySource == null)
+		if (celebritySource == null) {
 			celebritySource = new CelebritySource(dataSource);
+		}
 		return celebritySource;
 	}
 

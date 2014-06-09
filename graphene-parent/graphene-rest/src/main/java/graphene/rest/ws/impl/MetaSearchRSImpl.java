@@ -1,4 +1,4 @@
-package graphene.rest.ws;
+package graphene.rest.ws.impl;
 
 import graphene.model.idl.G_AppInfo;
 import graphene.model.idl.G_CanonicalPropertyType;
@@ -12,6 +12,7 @@ import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
+import graphene.rest.ws.MetaSearchRS;
 
 import java.util.Arrays;
 import java.util.List;

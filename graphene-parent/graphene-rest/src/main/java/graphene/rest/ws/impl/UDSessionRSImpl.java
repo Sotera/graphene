@@ -1,5 +1,6 @@
-package graphene.rest.ws;
+package graphene.rest.ws.impl;
 
+import graphene.rest.ws.UDSessionRS;
 import graphene.util.FastNumberUtils;
 
 import java.io.ByteArrayOutputStream;

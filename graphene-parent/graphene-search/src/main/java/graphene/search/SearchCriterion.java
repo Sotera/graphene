@@ -8,7 +8,6 @@ public class SearchCriterion {
 	private boolean startsWith = false;
 	String str;
 
-
 	public SearchCriterion(String s) {
 		setStr(s);
 	}
@@ -92,7 +91,7 @@ public class SearchCriterion {
 			contains = true;
 			startsWith = endsWith = false;
 		}
-		//if not specified, the default should be contains.
+		// if not specified, the default should be contains.
 		if (!(mustHave || mustNotHave || endsWith || startsWith)) {
 			contains = true;
 			mustHave = true;
@@ -104,16 +103,21 @@ public class SearchCriterion {
 
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		if (mustHave)
+		if (mustHave) {
 			b.append(" Must Have ");
-		if (mustNotHave)
+		}
+		if (mustNotHave) {
 			b.append(" Must Not Have ");
-		if (startsWith)
+		}
+		if (startsWith) {
 			b.append(" Starts With ");
-		if (endsWith)
+		}
+		if (endsWith) {
 			b.append(" Ends With ");
-		if (contains)
+		}
+		if (contains) {
 			b.append(" Contains ");
+		}
 		b.append("String: " + str);
 
 		return b.toString();

@@ -1,6 +1,8 @@
 package graphene.dao;
 
 import graphene.model.idl.G_UserDataAccess;
+import graphene.services.FederatedEventGraphImpl;
+import graphene.services.FederatedPropertyGraphImpl;
 import graphene.services.UserServiceImpl;
 
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -18,5 +20,10 @@ public class DAOModule {
 
 	public static void bind(ServiceBinder binder) {
 		binder.bind(G_UserDataAccess.class, UserServiceImpl.class).eagerLoad();
+
+		binder.bind(FederatedPropertyGraph.class,
+				FederatedPropertyGraphImpl.class);
+		binder.bind(FederatedEventGraph.class, FederatedEventGraphImpl.class);
+
 	}
 }

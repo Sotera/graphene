@@ -149,6 +149,12 @@ public class ValidationUtils {
 		boolean isvalid = true;
 		if (t == null) {
 			isvalid = false;
+		} else if (String.class.isAssignableFrom(t.getClass())) {
+			isvalid = isValid((String) t);
+		} else if (Number.class.isAssignableFrom(t.getClass())) {
+			isvalid = isValid((Number) t);
+		} else if (Boolean.class.isAssignableFrom(t.getClass())) {
+			isvalid = isValid((Boolean) t);
 		}
 		return isvalid;
 	}
@@ -191,9 +197,14 @@ public class ValidationUtils {
 	 */
 	public static boolean isValid(Object... objects) {
 		boolean isvalid = true;
-		for (Object o : objects) {
-			if (!isValid(o)) {
-				return false;
+		if (objects == null) {
+			isvalid = false;
+		} else {
+			for (Object o : objects) {
+				if (!isValid(o)) {
+					isvalid = false;
+					break;
+				}
 			}
 		}
 		return isvalid;

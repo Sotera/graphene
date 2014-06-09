@@ -18,8 +18,9 @@ public class ScoredResultsBuilder {
 
 		for (String target : source) {
 			score = sm.calcScore(target);
-			if (score > 0)
+			if (score > 0) {
 				matches.add(new SearchResult(target, score));
+			}
 		}
 
 		// sort the matches by score (uses a custom comparator internally)
@@ -28,9 +29,9 @@ public class ScoredResultsBuilder {
 		// this is perhaps inefficient, and we may want to make use of the
 		// scores later.
 		// TODO: create a version that returns scored results list.
-		for (SearchResult r : matches)
+		for (SearchResult r : matches) {
 			scoredResults.add(r.getStr());
-
+		}
 		return scoredResults;
 	}
 

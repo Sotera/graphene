@@ -38,7 +38,7 @@ public interface TransferServerRS {
 	@GET
 	@Path("/getEvents")
 	public abstract DirectedEvents getEvents(
-			@QueryParam("accountNumber") @DefaultValue(value = "") String account,
+			@QueryParam("accountNumber") @DefaultValue(value = "") String[] account,
 			@QueryParam("start") @DefaultValue(value = "0") int start,
 			@QueryParam("limit") @DefaultValue(value = "1000") int limit,
 			@QueryParam("minAmount") @DefaultValue(value = "0") String minAmount,

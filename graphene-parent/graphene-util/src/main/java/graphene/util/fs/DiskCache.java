@@ -2,9 +2,6 @@ package graphene.util.fs;
 
 import graphene.util.G_CallBack;
 
-import java.io.ObjectInputStream;
-import java.util.Stack;
-
 public interface DiskCache<T> extends G_CallBack<T> {
 
 	public abstract void closeStreams();

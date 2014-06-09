@@ -1,7 +1,5 @@
 package graphene.ingest;
 
-import graphene.util.ConnectionPoolModule;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -18,7 +16,7 @@ public class ExampleJDBCInjected {
 	public static void setup() {
 
 		RegistryBuilder builder = new RegistryBuilder();
-		builder.add(ConnectionPoolModule.class);
+		
 		registry = builder.build();
 		registry.performRegistryStartup();
 		cp = registry.getService(BoneCP.class);

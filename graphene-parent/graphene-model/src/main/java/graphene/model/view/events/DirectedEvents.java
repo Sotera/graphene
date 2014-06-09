@@ -16,18 +16,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * XXX: Make fields private, use getters and setters
  * 
  * XXX: Replace with IDL generated classes --djue
- *
- * @author  djue
+ * 
+ * @author djue
  * 
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class DirectedEvents {
 
-	public boolean multiUnit = false;
-	public long resultCount;
+	private boolean multiUnit = false;
+	private long resultCount;
 
-	public List<DirectedEventRow> rows = new Vector<DirectedEventRow>(3);
+	private List<DirectedEventRow> rows = new Vector<DirectedEventRow>(3);
 
 	public DirectedEvents() {
 		// needed for JAXB

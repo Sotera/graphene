@@ -4,7 +4,6 @@ import graphene.util.fs.FileUtils;
 import graphene.util.jvm.JVMHelper;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
@@ -171,7 +170,7 @@ public class DBConnectionPoolService {
 					logger.warn("Could not create connection pool for " + url);
 				}
 				connection = null;
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				initialized = false;
 				throw e;

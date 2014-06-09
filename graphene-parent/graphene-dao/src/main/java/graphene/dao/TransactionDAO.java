@@ -1,8 +1,9 @@
 package graphene.dao;
 
+import java.util.List;
+
 import graphene.model.query.BasicQuery;
-import graphene.model.query.EventQuery;
-import graphene.util.G_CallBack;
+import graphene.model.view.events.DirectedEventRow;
 
 /**
  * This is for ONE OR TWO sided transactions.
@@ -12,12 +13,11 @@ import graphene.util.G_CallBack;
  * @param <T>
  * @param <Q>
  */
-public interface TransactionDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
+public interface TransactionDAO<T, Q extends BasicQuery> extends
+		GenericDAO<T, Q> {
 
 	long countEdges(String id) throws Exception;
 
-	// FIXME: we already have a version of this in GenericDAO, why do we need
-	// this? --djue
-//	boolean performThrottlingCallback(long offset, long maxResults,
-//			G_CallBack<T> cb, EventQuery q);
+	List<DirectedEventRow> getEvents(Q q);
+
 }

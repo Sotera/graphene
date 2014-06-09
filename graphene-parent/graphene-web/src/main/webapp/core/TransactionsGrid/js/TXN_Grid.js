@@ -181,13 +181,6 @@ Ext.define("DARPA.TransactionGrid",  {
 		{header: 'Loc Debit',   width:100, dataIndex: 'localDebit', align:'right', hidden:true},  // 7
 		{header: 'Loc Credit',  width:100, dataIndex: 'localCredit',align:'right', hidden:true},  // 8
 		{header: 'Loc Balance', width:100, dataIndex: 'localBalance',align:'right', hidden:true}, // 9		
-		
-/*
-		{header: 'USD Debit',   width:100, dataIndex: 'usdDebit',    align:'right', hidden:true},  // 7
-		{header: 'USD Credit',  width:100, dataIndex: 'usdCredit',   align:'right', hidden:true},  // 8
-		{header: 'USD Balance', width:100, dataIndex: 'usdBalance',  align:'right', hidden:true},  // 9		
-*/		
-
 		{header: 'Transaction', width:80,  dataIndex: 'id',         align:'left',  hidden:true} // will use for match search
 	],
         loadMask: true,

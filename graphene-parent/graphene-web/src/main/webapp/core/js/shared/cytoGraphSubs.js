@@ -604,7 +604,7 @@ Ext.define("DARPA.GraphVis",
                                         'content': 'data(name)',
                                         'text-valign': 'bottom',
                                         'color': 'black',
-                                        'background-color': 'data(color)',
+                                        'background-color': 'data(color)', //some CSS color
                                         'font-size': 10,
                                         'text-outline-width': 1,
                                         'text-outline-color': 'white',

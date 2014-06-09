@@ -1,5 +1,7 @@
-package graphene.rest.ws;
+package graphene.rest.ws.impl;
 
+import graphene.rest.ws.CSGraphServerRS;
+import graphene.services.EventGraphBuilder;
 import graphene.services.PropertyGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
@@ -7,26 +9,19 @@ import graphene.util.StringUtils;
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
-import mil.darpa.vande.interactions.InteractionFinder;
-import mil.darpa.vande.interactions.InteractionGraphBuilder;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
-import mil.darpa.vande.property.PropertyFinder;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.slf4j.Logger;
 
 public class CSGraphServerRSImpl implements CSGraphServerRS {
-	@Inject
-	private PropertyGraphBuilder pbgu;
-	@Inject
-	private PropertyGraphBuilder entityGraphBuilder;
 
-	@InjectService("Interaction")
-	private InteractionFinder interactionFinder;
+	@InjectService("Property")
+	private PropertyGraphBuilder propertyGraphBuilder;
 
-	@Inject
-	private InteractionGraphBuilder interactionGraphBuilder;
+	@InjectService("Event")
+	private EventGraphBuilder eventGraphBuilder;
 
 	@Inject
 	private Logger logger;
@@ -63,8 +58,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			q.setMaxNodes(maxnodes);
 			q.setMaxEdgesPerNode(maxedges);
 			q.setMaxHops(maxdegree);
-			// g = entityGraphBuilder.makeGraphResponse(q, propertyFinder);
-			g = pbgu.makeGraphResponse(q);
+			g = propertyGraphBuilder.makeGraphResponse(q);
 			m = new V_CSGraph(g, true);
 		} catch (Exception e) {
 			logger.error(ExceptionUtil.getRootCauseMessage(e));
@@ -120,14 +114,19 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 		logger.debug(gq.toString());
 
-		interactionGraphBuilder.setOriginalQuery(gq);
-		V_GenericGraph g = interactionGraphBuilder.makeGraphResponse(gq,
-				interactionFinder);
+		// egb.setOriginalQuery(gq);
 
-		logger.debug("Made graph with " + g.getNodes().size() + " Nodes and "
-				+ g.getEdges().size() + " Edges");
+		V_CSGraph m = null;
+		try {
+			V_GenericGraph g = eventGraphBuilder.makeGraphResponse(gq);
+			m = new V_CSGraph(g, true);
+			logger.debug("Made graph with " + g.getNodes().size()
+					+ " Nodes and " + g.getEdges().size() + " Edges");
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
 
-		V_CSGraph m = new V_CSGraph(g, true);
 		return m;
 
 	}
@@ -157,7 +156,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
 		long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);
 
-		V_GraphQuery q = new V_GraphQuery();
+		TemporalGraphQuery q = new TemporalGraphQuery();
 		q.setStartTime(startDate);
 		q.setEndTime(endDate);
 		q.setType(valueType); // new, --djue
@@ -168,8 +167,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		q.addSearchIds(value);
 		V_CSGraph m = null;
 		try {
-			V_GenericGraph g = interactionGraphBuilder.makeGraphResponse(q,
-					interactionFinder);
+			V_GenericGraph g = eventGraphBuilder.makeGraphResponse(q);
 			m = new V_CSGraph(g, true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());

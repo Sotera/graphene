@@ -1,5 +1,7 @@
-package graphene.rest.ws;
+package graphene.rest.ws.impl;
 
+import graphene.rest.ws.GraphmlServerRS;
+import graphene.services.EventGraphBuilder;
 import graphene.services.PropertyGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
@@ -14,6 +16,7 @@ import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.InteractionFinder;
 import mil.darpa.vande.interactions.InteractionGraphBuilder;
+import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
@@ -29,13 +32,10 @@ import org.slf4j.Logger;
 public class GraphmlServerRSImpl implements GraphmlServerRS {
 
 	@InjectService("Property")
-	private PropertyGraphBuilder pgb;
+	private PropertyGraphBuilder propertyGraphBuilder;
 
-	@InjectService("Interaction")
-	private InteractionFinder interactionFinder;
-
-	@Inject
-	private InteractionGraphBuilder interactionGraphBuilder;
+	@InjectService("Event")
+	private EventGraphBuilder eventGraphBuilder;
 
 	@Inject
 	private Logger logger;
@@ -80,7 +80,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 			q.setMaxEdgesPerNode(maxedges);
 			q.setMaxHops(maxdegree);
 			// g = entityGraphBuilder.makeGraphResponse(q, propertyFinder);
-			g = pgb.makeGraphResponse(q);
+			g = propertyGraphBuilder.makeGraphResponse(q);
 			m = new GraphmlGraph(g, true);
 			c = new GraphmlContainer(m);
 		} catch (Exception e) {
@@ -127,7 +127,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 		} else
 			values = new String[] { value };
 
-		V_GraphQuery q = new V_GraphQuery();
+		TemporalGraphQuery q = new TemporalGraphQuery();
 
 		q.addSearchIds(values);
 
@@ -142,7 +142,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 		V_GenericGraph g = null;
 		GraphmlGraph m = null;
 		try {
-			g = interactionGraphBuilder.makeGraphResponse(q, interactionFinder);
+			g = eventGraphBuilder.makeGraphResponse(q);
 			m = new GraphmlGraph(g, true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -153,11 +153,4 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 		return c;
 
 	}
-	//
-	// private String fixup(String id) {
-	// id = id.replace("___", "/");
-	// id = id.replace("ZZZZZ", "#");
-	// return id;
-	// }
-
 }

@@ -1,7 +1,6 @@
 package graphene.util;
 
 import graphene.util.fs.DiskCache;
-import graphene.util.fs.JavaDiskCache;
 import graphene.util.fs.KryoDiskCache;
 
 import org.apache.tapestry5.ioc.ServiceBinder;

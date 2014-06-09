@@ -1,10 +1,11 @@
 package graphene.services;
 
-import graphene.dao.EntityRefDAO;
+import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_SearchType;
-import graphene.model.query.EntityRefQuery;
 import graphene.model.query.EntitySearchTuple;
+import graphene.model.query.EventQuery;
+import graphene.util.G_CallBack;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,37 +16,34 @@ import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
-import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
+import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
 /**
- * This abstract class contains the common parts of a property graph builder.
- * The concrete versions will supply the correct DAO(s) and work with the
- * customer domain objects to create nodes and edges.
+ * TODO: The parts between the eventgraphbuilder and propertygraphbuilder are
+ * almost the same--the same methods are used on the DAO as well. Consider
+ * combining the two.
+ * 
+ * This abstract class contains the common parts of an event graph builder. The
+ * concrete versions will supply the correct DAO(s) and work with the customer
+ * domain objects to create nodes and edges.
  * 
  * @author djue
  * 
  * @param <T>
  */
-public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
-	
+public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 	@Inject
 	private Logger logger;
-
 	/**
 	 * This object will be supplied by the concrete implementation
 	 */
-	protected EntityRefDAO dao;
+	protected TransactionDAO dao;
 
-	/**
-	 * Note that the concrete implmentation of this class will usually provide
-	 * the DAOs needed through its constructor (which may take advantage of
-	 * dependency injection)
-	 */
-	public PropertyGraphBuilder() {
+	public EventGraphBuilder() {
 		super();
 	}
 
@@ -61,7 +59,7 @@ public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
 	 * @return
 	 * @throws Exception
 	 */
-	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery)
+	public V_GenericGraph makeGraphResponse(final TemporalGraphQuery graphQuery)
 			throws Exception {
 		if (graphQuery.getMaxHops() <= 0) {
 			return new V_GenericGraph();
@@ -79,7 +77,7 @@ public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
 		// V_EdgeList savEdgeList = edgeList.clone();
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>(
 				edgeMap);
-		EntityRefQuery eq = new EntityRefQuery();
+		EventQuery eq = new EventQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		for (String id : graphQuery.getSearchIds()) {
@@ -108,7 +106,7 @@ public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
 
 			}
 
-			eq = new EntityRefQuery();
+			eq = new EventQuery();
 			// Iterate over each node found by the previous query and scan them.
 			for (V_GenericNode node : newNodeList) {
 

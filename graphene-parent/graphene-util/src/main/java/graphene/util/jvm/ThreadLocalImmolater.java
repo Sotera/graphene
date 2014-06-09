@@ -54,8 +54,10 @@ public class ThreadLocalImmolater {
 		final Object table = tableField.get(threadLocalMap);
 		for (int i = 0, length = Array.getLength(table); i < length; ++i) {
 			final Object entry = Array.get(table, i);
-			if (entry != null) {
-				final Object threadLocal = ((WeakReference) entry).get();
+			if (entry != null
+					&& WeakReference.class.isAssignableFrom(entry.getClass())) {
+				WeakReference<Object> wr = (WeakReference<Object>) entry;
+				final Object threadLocal = wr.get();
 				if (threadLocal != null) {
 					log(i, threadLocal);
 					Array.set(table, i, null);

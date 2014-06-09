@@ -11,7 +11,8 @@ import java.util.List;
  * intersection is selected, we will only return results where the ID is on
  * all/both sides of an event.
  * 
- * TODO: Reconcile the differences and needs between this class and V_GraphQuery of Vande.
+ * TODO: Reconcile the differences and needs between this class and V_GraphQuery
+ * of Vande.
  * 
  * @author djue
  * 
@@ -29,9 +30,27 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	private boolean findRelatedIds = false;
 
 	/*
-	 * A list of zero or more ids to filter on. The ids provided might be related
+	 * A list of zero or more ids to filter on. The ids provided might be
+	 * related
 	 */
 	private List<String> idList = new ArrayList<String>();
+	private List<EntitySearchTuple<String>> attributeList = new ArrayList<EntitySearchTuple<String>>(
+			1);
+
+	/**
+	 * @return the attributeList
+	 */
+	public List<EntitySearchTuple<String>> getAttributeList() {
+		return attributeList;
+	}
+
+	/**
+	 * @param attributeList
+	 *            the attributeList to set
+	 */
+	public void setAttributeList(List<EntitySearchTuple<String>> attributeList) {
+		this.attributeList = attributeList;
+	}
 
 	private boolean intersectionOnly = false;
 	/*
@@ -60,8 +79,8 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	}
 
 	/**
-	 * Add a single id to the list of ids to search. This is
-	 * the proper way of adding ids.
+	 * Add a single id to the list of ids to search. This is the proper way of
+	 * adding ids.
 	 * 
 	 * @param id
 	 */
@@ -72,8 +91,8 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	}
 
 	/**
-	 * This is the proper, safe way of adding id numbers. Use this instead
-	 * of setting the collection, as we filter out bad values.
+	 * This is the proper, safe way of adding id numbers. Use this instead of
+	 * setting the collection, as we filter out bad values.
 	 * 
 	 * @param ids
 	 */

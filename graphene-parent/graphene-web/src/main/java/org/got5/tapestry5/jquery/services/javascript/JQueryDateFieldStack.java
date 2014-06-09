@@ -39,143 +39,144 @@ import org.got5.tapestry5.jquery.JQuerySymbolConstants;
 
 /**
  * Replacement for the core stack {@link DateFieldStack}.
- *
+ * 
  * @author criedel, GOT5
  */
-public class JQueryDateFieldStack implements JavaScriptStack
-{
-    private final ThreadLocale threadLocale;
+public class JQueryDateFieldStack implements JavaScriptStack {
+	private final ThreadLocale threadLocale;
 
-    private final AssetSource assetSource;
+	private final AssetSource assetSource;
 
-    private final boolean compactJSON;
+	private final boolean compactJSON;
 
-    private final boolean minified;
+	private final boolean minified;
 
-    private final boolean includeDatePickerI18N;
-    
-    private final TypeCoercer typeCoercer;
+	private final boolean includeDatePickerI18N;
 
-    private final SymbolSource symbolSource;
+	private final TypeCoercer typeCoercer;
 
-    public JQueryDateFieldStack(final ThreadLocale threadLocale,
+	private final SymbolSource symbolSource;
 
-    @Symbol(SymbolConstants.COMPACT_JSON)
-    final boolean compactJSON,
+	public JQueryDateFieldStack(
+			final ThreadLocale threadLocale,
 
-    @Symbol(JQuerySymbolConstants.USE_MINIFIED_JS)
-    final boolean minified,
+			@Symbol(SymbolConstants.COMPACT_JSON) final boolean compactJSON,
 
-    @Symbol(JQuerySymbolConstants.INCLUDE_DATEPICKER_I18N)
-    final boolean includeDatePickerI18N, 
-    
-    final AssetSource assetSource,
+			@Symbol(JQuerySymbolConstants.USE_MINIFIED_JS) final boolean minified,
 
-    final TypeCoercer typeCoercer,
-    final SymbolSource symbolSource)
-    {
-        this.threadLocale = threadLocale;
-        this.assetSource = assetSource;
-        this.compactJSON = compactJSON;
-        this.typeCoercer = typeCoercer;
-        this.symbolSource = symbolSource;
-        this.includeDatePickerI18N = includeDatePickerI18N;
-        this.minified = minified;
-    }
+			@Symbol(JQuerySymbolConstants.INCLUDE_DATEPICKER_I18N) final boolean includeDatePickerI18N,
 
-    public String getInitialization()
-    {
-        Locale locale = threadLocale.getLocale();
+			final AssetSource assetSource,
 
-        JSONObject spec = new JSONObject();
+			final TypeCoercer typeCoercer, final SymbolSource symbolSource) {
+		this.threadLocale = threadLocale;
+		this.assetSource = assetSource;
+		this.compactJSON = compactJSON;
+		this.typeCoercer = typeCoercer;
+		this.symbolSource = symbolSource;
+		this.includeDatePickerI18N = includeDatePickerI18N;
+		this.minified = minified;
+	}
 
-        DateFormatSymbols symbols = new DateFormatSymbols(locale);
+	public String getInitialization() {
+		Locale locale = threadLocale.getLocale();
 
-        spec.put("months", new JSONArray((Object[]) symbols.getMonths()));
+		JSONObject spec = new JSONObject();
 
-        StringBuilder days = new StringBuilder();
+		DateFormatSymbols symbols = new DateFormatSymbols(locale);
 
-        String[] weekdays = symbols.getWeekdays();
-        Calendar c = Calendar.getInstance(locale);
+		spec.put("months", new JSONArray((Object[]) symbols.getMonths()));
 
-        int firstDay = c.getFirstDayOfWeek();
+		StringBuilder days = new StringBuilder();
 
-        // DatePicker needs them in order from monday to sunday.
+		String[] weekdays = symbols.getWeekdays();
+		Calendar c = Calendar.getInstance(locale);
 
-        for (int i = Calendar.MONDAY; i <= Calendar.SATURDAY; i++)
-        {
-            days.append(weekdays[i].substring(0, 1));
-        }
+		int firstDay = c.getFirstDayOfWeek();
 
-        days.append(weekdays[Calendar.SUNDAY].substring(0, 1));
+		// DatePicker needs them in order from monday to sunday.
 
-        spec.put("days", days.toString().toLowerCase(locale));
+		for (int i = Calendar.MONDAY; i <= Calendar.SATURDAY; i++) {
+			days.append(weekdays[i].substring(0, 1));
+		}
 
-        // jQuery DatePicker widget expects 0 to be sunday. Calendar defines SUNDAY as 1, MONDAY as 2, etc.
-        spec.put("firstDay", firstDay-1);
+		days.append(weekdays[Calendar.SUNDAY].substring(0, 1));
 
-        // set language
-        spec.put("language", locale.getLanguage());
+		spec.put("days", days.toString().toLowerCase(locale));
 
-        // TODO: Skip localization if locale is English?
+		// jQuery DatePicker widget expects 0 to be sunday. Calendar defines
+		// SUNDAY as 1, MONDAY as 2, etc.
+		spec.put("firstDay", firstDay - 1);
 
-        return String.format("Tapestry.DateField.initLocalization(%s);", spec.toString(compactJSON));
-    }
+		// set language
+		spec.put("language", locale.getLanguage());
 
-    public List<Asset> getJavaScriptLibraries()
-    {
-        String jQueryUIPath = symbolSource.valueForSymbol(JQuerySymbolConstants.JQUERY_UI_PATH);
-        if ( ! jQueryUIPath.endsWith("/")) {
+		// TODO: Skip localization if locale is English?
 
-            jQueryUIPath += "/";
-        }
+		return String.format("Tapestry.DateField.initLocalization(%s);",
+				spec.toString(compactJSON));
+	}
 
-        final List<Asset> javaScriptStack = new ArrayList<Asset>();
+	public List<Asset> getJavaScriptLibraries() {
+		String jQueryUIPath = symbolSource
+				.valueForSymbol(JQuerySymbolConstants.JQUERY_UI_PATH);
+		if (!jQueryUIPath.endsWith("/")) {
 
-        javaScriptStack.add(assetSource.getClasspathAsset(String.format("%s%s/jquery.ui.datepicker%s.js", jQueryUIPath, 
-        		(minified ? "/minified" : ""),
-        		(minified ? ".min" : ""))));
+			jQueryUIPath += "/";
+		}
 
-        final Asset datePickerI18nAsset = getLocaleAsset(threadLocale.getLocale(), jQueryUIPath);
+		final List<Asset> javaScriptStack = new ArrayList<Asset>();
 
-    	if (includeDatePickerI18N && datePickerI18nAsset != null)
-     	{
-     	    javaScriptStack.add(datePickerI18nAsset);
-     	}
-        
-     	javaScriptStack.add(assetSource.getExpandedAsset("${assets.path}/components/datefield/datefield.js"));
+		javaScriptStack.add(assetSource.getClasspathAsset(String.format(
+				"%s%s/jquery.ui.datepicker%s.js", jQueryUIPath,
+				(minified ? "/minified" : ""), (minified ? ".min" : ""))));
 
-    	return javaScriptStack;
-    }
+		final Asset datePickerI18nAsset = getLocaleAsset(
+				threadLocale.getLocale(), jQueryUIPath);
 
-    private Asset getLocaleAsset(Locale locale, String jQueryUIPath) {
+		if (includeDatePickerI18N && datePickerI18nAsset != null) {
+			javaScriptStack.add(datePickerI18nAsset);
+		}
 
-        final String prefix = String.format("%s/i18n/jquery.ui.datepicker-%s", jQueryUIPath, locale.getLanguage());
-        final Resource withCountryExtension = typeCoercer.coerce(String.format("%s-%s.js", prefix, locale.getCountry()), Resource.class);
+		javaScriptStack
+				.add(assetSource
+						.getExpandedAsset("${assets.path}/components/datefield/datefield.js"));
 
-        if (withCountryExtension.exists()) {
+		return javaScriptStack;
+	}
 
-            return assetSource.getClasspathAsset(withCountryExtension.getPath());
-        }
+	private Asset getLocaleAsset(Locale locale, String jQueryUIPath) {
 
-        final Resource withLanguageExtension = typeCoercer.coerce(String.format("%s.js", prefix), Resource.class);
+		final String prefix = String.format("%s/i18n/jquery.ui.datepicker-%s",
+				jQueryUIPath, locale.getLanguage());
+		final Resource withCountryExtension = typeCoercer.coerce(
+				String.format("%s-%s.js", prefix, locale.getCountry()),
+				Resource.class);
 
-        if (withLanguageExtension.exists()) {
+		if (withCountryExtension.exists()) {
 
-            return assetSource.getClasspathAsset(withLanguageExtension.getPath());
-        }
+			return assetSource
+					.getClasspathAsset(withCountryExtension.getPath());
+		}
 
-        return null;
-    }
+		final Resource withLanguageExtension = typeCoercer.coerce(
+				String.format("%s.js", prefix), Resource.class);
 
-    public List<StylesheetLink> getStylesheets()
-    {
-        return Collections.emptyList();
-    }
+		if (withLanguageExtension.exists()) {
 
-    public List<String> getStacks()
-    {
-        return Collections.emptyList();
-    }
+			return assetSource.getClasspathAsset(withLanguageExtension
+					.getPath());
+		}
+
+		return null;
+	}
+
+	public List<StylesheetLink> getStylesheets() {
+		return Collections.emptyList();
+	}
+
+	public List<String> getStacks() {
+		return Collections.emptyList();
+	}
 
 }

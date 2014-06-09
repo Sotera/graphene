@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 public class CallbackTest {
 
-	public class ExampleCallback implements G_CallBack {
+	public class ExampleCallback implements G_CallBack<Object> {
 
 		@Override
 		public boolean callBack(Object t) {

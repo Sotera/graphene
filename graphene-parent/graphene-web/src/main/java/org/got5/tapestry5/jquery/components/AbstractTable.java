@@ -94,7 +94,7 @@ public class AbstractTable implements ClientElement {
 	 */
 	@Parameter(defaultPrefix = BindingConstants.LITERAL)
 	private String add;
-	
+
 	/**
 	 * Defines where block and label overrides are obtained from. By default,
 	 * the Grid component provides block overrides (from its block parameters).
@@ -137,7 +137,7 @@ public class AbstractTable implements ClientElement {
 	@SuppressWarnings("unused")
 	@Parameter
 	private Object value;
-	
+
 	/**
 	 * If true, then the Grid will be wrapped in an element that acts like a
 	 * {@link org.apache.tapestry5.corelib.components.Zone}; all the paging and
@@ -146,27 +146,28 @@ public class AbstractTable implements ClientElement {
 	 */
 	@Parameter
 	private boolean inPlace;
-	
+
 	/**
-	 * Parameter used to define some parameters of a HTML table : caption, summary, css class
+	 * Parameter used to define some parameters of a HTML table : caption,
+	 * summary, css class
 	 */
 
 	@Parameter(required = false)
 	private Object row;
-	
+
 	@Parameter
 	private int rowIndex;
-	
+
 	@Parameter(cache = false)
 	private String rowClass;
-	
+
 	@Property
-	@Parameter(cache=false)
+	@Parameter(cache = false)
 	private int columnIndex;
-	
+
 	@Parameter(defaultPrefix = BindingConstants.PROP)
 	private TableInformation tableInformation;
-	
+
 	/**
 	 * The model parameter after modification due to the add, include, exclude
 	 * and reorder parameters.
@@ -179,41 +180,42 @@ public class AbstractTable implements ClientElement {
 	@Inject
 	private ComponentResources resources;
 
-
 	@Inject
 	private BeanModelSource modelSource;
-	
-	@Inject 
+
+	@Inject
 	private TranslatorSource translatorSource;
 	@Persist
 	private Boolean sortAscending;
 
 	@Persist
 	private String sortColumnId;
-	
+
 	private String clientId;
-	
+
 	@Property
 	private Integer index;
 
 	@Property
 	private String cellModel;
-	
+
 	@Inject
 	private TypeCoercer typeCoercer;
 
 	@Inject
 	private Request request;
 
-    @SetupRender
-    void resetClientId()
-    {
-        clientId = null;
-    }
+	@SetupRender
+	void resetClientId() {
+		clientId = null;
+	}
 
 	public String getClientId() {
-        if(InternalUtils.isBlank(clientId))
-			clientId = (InternalUtils.isNonBlank(resources.getInformalParameter("id", String.class))) ? resources.getInformalParameter("id", String.class) : javaScriptSupport.allocateClientId(resources);
+		if (InternalUtils.isBlank(clientId))
+			clientId = (InternalUtils.isNonBlank(resources
+					.getInformalParameter("id", String.class))) ? resources
+					.getInformalParameter("id", String.class)
+					: javaScriptSupport.allocateClientId(resources);
 		return clientId;
 	}
 
@@ -238,7 +240,7 @@ public class AbstractTable implements ClientElement {
 	}
 
 	public BeanModel getDataModel() {
-        if (dataModel == null) {
+		if (dataModel == null) {
 			dataModel = getModel();
 
 			BeanModelUtils.modify(dataModel, add, include, exclude, reorder);
@@ -250,7 +252,7 @@ public class AbstractTable implements ClientElement {
 	public GridDataSource getSource() {
 		return source;
 	}
-	
+
 	/**
 	 * Default implementation that only allows a single column to be the sort
 	 * column, and stores the sort information as persistent fields of the Grid
@@ -300,10 +302,11 @@ public class AbstractTable implements ClientElement {
 	GridSortModel defaultSortModel() {
 		return new DefaultGridSortModel();
 	}
-	
-	public PropertyOverrides getOverrides(){ 
-		return overrides; 
+
+	public PropertyOverrides getOverrides() {
+		return overrides;
 	}
+
 	/**
 	 * Returns a {@link org.apache.tapestry5.Binding} instance that attempts to
 	 * identify the model from the source parameter (via
@@ -348,7 +351,7 @@ public class AbstractTable implements ClientElement {
 			}
 		};
 	}
-	
+
 	/**
 	 * A version of GridDataSource that caches the availableRows property. This
 	 * addresses TAPESTRY-2245.
@@ -385,62 +388,58 @@ public class AbstractTable implements ClientElement {
 		public Class getRowType() {
 			return delegate.getRowType();
 		}
-		
-		
+
 	}
 
 	/**
 	 * In order to get the css of a specific row
 	 */
-	public String getRowClass()
-    {
-        List<String> classes = CollectionFactory.newList();
+	public String getRowClass() {
+		List<String> classes = CollectionFactory.newList();
 
-        // Not a cached parameter, so careful to only access it once.
+		// Not a cached parameter, so careful to only access it once.
 
-       String rc = rowClass;
+		String rc = rowClass;
 
-       if (rc != null) classes.add(rc);
+		if (rc != null)
+			classes.add(rc);
 
-       return TapestryInternalUtils.toClassAttributeValue(classes);
-    }
-	
+		return TapestryInternalUtils.toClassAttributeValue(classes);
+	}
+
 	/**
 	 * In order to get the value of a specific cell
 	 */
 	public Object getCellValue() {
-		
-		
+
 		Object obj = getSource().getRowValue(index);
 
-		if (obj == null) { //rows can be null, as stated in getRowValue docs
-		    return "";
+		if (obj == null) { // rows can be null, as stated in getRowValue docs
+			return "";
 		}
-		
+
 		PropertyConduit conduit = getDataModel().get(cellModel).getConduit();
 
 		Class type = conduit.getPropertyType();
 
 		Object val = conduit.get(obj);
 
-		if (val == null) { //cells should be able to have null values
-		    return "";
+		if (val == null) { // cells should be able to have null values
+			return "";
 		}
-		
+
 		if (!String.class.equals(getDataModel().get(cellModel).getClass())
-                && !Number.class.isAssignableFrom(getDataModel().get(cellModel).getClass()))
-        {
-			Translator<Object> translator = translatorSource.findByType(getDataModel().get(cellModel).getPropertyType());
-            if (translator != null)
-            {
-            	val = translator.toClient(val);
-            }
-            else
-            {
-            	val = val.toString();
-            }
-        }
-            
+				&& !Number.class.isAssignableFrom(getDataModel().get(cellModel)
+						.getClass())) {
+			Translator<Object> translator = translatorSource
+					.findByType(getDataModel().get(cellModel).getPropertyType());
+			if (translator != null) {
+				val = translator.toClient(val);
+			} else {
+				val = val.toString();
+			}
+		}
+
 		return val;
 	}
 
@@ -459,7 +458,8 @@ public class AbstractTable implements ClientElement {
 		// Issue #284 : call prepared() before calling getRowValue()
 		int startIndex = 0;
 		int endIndex = getSource().getAvailableRows() - 1;
-		getSource().prepare(startIndex, endIndex, sortModel.getSortConstraints());
+		getSource().prepare(startIndex, endIndex,
+				sortModel.getSortConstraints());
 
 		return new Iterable<Integer>() {
 
@@ -505,11 +505,14 @@ public class AbstractTable implements ClientElement {
 
 	@Inject
 	private Block cell;
-	
-	public Block getCellBlock(){
+
+	public Block getCellBlock() {
 		rowIndex = index;
-		Block override = overrides.getOverrideBlock(getDataModel().get(cellModel).getPropertyName()+"Cell");
-		if(override != null) return override;
+		Block override = overrides.getOverrideBlock(getDataModel().get(
+				cellModel).getPropertyName()
+				+ "Cell");
+		if (override != null)
+			return override;
 		return cell;
 	}
 

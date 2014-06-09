@@ -44,6 +44,16 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	boolean isReady();
 
 	/**
+	 * Allows end user implementations to record the readiness of the service,
+	 * for example if a procedure fails we may set the service to not ready, or
+	 * a larger service can cause this service to be available or unavailable
+	 * depending on it's settings.
+	 * 
+	 * @param b
+	 */
+	void setReady(boolean b);
+
+	/**
 	 * This method is an expansion of the isReady system status. Individual
 	 * implementations can declare what their readiness state is, and methods
 	 * calling those implementations can decide whether the system is ready
@@ -57,7 +67,11 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	double getReadiness();
 
 	/**
-	 * Within this method, the callback cb will be executed
+	 * Within this method, the callback cb will be executed, usually on each
+	 * result the implementation finds. The implementation may choose to respect
+	 * the QUERYOBJECT q. If maxResults is set to 0, that is usually understood
+	 * to mean that there is no upper bound to the number of results (aka All
+	 * results)
 	 * 
 	 * @param offset
 	 * @param maxResults
