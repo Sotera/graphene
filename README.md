@@ -161,5 +161,5 @@ Running a Graphene application
  
 Licensing
 ------
-   Graphene is an open source project, containing dependencies on other open source projects.  This project was funded by DARPA under part of the XData program.
+   Graphene is an open source project, containing dependencies on other open source projects.  This project was funded by DARPA under part of the XDATA program.
  
