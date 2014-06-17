@@ -26,14 +26,14 @@ public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> 
 	 * @return
 	 * @throws Exception
 	 */
-	long countEdges(String id) throws Exception;
+	long countEdges(final String id) throws Exception;
 
 	/**
 	 * 
 	 * @param srch
 	 * @return
 	 */
-	Set<String> entityIDsByAdvancedSearch(AdvancedSearch srch);
+	Set<String> entityIDsByAdvancedSearch(final AdvancedSearch srch);
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> 
 	 * @return
 	 * @throws Exception
 	 */
-	Set<String> getAccountsForCustomer(String cust) throws Exception;
+	Set<String> getAccountsForCustomer(final String cust) throws Exception;
 
 	/**
 	 * 
@@ -103,7 +103,7 @@ public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> 
 	 * @return Set<String> of matching values
 	 * @throws Exception
 	 */
-	Set<String> valueSearch(Q q) throws Exception;
+	Set<String> valueSearch(final Q q) throws Exception;
 
 
 }

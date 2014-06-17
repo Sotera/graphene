@@ -30,10 +30,7 @@ public class DirectedEventRow implements Comparable<Object> {
 	public String receiverId = "-1"; // XXX: In case the js was looking for
 										// -1 as something special.
 	public String senderId = "-1";
-//	@XmlTransient
-//	private double amountAsDouble = 0;
-//	@XmlTransient
-//	private double balanceDouble;
+
 	public String comments;
 
 	public String credit;
@@ -46,12 +43,8 @@ public class DirectedEventRow implements Comparable<Object> {
 
 	public long id;
 
-	//@XmlTransient
-	//private double localBalanceDouble;
 	public String localUnitBalance;
 
-//	@XmlTransient
-//	private double locAmountAsDouble = 0;
 	@XmlTransient
 	private int month_zero_based;
 
@@ -67,7 +60,6 @@ public class DirectedEventRow implements Comparable<Object> {
 
 	@Override
 	public int compareTo(final Object o) {
-		// TODO Auto-generated method stub
 		DirectedEventRow c = (DirectedEventRow) o;
 		if (this.dateMilliSeconds > c.dateMilliSeconds)
 			return 1;
@@ -77,11 +69,6 @@ public class DirectedEventRow implements Comparable<Object> {
 			return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj)
@@ -96,10 +83,6 @@ public class DirectedEventRow implements Comparable<Object> {
 		return true;
 	}
 
-//	public double getBalanceDouble() {
-//		return balanceDouble;
-//	}
-
 	public String getBalanceStr() {
 		return unitBalance;
 	}
@@ -111,10 +94,6 @@ public class DirectedEventRow implements Comparable<Object> {
 	public String getCredit() {
 		return credit;
 	}
-
-//	public double getCreditAsDouble() {
-//		return amountAsDouble > 0 ? amountAsDouble : 0;
-//	}
 
 	public String getDate() {
 		return date;
@@ -132,10 +111,6 @@ public class DirectedEventRow implements Comparable<Object> {
 		return debit;
 	}
 
-//	public double getDebitAsDouble() {
-//		return amountAsDouble < 0 ? -amountAsDouble : 0;
-//	}
-
 	public long getId() {
 		return id;
 	}
@@ -143,10 +118,6 @@ public class DirectedEventRow implements Comparable<Object> {
 	public String getLocalBalance() {
 		return localUnitBalance;
 	}
-
-//	public double getLocalBalanceDouble() {
-//		return localBalanceDouble;
-//	}
 
 	public int getMonth_zero_based() {
 		return month_zero_based;
@@ -176,11 +147,6 @@ public class DirectedEventRow implements Comparable<Object> {
 		return year;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -198,21 +164,15 @@ public class DirectedEventRow implements Comparable<Object> {
 	}
 
 	public void setBalance(final double bal) {
-		//balanceDouble = bal;
 		unitBalance = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
 				.format(bal);
 	}
-
-//	public void setBalanceDouble(final double balanceDouble) {
-//		this.balanceDouble = balanceDouble;
-//	}
 
 	public void setComments(final String comments) {
 		this.comments = comments;
 	}
 
 	public void setCredit(final double credit) {
-		//this.amountAsDouble = -credit;
 		this.credit = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
 				.format(credit);
 	}
@@ -232,7 +192,6 @@ public class DirectedEventRow implements Comparable<Object> {
 	}
 
 	public void setDebit(final double debit) {
-		//this.amountAsDouble = -debit;
 		this.debit = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
 				.format(debit);
 	}
@@ -241,12 +200,7 @@ public class DirectedEventRow implements Comparable<Object> {
 		this.id = id;
 	}
 
-//	public void setLocalBalanceDouble(final double localBalanceDouble) {
-//		this.localBalanceDouble = localBalanceDouble;
-//	}
-
 	public void setLocalUnitBalance(final double bal) {
-	//	localBalanceDouble = bal;
 		this.localUnitBalance = new DecimalFormat(
 				DataFormatConstants.MONEY_FORMAT_STRING).format(bal);
 	}
@@ -263,9 +217,6 @@ public class DirectedEventRow implements Comparable<Object> {
 		this.year = year;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "DirectedEventRow [accountGroup="
@@ -294,22 +245,5 @@ public class DirectedEventRow implements Comparable<Object> {
 				+ (unitBalance != null ? "unitBalance=" + unitBalance + ", "
 						: "") + "year=" + year + "]";
 	}
-
-//	public Double updateBalance(final Double sofar) {
-//
-//		this.balanceDouble = sofar + amountAsDouble;
-//		this.unitBalance = new DecimalFormat(
-//				DataFormatConstants.MONEY_FORMAT_STRING).format(sofar);
-//		return balanceDouble;
-//
-//	}
-
-//	public Double updateLocalBalance(final Double sofar) {
-//		this.localBalanceDouble = sofar + locAmountAsDouble;
-//		this.localUnitBalance = new DecimalFormat(
-//				DataFormatConstants.MONEY_FORMAT_STRING).format(sofar);
-//		return localBalanceDouble;
-//
-//	}
 
 }

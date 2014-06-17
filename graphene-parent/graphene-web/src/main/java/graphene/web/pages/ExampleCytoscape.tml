@@ -21,11 +21,5 @@
 			</div>
 		</div>
 	</div>
-	<script src="${jsApp1}" />
-	<script src="${jsApp2}" />
-	<script src="${jsApp3}" />
-	<script src="${jsApp4}" />
-	<script src="${jsApp5}" />
-	<script src="${jsApp6}" />
-	<script src="${jsApp7}" />
+
 </html>

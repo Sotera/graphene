@@ -33,9 +33,9 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	 * @return a list of T
 	 * @throws Exception
 	 */
-	List<T> getAll(long offset, long maxResults) throws Exception;
+	List<T> getAll(final long offset, final long maxResults) throws Exception;
 
-	long count(QUERYOBJECT q) throws Exception;
+	long count(final QUERYOBJECT q) throws Exception;
 
 	/**
 	 * 

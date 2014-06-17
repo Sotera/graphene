@@ -26,7 +26,7 @@ public interface TransferDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract List<String> getRelatedAccounts(EventQuery q)
+	public abstract List<String> getRelatedAccounts(final EventQuery q)
 			throws Exception;
 
 }

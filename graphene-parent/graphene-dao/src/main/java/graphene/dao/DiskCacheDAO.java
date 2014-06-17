@@ -48,8 +48,8 @@ public abstract class DiskCacheDAO<T, Q> {
 	// return diskCache.getNumberOfRecordsCached();
 	// }
 
-	public boolean performCallback(long offset, long maxResults,
-			G_CallBack<T> cb, Q q) {
+	public boolean performCallback(final long offset, final long maxResults,
+			final G_CallBack<T> cb, final Q q) {
 		logger.debug("Performing callback at the Disk Cache level...");
 
 		boolean readerAvailable = getCacheToDisk(DELETE_EXISTING,
