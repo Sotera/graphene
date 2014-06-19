@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata modelVersion="1.1.0">
   <groupId>graphene</groupId>
-  <artifactId>graphene-model</artifactId>
+  <artifactId>graphene-dao</artifactId>
   <version>4.0.7-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20140619.230953</timestamp>
+      <timestamp>20140619.231008</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20140619230953</lastUpdated>
+    <lastUpdated>20140619231008</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>4.0.7-20140619.230953-1</value>
-        <updated>20140619230953</updated>
+        <value>4.0.7-20140619.231008-1</value>
+        <updated>20140619231008</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>4.0.7-20140619.230953-1</value>
-        <updated>20140619230953</updated>
+        <value>4.0.7-20140619.231008-1</value>
+        <updated>20140619231008</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
-        <value>4.0.7-20140619.230953-1</value>
-        <updated>20140619230953</updated>
+        <value>4.0.7-20140619.231008-1</value>
+        <updated>20140619231008</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
