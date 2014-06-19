@@ -6,6 +6,7 @@ import graphene.services.PropertyGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
+import graphene.util.validator.ValidationUtils;
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
@@ -117,14 +118,20 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		// egb.setOriginalQuery(gq);
 
 		V_CSGraph m = null;
-		try {
-			V_GenericGraph g = eventGraphBuilder.makeGraphResponse(gq);
-			m = new V_CSGraph(g, true);
-			logger.debug("Made graph with " + g.getNodes().size()
-					+ " Nodes and " + g.getEdges().size() + " Edges");
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+		if (ValidationUtils.isValid(ids)) {
+			try {
+				V_GenericGraph g = eventGraphBuilder.makeGraphResponse(gq);
+				m = new V_CSGraph(g, true);
+				logger.debug("Made graph with " + g.getNodes().size()
+						+ " Nodes and " + g.getEdges().size() + " Edges");
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			m = new V_CSGraph();
+			m.setStrStatus("A query was sent without any ids");
+			logger.error("A query was sent without any ids");
 		}
 
 		return m;
@@ -166,12 +173,18 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		q.setMaxHops(maxdegree);
 		q.addSearchIds(value);
 		V_CSGraph m = null;
-		try {
-			V_GenericGraph g = eventGraphBuilder.makeGraphResponse(q);
-			m = new V_CSGraph(g, true);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+		if (ValidationUtils.isValid(value)) {
+			try {
+				V_GenericGraph g = eventGraphBuilder.makeGraphResponse(q);
+				m = new V_CSGraph(g, true);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			m = new V_CSGraph();
+			m.setStrStatus("A query was sent without any ids");
+			logger.error("A query was sent without any ids");
 		}
 		return m;
 

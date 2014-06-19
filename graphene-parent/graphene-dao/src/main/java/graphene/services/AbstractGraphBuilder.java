@@ -15,6 +15,11 @@ import mil.darpa.vande.generic.V_NodeList;
 public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 
 	protected V_EdgeList edgeList;
+	/**
+	 * This field is to inform other services about which data sources can be
+	 * graphed using this builder. Each implementation should specify at least
+	 * one datasource string that is supported by itself.  
+	 */
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
 	protected Map<String, V_GenericEdge> edgeMap;
 	protected ArrayList<V_GenericNode> newNodeList = new ArrayList<V_GenericNode>(

@@ -48,8 +48,7 @@ import org.slf4j.Logger;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ SecurityModule.class, DAOModule.class, DAOSQLModule.class,
-		DAONeo4JEModule.class })
+@SubModule({ SecurityModule.class, DAOModule.class })
 public class GrapheneModule {
 
 	/**
@@ -81,7 +80,7 @@ public class GrapheneModule {
 		// DevelopmentModule or
 		// QaModule.
 		// configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene");
-		// configuration.override(SymbolConstants.APPLICATION_VERSION, "4.0.6");
+		// configuration.override(SymbolConstants.APPLICATION_VERSION, "4.0.7");
 		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
 		configuration.add(G_SymbolConstants.THEME_PATH, "core/");
 		configuration.add(SymbolConstants.PRODUCTION_MODE, true);

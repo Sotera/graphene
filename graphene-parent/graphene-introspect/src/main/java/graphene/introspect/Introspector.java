@@ -115,8 +115,10 @@ public class Introspector {
 	public void introspect() {
 		// TODO Auto-generated method stub
 		ClassPath classPath = null;
+		System.out.println("Starting introspection");
 		try {
 			classPath = ClassPath.from(Introspector.class.getClassLoader());
+			System.out.println("Starting introspection for "+classPath.toString());
 			for (ClassPath.ClassInfo classInfo : classPath
 					.getTopLevelClassesRecursive(beanPackageName)) {
 				Class<?> c = classInfo.load();

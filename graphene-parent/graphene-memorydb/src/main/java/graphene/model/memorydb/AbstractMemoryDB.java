@@ -31,81 +31,63 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
-IMemoryDB<T, I, CustomerDetails>{
-
+		IMemoryDB<T, I, CustomerDetails> {
 	protected static MemIndex accounts;
 	protected static int currentRow;
+
 	protected static MemIndex customers;
+
 	protected static MemRow[] grid;
 	protected static MemIndex identifiers;
-	private static Logger logger = LoggerFactory.getLogger(AbstractMemoryDB.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(AbstractMemoryDB.class);
 	private static long nRows;
 	private static final int STATE_LOAD_GRID = 2;
 	protected static final int STATE_LOAD_STRINGS = 1;
 	protected Set<String> accountSet;
-
-	@Override
-	public int getAccountIDForNumber(String number) {
-		return accounts.getIDForValue(number);
-	}
-
-	@Override
-	public String getAccountNumberForID(int id) {
-		return accounts.getValueForID(id);
-	}
-
-	@Override
-	public int getCustomerIDForNumber(String number) {
-		return customers.getIDForValue(number);
-	}
-
-	@Override
-	public String getCustomerNumberForID(int id) {
-		return customers.getValueForID(id);
-	}
-
-	@Override
-	public int getIdentifierIDForValue(String value) {
-		return identifiers.getIDForValue(value);
-	}
-
-	@Override
-	public String getIdValueForID(int id) {
-		return identifiers.getValueForID(id);
-	}
+	String[] communicationIdArray;
+	protected Set<String> communicationIdSet;
+	protected List<G_CanonicalPropertyType> communicationTypes;
 
 	protected Set<String> customerSet;
+
 	@Inject
 	private EntityRefDAO<T, EntityRefQuery> dao;
+
+	protected boolean enabled = false;
+
 	protected Set<String> identifierSet;
+
 	@Inject
 	protected IdTypeDAO<I, StringQuery> idTypeDAO;
+
+	protected HashMap<Integer, Integer> invalidTypes = new HashMap<Integer, Integer>(
+			10);
+
 	private boolean loaded;
 	String[] nameArray;
 	protected Set<String> nameSet;
-	String[] communicationIdArray;
-	protected Set<String> communicationIdSet;
-	protected int state;
-	protected HashMap<Integer, Integer> invalidTypes = new HashMap<Integer, Integer>(
-				10);
 	protected long numProcessed = 0;
-	protected List<G_CanonicalPropertyType> communicationTypes;
+	protected int state;
 
 	public AbstractMemoryDB() {
 		super();
 	}
 
+	public abstract boolean callBack(T p);
+
 	@Override
-	public List<CustomerDetails> customersForIdentifier(String identifier, String family, boolean rowPerAccount) {
+	public List<CustomerDetails> customersForIdentifier(String identifier,
+			String family, boolean rowPerAccount) {
 		Set<String> customersFound = new HashSet<String>();
 		List<CustomerDetails> results = new ArrayList<CustomerDetails>();
 		// MemoryDB mem = MemoryDB.getInstance();
-	
+
 		Set<MemRow> dbResults = getRowsForIdentifier(identifier);
 		Set<String> accounts = new HashSet<String>();
 		G_CanonicalPropertyType canonicalFamily = G_CanonicalPropertyType
 				.fromValue(family);
-	
+
 		for (MemRow r : dbResults) {
 			if (idTypeDAO.getByType(r.getIdType()).getType() == canonicalFamily) {
 				// So we need this identifier
@@ -115,7 +97,7 @@ IMemoryDB<T, I, CustomerDetails>{
 		}
 		// customersFound is now a unique set of customer nbrs matching the
 		// search
-	
+
 		for (String custno : customersFound) {
 			CustomerDetails c = new CustomerDetails(custno);
 			c.setMatchString(identifier);
@@ -140,21 +122,21 @@ IMemoryDB<T, I, CustomerDetails>{
 			} else {
 				results.add(c);
 			}
-	
+
 		}
-	
+
 		return results;
 	}
 
 	@Override
 	public Set<String> entityIDsByAdvancedSearch(AdvancedSearch srch) {
 		boolean found = false;
-	
+
 		Set<String> results = new HashSet<String>();
 		Set<String> pastResults = new HashSet<String>();
-	
+
 		List<SearchFilter> filters = srch.getFilters();
-	
+
 		if (filters.size() == 1) {
 			SearchFilter f = srch.getFilters().get(0);
 			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS)
@@ -164,14 +146,14 @@ IMemoryDB<T, I, CustomerDetails>{
 		// one of multiple filters
 		String val;
 		int pass = 0;
-	
+
 		for (SearchFilter f : filters) {
-	
+
 			++pass;
-	
+
 			logger.trace("About to scan grid with filter " + f);
 			results.clear();
-	
+
 			for (MemRow r : grid) {
 				if (r == null)
 					break; // TODO: find out why we are getting a null and
@@ -184,7 +166,7 @@ IMemoryDB<T, I, CustomerDetails>{
 				val = getIdValueForID(r.entries[IDENTIFIER]);
 				if (val == null)
 					continue;
-	
+
 				String family = idTypeDAO.getFamily(r.getIdType());
 				if (family == null)
 					continue;
@@ -195,28 +177,28 @@ IMemoryDB<T, I, CustomerDetails>{
 			logger.trace("Done scan grid with " + results.size() + "results");
 			pastResults.clear();
 			pastResults.addAll(results);
-	
+
 		}// each filter
-	
+
 		return results;
 	}
 
 	@Override
 	public Set<String> exactMatch(SearchFilter f) {
-	
+
 		Set<String> results = new HashSet<String>();
 		Set<MemRow> rows;
-	
+
 		rows = getRowsForIdentifier(f.getValue());
-	
+
 		for (MemRow r : rows) {
 			if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(
 					f.getFieldName())) {
-	
+
 				logger.trace("Family for row : "
 						+ idTypeDAO.getFamily(r.getIdType()));
 				logger.trace("Field name for search " + f.getFieldName());
-	
+
 				String cno = getCustomerNumberForID(r.entries[CUSTOMER]);
 				results.add(cno);
 			}
@@ -225,7 +207,8 @@ IMemoryDB<T, I, CustomerDetails>{
 	}
 
 	@Override
-	public Set<String> findRegexMatches(String srchValue, String family, boolean caseSensitive) {
+	public Set<String> findRegexMatches(String srchValue, String family,
+			boolean caseSensitive) {
 		int flags;
 		if (caseSensitive) {
 			flags = 0;
@@ -234,10 +217,10 @@ IMemoryDB<T, I, CustomerDetails>{
 			flags = Pattern.CASE_INSENSITIVE;
 		}
 		logger.trace("Compiling regex pattern " + srchValue);
-	
+
 		Pattern p = Pattern.compile(srchValue, flags);
 		Matcher ms;
-	
+
 		Set<String> results = new HashSet<String>();
 		for (String s : identifiers.getValues()) {
 			ms = p.matcher(s);
@@ -248,7 +231,8 @@ IMemoryDB<T, I, CustomerDetails>{
 	}
 
 	@Override
-	public Set<MemRow> findRegexRows(String srchValue, String family, boolean caseSensitive) {
+	public Set<MemRow> findRegexRows(String srchValue, String family,
+			boolean caseSensitive) {
 		Set<String> values = findRegexMatches(srchValue, family, caseSensitive);
 		Set<MemRow> results = new HashSet<MemRow>();
 		for (String s : values)
@@ -288,27 +272,57 @@ IMemoryDB<T, I, CustomerDetails>{
 	 */
 	protected int fixLinks(MemRow[] grid, String value, MemIndex index,
 			int offset) {
-				int id = index.getIDForValue(value);
-				if (id < 0) {
-					logger.error("Invalid id for value '" + value + "'");
-					return 0;
-				}
-			
-				int idstart = index.getHeads()[id];
-			
-				if (idstart == -1) {
-					// this is the first time
-					index.getHeads()[id] = currentRow;
-				} else {
-					// this is not the first time
-					MemRow lastrow = grid[index.getTails()[id]];
-					lastrow.nextrows[offset] = currentRow;
-				}
-				index.getTails()[id] = currentRow;
-			
-				return id;
-			
-			}
+		int id = index.getIDForValue(value);
+		if (id < 0) {
+			logger.error("Invalid id for value '" + value + "'");
+			return 0;
+		}
+
+		int idstart = index.getHeads()[id];
+
+		if (idstart == -1) {
+			// this is the first time
+			index.getHeads()[id] = currentRow;
+		} else {
+			// this is not the first time
+			MemRow lastrow = grid[index.getTails()[id]];
+			lastrow.nextrows[offset] = currentRow;
+		}
+		index.getTails()[id] = currentRow;
+
+		return id;
+
+	}
+
+	@Override
+	public int getAccountIDForNumber(String number) {
+		return accounts.getIDForValue(number);
+	}
+
+	@Override
+	public String getAccountNumberForID(int id) {
+		return accounts.getValueForID(id);
+	}
+
+	@Override
+	public int getCustomerIDForNumber(String number) {
+		return customers.getIDForValue(number);
+	}
+
+	@Override
+	public String getCustomerNumberForID(int id) {
+		return customers.getValueForID(id);
+	}
+
+	@Override
+	public int getIdentifierIDForValue(String value) {
+		return identifiers.getIDForValue(value);
+	}
+
+	@Override
+	public String getIdValueForID(int id) {
+		return identifiers.getValueForID(id);
+	}
 
 	@Override
 	public Set<MemRow> getRowsForAccount(int id) {
@@ -322,7 +336,7 @@ IMemoryDB<T, I, CustomerDetails>{
 			logger.warn("Invalid id for account '" + ac + "'");
 			return new HashSet<MemRow>();
 		}
-	
+
 		return traverse(id, accounts, ACCOUNT);
 	}
 
@@ -356,7 +370,7 @@ IMemoryDB<T, I, CustomerDetails>{
 			return new HashSet<MemRow>();
 		}
 		return traverse(id, identifiers, IDENTIFIER);
-	
+
 	}
 
 	@Override
@@ -374,19 +388,9 @@ IMemoryDB<T, I, CustomerDetails>{
 	}
 
 	@Override
-	public Set<String> getValuesContaining(Set<String> vals, boolean caseSensitive) {
+	public Set<String> getValuesContaining(Set<String> vals,
+			boolean caseSensitive) {
 		return identifiers.findValuesContaining(vals, caseSensitive);
-	}
-
-	@Override
-	public void logInvalidTypes() {
-		if (!invalidTypes.isEmpty()) {
-			for (Integer i : invalidTypes.keySet()) {
-	
-				logger.warn("Invalid type " + i + " encounted "
-						+ invalidTypes.get(i) + " times.");
-			}
-		}
 	}
 
 	@Override
@@ -417,7 +421,7 @@ IMemoryDB<T, I, CustomerDetails>{
 		MemoryReporter m = new MemoryReporter("Reading from database...",
 				logger);
 		boolean success = loadStrings(maxRecords);
-	
+
 		if (success) {
 			test(100000);
 			try {
@@ -437,12 +441,12 @@ IMemoryDB<T, I, CustomerDetails>{
 				} else {
 					logger.info("There are a maximum of " + nRows + " to load.");
 				}
-	
+
 				// Only make an array for the total number of rows we will
 				// actually load
 				grid = new MemRow[(int) nRows];
 				boolean successOnLoadGrid = loadGrid(maxRecords);
-	
+
 				if (successOnLoadGrid) {
 					logger.debug("Time to create and load grid " + t.report());
 					loaded = true;
@@ -451,13 +455,20 @@ IMemoryDB<T, I, CustomerDetails>{
 					// just to make sure.
 					loaded = false;
 				}
-	
+
 			}
 		}
 		t.logAsCompleted();
 		m.logMemoryUsedByEvent("Initialize");
 		m.logBytesUsedPerItem("Initialize record", numProcessed);
 		logInvalidTypes();
+	}
+
+	/**
+	 * @return the enabled
+	 */
+	boolean isEnabled() {
+		return enabled;
 	}
 
 	@Override
@@ -532,7 +543,7 @@ IMemoryDB<T, I, CustomerDetails>{
 		customers = new MemIndex("customers");
 		accounts = new MemIndex("accounts");
 		identifiers = new MemIndex("identifiers");
-	
+
 		state = STATE_LOAD_STRINGS;
 		identifierSet = new HashSet<String>();
 		customerSet = new HashSet<String>();
@@ -551,24 +562,24 @@ IMemoryDB<T, I, CustomerDetails>{
 					.toArray(new String[customerSet.size()]);
 			String[] accountArray = (String[]) accountSet
 					.toArray(new String[accountSet.size()]);
-	
+
 			logger.debug("Number of unique communication ids "
 					+ communicationIdSet.size());
-	
+
 			nameArray = (String[]) nameSet.toArray(new String[nameSet.size()]);
 			communicationIdArray = (String[]) communicationIdSet
 					.toArray(new String[nameSet.size()]);
-	
+
 			identifierSet = null; // give back the memory
 			customerSet = null;
 			accountSet = null;
 			nameSet = null;
 			communicationIdSet = null;
-	
+
 			identifiers.load(idArray);
 			customers.load(customerArray);
 			accounts.load(accountArray);
-	
+
 			logger.debug("Loaded " + customers.getCount()
 					+ " unique customer numbers");
 			logger.debug("Loaded " + accounts.getCount()
@@ -584,6 +595,17 @@ IMemoryDB<T, I, CustomerDetails>{
 		return loadStringsSuccessful;
 	}
 
+	@Override
+	public void logInvalidTypes() {
+		if (!invalidTypes.isEmpty()) {
+			for (Integer i : invalidTypes.keySet()) {
+
+				logger.warn("Invalid type " + i + " encounted "
+						+ invalidTypes.get(i) + " times.");
+			}
+		}
+	}
+
 	/**
 	 * Takes a list of identifiers and returns a list of customers Has to
 	 * preserve the order of the identifiers passed in
@@ -595,11 +617,12 @@ IMemoryDB<T, I, CustomerDetails>{
 	 *            first
 	 * @return a list of CustomerDetails objects
 	 */
-	private List<CustomerDetails> matchToCustomers(String family, Set<String> values) {
+	private List<CustomerDetails> matchToCustomers(String family,
+			Set<String> values) {
 		logger.trace("matchToCustomers with " + values.size() + " values");
 		Set<String> customersFound = new HashSet<String>();
 		List<CustomerDetails> results = new ArrayList<CustomerDetails>();
-	
+
 		for (String s : values) {
 			List<CustomerDetails> custs = customersForIdentifier(s, family,
 					false);
@@ -614,6 +637,14 @@ IMemoryDB<T, I, CustomerDetails>{
 		return results;
 	}
 
+	/**
+	 * @param enabled
+	 *            the enabled to set
+	 */
+	void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	@Override
 	public void setLoaded(boolean loaded) {
 		this.loaded = loaded;
@@ -625,7 +656,7 @@ IMemoryDB<T, I, CustomerDetails>{
 		Set<String> matches = new HashSet<String>();
 		Set<MemRow> results = new HashSet<MemRow>();
 		String dmcomp = null;
-	
+
 		try {
 			dmcomp = (String) dm.encode((Object) src);
 		} catch (EncoderException e) {
@@ -639,7 +670,7 @@ IMemoryDB<T, I, CustomerDetails>{
 				results.addAll(getRowsForIdentifier(s, family));
 			}
 		}
-	
+
 		return results;
 	}
 
@@ -649,12 +680,12 @@ IMemoryDB<T, I, CustomerDetails>{
 		for (MemRow i : ids) {
 			logger.trace(identifiers.getValueForID(i.entries[CUSTOMER]));
 		}
-	
+
 		ids = getRowsForCustomer(7);
 		for (MemRow i : ids) {
 			logger.trace(identifiers.getValueForID(i.entries[CUSTOMER]));
 		}
-	
+
 	}
 
 	public boolean test(int ntests) {
@@ -672,9 +703,9 @@ IMemoryDB<T, I, CustomerDetails>{
 				if (offset != n)
 					return false;
 			}
-	
+
 			t.logAverageTime(ntests);
-	
+
 			return true;
 		} else {
 			logger.warn("Test will fail because no identifiers were loaded.");
@@ -685,7 +716,7 @@ IMemoryDB<T, I, CustomerDetails>{
 	private Set<MemRow> traverse(int id, MemIndex index, int col) {
 		Set<MemRow> results = new HashSet<MemRow>();
 		int row;
-	
+
 		if (id >= 0) {
 			row = index.getHeads()[id];
 			while (row >= 0) {
@@ -696,24 +727,22 @@ IMemoryDB<T, I, CustomerDetails>{
 		return results;
 	}
 
-	private Set<MemRow> traverseWithFamily(int id, MemIndex index, String family,
-			int col) {
-				Set<MemRow> results = new HashSet<MemRow>();
-				int row;
-			
-				if (id >= 0) {
-					row = index.getHeads()[id];
-					while (row >= 0) {
-						MemRow r = grid[row];
-						if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(family)) {
-							results.add(grid[row]);
-							row = grid[row].nextrows[col];
-						}
-					}
-				}
-				return results;
-			}
+	private Set<MemRow> traverseWithFamily(int id, MemIndex index,
+			String family, int col) {
+		Set<MemRow> results = new HashSet<MemRow>();
+		int row;
 
-	public abstract boolean callBack(T p) ;
+		if (id >= 0) {
+			row = index.getHeads()[id];
+			while (row >= 0) {
+				MemRow r = grid[row];
+				if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(family)) {
+					results.add(grid[row]);
+					row = grid[row].nextrows[col];
+				}
+			}
+		}
+		return results;
+	}
 
 }

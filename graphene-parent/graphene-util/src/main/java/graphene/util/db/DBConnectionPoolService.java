@@ -25,13 +25,13 @@ public class DBConnectionPoolService {
 	private String userName, url, password;
 	private BoneCP connectionPool;
 	private boolean initialized = false;
-	private String serverName;
-	private String serverPort;
-	private String databaseName;
+
 
 	public boolean isDatabaseEnabled() {
 		return databaseEnabled;
 	}
+
+	
 
 	public void setDatabaseEnabled(boolean databaseEnabled) {
 		this.databaseEnabled = databaseEnabled;
@@ -112,7 +112,8 @@ public class DBConnectionPoolService {
 		initialized = enableDatabase(config);
 		// We no longer have access to the server name to ping.
 		// if (NetworkUtils
-		// .isServerAlive(serverName, FastNumberUtils.parseIntWithCheck(serverPort))) {
+		// .isServerAlive(serverName,
+		// FastNumberUtils.parseIntWithCheck(serverPort))) {
 		// initialized = enableDatabase(config);
 		// } else {
 		// initialized = false;
@@ -149,6 +150,8 @@ public class DBConnectionPoolService {
 
 				// Register for automatic shutdown if JVM stops
 				registerShutdownHook(connectionPool);
+				// Explicitly get a connection, which forces bonecp to init in
+				// correct classloader.
 				Connection connection = connectionPool.getConnection();
 				if (connection != null) {
 					logger.info("Connection successful!");

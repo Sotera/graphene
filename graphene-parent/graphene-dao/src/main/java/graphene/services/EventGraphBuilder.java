@@ -80,27 +80,29 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		for (String id : graphQuery.getSearchIds()) {
-			eq.getAttributeList().add(
-					new EntitySearchTuple<String>(G_SearchType.COMPARE_EQUALS,
-							G_CanonicalPropertyType.ANY, id));
+			eq.addIds(graphQuery.getSearchIds());
+			//lets try using ids instead of attributes.
+//			eq.getAttributeList().add(
+//					new EntitySearchTuple<String>(G_SearchType.COMPARE_EQUALS,
+//							G_CanonicalPropertyType.ANY, id));
 		}
 
 		// aka traversals from legacy--djue
 		int hop = 0;
 		for (hop = 0; hop < graphQuery.getMaxHops()
 				&& nodeList.getNodes().size() < graphQuery.getMaxNodes()
-				&& eq.getAttributeList().size() > 0; hop++) {
+				&& eq.getIdList().size() > 0; hop++) {
 
 			logger.debug("Processing hop " + hop);
 
-			if (eq.getAttributeList().size() > 0) {
-				logger.debug("Found " + eq.getAttributeList().size()
+			if (eq.getIdList().size() > 0) {
+				logger.debug("Found " + eq.getIdList().size()
 						+ " unscanned nodes to query on");
 
 				dao.performCallback(0, 0, this, eq);
 
-				for (EntitySearchTuple<String> tuple : eq.getAttributeList()) {
-					scannedActors.add(tuple.getValue());
+				for (String scannedId : eq.getIdList()) {
+					scannedActors.add(scannedId);
 				}
 
 			}

@@ -78,6 +78,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				if (q == null) {
 					// There was no query object, which mean just get
 					// everything.
+					
 					results = getAll(offset, maxResults);
 				} else {
 					// We have some sort of query object.
