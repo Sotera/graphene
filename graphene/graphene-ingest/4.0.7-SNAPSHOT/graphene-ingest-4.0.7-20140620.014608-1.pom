@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>graphene-parent</artifactId>
+		<groupId>graphene</groupId>
+		<version>4.0.7-SNAPSHOT</version>
+	</parent>
+	<artifactId>graphene-ingest</artifactId>
+	<name>${project.artifactId}</name>
+	<properties>
+	</properties>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.java</include>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+			<resource>
+            <directory>src/main/sql</directory>
+            <includes>
+                <include>**/*.sql</include>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+        </resource>
+		</resources>
+	</build>
+	<repositories>
+		<repository>
+			<id>batch-insert-graphene-mvn-repo</id>
+			<url>https://raw.github.com/danieljue/batch-import-graphene/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>batch-import</artifactId><!-- Note that for now, this is being 
+				manually synced to the neo4j version used elsewhere. -->
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-dao-neo4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-dao-sql</artifactId>
+		</dependency>
+
+
+		<!-- Dependencies for snapshot of batch importer -->
+		<dependency>
+			<groupId>edu.ucla.sspace</groupId>
+			<artifactId>sspace</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.disruptor</groupId>
+			<artifactId>disruptor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mapdb</groupId>
+			<artifactId>mapdb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+		</dependency>
+	</dependencies>
+	<description>A module for ingest and ETL operations, including generation of DTOs using QueryDSL and bulk import into graph databases .</description>
+</project>
