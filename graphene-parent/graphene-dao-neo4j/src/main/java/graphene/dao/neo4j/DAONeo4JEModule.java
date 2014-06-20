@@ -32,10 +32,12 @@ public class DAONeo4JEModule {
 				.withMarker(UserGraph.class).scope(ScopeConstants.DEFAULT);
 		binder.bind(GroupDAO.class, GroupDAONeo4JEImpl.class);
 		binder.bind(WorkspaceDAO.class, WorkspaceDAONeo4JEImpl.class);
-		binder.bind(UserDAO.class, UserDAONeo4JEImpl.class);
+		binder.bind(UserDAO.class, UserDAONeo4JEImpl.class).eagerLoad();
 		
 	}
 
+	
+	
 	/**
 	 * Builds the advisor for the UserGraph database. Note that since we can
 	 * have multiple Neo4J instances running, we have to build the advise for

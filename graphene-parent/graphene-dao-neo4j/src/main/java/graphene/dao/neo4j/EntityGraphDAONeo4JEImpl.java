@@ -26,14 +26,15 @@ public class EntityGraphDAONeo4JEImpl implements
 		EntityGraphDAO<InfoVisGraphAdjacency, EntityGraphQuery> {
 	private static final boolean DEBUGMODE = true;
 
-	public EntityGraphDAONeo4JEImpl() {
-		if (service == null) {
+	public EntityGraphDAONeo4JEImpl(Neo4JEmbeddedService service) {
+		this.service=service;
+		if (this.service == null) {
 			System.out.println("Waiting to initialize service...");
 		}
 	}
 
 	// inject a pre-configured service.
-	@InjectService("UnifiedEntity")
+	//@InjectService("UnifiedEntity")
 	private Neo4JEmbeddedService service;
 	@Inject
 	private Logger logger;

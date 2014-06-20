@@ -536,11 +536,13 @@ public class Neo4JEmbeddedService {
 					.getResourceAsStream(propertiesFileLocation);
 			prop.load(is);
 			String databaseLocationRaw = (prop.getProperty("databaseLocation"));
-			logger.info("Neo4j Embedded Database Location string provided by properties file was "+ databaseLocationRaw);
-			databaseLocation = graphene.util.fs.FileUtils.convertSystemProperties(databaseLocationRaw);
-			logger.info("Neo4j Embedded Database Location resolved to "+ databaseLocation);
-			
-			
+			logger.info("Neo4j Embedded Database Location string provided by properties file was "
+					+ databaseLocationRaw);
+			databaseLocation = graphene.util.fs.FileUtils
+					.convertSystemProperties(databaseLocationRaw);
+			logger.info("Neo4j Embedded Database Location resolved to "
+					+ databaseLocation);
+
 			dropExisting = (prop.getProperty("dropExisting")
 					.equalsIgnoreCase("true"));
 			embedded = prop.getProperty("embedded").equalsIgnoreCase("true");
@@ -679,8 +681,11 @@ public class Neo4JEmbeddedService {
 		System.out.println();
 		System.out.println("Shutting down database ...");
 		// START SNIPPET: shutdownServer
-		graphDb.shutdown();
-		graphDb = null;
+		if (graphDb != null) {
+			graphDb.shutdown();
+			graphDb = null;
+		}
+
 		connected = false;
 		// END SNIPPET: shutdownServer
 	}

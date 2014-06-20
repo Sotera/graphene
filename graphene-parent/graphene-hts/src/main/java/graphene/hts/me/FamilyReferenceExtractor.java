@@ -47,9 +47,9 @@ public class FamilyReferenceExtractor {
 	private Pattern wifeOfPattern = null;
 
 	public FamilyReferenceExtractor() {
-		sonOfPattern = Pattern.compile(".*[Ss]\\s*[\\.\\/]\\s*[Oo]\\s*(.+),");
-		daughterOfPattern = Pattern.compile(".*[Dd]\\s*[\\/]\\s*[Oo]\\s*(.+),");
-		wifeOfPattern = Pattern.compile(".*[Ww]\\s*[\\.\\/]\\s*[Oo]\\s*(.+),");
+		sonOfPattern = Pattern.compile(".*[Ss]\\s*[\\.\\/]\\s*[Oo]\\s*([\\w\\s]+),(.*)");
+		daughterOfPattern = Pattern.compile(".*[Dd]\\s*[\\/]\\s*[Oo]\\s*(.+),.*");
+		wifeOfPattern = Pattern.compile(".*[Ww]\\s*[\\.\\/]\\s*[Oo]\\s*(.+),.*");
 	}
 
 	/**

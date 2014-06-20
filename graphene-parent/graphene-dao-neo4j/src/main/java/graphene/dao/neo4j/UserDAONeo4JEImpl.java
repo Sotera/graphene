@@ -142,60 +142,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return user;
 	}
 
-	//
-	// @Override
-	// public G_User createOrUpdate(String username, Map<String, Object>
-	// properties) {
-	// G_User user = null;
-	//
-	// ResourceIterator<Node> resultIterator = null;
-	// try (Transaction tx = beginTx()) {
-	// String queryString = "MERGE (n:"
-	// + GrapheneNeo4JConstants.userLabel.name() + " {"
-	// + G_UserFields.username.name() + ": {var}}) RETURN n";
-	// Map<String, Object> parameters = new HashMap<>();
-	// parameters.put("var", username);
-	// ExecutionEngine ex = new ExecutionEngine(n4jService.getGraphDb());
-	// resultIterator = ex.execute(queryString, parameters).columnAs("n");
-	// Node n = resultIterator.next();
-	// setSafeProperty(n, G_UserFields.accountcreated.name(), DateTime
-	// .now().getMillis());
-	// setSafeProperty(n, G_UserFields.active.name(), false);
-	// setSafeProperty(n, G_UserFields.avatar.name(), "default.png");
-	// setSafeProperty(n, G_UserFields.email.name(), "not set");
-	// setSafeProperty(n, G_UserFields.fullname.name(), "not set");
-	// setSafeProperty(n, G_UserFields.hashedpassword.name(), "not set");
-	// // make sure it's along value
-	// setSafeProperty(n, G_UserFields.lastlogin.name(), 0l);
-	// setSafeProperty(n, G_UserFields.numberlogins.name(), 0);
-	// setSafeProperty(n, G_UserFields.username.name(), username);
-	//
-	// if (properties != null) {
-	// // Update them
-	// for (String key : properties.keySet()) {
-	// // XXX: Dangerous, because values can only be elementary
-	// // data types
-	// if (key.equals(G_UserFields.passwordtohash.name())) {
-	// // Take care of a password if it was supplied, but don't
-	// // store it as a property.
-	// setPasswordHash(n,
-	// (String) properties
-	// .get(G_UserFields.passwordtohash
-	// .name()));
-	// } else {
-	// n.setProperty(key, properties.get(key));
-	// }
-	// }
-	// }
-	// user = createDetached(n);
-	//
-	// resultIterator.close();
-	//
-	// tx.success();
-	// }
-	//
-	// return user;
-	// }
+	
 
 	private Node createUniqueUser(String username, String password) {
 		Node result = null;
@@ -359,19 +306,6 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return (n == null ? null : createDetached(n));
 	}
 
-	// private Node getNodeByUsername(String username) {
-	// Node n = null;
-	// try (Transaction tx = beginTx()) {
-	// for (Node node : n4jService.getGraphDb()
-	// FindNodesByLabelAndProperty(
-	// GrapheneNeo4JConstants.userLabel,
-	// G_UserFields.username.name(), username)) {
-	// n = node;
-	// }
-	// tx.success();
-	// }
-	// return n;
-	// }
 
 	@PostInjection
 	public void initialize() throws DataAccessException {
@@ -383,6 +317,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 
 		} else {
 			logger.error("Could not connect to graph database");
+			
 			throw new DataAccessException("Could not connect to graph database");
 		}
 	}

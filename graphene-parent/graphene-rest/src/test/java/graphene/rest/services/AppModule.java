@@ -40,9 +40,9 @@ public class AppModule
 	@ApplicationDefaults
 	public static void provideSymbols(MappedConfiguration<String, String> configuration)
 	{
-		configuration.add(ResteasySymbols.MAPPING_PREFIX, "/rest");
+		configuration.add(ResteasySymbols.MAPPING_PREFIX, "/mycustomresteasyprefix");
 		configuration.add(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, "graphene.rest");
-		configuration.add(InternalSymbols.APP_PACKAGE_PATH, "graphene.rest.ws");
+		 configuration.add(InternalSymbols.APP_PACKAGE_PATH, "graphene/rest");
 	}
 
 	@Contribute(ResteasyPackageManager.class)

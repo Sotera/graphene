@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>graphene</groupId>
 	<artifactId>graphene-parent</artifactId>
-	<version>4.0.6-SNAPSHOT</version>
+	<version>4.0.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<prerequisites>
 		<maven>3.0.4</maven>
@@ -27,17 +27,10 @@
 		<module>graphene-memorydb</module>
 	</modules>
 
-	<distributionManagement>
-		<repository>
-			<id>internal.repo</id>
-			<name>Temporary Staging Repository</name>
-			<url>file://${project.build.directory}/mvn-repo</url>
-		</repository>
-	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<license-text.header>GPL-3-header.txt</license-text.header>
-		<github.global.server>github</github.global.server>
+		
 
 		<!-- properties for dependencies for web frameworks -->
 		<resteasy.version>3.0.1.Final</resteasy.version>
@@ -66,11 +59,16 @@
 		<commons-beanutils.version>1.9.0</commons-beanutils.version>
 		<commons-dbutils.version>1.5</commons-dbutils.version>
 		<avro.version>1.7.5</avro.version>
+		
 		<!-- properties for testing dependencies -->
 		<jettyVersion>9.0.0</jettyVersion>
 		<servlet-api-release-version>2.5</servlet-api-release-version>
 		<testng-release-version>6.3.1</testng-release-version>
 		<easymock-release-version>3.0</easymock-release-version>
+		
+		<!-- properties for github -->
+		<github.global.server>github</github.global.server>
+        <github.site.maven.plugin.version>0.9</github.site.maven.plugin.version>
 		<!-- Maven properties -->
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.site.plugin.version>3.0</maven.site.plugin.version>
@@ -402,13 +400,7 @@
 				<artifactId>tapestry-yuicompressor</artifactId>
 				<version>${tapestry-release-version}</version>
 			</dependency>
-			<!-- <dependency> <groupId>org.apache.avro</groupId> <artifactId>avro</artifactId> 
-				<version>1.7.4</version> </dependency> <dependency> <groupId>org.apache.avro</groupId> 
-				<artifactId>avro-ipc</artifactId> <version>1.7.4</version> </dependency> -->
-			<!-- <dependency> <groupId>com.microsoft.sqlserver.jdbc.SQLServerDriver</groupId> 
-				<artifactId>sqljdbc4</artifactId> <version>4.0</version> </dependency> -->
-			<!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId> 
-				<version>4.0</version> <scope>provided</scope> </dependency> -->
+
 			<dependency>
 				<!-- jTDS is an open source 100% pure Java (type 4) JDBC 3.0 driver for 
 					Microsoft SQL Server (6.5, 7, 2000, 2005, 2008, 2012) and Sybase ASE (10, 
@@ -652,7 +644,7 @@
 				<plugin>
 					<groupId>com.github.github</groupId>
 					<artifactId>site-maven-plugin</artifactId>
-					<version>0.8</version>
+					<version>${github.site.maven.plugin.version}</version>
 					<configuration>
 						<message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
 						<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
@@ -661,8 +653,8 @@
 						<includes>
 							<include>**/*</include>
 						</includes>
-						<repositoryName>batch-import-graphene</repositoryName>      <!-- github repo name -->
-						<repositoryOwner>danieljue</repositoryOwner>    <!-- github username -->
+						<repositoryName>graphene</repositoryName>      <!-- github repo name -->
+						<repositoryOwner>Sotera</repositoryOwner>    <!-- github username -->
 					</configuration>
 					<executions>
 						<!-- run site-maven-plugin's 'site' target as part of the build's normal 
@@ -827,9 +819,24 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>			
 			</plugin>
+						<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId></plugin>
+				
+				<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				
+				</plugin>
 		</plugins>
 		
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>internal.repo</id>
+			<name>Temporary Staging Repository</name>
+			<url>file://${project.build.directory}/mvn-repo</url>
+		</repository>
+	</distributionManagement>
 	<reporting>
 		<plugins>
 			<plugin>

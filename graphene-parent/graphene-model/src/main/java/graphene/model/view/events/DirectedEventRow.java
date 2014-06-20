@@ -4,6 +4,8 @@ import graphene.util.DataFormatConstants;
 
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,36 +28,39 @@ import org.slf4j.LoggerFactory;
 public class DirectedEventRow implements Comparable<Object> {
 
 	static Logger logger = LoggerFactory.getLogger(DirectedEventRow.class);
-	public int accountGroup = 0;
-	public String receiverId = "-1"; // XXX: In case the js was looking for
-										// -1 as something special.
-	public String senderId = "-1";
+	private int accountGroup = 0;
+	private String comments;
+	private String credit;
 
-	public String comments;
+	private Map<String, String> data = new HashMap<String, String>();
 
-	public String credit;
-
-	public String date;
-	public long dateMilliSeconds; // used in plotting
+	private String date;
+	private long dateMilliSeconds; // used in plotting
 	@XmlTransient
 	private int day_one_based;
-	public String debit;
 
-	public long id;
+	private String debit;
 
-	public String localUnitBalance;
+	private long id;
+	private String localUnitBalance;
 
 	@XmlTransient
 	private int month_zero_based;
 
-	public String unit;
+	private String receiverId = "-1"; // XXX: In case the js was looking for
 
-	public String unitBalance;
+	// -1 as something special.
+	private String senderId = "-1";
+
+	private String unit;
+
+	private String unitBalance;
+
 	@XmlTransient
 	private int year;
 
 	public DirectedEventRow() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
@@ -95,6 +100,17 @@ public class DirectedEventRow implements Comparable<Object> {
 		return credit;
 	}
 
+	public void addData(final String key, final String value) {
+		data.put(key, value);
+	}
+
+	/**
+	 * @return the data
+	 */
+	public Map<String, String> getData() {
+		return data;
+	}
+
 	public String getDate() {
 		return date;
 	}
@@ -127,16 +143,8 @@ public class DirectedEventRow implements Comparable<Object> {
 		return receiverId;
 	}
 
-	public String getReceiverAccountasString() {
-		return new Long(receiverId).toString();
-	}
-
 	public String getSenderAccount() {
 		return senderId;
-	}
-
-	public String getSenderAccountasString() {
-		return new Long(senderId).toString();
 	}
 
 	public String getUnit() {
@@ -177,6 +185,14 @@ public class DirectedEventRow implements Comparable<Object> {
 				.format(credit);
 	}
 
+	/**
+	 * @param data
+	 *            the data to set
+	 */
+	public void setData(Map<String, String> data) {
+		this.data = data;
+	}
+
 	public void setDate(final Date date) {
 		setDateMilliSeconds(date.getTime());
 		this.date = FastDateFormat.getInstance(
@@ -192,8 +208,8 @@ public class DirectedEventRow implements Comparable<Object> {
 	}
 
 	public void setDebit(final double debit) {
-		this.debit = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
-				.format(debit);
+		this.debit = new DecimalFormat(
+				DataFormatConstants.WHOLE_NUMBER_FORMAT_STRING).format(debit);
 	}
 
 	public void setId(final long id) {
@@ -202,7 +218,7 @@ public class DirectedEventRow implements Comparable<Object> {
 
 	public void setLocalUnitBalance(final double bal) {
 		this.localUnitBalance = new DecimalFormat(
-				DataFormatConstants.MONEY_FORMAT_STRING).format(bal);
+				DataFormatConstants.WHOLE_NUMBER_FORMAT_STRING).format(bal);
 	}
 
 	public void setMonth_zero_based(final int month_zero_based) {

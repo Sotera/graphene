@@ -82,22 +82,19 @@ public class SearchMatcher {
 		List<String> words = new ArrayList<String>();
 		while (m.find()) {
 			String s = m.group(1).replace("\"", "");
-			if (!caseSensitive) {
-				s = s.toLowerCase();
-			}
 			words.add(s);
 		}
 		for (SearchCriterion sc : search) {
 			if (sc.str.contains(" ")) { // derived from a quoted string
 				if (target.contains(str)) {
-					++score;
+					score++;
 				}
 				continue;
 			}
 			int count = 0;
 			for (String s : words) {
 				if (sc.match(s)) {
-					++count;
+					count++;
 				}
 			}
 			if (sc.isMustHave() && count == 0) {
@@ -107,7 +104,7 @@ public class SearchMatcher {
 				return -1;
 			}
 			if (count > 0) {
-				++score;
+				score++;
 			}
 		}
 

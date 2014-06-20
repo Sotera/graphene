@@ -5,8 +5,11 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public class FastNumberUtilsTest {
-	private static final int INTSTOCHASTICITY = 200000;
-	private static final long LONGSTOCHASTICITY = 200000000000000l;
+	/**
+	 * Increase these numbers to perform less tests, decrease to perform more tests.
+	 */
+	private static final int INTSTOCHASTICITY = 20000000;
+	private static final long LONGSTOCHASTICITY = 20000000000000000l;
 
 	@BeforeSuite
 	public void beforeSuite() {

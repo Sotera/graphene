@@ -13,15 +13,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * TODO: remove unnecessary XML annotations
  * 
- * XXX: Make fields private, use getters and setters
  * 
  * XXX: Replace with IDL generated classes --djue
  * 
- * @author djue
+ * @author not djue
  * 
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DirectedEvents {
 
 	private boolean multiUnit = false;
