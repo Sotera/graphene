@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>graphene</groupId>
-  <artifactId>graphene-search</artifactId>
+  <artifactId>graphene-dao-sql</artifactId>
   <versioning>
     <versions>
       <version>4.0.7-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20140620014601</lastUpdated>
+    <lastUpdated>20140620014603</lastUpdated>
   </versioning>
 </metadata>
