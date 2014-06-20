@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>graphene</groupId>
-  <artifactId>graphene-ingest</artifactId>
+  <artifactId>graphene-export</artifactId>
   <versioning>
     <versions>
       <version>4.0.7-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20140620014609</lastUpdated>
+    <lastUpdated>20140620014610</lastUpdated>
   </versioning>
 </metadata>
