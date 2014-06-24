@@ -1,8 +1,6 @@
 package graphene.web.services;
 
 import graphene.dao.DAOModule;
-import graphene.dao.neo4j.DAONeo4JEModule;
-import graphene.dao.sql.DAOSQLModule;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.time.JodaTimeUtil;
 import graphene.web.security.AuthenticationFilter;
@@ -48,7 +46,7 @@ import org.slf4j.Logger;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ SecurityModule.class, DAOModule.class })
+@SubModule({ ShiroSecurityModule.class, DAOModule.class })
 public class GrapheneModule {
 
 	/**
@@ -83,7 +81,7 @@ public class GrapheneModule {
 		// configuration.override(SymbolConstants.APPLICATION_VERSION, "4.0.7");
 		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
 		configuration.add(G_SymbolConstants.THEME_PATH, "core/");
-		configuration.add(SymbolConstants.PRODUCTION_MODE, true);
+		configuration.add(SymbolConstants.PRODUCTION_MODE, false);
 		configuration.add(G_SymbolConstants.DATABASE_PROPERTIES_LOCATION, "");
 		configuration.add(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX,
 				"graphene");
@@ -161,11 +159,7 @@ public class GrapheneModule {
 		// configuration.add("Timing", filter);
 	}
 
-	@Contribute(ComponentRequestHandler.class)
-	public static void contributeComponentRequestHandler(
-			OrderedConfiguration<ComponentRequestFilter> configuration) {
-		configuration.addInstance("RequiresLogin", AuthenticationFilter.class);
-	}
+
 
 	/**
 	 * Tell Tapestry how to coerce Joda Time types to and from Java Date types

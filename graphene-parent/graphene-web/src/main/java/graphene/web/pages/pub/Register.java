@@ -1,12 +1,11 @@
-package graphene.web.pages;
+package graphene.web.pages.pub;
 
-import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.util.ExceptionUtil;
 import graphene.web.annotations.AnonymousAccess;
-import graphene.web.services.Authenticator;
+import graphene.web.pages.Index;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.EventConstants;
@@ -46,9 +45,9 @@ public class Register {
 	@Inject
 	@Symbol(SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
-
-	@Inject
-	private Authenticator authenticator;
+//
+//	@Inject
+//	private Authenticator authenticator;
 	@Inject
 	private G_UserDataAccess dao;
 
@@ -118,25 +117,26 @@ public class Register {
 
 				// Get the version that has been registered, because it will
 				// have added business logic.
-				if (dao.registerUser(tempUser) != null) {
-					// tempUser = null;
-					dao.setUserPassword(username, password);
-					try {
-						authenticator.login(username, password);
-					} catch (AuthenticationException ex) {
-						manager.alert(Duration.SINGLE, Severity.ERROR,
-								"ERROR: Authentication process has failed");
-						String message = "Authentication process has failed";// ExceptionUtil.getRootCauseMessage(ex);
-						manager.alert(Duration.SINGLE, Severity.ERROR,
-								"ERROR: " + message);
-						logger.error(ExceptionUtil.getRootCauseMessage(ex));
-						ex.printStackTrace();
-						registerForm
-								.recordError("Authentication process has failed");
-						return this;
-					}
-					return Index.class;
-				}
+//				if (dao.registerUser(tempUser) != null) {
+//					// tempUser = null;
+//					dao.setUserPassword(username, password);
+//					try {
+//						authenticator.login(username, password);
+//					} catch (AuthenticationException ex) {
+//						manager.alert(Duration.SINGLE, Severity.ERROR,
+//								"ERROR: Authentication process has failed");
+//						String message = "Authentication process has failed";// ExceptionUtil.getRootCauseMessage(ex);
+//						manager.alert(Duration.SINGLE, Severity.ERROR,
+//								"ERROR: " + message);
+//						logger.error(ExceptionUtil.getRootCauseMessage(ex));
+//						ex.printStackTrace();
+//						registerForm
+//								.recordError("Authentication process has failed");
+//						return this;
+//					}
+//					return Index.class;
+//				}
+				return Index.class;
 			}
 		} catch (Exception ex) {
 			String message = ExceptionUtil.getRootCauseMessage(ex);

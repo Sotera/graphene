@@ -15,10 +15,10 @@ public class DirectedEventsToCSV {
 
 			result.append(r.getDate() + ",");
 			// result.append("\"");
-			result.append(r.getSenderAccount());
+			result.append(r.getSenderId());
 			// result.append("\"");
 			result.append(",");
-			result.append(r.getReceiverAccount());
+			result.append(r.getReceiverId());
 			// Remove commas from amounts. Replace commas in comments with
 			// spaces
 

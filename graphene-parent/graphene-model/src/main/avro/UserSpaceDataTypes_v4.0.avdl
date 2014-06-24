@@ -3,6 +3,8 @@
 */
 protocol G_UserSpaceDataTypes {
 	import idl "DataTypes_v4.0.avdl";
+	import idl "SecurityDataTypes_v4.0.avdl";
+	
 	enum G_UserFields {
 		active,username,avatar,email,fullname,hashedpassword,lastlogin,lastmodified,accountcreated,numberlogins,provenance,uncertainty
 	}

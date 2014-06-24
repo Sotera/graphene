@@ -1,0 +1,78 @@
+/**
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+protocol G_SecurityDataTypes {
+	/**
+	 * Tags are defined by the application layer as a taxonomy of user and
+	 * application concepts, independent of the data sources. This allows
+	 * application semantics to be re-used with new data, with a minimum of new
+	 * software design and development. Data layer entity types, link types and
+	 * properties should be mapped into the list of tags. The application layer
+	 * must be able to search by native field name or by tag interchangeably,
+	 * and properties returned must contain both native field names as well as
+	 * tags.
+	 * 
+	 * The list of tags may change as application features evolve, though that
+	 * will require collaboration with the data layer providers. Evolving the
+	 * tag list should not change the Data Access or Search APIs.
+	 * 
+	 * This is the current list of tags for Properties:
+	 * 
+	 * 
+	 */
+	
+	
+	/**
+	 * This is the role object used in security concerns.  A G_User has one or more G_Role.
+	 * 
+	 */
+	record G_Role {
+		/**
+		 * Name of the role
+		 */
+		string name = null;
+		
+		/**
+		 * For describing the nature of the role
+		 */
+		union {string, null} description = null;
+	}
+	
+	/**
+	 * This is the permission object used in security concerns.  A G_Role has zero or more G_Permissions
+	 * 
+	 */
+	record G_Permission {
+		/**
+		 * Name of the permission
+		 */
+		string name = null;
+		
+		/**
+		 * For describing the nature of the permission
+		 */
+		union {string, null} description = null;
+	}
+	
+	
+	
+}

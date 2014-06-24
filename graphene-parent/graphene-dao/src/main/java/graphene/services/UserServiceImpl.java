@@ -1,10 +1,14 @@
 package graphene.services;
 
 import graphene.dao.GroupDAO;
+import graphene.dao.PermissionDAO;
+import graphene.dao.RoleDAO;
 import graphene.dao.UserDAO;
 import graphene.dao.WorkspaceDAO;
 import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_Group;
+import graphene.model.idl.G_Permission;
+import graphene.model.idl.G_Role;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_UserSpaceRelationshipType;
@@ -25,6 +29,10 @@ import org.slf4j.Logger;
  * 
  */
 public class UserServiceImpl implements G_UserDataAccess {
+	@Inject
+	private PermissionDAO pDao;
+	@Inject
+	private RoleDAO rDao;
 	@Inject
 	private GroupDAO gDao;
 	@Inject
@@ -278,6 +286,23 @@ public class UserServiceImpl implements G_UserDataAccess {
 			workspaces.add(g);
 		}
 		return workspaces;
+	}
+
+	@Override
+	public List<G_Role> getRolesByUsername(String username)
+			throws AvroRemoteException {
+		return rDao.getForUsername(username);
+	}
+
+	@Override
+	public List<G_Permission> getPermissionsByRole(G_Role role)
+			throws AvroRemoteException {
+		return pDao.getForRole(role);
+	}
+
+	@Override
+	public String getPasswordHash(String username, String password) {
+		return uDao.getPasswordHash(username, password);
 	}
 
 }

@@ -1,7 +1,7 @@
 package graphene.web.components;
 
 import graphene.model.idl.G_SymbolConstants;
-import graphene.web.services.Authenticator;
+import graphene.web.services.AuthenticatorHelper;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;
@@ -54,8 +54,8 @@ public class UnauthenticatedLayout {
 	private String appVersion;
 	
 	
-	@Inject
-	private Authenticator authenticator;
+//	@Inject
+//	private IAuthenticator authenticator;
 
 //	@Inject
 //	private ComponentClassResolver componentClassResolver;

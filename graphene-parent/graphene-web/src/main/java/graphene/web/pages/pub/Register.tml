@@ -17,7 +17,7 @@
 
 			<span id="login-header-space">
 				<h4 class="hidden-mobile">Already registered?</h4>
-				<t:pagelink page="graphene/login" class="btn btn-danger">Sign In</t:pagelink>
+				<t:pagelink page="graphene/pub/login" class="btn btn-danger">Sign In</t:pagelink>
 			</span>
 
 		</header>

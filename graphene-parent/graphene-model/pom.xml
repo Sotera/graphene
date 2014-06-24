@@ -76,11 +76,6 @@
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-sql-codegen</artifactId>
 		</dependency>
-		<!-- For some reason you have to explictly ask for this in case it happens 
-			to be a snapshot. The transitive dependency was not downloading when you 
-			use a snapshot version. -->
-		<!-- <dependency> <groupId>com.mysema.querydsl</groupId> <artifactId>querydsl-maven-plugin</artifactId> 
-			<version>${querydsl.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
@@ -93,6 +88,10 @@
 		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.tynamo</groupId>
+			<artifactId>tapestry-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.avro</groupId>

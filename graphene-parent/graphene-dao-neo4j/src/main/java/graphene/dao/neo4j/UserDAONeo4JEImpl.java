@@ -40,7 +40,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	@Inject
 	Logger logger;
 
-	PasswordHash p = new PasswordHash();
+	PasswordHash passwordHasher = new PasswordHash();
 
 	public UserDAONeo4JEImpl() {
 		// TODO Auto-generated constructor stub
@@ -141,8 +141,6 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 
 		return user;
 	}
-
-	
 
 	private Node createUniqueUser(String username, String password) {
 		Node result = null;
@@ -306,7 +304,6 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return (n == null ? null : createDetached(n));
 	}
 
-
 	@PostInjection
 	public void initialize() throws DataAccessException {
 		if (n4jService.connectToGraph()) {
@@ -317,7 +314,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 
 		} else {
 			logger.error("Could not connect to graph database");
-			
+
 			throw new DataAccessException("Could not connect to graph database");
 		}
 	}
@@ -337,7 +334,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				String hash = (String) node
 						.getProperty(G_UserFields.hashedpassword.name());
 				try {
-					if (p.validatePassword(password, hash)) {
+					if (passwordHasher.validatePassword(password, hash)) {
 
 						node.setProperty(G_UserFields.lastlogin.name(),
 								DateTime.now(DateTimeZone.UTC).getMillis());
@@ -364,12 +361,12 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		// it is set.
 		if (ValidationUtils.isValid(password)) {
 			// then update
-			logger.info("Updating password hash");
 			try {
-				n.setProperty(G_UserFields.hashedpassword.name(),
-						p.createHash(password));
+				String hash = passwordHasher.createHash(password);
+				logger.info("Updating password hash to " + hash);
+				n.setProperty(G_UserFields.hashedpassword.name(), hash);
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-				logger.error("Error setting password for user "
+				logger.error("Error setting password hash for user "
 						+ n.getProperty(G_UserFields.username.name()));
 				e.printStackTrace();
 			}
@@ -408,6 +405,18 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String getPasswordHash(String username, String password) {
+		String hash = null;
+		try {
+			hash = passwordHasher.createHash(password);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			logger.error("Error getting password hash for user " + username);
+			e.printStackTrace();
+		}
+		return hash;
 	}
 
 }

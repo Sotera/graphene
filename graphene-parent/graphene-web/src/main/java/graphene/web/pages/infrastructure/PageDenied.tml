@@ -1,0 +1,18 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html title="Page Denied" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<head>
+		<title>Page Denied</title>
+	</head>
+	<body>
+		<p>
+			<h1>Page Denied</h1>
+
+			You are not authorized to page ${urlDenied}.
+			<br />
+			<br />
+
+			<a t:type="pageLink" t:page="Index">Home</a>
+		</p>
+	</body>
+</html>

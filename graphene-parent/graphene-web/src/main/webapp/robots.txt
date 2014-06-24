@@ -1,0 +1,10 @@
+User-agent: *       # to all spiders/robots.
+
+# Disallow: /       # DISALLOWS the crawling of all files and directories
+
+# see: http://apache-tapestry-mailing-list-archives.1045711.n5.nabble.com/Safari-for-example-browser-history-and-form-exception-td4942074.html
+Disallow: /*?*      # block access to all URLs that include a question mark (?)
+Disallow: /*.form$  # block URLs that end with .form
+Disallow: /*.*form$
+
+Allow: /

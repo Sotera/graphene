@@ -1,21 +1,22 @@
 package graphene.web.pages;
 
-import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
 import graphene.web.annotations.PluginPage;
+import graphene.web.annotations.ProtectedPage;
 
 import java.util.Date;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.Secure;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -24,8 +25,10 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 /**
  * Start page of application.
  */
+
+//@RequiresAuthentication
 @PluginPage(visualType = G_VisualType.META)
-public class Index {
+public class Index extends SimpleBasePage{
 	@Inject
 	private AlertManager alertManager;
 
@@ -41,10 +44,6 @@ public class Index {
 	@Symbol(SymbolConstants.TAPESTRY_VERSION)
 	private String tapestryVersion;
 
-	@SessionState(create=false)
-	private G_User user;
-
-	private boolean userExists;
 
 	@Inject
 	private G_UserDataAccess service;
@@ -73,10 +72,9 @@ public class Index {
 
 	@SetupRender
 	public void setupRender() {
-		if (userExists) {
-			String username = user.getUsername();
+		if (isUserExists()) {
 			try {
-				workspaces = service.getWorkspacesOrCreateNewForUser(username);
+				workspaces = service.getWorkspacesOrCreateNewForUser(getUser().getUsername());
 			} catch (AvroRemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

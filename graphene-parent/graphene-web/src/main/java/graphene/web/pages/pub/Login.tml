@@ -1,0 +1,67 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/unauthenticatedLayout" title="Login"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+	<body id="login" class="animated fadeInDown">
+
+		<!-- possible classes: minified, no-right-panel, fixed-ribbon, fixed-header, 
+			fixed-width -->
+		<header id="header">
+			<div id="logo-group">
+				<!-- PLACE YOUR LOGO HERE -->
+				<span id="logo">
+					<img src="${imgLogo}" alt="${appName}" />
+				</span>
+				<!-- END LOGO PLACEHOLDER -->
+			</div>
+
+			<span id="login-header-space">
+				<h4 class="hidden-mobile">Need an account?</h4>
+				<t:pagelink page="graphene/pub/register" class="btn btn-danger">Create account
+				</t:pagelink>
+			</span>
+
+		</header>
+
+
+		<div id="main" role="main">
+
+			<!-- MAIN CONTENT -->
+			<div id="content" class="container">
+
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 hidden-xs hidden-sm">
+						<div t:type="graphene/greeting"></div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+						<t:graphene.security.loginform />
+
+						<h5 class="text-center"> - Or sign in using -</h5>
+
+						<ul class="list-inline text-center">
+							<li>
+								<a href="javascript:void(0);" class="btn btn-primary btn-circle">
+									Federated provider 1
+								</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);" class="btn btn-info btn-circle">
+									Federated provider 2
+								</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);" class="btn btn-warning btn-circle">
+									Federated provider 3
+								</a>
+							</li>
+						</ul>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+	</body>
+</html>

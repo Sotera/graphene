@@ -2,6 +2,7 @@ package graphene.web.services;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.web.model.BusinessException;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -14,7 +15,8 @@ import org.slf4j.Logger;
  * Basic Security Realm implementation to be replaced with Shiro integration
  * from Tynamo.
  */
-public class BasicAuthenticator implements Authenticator {
+@Deprecated
+public class BasicAuthenticator implements AuthenticatorHelper {
 
 	public static final String AUTH_TOKEN = "authToken";
 
@@ -36,7 +38,7 @@ public class BasicAuthenticator implements Authenticator {
 	private Request request;
 
 	public void login(String username, String password)
-			throws AvroRemoteException {
+			throws AvroRemoteException, BusinessException {
 
 		G_User user = service.loginUser(username, password);
 		applicationStateManager.set(G_User.class, user);
@@ -44,7 +46,7 @@ public class BasicAuthenticator implements Authenticator {
 
 	}
 
-	public boolean isLoggedIn() {
+	public boolean isUserObjectCreated() {
 		return applicationStateManager.exists(G_User.class);
 		// Session session = request.getSession(false);
 		// if (session != null) {
@@ -65,17 +67,17 @@ public class BasicAuthenticator implements Authenticator {
 		}
 	}
 
-	public G_User getLoggedUser() {
-		G_User user = null;
-
-		if (isLoggedIn()) {
-
-			user = (G_User) request.getSession(true).getAttribute(AUTH_TOKEN);
-			logger.info("User was found in the session");
-		} else {
-			throw new IllegalStateException("The user is not logged in! ");
-		}
-		return user;
-	}
+//	public G_User getLoggedUser() {
+//		G_User user = null;
+//
+//		if (isLoggedIn()) {
+//
+//			user = (G_User) request.getSession(true).getAttribute(AUTH_TOKEN);
+//			logger.info("User was found in the session");
+//		} else {
+//			throw new IllegalStateException("The user is not logged in! ");
+//		}
+//		return user;
+//	}
 
 }

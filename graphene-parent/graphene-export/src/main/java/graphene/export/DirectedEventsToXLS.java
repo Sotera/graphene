@@ -79,7 +79,7 @@ public class DirectedEventsToXLS {
 				org.joda.time.DateTime testd = new org.joda.time.DateTime(
 						r.getDateMilliSeconds());
 				dt = new DateTime(0, row, testd.toDate(), dateFormat);
-				account = new Label(1, row, r.getSenderAccount());
+				account = new Label(1, row, r.getSenderId());
 
 				//deb = r.getDebitAsDouble();
 				//TODO: Unit test this to make sure the Money format is parseable as a Double

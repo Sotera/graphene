@@ -2,7 +2,8 @@ package graphene.web.pages;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
-import graphene.web.services.Authenticator;
+import graphene.web.pages.pub.Login;
+import graphene.web.services.AuthenticatorHelper;
 
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -12,6 +13,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
+import org.tynamo.security.services.SecurityService;
 
 /**
  * Allows the user to modify password and other settings
@@ -44,11 +46,12 @@ public class Settings {
 
 	private boolean userExists;
 
-	@Inject
-	private Authenticator authenticator;
 
 	@Inject
 	private Logger logger;
+
+	@Inject
+	private SecurityService securityService;
 
 	public Object onSuccess() {
 		if (!verifyPassword.equals(password)) {
@@ -69,7 +72,10 @@ public class Settings {
 			loginPage.setFlashMessage(messages
 					.get("settings.password-not-changed"));
 		}
-		authenticator.logout();
+
+		// authenticator.logout();
+		user = null;
+		securityService.getSubject().logout();
 		// Send the user to the login page.
 		return loginPage;
 	}

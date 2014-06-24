@@ -9,155 +9,107 @@ package graphene.model.idl;
 /**  */
 @org.apache.avro.specific.AvroGenerated
 public interface G_UserDataAccess {
-  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"G_UserDataAccess\",\"namespace\":\"graphene.model.idl\",\"doc\":\"\",\"types\":[{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"* Tags are defined by the application layer as a taxonomy of user and\\r\\n\\t * application concepts, independent of the data sources. This allows\\r\\n\\t * application semantics to be re-used with new data, with a minimum of new\\r\\n\\t * software design and development. Data layer entity types, link types and\\r\\n\\t * properties should be mapped into the list of tags. The application layer\\r\\n\\t * must be able to search by native field name or by tag interchangeably,\\r\\n\\t * and properties returned must contain both native field names as well as\\r\\n\\t * tags.\\r\\n\\t * \\r\\n\\t * The list of tags may change as application features evolve, though that\\r\\n\\t * will require collaboration with the data layer providers. Evolving the\\r\\n\\t * tag list should not change the Data Access or Search APIs.\\r\\n\\t * \\r\\n\\t * This is the current list of tags for Properties:\\r\\n\\t * \\r\\n\\t *\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"VIDEO\",\"AUDIO\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\",\"REDACTED\"]},{\"type\":\"enum\",\"name\":\"G_CanonicalIndustryType\",\"doc\":\"* Industry types are for classifying datasets, data sources, or individual\\r\\n\\t * datum.\\r\\n\\t * \\r\\n\\t *\",\"symbols\":[\"REDACTED\",\"UNKNOWN_OR_UNSURE\",\"BANKING\",\"FINANCIAL_SERVICES\",\"FOOD_RESTAURANT\",\"COMMODITY_PROVIDER\",\"ISP\",\"TELCO\",\"TELEVISION\",\"EMAIL_PROVIDER\",\"MULTI\",\"TRANSPORT\",\"LOGISTICS\",\"ADVERTISEMENT_AGENCY\",\"EMPLOYMENT_AGENCY\",\"GOVERNMENT_AGENCY\",\"INTERNATIONAL_AGENCY\",\"NEWS_AGENCY\",\"POSTAL\",\"REAL_ESTATE\",\"EDUCATION\",\"HEALTHCARE\",\"CHARITY\"]},{\"type\":\"enum\",\"name\":\"G_EntityTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"GROUP\",\"CLUSTER\",\"CLUSTER_SUMMARY\",\"FILE\",\"ANONYMOUS\",\"OTHER\",\"REDACTED\"]},{\"type\":\"enum\",\"name\":\"G_LinkTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"FINANCIAL\",\"SOCIAL\",\"COMMUNICATION\",\"EVENT\",\"OTHER\",\"REDACTED\",\"FATHER_OF\",\"SON_OF\",\"MOTHER_OF\",\"DAUGHTER_OF\",\"BROTHER_OF\",\"SISTER_OF\",\"GUARDIAN_OF\",\"KIN_OF\",\"COUSIN_OF\",\"WIFE_OF\",\"HUSBAND_OF\",\"EMPLOYEE_OF\",\"OWNER_OF\",\"SELLER_OF\",\"BUYER_OF\",\"CREATOR_OF\",\"FRIEND_OF\",\"ENEMY_OF\",\"KNOWS\"]},{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"IMAGE\",\"URI\",\"OTHER\",\"REDACTED\"]},{\"type\":\"enum\",\"name\":\"G_VisualTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"CHOROPLETH\",\"CARTOGRAM\",\"DOT_DISTRIBUTION\",\"PROPORTIONAL_SYMBOL\",\"CONTOUR_MAP\",\"DASYMETRIC\",\"FLOW_MAP\",\"SOM\",\"TIME_LINE\",\"TIME_SERIES\",\"GANTT\",\"STREAM_GRAPH\",\"ARC_DIAGRAM\",\"POLAR_AREA\",\"SANKEY\",\"ALLUVIAL\",\"PIE_CHART\",\"HISTOGRAM\",\"TAG_CLOUD\",\"BUBBLE_CHART\",\"BAR_CHART\",\"TREE_MAP\",\"SCATTER_PLOT\",\"LINE_CHART\",\"STEP_CHART\",\"AREA_CHART\",\"HEAT_MAP\",\"SPIDER_CHART\",\"CANDLESTICK\",\"TREE_REGULAR\",\"TREE_RADIAL\",\"TREE_HYPERBOLIC\",\"RADIAL_HIERARCHY\",\"MATRIX\",\"NODE_LINK_DIAGRAM\",\"NODE_LINK_DIAGRAM3D\",\"CIRCULAR_HIERARCHY\",\"HIVE_PLOT\",\"SUBWAY_MAP\",\"DEFAULT\",\"HIDDEN\",\"IMAGE\",\"VIDEO\",\"INFINITE_SCROLL\",\"LIST\",\"PLUGIN\",\"REDACTED\"]},{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"* This is a placeholder for future modeling of provenance. It is not a\\r\\n\\t * required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"* This is a placeholder for future modeling of uncertainty. It is not a\\r\\n\\t * required field in any service calls.\\r\\n\\t *\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"* Placeholder for now. Express original source confidence as a single\\r\\n\\t\\t * number from 0 to 1.\",\"default\":1},{\"name\":\"type\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the uncertainty (source data, algorithm,\\r\\n\\t\\t * unit, etc)\",\"default\":null}]},{\"type\":\"record\",\"name\":\"G_LinkedData\",\"doc\":\"* A URL and MIME type representing a pointer to text, image or other\\r\\n\\t * external resource.\",\"fields\":[{\"name\":\"url\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"URL of the resource\"},{\"name\":\"mimeType\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"MIME type of the resource\",\"default\":null},{\"name\":\"title\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* description of the linked resource (suitable for display to the user\\r\\n\\t\\t * in an hypertext link)\",\"default\":null}]},{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"* Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]},{\"type\":\"enum\",\"name\":\"G_ContinentCode\",\"doc\":\"* Standard two letter continent code\\r\\n\\t *\",\"symbols\":[\"AF\",\"AS\",\"EU\",\"NA\",\"SA\",\"OC\",\"AN\"]},{\"type\":\"record\",\"name\":\"G_Country\",\"doc\":\"* Structured representation of country data, which includes geo-spatial\\r\\n\\t * data.\\r\\n\\t *\",\"fields\":[{\"name\":\"country\",\"type\":\"G_GeoData\",\"doc\":\"country geo data, including the name as text\"},{\"name\":\"region\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* the name of the global region to which the country belongs; any\\r\\n\\t\\t * common classification here is acceptable\"},{\"name\":\"continent\",\"type\":\"G_ContinentCode\",\"doc\":\"continent\"}]},{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"doc\":\"* Temporal resolution of a duration\\r\\n\\t *\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]},{\"type\":\"record\",\"name\":\"G_Duration\",\"doc\":\"* A temporal duration\\r\\n\\t *\",\"fields\":[{\"name\":\"interval\",\"type\":\"G_DateInterval\",\"doc\":\"time aggregation level, e.g. use monthly data\"},{\"name\":\"numIntervals\",\"type\":\"long\",\"doc\":\"number of intervals, e.g. 12 monthly intervals is a 1 year duration\"}]},{\"type\":\"record\",\"name\":\"G_DateRange\",\"doc\":\"* Describes a date range at a specific resolution.\\r\\n\\t *\",\"fields\":[{\"name\":\"startDate\",\"type\":\"long\"},{\"name\":\"numBins\",\"type\":\"long\",\"doc\":\"number of bins to return, e.g. 12 monthly bins for 1 year of data\"},{\"name\":\"durationPerBin\",\"type\":\"G_Duration\",\"doc\":\"* number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2\\r\\n\\t\\t * years of data\"}]},{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"* Allowed types for Ranges of values.\\r\\n\\t *\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},{\"type\":\"enum\",\"name\":\"G_Gender\",\"doc\":\"* Allowed types for Gender values.\\r\\n\\t *\",\"symbols\":[\"REDACTED\",\"MALE\",\"FEMALE\",\"UKNOWN\",\"OTHER\"]},{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"* Single value\\r\\n\\t *\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"* List of values\\r\\n\\t *\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"* Bounded or unbounded range values\\r\\n\\t *\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G","_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"* If true, range includes specified endpoint. If false, range is\\r\\n\\t\\t * exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"* A frequency or probability element of a distribution.\\r\\n\\t *\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"* Describes a distribution of values.\\r\\n\\t *\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":\"G_Frequency\"}},{\"name\":\"rangeType\",\"type\":\"G_RangeType\",\"doc\":\"Describes how the values in the distribution are summarized\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"* The type of value that the distribution describes. One of DOUBLE,\\r\\n\\t\\t * LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]},{\"type\":\"record\",\"name\":\"G_Property\",\"doc\":\"* Each property on an Entity or Link is a name-value pair, with data type\\r\\n\\t * information, as well as optional provenance. Tags provide a way for the\\r\\n\\t * data provider to associate semantic annotations to each property in terms\\r\\n\\t * of the semantics of the application.\\r\\n\\t *\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"range\",\"type\":[\"G_SingletonRange\",\"G_ListRange\",\"G_BoundedRange\",\"G_DistributionRange\"],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_PropertyTag\"},\"doc\":\"* one or more tags from the Tag list, used to map this source-specific\\r\\n\\t\\t * field into the semantics of applications\"}]},{\"type\":\"record\",\"name\":\"G_DataSetField\",\"doc\":\"* A field within a DataSet, which in turn is a real or virtual table within\\r\\n\\t * a DataSource. From Non Avro version by PWG.\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"name of the field\"},{\"name\":\"friendlyName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"sortable\",\"type\":\"boolean\",\"default\":true},{\"name\":\"searchable\",\"type\":\"boolean\",\"default\":true},{\"name\":\"reportable\",\"type\":\"boolean\",\"default\":true}]},{\"type\":\"record\",\"name\":\"G_DataSet\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"name of the dataset\"},{\"name\":\"isEntity\",\"type\":\"boolean\",\"default\":true},{\"name\":\"isTransaction\",\"type\":\"boolean\",\"default\":true},{\"name\":\"fields\",\"type\":{\"type\":\"array\",\"items\":\"G_DataSetField\"}}]},{\"type\":\"record\",\"name\":\"G_DataSource\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"id of the data source\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"name of the data source\"},{\"name\":\"friendlyName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"isEntity\",\"type\":\"boolean\",\"default\":true},{\"name\":\"isTransaction\",\"type\":\"boolean\",\"default\":true},{\"name\":\"dataSets\",\"type\":{\"type\":\"array\",\"items\":\"G_DataSet\"}}]},{\"type\":\"record\",\"name\":\"G_DataSourceList\",\"fields\":[{\"name\":\"dataSources\",\"type\":{\"type\":\"array\",\"items\":\"G_DataSource\"}}]},{\"type\":\"record\",\"name\":\"G_Entity\",\"doc\":\"* The nodes in the social, financial, communications or other graphs. May\\r\\n\\t * represent concrete individuals or organizations, specific proxies such as\\r\\n\\t * accounts, or the implicit individuals or groups behind those other\\r\\n\\t * entities.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* This uid must represent either (1) a globally unique identifier that\\r\\n\\t\\t * can be used to retrieve data for an explicit entity, or (2) encoded\\r\\n\\t\\t * query information that can be used to find a set of associated record\\r\\n\\t\\t * notionally representing an implicit entity (e.g.\\r\\n\\t\\t * Loans&FirstName&LastName&Gender). Must not be used for IDs that\\r\\n\\t\\t * aren't globally unique. For example, in Kiva, \\\"Lenders\\\" has a UID\\r\\n\\t\\t * (\\\"L12345\\\") while \\\"Borrowers\\\" have an encoded search in the Loans\\r\\n\\t\\t * table for uid (\\\"B{loan:23456;name=Daniel}\\\"). The encoded information\\r\\n\\t\\t * is data layer-specific, may be different from entity to entity or\\r\\n\\t\\t * data set to data set, and should be considered opaque to the\\r\\n\\t\\t * consumers of the entities. Entities of type 2 should always have the\\r\\n\\t\\t * Entity Tag ANONYMOUS to help distinguish them when required.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_EntityTag\"},\"doc\":\"Entity Tags (see above, e.g. \\\"ACCOUNT\\\")\"},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":\"G_Property\"}}]},{\"type\":\"record\",\"name\":\"G_Link\",\"doc\":\"* The links in the social, financial, communications or other graphs. May\\r\\n\\t * represent communication events, financial transactions or social\\r\\n\\t * connections.\",\"fields\":[{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"source entity uid\",\"default\":null},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"target entity uid\",\"default\":null},{\"name\":\"directed\",\"type\":\"boolean\",\"doc\":\"true if directed, false if undirected\",\"default\":true},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":\"G_Property\"}},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_LinkTag\"},\"doc\":\"Link Tags\"}]},{\"type\":\"record\",\"name\":\"G_Cluster\",\"doc\":\"* Cluster of nodes in the social, financial, communications or other\\r\\n\\t * graphs.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* A unique identifier use to retrieve data about this cluster. Should\\r\\n\\t\\t * not be used for non-global identifiers.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_EntityTag\"},\"doc\":\"Entity Tags (see DataTypes, e.g. \\\"CLUSTER\\\")\"},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":\"G_Property\"}},{\"name\":\"members\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"List of id's of the members of this cluster\"},{\"name\":\"subclusters\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"* List of id's of the subclusters of this cluster - empty if this is a\\r\\n\\t\\t * leaf cluster in cluster hierarchy\"},{\"name\":\"parent\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* The id of the parent cluster if this is a cluster in a hierarchy -\\r\\n\\t\\t * Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"root\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* The id of the root cluster (top level cluster) if this is a cluster\\r\\n\\","t\\t * in a hierarchy - Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"level\",\"type\":\"int\",\"doc\":\"* The degree from the root this cluster is in the hierarchy - level = 0\\r\\n\\t\\t * if this is a root cluster *\",\"default\":0}]},{\"type\":\"record\",\"name\":\"G_Future\",\"doc\":\"* Represents the future results of an asynchronous task. Can be passed into\\r\\n\\t * the FutureResults service API\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this task\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"short human-readable description of task for display\"},{\"name\":\"service\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"uid of the service task is running on\",\"default\":null},{\"name\":\"started\",\"type\":\"long\",\"doc\":\"date/time task was started\"},{\"name\":\"completed\",\"type\":\"long\",\"doc\":\"date/time task was completed (negative if not completed yet)\",\"default\":-1}]},{\"type\":\"record\",\"name\":\"G_Service\",\"doc\":\"* Selectable services, returned by getServices() in various APIs\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this service\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"short human-readable description of service for display\"}]},{\"type\":\"record\",\"name\":\"G_AppInfo\",\"doc\":\"* Selectable services, returned by getAppInfo() in various meta APIs\",\"fields\":[{\"name\":\"appName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this application\"},{\"name\":\"appVersion\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"version of this application\"},{\"name\":\"serverTime\",\"type\":\"long\",\"doc\":\"version of this application\"}]},{\"type\":\"enum\",\"name\":\"G_UserFields\",\"symbols\":[\"active\",\"username\",\"avatar\",\"email\",\"fullname\",\"hashedpassword\",\"lastlogin\",\"lastmodified\",\"accountcreated\",\"numberlogins\",\"provenance\",\"uncertainty\"]},{\"type\":\"record\",\"name\":\"G_User\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"doc\":\"\",\"default\":true},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"},{\"name\":\"avatar\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* some id of an avatar (could be a file name or other string to look\\r\\n\\t\\t * up)\",\"default\":null},{\"name\":\"email\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's email\",\"default\":null},{\"name\":\"fullname\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's full name\",\"default\":null},{\"name\":\"hashedpassword\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's hashed password\",\"default\":null},{\"name\":\"lastlogin\",\"type\":[\"long\",\"null\"],\"doc\":\"user's lastlogin datetime\",\"default\":0},{\"name\":\"lastmodified\",\"type\":[\"long\",\"null\"],\"doc\":\"user's modified datetime\",\"default\":0},{\"name\":\"accountcreated\",\"type\":[\"long\",\"null\"],\"doc\":\"user's account created datetime\",\"default\":0},{\"name\":\"numberlogins\",\"type\":\"int\",\"doc\":\"user's numberlogins\",\"default\":0}]},{\"type\":\"enum\",\"name\":\"G_GroupFields\",\"symbols\":[\"groupname\"]},{\"type\":\"record\",\"name\":\"G_Group\",\"fields\":[{\"name\":\"groupname\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"}]},{\"type\":\"enum\",\"name\":\"G_WorkspaceFields\",\"symbols\":[\"active\",\"creatorusername\",\"json\",\"title\",\"workspaceid\",\"lastmodified\",\"createddate\"]},{\"type\":\"record\",\"name\":\"G_Workspace\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"creatorusername\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"workspaceid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastmodified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"createddate\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]},{\"type\":\"error\",\"name\":\"AuthenticationException\",\"fields\":[{\"name\":\"message\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},{\"type\":\"error\",\"name\":\"UnauthorizedActionException\",\"fields\":[{\"name\":\"message\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}],\"messages\":{\"addNewWorkspaceForUser\":{\"doc\":\"* The user has created a new, unattached workspace and wishes to save it.\\r\\n\\t * This will save the workspace as it is passed in, and create relationships\\r\\n\\t * showing the user is the creator and an editor of the workspace.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspace\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspace\",\"type\":\"G_Workspace\"}],\"response\":\"G_Workspace\"},\"countUsers\":{\"request\":[{\"name\":\"partialUsername\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"int\"},\"countWorkspaces\":{\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"partialWorkspaceTitle\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"int\"},\"createFirstWorkspaceForUser\":{\"doc\":\"* Creates a new workspace for the user, saves it, and sets the user as the\\r\\n\\t * editor and creator of it.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_Workspace\"},\"getWorkspacesOrCreateNewForUser\":{\"doc\":\"* Gets the workspaces for the user.  If no workspaces were found, create a first workspace for the user and return the one element list.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":{\"type\":\"array\",\"items\":\"G_Workspace\"}},\"createTempWorkspaceForUser\":{\"doc\":\"* Creates a blank workspace for the user, but it is not saved to the\\r\\n\\t * database yet.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_Workspace\"},\"deleteUser\":{\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"deleteWorkspace\":{\"doc\":\"* Deletes the workspace if the user is the creator of the workspace.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspaceId\\r\\n\\t * @return\\r\\n\\t * @throws UnauthorizedActionException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\",\"errors\":[\"UnauthorizedActionException\"]},\"deleteWorkspaceIfUnused\":{\"doc\":\"* Deletes the workspace if there are no relationships\\r\\n\\t * \\r\\n\\t * @param workspaceid\\r\\n\\t * @return\\r\\n\\t * @throws UnauthorizedActionException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\",\"errors\":[\"UnauthorizedActionException\"]},\"findWorkspaces\":{\"doc\":\"* Find workspaces for the username where the partialName matches the workspace title.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"partialWorkspaceTitle\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"offset\",\"type\":\"int\"},{\"name\":\"limit\",\"type\":\"int\"}],\"response\":{\"type\":\"array\",\"items\":\"G_Workspace\"}},\"getUser\":{\"doc\":\"* Return the user specified by the username\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_User\"},\"getWorkspace\":{\"doc\":\"* Retrieves the workspace.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspaceId\\r\\n\\t * @return The workspace.\\r\\n\\t * @throws UnauthorizedActionException\\r\\n\\t *             if the user is not a creator, editor or reviewer of the\\r\\n\\t *             workspace. (also if the workspace or user ids supplied were\\r\\n\\t *             not valid)\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"re","sponse\":\"G_Workspace\",\"errors\":[\"UnauthorizedActionException\"]},\"getWorkspacesForUser\":{\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":{\"type\":\"array\",\"items\":\"G_Workspace\"}},\"loginUser\":{\"doc\":\"* Finds the user and checks to see if the password hashes match. If the\\r\\n\\t * user is not found or the hashes don't match, then an exception is thrown\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param password\\r\\n\\t * @return a non null user.\\r\\n\\t * @throws AuthenticationException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_User\",\"errors\":[\"AuthenticationException\"]},\"registerUser\":{\"doc\":\"* Performs the creation of a new user.\\r\\n\\t * \\r\\n\\t * @param d\\r\\n\\t * @return\",\"request\":[{\"name\":\"d\",\"type\":\"G_User\"}],\"response\":\"G_User\"},\"removeUserFromWorkspace\":{\"doc\":\"* Remove all relationships between the supplied username and the supplied workspace id\\r\\n\\t  * \\r\\n\\t  * Return true if permissions existed and were removed.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"removeUserPermissionFromWorkspace\":{\"doc\":\"* Remove the specified permission between the supplied username and the supplied workspace id\\r\\n\\t  * \\r\\n\\t  * Return true if the permission existed and was removed.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"permission\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"saveGroup\":{\"doc\":\"* Save the provided group and return the saved group object (which may have been updated with business logic.)\",\"request\":[{\"name\":\"user\",\"type\":\"G_Group\"}],\"response\":\"G_Group\"},\"saveUser\":{\"doc\":\"* Save the provided user and return the saved user object (which may have been updated with business logic.)\",\"request\":[{\"name\":\"user\",\"type\":\"G_User\"}],\"response\":\"G_User\"},\"saveWorkspace\":{\"doc\":\"* Saves the workspace if the user is allowed to save.\\r\\n\\t * \\r\\n\\t * TODO: Revisit the business logic to see if returning a null is better\\r\\n\\t * than throwing and catching exceptions (slow)\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspace\\r\\n\\t * @return The workspace if the save was performed, null if unable to save.\\r\\n\\t * @throws UnauthorizedActionException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspace\",\"type\":\"G_Workspace\"}],\"response\":\"G_Workspace\",\"errors\":[\"UnauthorizedActionException\"]},\"setUserPassword\":{\"doc\":\"* Return true if the password was able to be set.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"newPassword\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"userExists\":{\"doc\":\"* Return true if the username exists, false otherwise\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"getByPartialUsername\":{\"doc\":\"* Given a partial username, return results between offset and offset+limit\",\"request\":[{\"name\":\"partialUsername\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"offset\",\"type\":\"int\"},{\"name\":\"limit\",\"type\":\"int\"}],\"response\":{\"type\":\"array\",\"items\":\"G_User\"}}}}");
-  /** * The user has created a new, unattached workspace and wishes to save it.
-	 * This will save the workspace as it is passed in, and create relationships
-	 * showing the user is the creator and an editor of the workspace.
-	 * 
-	 * @param username
-	 * @param workspace
-	 * @return */
-  graphene.model.idl.G_Workspace addNewWorkspaceForUser(java.lang.String username, graphene.model.idl.G_Workspace workspace) throws org.apache.avro.AvroRemoteException;
-  int countUsers(java.lang.String partialUsername) throws org.apache.avro.AvroRemoteException;
-  int countWorkspaces(java.lang.String username, java.lang.String partialWorkspaceTitle) throws org.apache.avro.AvroRemoteException;
-  /** * Creates a new workspace for the user, saves it, and sets the user as the
-	 * editor and creator of it.
-	 * 
-	 * @param username
-	 * @return */
-  graphene.model.idl.G_Workspace createFirstWorkspaceForUser(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  /** * Gets the workspaces for the user.  If no workspaces were found, create a first workspace for the user and return the one element list.
-	 * 
-	 * @param username
-	 * @return */
-  java.util.List<graphene.model.idl.G_Workspace> getWorkspacesOrCreateNewForUser(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  /** * Creates a blank workspace for the user, but it is not saved to the
-	 * database yet.
-	 * 
-	 * @param username
-	 * @return */
-  graphene.model.idl.G_Workspace createTempWorkspaceForUser(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  boolean deleteUser(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  /** * Deletes the workspace if the user is the creator of the workspace.
-	 * 
-	 * @param username
-	 * @param workspaceId
-	 * @return
-	 * @throws UnauthorizedActionException */
-  boolean deleteWorkspace(java.lang.String username, java.lang.String workspaceId) throws org.apache.avro.AvroRemoteException, graphene.model.idl.UnauthorizedActionException;
-  /** * Deletes the workspace if there are no relationships
-	 * 
-	 * @param workspaceid
-	 * @return
-	 * @throws UnauthorizedActionException */
-  boolean deleteWorkspaceIfUnused(java.lang.String username, java.lang.String workspaceId) throws org.apache.avro.AvroRemoteException, graphene.model.idl.UnauthorizedActionException;
-  /** * Find workspaces for the username where the partialName matches the workspace title. */
-  java.util.List<graphene.model.idl.G_Workspace> findWorkspaces(java.lang.String username, java.lang.String partialWorkspaceTitle, int offset, int limit) throws org.apache.avro.AvroRemoteException;
-  /** * Return the user specified by the username */
-  graphene.model.idl.G_User getUser(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  /** * Retrieves the workspace.
-	 * 
-	 * @param username
-	 * @param workspaceId
-	 * @return The workspace.
-	 * @throws UnauthorizedActionException
-	 *             if the user is not a creator, editor or reviewer of the
-	 *             workspace. (also if the workspace or user ids supplied were
-	 *             not valid) */
-  graphene.model.idl.G_Workspace getWorkspace(java.lang.String username, java.lang.String workspaceId) throws org.apache.avro.AvroRemoteException, graphene.model.idl.UnauthorizedActionException;
-  java.util.List<graphene.model.idl.G_Workspace> getWorkspacesForUser(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  /** * Finds the user and checks to see if the password hashes match. If the
-	 * user is not found or the hashes don't match, then an exception is thrown
-	 * 
-	 * @param username
-	 * @param password
-	 * @return a non null user.
-	 * @throws AuthenticationException */
-  graphene.model.idl.G_User loginUser(java.lang.String username, java.lang.String password) throws org.apache.avro.AvroRemoteException, graphene.model.idl.AuthenticationException;
-  /** * Performs the creation of a new user.
-	 * 
-	 * @param d
-	 * @return */
-  graphene.model.idl.G_User registerUser(graphene.model.idl.G_User d) throws org.apache.avro.AvroRemoteException;
-  /** * Remove all relationships between the supplied username and the supplied workspace id
-	  * 
-	  * Return true if permissions existed and were removed. */
-  boolean removeUserFromWorkspace(java.lang.String username, java.lang.String workspaceId) throws org.apache.avro.AvroRemoteException;
-  /** * Remove the specified permission between the supplied username and the supplied workspace id
-	  * 
-	  * Return true if the permission existed and was removed. */
-  boolean removeUserPermissionFromWorkspace(java.lang.String username, java.lang.String permission, java.lang.String workspaceId) throws org.apache.avro.AvroRemoteException;
-  /** * Save the provided group and return the saved group object (which may have been updated with business logic.) */
-  graphene.model.idl.G_Group saveGroup(graphene.model.idl.G_Group user) throws org.apache.avro.AvroRemoteException;
-  /** * Save the provided user and return the saved user object (which may have been updated with business logic.) */
-  graphene.model.idl.G_User saveUser(graphene.model.idl.G_User user) throws org.apache.avro.AvroRemoteException;
-  /** * Saves the workspace if the user is allowed to save.
-	 * 
-	 * TODO: Revisit the business logic to see if returning a null is better
-	 * than throwing and catching exceptions (slow)
-	 * 
-	 * @param username
-	 * @param workspace
-	 * @return The workspace if the save was performed, null if unable to save.
-	 * @throws UnauthorizedActionException */
-  graphene.model.idl.G_Workspace saveWorkspace(java.lang.String username, graphene.model.idl.G_Workspace workspace) throws org.apache.avro.AvroRemoteException, graphene.model.idl.UnauthorizedActionException;
-  /** * Return true if the password was able to be set. */
-  boolean setUserPassword(java.lang.String username, java.lang.String newPassword) throws org.apache.avro.AvroRemoteException;
-  /** * Return true if the username exists, false otherwise */
-  boolean userExists(java.lang.String username) throws org.apache.avro.AvroRemoteException;
-  /** * Given a partial username, return results between offset and offset+limit */
-  java.util.List<graphene.model.idl.G_User> getByPartialUsername(java.lang.String partialUsername, int offset, int limit) throws org.apache.avro.AvroRemoteException;
+	public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol
+			.parse("{\"protocol\":\"G_UserDataAccess\",\"namespace\":\"graphene.model.idl\",\"doc\":\"\",\"types\":[{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"* Tags are defined by the application layer as a taxonomy of user and\\r\\n\\t * application concepts, independent of the data sources. This allows\\r\\n\\t * application semantics to be re-used with new data, with a minimum of new\\r\\n\\t * software design and development. Data layer entity types, link types and\\r\\n\\t * properties should be mapped into the list of tags. The application layer\\r\\n\\t * must be able to search by native field name or by tag interchangeably,\\r\\n\\t * and properties returned must contain both native field names as well as\\r\\n\\t * tags.\\r\\n\\t * \\r\\n\\t * The list of tags may change as application features evolve, though that\\r\\n\\t * will require collaboration with the data layer providers. Evolving the\\r\\n\\t * tag list should not change the Data Access or Search APIs.\\r\\n\\t * \\r\\n\\t * This is the current list of tags for Properties:\\r\\n\\t * \\r\\n\\t *\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"VIDEO\",\"AUDIO\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\",\"REDACTED\"]},{\"type\":\"enum\",\"name\":\"G_CanonicalIndustryType\",\"doc\":\"* Industry types are for classifying datasets, data sources, or individual\\r\\n\\t * datum.\\r\\n\\t * \\r\\n\\t *\",\"symbols\":[\"REDACTED\",\"UNKNOWN_OR_UNSURE\",\"BANKING\",\"FINANCIAL_SERVICES\",\"FOOD_RESTAURANT\",\"COMMODITY_PROVIDER\",\"ISP\",\"TELCO\",\"TELEVISION\",\"EMAIL_PROVIDER\",\"MULTI\",\"TRANSPORT\",\"LOGISTICS\",\"ADVERTISEMENT_AGENCY\",\"EMPLOYMENT_AGENCY\",\"GOVERNMENT_AGENCY\",\"INTERNATIONAL_AGENCY\",\"NEWS_AGENCY\",\"POSTAL\",\"REAL_ESTATE\",\"EDUCATION\",\"HEALTHCARE\",\"CHARITY\"]},{\"type\":\"enum\",\"name\":\"G_EntityTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"GROUP\",\"CLUSTER\",\"CLUSTER_SUMMARY\",\"FILE\",\"ANONYMOUS\",\"OTHER\",\"REDACTED\"]},{\"type\":\"enum\",\"name\":\"G_LinkTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"FINANCIAL\",\"SOCIAL\",\"COMMUNICATION\",\"EVENT\",\"OTHER\",\"REDACTED\",\"FATHER_OF\",\"SON_OF\",\"MOTHER_OF\",\"DAUGHTER_OF\",\"BROTHER_OF\",\"SISTER_OF\",\"GUARDIAN_OF\",\"KIN_OF\",\"COUSIN_OF\",\"WIFE_OF\",\"HUSBAND_OF\",\"EMPLOYEE_OF\",\"OWNER_OF\",\"SELLER_OF\",\"BUYER_OF\",\"CREATOR_OF\",\"FRIEND_OF\",\"ENEMY_OF\",\"KNOWS\"]},{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"IMAGE\",\"URI\",\"OTHER\",\"REDACTED\"]},{\"type\":\"enum\",\"name\":\"G_VisualTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"CHOROPLETH\",\"CARTOGRAM\",\"DOT_DISTRIBUTION\",\"PROPORTIONAL_SYMBOL\",\"CONTOUR_MAP\",\"DASYMETRIC\",\"FLOW_MAP\",\"SOM\",\"TIME_LINE\",\"TIME_SERIES\",\"GANTT\",\"STREAM_GRAPH\",\"ARC_DIAGRAM\",\"POLAR_AREA\",\"SANKEY\",\"ALLUVIAL\",\"PIE_CHART\",\"HISTOGRAM\",\"TAG_CLOUD\",\"BUBBLE_CHART\",\"BAR_CHART\",\"TREE_MAP\",\"SCATTER_PLOT\",\"LINE_CHART\",\"STEP_CHART\",\"AREA_CHART\",\"HEAT_MAP\",\"SPIDER_CHART\",\"CANDLESTICK\",\"TREE_REGULAR\",\"TREE_RADIAL\",\"TREE_HYPERBOLIC\",\"RADIAL_HIERARCHY\",\"MATRIX\",\"NODE_LINK_DIAGRAM\",\"NODE_LINK_DIAGRAM3D\",\"CIRCULAR_HIERARCHY\",\"HIVE_PLOT\",\"SUBWAY_MAP\",\"DEFAULT\",\"HIDDEN\",\"IMAGE\",\"VIDEO\",\"INFINITE_SCROLL\",\"LIST\",\"PLUGIN\",\"REDACTED\"]},{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"* This is a placeholder for future modeling of provenance. It is not a\\r\\n\\t * required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"* This is a placeholder for future modeling of uncertainty. It is not a\\r\\n\\t * required field in any service calls.\\r\\n\\t *\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"* Placeholder for now. Express original source confidence as a single\\r\\n\\t\\t * number from 0 to 1.\",\"default\":1},{\"name\":\"type\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the uncertainty (source data, algorithm,\\r\\n\\t\\t * unit, etc)\",\"default\":null}]},{\"type\":\"record\",\"name\":\"G_LinkedData\",\"doc\":\"* A URL and MIME type representing a pointer to text, image or other\\r\\n\\t * external resource.\",\"fields\":[{\"name\":\"url\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"URL of the resource\"},{\"name\":\"mimeType\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"MIME type of the resource\",\"default\":null},{\"name\":\"title\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* description of the linked resource (suitable for display to the user\\r\\n\\t\\t * in an hypertext link)\",\"default\":null}]},{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"* Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]},{\"type\":\"enum\",\"name\":\"G_ContinentCode\",\"doc\":\"* Standard two letter continent code\\r\\n\\t *\",\"symbols\":[\"AF\",\"AS\",\"EU\",\"NA\",\"SA\",\"OC\",\"AN\"]},{\"type\":\"record\",\"name\":\"G_Country\",\"doc\":\"* Structured representation of country data, which includes geo-spatial\\r\\n\\t * data.\\r\\n\\t *\",\"fields\":[{\"name\":\"country\",\"type\":\"G_GeoData\",\"doc\":\"country geo data, including the name as text\"},{\"name\":\"region\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* the name of the global region to which the country belongs; any\\r\\n\\t\\t * common classification here is acceptable\"},{\"name\":\"continent\",\"type\":\"G_ContinentCode\",\"doc\":\"continent\"}]},{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"doc\":\"* Temporal resolution of a duration\\r\\n\\t *\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]},{\"type\":\"record\",\"name\":\"G_Duration\",\"doc\":\"* A temporal duration\\r\\n\\t *\",\"fields\":[{\"name\":\"interval\",\"type\":\"G_DateInterval\",\"doc\":\"time aggregation level, e.g. use monthly data\"},{\"name\":\"numIntervals\",\"type\":\"long\",\"doc\":\"number of intervals, e.g. 12 monthly intervals is a 1 year duration\"}]},{\"type\":\"record\",\"name\":\"G_DateRange\",\"doc\":\"* Describes a date range at a specific resolution.\\r\\n\\t *\",\"fields\":[{\"name\":\"startDate\",\"type\":\"long\"},{\"name\":\"numBins\",\"type\":\"long\",\"doc\":\"number of bins to return, e.g. 12 monthly bins for 1 year of data\"},{\"name\":\"durationPerBin\",\"type\":\"G_Duration\",\"doc\":\"* number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2\\r\\n\\t\\t * years of data\"}]},{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"* Allowed types for Ranges of values.\\r\\n\\t *\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},{\"type\":\"enum\",\"name\":\"G_Gender\",\"doc\":\"* Allowed types for Gender values.\\r\\n\\t *\",\"symbols\":[\"REDACTED\",\"MALE\",\"FEMALE\",\"UKNOWN\",\"OTHER\"]},{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"* Single value\\r\\n\\t *\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"* List of values\\r\\n\\t *\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"* Bounded or unbounded range values\\r\\n\\t *\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G",
+					"_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"* If true, range includes specified endpoint. If false, range is\\r\\n\\t\\t * exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"* A frequency or probability element of a distribution.\\r\\n\\t *\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"* Describes a distribution of values.\\r\\n\\t *\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":\"G_Frequency\"}},{\"name\":\"rangeType\",\"type\":\"G_RangeType\",\"doc\":\"Describes how the values in the distribution are summarized\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"* The type of value that the distribution describes. One of DOUBLE,\\r\\n\\t\\t * LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]},{\"type\":\"record\",\"name\":\"G_Property\",\"doc\":\"* Each property on an Entity or Link is a name-value pair, with data type\\r\\n\\t * information, as well as optional provenance. Tags provide a way for the\\r\\n\\t * data provider to associate semantic annotations to each property in terms\\r\\n\\t * of the semantics of the application.\\r\\n\\t *\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"range\",\"type\":[\"G_SingletonRange\",\"G_ListRange\",\"G_BoundedRange\",\"G_DistributionRange\"],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_PropertyTag\"},\"doc\":\"* one or more tags from the Tag list, used to map this source-specific\\r\\n\\t\\t * field into the semantics of applications\"}]},{\"type\":\"record\",\"name\":\"G_DataSetField\",\"doc\":\"* A field within a DataSet, which in turn is a real or virtual table within\\r\\n\\t * a DataSource. From Non Avro version by PWG.\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"name of the field\"},{\"name\":\"friendlyName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"sortable\",\"type\":\"boolean\",\"default\":true},{\"name\":\"searchable\",\"type\":\"boolean\",\"default\":true},{\"name\":\"reportable\",\"type\":\"boolean\",\"default\":true}]},{\"type\":\"record\",\"name\":\"G_DataSet\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"name of the dataset\"},{\"name\":\"isEntity\",\"type\":\"boolean\",\"default\":true},{\"name\":\"isTransaction\",\"type\":\"boolean\",\"default\":true},{\"name\":\"fields\",\"type\":{\"type\":\"array\",\"items\":\"G_DataSetField\"}}]},{\"type\":\"record\",\"name\":\"G_DataSource\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"id of the data source\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"name of the data source\"},{\"name\":\"friendlyName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"isEntity\",\"type\":\"boolean\",\"default\":true},{\"name\":\"isTransaction\",\"type\":\"boolean\",\"default\":true},{\"name\":\"dataSets\",\"type\":{\"type\":\"array\",\"items\":\"G_DataSet\"}}]},{\"type\":\"record\",\"name\":\"G_DataSourceList\",\"fields\":[{\"name\":\"dataSources\",\"type\":{\"type\":\"array\",\"items\":\"G_DataSource\"}}]},{\"type\":\"record\",\"name\":\"G_Entity\",\"doc\":\"* The nodes in the social, financial, communications or other graphs. May\\r\\n\\t * represent concrete individuals or organizations, specific proxies such as\\r\\n\\t * accounts, or the implicit individuals or groups behind those other\\r\\n\\t * entities.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* This uid must represent either (1) a globally unique identifier that\\r\\n\\t\\t * can be used to retrieve data for an explicit entity, or (2) encoded\\r\\n\\t\\t * query information that can be used to find a set of associated record\\r\\n\\t\\t * notionally representing an implicit entity (e.g.\\r\\n\\t\\t * Loans&FirstName&LastName&Gender). Must not be used for IDs that\\r\\n\\t\\t * aren't globally unique. For example, in Kiva, \\\"Lenders\\\" has a UID\\r\\n\\t\\t * (\\\"L12345\\\") while \\\"Borrowers\\\" have an encoded search in the Loans\\r\\n\\t\\t * table for uid (\\\"B{loan:23456;name=Daniel}\\\"). The encoded information\\r\\n\\t\\t * is data layer-specific, may be different from entity to entity or\\r\\n\\t\\t * data set to data set, and should be considered opaque to the\\r\\n\\t\\t * consumers of the entities. Entities of type 2 should always have the\\r\\n\\t\\t * Entity Tag ANONYMOUS to help distinguish them when required.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_EntityTag\"},\"doc\":\"Entity Tags (see above, e.g. \\\"ACCOUNT\\\")\"},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":\"G_Property\"}}]},{\"type\":\"record\",\"name\":\"G_Link\",\"doc\":\"* The links in the social, financial, communications or other graphs. May\\r\\n\\t * represent communication events, financial transactions or social\\r\\n\\t * connections.\",\"fields\":[{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"source entity uid\",\"default\":null},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"target entity uid\",\"default\":null},{\"name\":\"directed\",\"type\":\"boolean\",\"doc\":\"true if directed, false if undirected\",\"default\":true},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":\"G_Property\"}},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_LinkTag\"},\"doc\":\"Link Tags\"}]},{\"type\":\"record\",\"name\":\"G_Cluster\",\"doc\":\"* Cluster of nodes in the social, financial, communications or other\\r\\n\\t * graphs.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* A unique identifier use to retrieve data about this cluster. Should\\r\\n\\t\\t * not be used for non-global identifiers.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":\"G_EntityTag\"},\"doc\":\"Entity Tags (see DataTypes, e.g. \\\"CLUSTER\\\")\"},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":\"G_Property\"}},{\"name\":\"members\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"List of id's of the members of this cluster\"},{\"name\":\"subclusters\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"* List of id's of the subclusters of this cluster - empty if this is a\\r\\n\\t\\t * leaf cluster in cluster hierarchy\"},{\"name\":\"parent\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* The id of the parent cluster if this is a cluster in a hierarchy -\\r\\n\\t\\t * Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"root\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* The id of the root cluster (top level cluster) if this is a cluster\\r\\n\\",
+					"t\\t * in a hierarchy - Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"level\",\"type\":\"int\",\"doc\":\"* The degree from the root this cluster is in the hierarchy - level = 0\\r\\n\\t\\t * if this is a root cluster *\",\"default\":0}]},{\"type\":\"record\",\"name\":\"G_Future\",\"doc\":\"* Represents the future results of an asynchronous task. Can be passed into\\r\\n\\t * the FutureResults service API\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this task\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"short human-readable description of task for display\"},{\"name\":\"service\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"uid of the service task is running on\",\"default\":null},{\"name\":\"started\",\"type\":\"long\",\"doc\":\"date/time task was started\"},{\"name\":\"completed\",\"type\":\"long\",\"doc\":\"date/time task was completed (negative if not completed yet)\",\"default\":-1}]},{\"type\":\"record\",\"name\":\"G_Service\",\"doc\":\"* Selectable services, returned by getServices() in various APIs\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this service\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"short human-readable description of service for display\"}]},{\"type\":\"record\",\"name\":\"G_AppInfo\",\"doc\":\"* Selectable services, returned by getAppInfo() in various meta APIs\",\"fields\":[{\"name\":\"appName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this application\"},{\"name\":\"appVersion\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"version of this application\"},{\"name\":\"serverTime\",\"type\":\"long\",\"doc\":\"version of this application\"}]},{\"type\":\"record\",\"name\":\"G_Role\",\"doc\":\"* This is the role object used in security concerns.  A G_User has one or more G_Role.\\r\\n\\t *\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* Name of the role\",\"default\":null},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the role\",\"default\":null}]},{\"type\":\"record\",\"name\":\"G_Permission\",\"doc\":\"* This is the permission object used in security concerns.  A G_Role has zero or more G_Permissions\\r\\n\\t *\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* Name of the permission\",\"default\":null},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the permission\",\"default\":null}]},{\"type\":\"enum\",\"name\":\"G_UserFields\",\"symbols\":[\"active\",\"username\",\"avatar\",\"email\",\"fullname\",\"hashedpassword\",\"lastlogin\",\"lastmodified\",\"accountcreated\",\"numberlogins\",\"provenance\",\"uncertainty\"]},{\"type\":\"record\",\"name\":\"G_User\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"doc\":\"\",\"default\":true},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"},{\"name\":\"avatar\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* some id of an avatar (could be a file name or other string to look\\r\\n\\t\\t * up)\",\"default\":null},{\"name\":\"email\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's email\",\"default\":null},{\"name\":\"fullname\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's full name\",\"default\":null},{\"name\":\"hashedpassword\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's hashed password\",\"default\":null},{\"name\":\"lastlogin\",\"type\":[\"long\",\"null\"],\"doc\":\"user's lastlogin datetime\",\"default\":0},{\"name\":\"lastmodified\",\"type\":[\"long\",\"null\"],\"doc\":\"user's modified datetime\",\"default\":0},{\"name\":\"accountcreated\",\"type\":[\"long\",\"null\"],\"doc\":\"user's account created datetime\",\"default\":0},{\"name\":\"numberlogins\",\"type\":\"int\",\"doc\":\"user's numberlogins\",\"default\":0}]},{\"type\":\"enum\",\"name\":\"G_GroupFields\",\"symbols\":[\"groupname\"]},{\"type\":\"record\",\"name\":\"G_Group\",\"fields\":[{\"name\":\"groupname\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"}]},{\"type\":\"enum\",\"name\":\"G_WorkspaceFields\",\"symbols\":[\"active\",\"creatorusername\",\"json\",\"title\",\"workspaceid\",\"lastmodified\",\"createddate\"]},{\"type\":\"record\",\"name\":\"G_Workspace\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"creatorusername\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"workspaceid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastmodified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"createddate\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]},{\"type\":\"error\",\"name\":\"AuthenticationException\",\"fields\":[{\"name\":\"message\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},{\"type\":\"error\",\"name\":\"UnauthorizedActionException\",\"fields\":[{\"name\":\"message\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}],\"messages\":{\"addNewWorkspaceForUser\":{\"doc\":\"* The user has created a new, unattached workspace and wishes to save it.\\r\\n\\t * This will save the workspace as it is passed in, and create relationships\\r\\n\\t * showing the user is the creator and an editor of the workspace.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspace\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspace\",\"type\":\"G_Workspace\"}],\"response\":\"G_Workspace\"},\"countUsers\":{\"request\":[{\"name\":\"partialUsername\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"int\"},\"countWorkspaces\":{\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"partialWorkspaceTitle\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"int\"},\"createFirstWorkspaceForUser\":{\"doc\":\"* Creates a new workspace for the user, saves it, and sets the user as the\\r\\n\\t * editor and creator of it.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_Workspace\"},\"getWorkspacesOrCreateNewForUser\":{\"doc\":\"* Gets the workspaces for the user.  If no workspaces were found, create a first workspace for the user and return the one element list.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":{\"type\":\"array\",\"items\":\"G_Workspace\"}},\"createTempWorkspaceForUser\":{\"doc\":\"* Creates a blank workspace for the user, but it is not saved to the\\r\\n\\t * database yet.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @return\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_Workspace\"},\"deleteUser\":{\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"deleteWorkspace\":{\"doc\":\"* Deletes the workspace if the user is the creator of the workspace.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspaceId\\r\\n\\t * @return\\r\\n\\t * @throws UnauthorizedActionException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\",\"errors\":[\"UnauthorizedActionException\"]},\"deleteWorkspaceIfUnused\":{\"doc\":\"* Deletes the workspace if there are no relationships\\r\\n\\t * \\r\\n\\t * @param workspaceid\\r\\n\\t * @return\\r\\n\\t * @throws UnauthorizedActionException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\",\"errors\":[\"UnauthorizedActionException\"]},\"findWorkspaces\":{\"doc\":\"* Find workspaces for the username where the partialName matches the workspace title.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"partialWorkspaceTitle\",\"type\":{\"type\":\"string\",\"avr",
+					"o.java.string\":\"String\"}},{\"name\":\"offset\",\"type\":\"int\"},{\"name\":\"limit\",\"type\":\"int\"}],\"response\":{\"type\":\"array\",\"items\":\"G_Workspace\"}},\"getUser\":{\"doc\":\"* Return the user specified by the username\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_User\"},\"getWorkspace\":{\"doc\":\"* Retrieves the workspace.\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspaceId\\r\\n\\t * @return The workspace.\\r\\n\\t * @throws UnauthorizedActionException\\r\\n\\t *             if the user is not a creator, editor or reviewer of the\\r\\n\\t *             workspace. (also if the workspace or user ids supplied were\\r\\n\\t *             not valid)\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_Workspace\",\"errors\":[\"UnauthorizedActionException\"]},\"getWorkspacesForUser\":{\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":{\"type\":\"array\",\"items\":\"G_Workspace\"}},\"loginUser\":{\"doc\":\"* Finds the user and checks to see if the password hashes match. If the\\r\\n\\t * user is not found or the hashes don't match, then an exception is thrown\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param password\\r\\n\\t * @return a non null user.\\r\\n\\t * @throws AuthenticationException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"G_User\",\"errors\":[\"AuthenticationException\"]},\"registerUser\":{\"doc\":\"* Performs the creation of a new user.\\r\\n\\t * \\r\\n\\t * @param d\\r\\n\\t * @return\",\"request\":[{\"name\":\"d\",\"type\":\"G_User\"}],\"response\":\"G_User\"},\"removeUserFromWorkspace\":{\"doc\":\"* Remove all relationships between the supplied username and the supplied workspace id\\r\\n\\t  * \\r\\n\\t  * Return true if permissions existed and were removed.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"removeUserPermissionFromWorkspace\":{\"doc\":\"* Remove the specified permission between the supplied username and the supplied workspace id\\r\\n\\t  * \\r\\n\\t  * Return true if the permission existed and was removed.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"permission\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"saveGroup\":{\"doc\":\"* Save the provided group and return the saved group object (which may have been updated with business logic.)\",\"request\":[{\"name\":\"user\",\"type\":\"G_Group\"}],\"response\":\"G_Group\"},\"saveUser\":{\"doc\":\"* Save the provided user and return the saved user object (which may have been updated with business logic.)\",\"request\":[{\"name\":\"user\",\"type\":\"G_User\"}],\"response\":\"G_User\"},\"saveWorkspace\":{\"doc\":\"* Saves the workspace if the user is allowed to save.\\r\\n\\t * \\r\\n\\t * TODO: Revisit the business logic to see if returning a null is better\\r\\n\\t * than throwing and catching exceptions (slow)\\r\\n\\t * \\r\\n\\t * @param username\\r\\n\\t * @param workspace\\r\\n\\t * @return The workspace if the save was performed, null if unable to save.\\r\\n\\t * @throws UnauthorizedActionException\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"workspace\",\"type\":\"G_Workspace\"}],\"response\":\"G_Workspace\",\"errors\":[\"UnauthorizedActionException\"]},\"setUserPassword\":{\"doc\":\"* Return true if the password was able to be set.\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"newPassword\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"userExists\":{\"doc\":\"* Return true if the username exists, false otherwise\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":\"boolean\"},\"getByPartialUsername\":{\"doc\":\"* Given a partial username, return results between offset and offset+limit\",\"request\":[{\"name\":\"partialUsername\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"offset\",\"type\":\"int\"},{\"name\":\"limit\",\"type\":\"int\"}],\"response\":{\"type\":\"array\",\"items\":\"G_User\"}},\"getRolesByUsername\":{\"doc\":\"* Given a username, return a list of Roles\",\"request\":[{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"response\":{\"type\":\"array\",\"items\":\"G_Role\"}},\"getPermissionsByRole\":{\"doc\":\"* Given a G_Role, return a list of G_Permission\",\"request\":[{\"name\":\"role\",\"type\":\"G_Role\"}],\"response\":{\"type\":\"array\",\"items\":\"G_Permission\"}}}}");
 
-  @SuppressWarnings("all")
-  /**  */
-  public interface Callback extends G_UserDataAccess {
-    public static final org.apache.avro.Protocol PROTOCOL = graphene.model.idl.G_UserDataAccess.PROTOCOL;
-    /** * The user has created a new, unattached workspace and wishes to save it.
+	/**
+	 * * The user has created a new, unattached workspace and wishes to save it.
 	 * This will save the workspace as it is passed in, and create relationships
 	 * showing the user is the creator and an editor of the workspace.
 	 * 
 	 * @param username
 	 * @param workspace
-	 * @return */
-    void addNewWorkspaceForUser(java.lang.String username, graphene.model.idl.G_Workspace workspace, org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback) throws java.io.IOException;
-    void countUsers(java.lang.String partialUsername, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
-    void countWorkspaces(java.lang.String username, java.lang.String partialWorkspaceTitle, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
-    /** * Creates a new workspace for the user, saves it, and sets the user as the
-	 * editor and creator of it.
+	 * @return
+	 */
+	graphene.model.idl.G_Workspace addNewWorkspaceForUser(
+			java.lang.String username, graphene.model.idl.G_Workspace workspace)
+			throws org.apache.avro.AvroRemoteException;
+
+	int countUsers(java.lang.String partialUsername)
+			throws org.apache.avro.AvroRemoteException;
+
+	int countWorkspaces(java.lang.String username,
+			java.lang.String partialWorkspaceTitle)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Creates a new workspace for the user, saves it, and sets the user as
+	 * the editor and creator of it.
 	 * 
 	 * @param username
-	 * @return */
-    void createFirstWorkspaceForUser(java.lang.String username, org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback) throws java.io.IOException;
-    /** * Gets the workspaces for the user.  If no workspaces were found, create a first workspace for the user and return the one element list.
+	 * @return
+	 */
+	graphene.model.idl.G_Workspace createFirstWorkspaceForUser(
+			java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Gets the workspaces for the user. If no workspaces were found, create a
+	 * first workspace for the user and return the one element list.
 	 * 
 	 * @param username
-	 * @return */
-    void getWorkspacesOrCreateNewForUser(java.lang.String username, org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Workspace>> callback) throws java.io.IOException;
-    /** * Creates a blank workspace for the user, but it is not saved to the
+	 * @return
+	 */
+	java.util.List<graphene.model.idl.G_Workspace> getWorkspacesOrCreateNewForUser(
+			java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Creates a blank workspace for the user, but it is not saved to the
 	 * database yet.
 	 * 
 	 * @param username
-	 * @return */
-    void createTempWorkspaceForUser(java.lang.String username, org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback) throws java.io.IOException;
-    void deleteUser(java.lang.String username, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Deletes the workspace if the user is the creator of the workspace.
+	 * @return
+	 */
+	graphene.model.idl.G_Workspace createTempWorkspaceForUser(
+			java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	boolean deleteUser(java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Deletes the workspace if the user is the creator of the workspace.
 	 * 
 	 * @param username
 	 * @param workspaceId
 	 * @return
-	 * @throws UnauthorizedActionException */
-    void deleteWorkspace(java.lang.String username, java.lang.String workspaceId, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Deletes the workspace if there are no relationships
+	 * @throws UnauthorizedActionException
+	 */
+	boolean deleteWorkspace(java.lang.String username,
+			java.lang.String workspaceId)
+			throws org.apache.avro.AvroRemoteException,
+			graphene.model.idl.UnauthorizedActionException;
+
+	/**
+	 * * Deletes the workspace if there are no relationships
 	 * 
 	 * @param workspaceid
 	 * @return
-	 * @throws UnauthorizedActionException */
-    void deleteWorkspaceIfUnused(java.lang.String username, java.lang.String workspaceId, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Find workspaces for the username where the partialName matches the workspace title. */
-    void findWorkspaces(java.lang.String username, java.lang.String partialWorkspaceTitle, int offset, int limit, org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Workspace>> callback) throws java.io.IOException;
-    /** * Return the user specified by the username */
-    void getUser(java.lang.String username, org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback) throws java.io.IOException;
-    /** * Retrieves the workspace.
+	 * @throws UnauthorizedActionException
+	 */
+	boolean deleteWorkspaceIfUnused(java.lang.String username,
+			java.lang.String workspaceId)
+			throws org.apache.avro.AvroRemoteException,
+			graphene.model.idl.UnauthorizedActionException;
+
+	/**
+	 * * Find workspaces for the username where the partialName matches the
+	 * workspace title.
+	 */
+	java.util.List<graphene.model.idl.G_Workspace> findWorkspaces(
+			java.lang.String username, java.lang.String partialWorkspaceTitle,
+			int offset, int limit) throws org.apache.avro.AvroRemoteException;
+
+	/** * Return the user specified by the username */
+	graphene.model.idl.G_User getUser(java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Retrieves the workspace.
 	 * 
 	 * @param username
 	 * @param workspaceId
@@ -165,35 +117,76 @@ public interface G_UserDataAccess {
 	 * @throws UnauthorizedActionException
 	 *             if the user is not a creator, editor or reviewer of the
 	 *             workspace. (also if the workspace or user ids supplied were
-	 *             not valid) */
-    void getWorkspace(java.lang.String username, java.lang.String workspaceId, org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback) throws java.io.IOException;
-    void getWorkspacesForUser(java.lang.String username, org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Workspace>> callback) throws java.io.IOException;
-    /** * Finds the user and checks to see if the password hashes match. If the
+	 *             not valid)
+	 */
+	graphene.model.idl.G_Workspace getWorkspace(java.lang.String username,
+			java.lang.String workspaceId)
+			throws org.apache.avro.AvroRemoteException,
+			graphene.model.idl.UnauthorizedActionException;
+
+	java.util.List<graphene.model.idl.G_Workspace> getWorkspacesForUser(
+			java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Finds the user and checks to see if the password hashes match. If the
 	 * user is not found or the hashes don't match, then an exception is thrown
 	 * 
 	 * @param username
 	 * @param password
 	 * @return a non null user.
-	 * @throws AuthenticationException */
-    void loginUser(java.lang.String username, java.lang.String password, org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback) throws java.io.IOException;
-    /** * Performs the creation of a new user.
+	 * @throws AuthenticationException
+	 */
+	graphene.model.idl.G_User loginUser(java.lang.String username,
+			java.lang.String password)
+			throws org.apache.avro.AvroRemoteException,
+			graphene.model.idl.AuthenticationException;
+
+	/**
+	 * * Performs the creation of a new user.
 	 * 
 	 * @param d
-	 * @return */
-    void registerUser(graphene.model.idl.G_User d, org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback) throws java.io.IOException;
-    /** * Remove all relationships between the supplied username and the supplied workspace id
-	  * 
-	  * Return true if permissions existed and were removed. */
-    void removeUserFromWorkspace(java.lang.String username, java.lang.String workspaceId, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Remove the specified permission between the supplied username and the supplied workspace id
-	  * 
-	  * Return true if the permission existed and was removed. */
-    void removeUserPermissionFromWorkspace(java.lang.String username, java.lang.String permission, java.lang.String workspaceId, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Save the provided group and return the saved group object (which may have been updated with business logic.) */
-    void saveGroup(graphene.model.idl.G_Group user, org.apache.avro.ipc.Callback<graphene.model.idl.G_Group> callback) throws java.io.IOException;
-    /** * Save the provided user and return the saved user object (which may have been updated with business logic.) */
-    void saveUser(graphene.model.idl.G_User user, org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback) throws java.io.IOException;
-    /** * Saves the workspace if the user is allowed to save.
+	 * @return
+	 */
+	graphene.model.idl.G_User registerUser(graphene.model.idl.G_User d)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Remove all relationships between the supplied username and the supplied
+	 * workspace id
+	 * 
+	 * Return true if permissions existed and were removed.
+	 */
+	boolean removeUserFromWorkspace(java.lang.String username,
+			java.lang.String workspaceId)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Remove the specified permission between the supplied username and the
+	 * supplied workspace id
+	 * 
+	 * Return true if the permission existed and was removed.
+	 */
+	boolean removeUserPermissionFromWorkspace(java.lang.String username,
+			java.lang.String permission, java.lang.String workspaceId)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Save the provided group and return the saved group object (which may
+	 * have been updated with business logic.)
+	 */
+	graphene.model.idl.G_Group saveGroup(graphene.model.idl.G_Group user)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Save the provided user and return the saved user object (which may have
+	 * been updated with business logic.)
+	 */
+	graphene.model.idl.G_User saveUser(graphene.model.idl.G_User user)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Saves the workspace if the user is allowed to save.
 	 * 
 	 * TODO: Revisit the business logic to see if returning a null is better
 	 * than throwing and catching exceptions (slow)
@@ -201,13 +194,290 @@ public interface G_UserDataAccess {
 	 * @param username
 	 * @param workspace
 	 * @return The workspace if the save was performed, null if unable to save.
-	 * @throws UnauthorizedActionException */
-    void saveWorkspace(java.lang.String username, graphene.model.idl.G_Workspace workspace, org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback) throws java.io.IOException;
-    /** * Return true if the password was able to be set. */
-    void setUserPassword(java.lang.String username, java.lang.String newPassword, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Return true if the username exists, false otherwise */
-    void userExists(java.lang.String username, org.apache.avro.ipc.Callback<java.lang.Boolean> callback) throws java.io.IOException;
-    /** * Given a partial username, return results between offset and offset+limit */
-    void getByPartialUsername(java.lang.String partialUsername, int offset, int limit, org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_User>> callback) throws java.io.IOException;
-  }
+	 * @throws UnauthorizedActionException
+	 */
+	graphene.model.idl.G_Workspace saveWorkspace(java.lang.String username,
+			graphene.model.idl.G_Workspace workspace)
+			throws org.apache.avro.AvroRemoteException,
+			graphene.model.idl.UnauthorizedActionException;
+
+	/** * Return true if the password was able to be set. */
+	boolean setUserPassword(java.lang.String username,
+			java.lang.String newPassword)
+			throws org.apache.avro.AvroRemoteException;
+
+	/** * Return true if the username exists, false otherwise */
+	boolean userExists(java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/**
+	 * * Given a partial username, return results between offset and
+	 * offset+limit
+	 */
+	java.util.List<graphene.model.idl.G_User> getByPartialUsername(
+			java.lang.String partialUsername, int offset, int limit)
+			throws org.apache.avro.AvroRemoteException;
+
+	/** * Given a username, return a list of Roles */
+	java.util.List<graphene.model.idl.G_Role> getRolesByUsername(
+			java.lang.String username)
+			throws org.apache.avro.AvroRemoteException;
+
+	/** * Given a G_Role, return a list of G_Permission */
+	java.util.List<graphene.model.idl.G_Permission> getPermissionsByRole(
+			graphene.model.idl.G_Role role)
+			throws org.apache.avro.AvroRemoteException;
+
+	@SuppressWarnings("all")
+	/**  */
+	public interface Callback extends G_UserDataAccess {
+		public static final org.apache.avro.Protocol PROTOCOL = graphene.model.idl.G_UserDataAccess.PROTOCOL;
+
+		/**
+		 * * The user has created a new, unattached workspace and wishes to save
+		 * it. This will save the workspace as it is passed in, and create
+		 * relationships showing the user is the creator and an editor of the
+		 * workspace.
+		 * 
+		 * @param username
+		 * @param workspace
+		 * @return
+		 */
+		void addNewWorkspaceForUser(
+				java.lang.String username,
+				graphene.model.idl.G_Workspace workspace,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback)
+				throws java.io.IOException;
+
+		void countUsers(java.lang.String partialUsername,
+				org.apache.avro.ipc.Callback<java.lang.Integer> callback)
+				throws java.io.IOException;
+
+		void countWorkspaces(java.lang.String username,
+				java.lang.String partialWorkspaceTitle,
+				org.apache.avro.ipc.Callback<java.lang.Integer> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Creates a new workspace for the user, saves it, and sets the user
+		 * as the editor and creator of it.
+		 * 
+		 * @param username
+		 * @return
+		 */
+		void createFirstWorkspaceForUser(
+				java.lang.String username,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Gets the workspaces for the user. If no workspaces were found,
+		 * create a first workspace for the user and return the one element
+		 * list.
+		 * 
+		 * @param username
+		 * @return
+		 */
+		void getWorkspacesOrCreateNewForUser(
+				java.lang.String username,
+				org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Workspace>> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Creates a blank workspace for the user, but it is not saved to the
+		 * database yet.
+		 * 
+		 * @param username
+		 * @return
+		 */
+		void createTempWorkspaceForUser(
+				java.lang.String username,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback)
+				throws java.io.IOException;
+
+		void deleteUser(java.lang.String username,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Deletes the workspace if the user is the creator of the workspace.
+		 * 
+		 * @param username
+		 * @param workspaceId
+		 * @return
+		 * @throws UnauthorizedActionException
+		 */
+		void deleteWorkspace(java.lang.String username,
+				java.lang.String workspaceId,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Deletes the workspace if there are no relationships
+		 * 
+		 * @param workspaceid
+		 * @return
+		 * @throws UnauthorizedActionException
+		 */
+		void deleteWorkspaceIfUnused(java.lang.String username,
+				java.lang.String workspaceId,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Find workspaces for the username where the partialName matches the
+		 * workspace title.
+		 */
+		void findWorkspaces(
+				java.lang.String username,
+				java.lang.String partialWorkspaceTitle,
+				int offset,
+				int limit,
+				org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Workspace>> callback)
+				throws java.io.IOException;
+
+		/** * Return the user specified by the username */
+		void getUser(java.lang.String username,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Retrieves the workspace.
+		 * 
+		 * @param username
+		 * @param workspaceId
+		 * @return The workspace.
+		 * @throws UnauthorizedActionException
+		 *             if the user is not a creator, editor or reviewer of the
+		 *             workspace. (also if the workspace or user ids supplied
+		 *             were not valid)
+		 */
+		void getWorkspace(
+				java.lang.String username,
+				java.lang.String workspaceId,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback)
+				throws java.io.IOException;
+
+		void getWorkspacesForUser(
+				java.lang.String username,
+				org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Workspace>> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Finds the user and checks to see if the password hashes match. If
+		 * the user is not found or the hashes don't match, then an exception is
+		 * thrown
+		 * 
+		 * @param username
+		 * @param password
+		 * @return a non null user.
+		 * @throws AuthenticationException
+		 */
+		void loginUser(java.lang.String username, java.lang.String password,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Performs the creation of a new user.
+		 * 
+		 * @param d
+		 * @return
+		 */
+		void registerUser(graphene.model.idl.G_User d,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Remove all relationships between the supplied username and the
+		 * supplied workspace id
+		 * 
+		 * Return true if permissions existed and were removed.
+		 */
+		void removeUserFromWorkspace(java.lang.String username,
+				java.lang.String workspaceId,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Remove the specified permission between the supplied username and
+		 * the supplied workspace id
+		 * 
+		 * Return true if the permission existed and was removed.
+		 */
+		void removeUserPermissionFromWorkspace(java.lang.String username,
+				java.lang.String permission, java.lang.String workspaceId,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Save the provided group and return the saved group object (which
+		 * may have been updated with business logic.)
+		 */
+		void saveGroup(
+				graphene.model.idl.G_Group user,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_Group> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Save the provided user and return the saved user object (which may
+		 * have been updated with business logic.)
+		 */
+		void saveUser(graphene.model.idl.G_User user,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_User> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Saves the workspace if the user is allowed to save.
+		 * 
+		 * TODO: Revisit the business logic to see if returning a null is better
+		 * than throwing and catching exceptions (slow)
+		 * 
+		 * @param username
+		 * @param workspace
+		 * @return The workspace if the save was performed, null if unable to
+		 *         save.
+		 * @throws UnauthorizedActionException
+		 */
+		void saveWorkspace(
+				java.lang.String username,
+				graphene.model.idl.G_Workspace workspace,
+				org.apache.avro.ipc.Callback<graphene.model.idl.G_Workspace> callback)
+				throws java.io.IOException;
+
+		/** * Return true if the password was able to be set. */
+		void setUserPassword(java.lang.String username,
+				java.lang.String newPassword,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/** * Return true if the username exists, false otherwise */
+		void userExists(java.lang.String username,
+				org.apache.avro.ipc.Callback<java.lang.Boolean> callback)
+				throws java.io.IOException;
+
+		/**
+		 * * Given a partial username, return results between offset and
+		 * offset+limit
+		 */
+		void getByPartialUsername(
+				java.lang.String partialUsername,
+				int offset,
+				int limit,
+				org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_User>> callback)
+				throws java.io.IOException;
+
+		/** * Given a username, return a list of Roles */
+		void getRolesByUsername(
+				java.lang.String username,
+				org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Role>> callback)
+				throws java.io.IOException;
+
+		/** * Given a G_Role, return a list of G_Permission */
+		void getPermissionsByRole(
+				graphene.model.idl.G_Role role,
+				org.apache.avro.ipc.Callback<java.util.List<graphene.model.idl.G_Permission>> callback)
+				throws java.io.IOException;
+	}
+
+	String getPasswordHash(String tynamoLogin, String tynamoPassword);
 }

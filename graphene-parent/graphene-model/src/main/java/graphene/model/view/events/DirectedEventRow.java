@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 public class DirectedEventRow implements Comparable<Object> {
 
 	static Logger logger = LoggerFactory.getLogger(DirectedEventRow.class);
-	private int accountGroup = 0;
 	private String comments;
 	private String credit;
 
@@ -63,6 +62,10 @@ public class DirectedEventRow implements Comparable<Object> {
 
 	}
 
+	public void addData(final String key, final String value) {
+		data.put(key, value);
+	}
+
 	@Override
 	public int compareTo(final Object o) {
 		DirectedEventRow c = (DirectedEventRow) o;
@@ -88,20 +91,12 @@ public class DirectedEventRow implements Comparable<Object> {
 		return true;
 	}
 
-	public String getBalanceStr() {
-		return unitBalance;
-	}
-
 	public String getComments() {
 		return comments == null ? "" : comments;
 	}
 
 	public String getCredit() {
 		return credit;
-	}
-
-	public void addData(final String key, final String value) {
-		data.put(key, value);
 	}
 
 	/**
@@ -127,6 +122,13 @@ public class DirectedEventRow implements Comparable<Object> {
 		return debit;
 	}
 
+	/**
+	 * @param date the date to set
+	 */
+	public final void setDate(String date) {
+		this.date = date;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -135,15 +137,20 @@ public class DirectedEventRow implements Comparable<Object> {
 		return localUnitBalance;
 	}
 
-	public int getMonth_zero_based() {
-		return month_zero_based;
-	}
 
-	public String getReceiverAccount() {
+
+	/**
+	 * @return the receiverId
+	 */
+	public final String getReceiverId() {
 		return receiverId;
 	}
 
-	public String getSenderAccount() {
+
+	/**
+	 * @return the senderId
+	 */
+	public final String getSenderId() {
 		return senderId;
 	}
 
@@ -161,14 +168,6 @@ public class DirectedEventRow implements Comparable<Object> {
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
-	}
-
-	public void setAcnoReceiver(final String account) {
-		this.receiverId = account;
-	}
-
-	public void setAcnoSender(final String account) {
-		this.senderId = account;
 	}
 
 	public void setBalance(final double bal) {
@@ -225,6 +224,22 @@ public class DirectedEventRow implements Comparable<Object> {
 		this.month_zero_based = month_zero_based;
 	}
 
+	/**
+	 * @param receiverId
+	 *            the receiverId to set
+	 */
+	public final void setReceiverId(String receiverId) {
+		this.receiverId = receiverId;
+	}
+
+	/**
+	 * @param senderId
+	 *            the senderId to set
+	 */
+	public final void setSenderId(String senderId) {
+		this.senderId = senderId;
+	}
+
 	public void setUnit(final String unit) {
 		this.unit = unit;
 	}
@@ -233,15 +248,15 @@ public class DirectedEventRow implements Comparable<Object> {
 		this.year = year;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "DirectedEventRow [accountGroup="
-				+ accountGroup
-				+ ", "
-				+ (receiverId != null ? "receiverId=" + receiverId + ", " : "")
-				+ (senderId != null ? "senderId=" + senderId + ", " : "")
+		return "DirectedEventRow ["
 				+ (comments != null ? "comments=" + comments + ", " : "")
 				+ (credit != null ? "credit=" + credit + ", " : "")
+				+ (data != null ? "data=" + data + ", " : "")
 				+ (date != null ? "date=" + date + ", " : "")
 				+ "dateMilliSeconds="
 				+ dateMilliSeconds
@@ -257,6 +272,8 @@ public class DirectedEventRow implements Comparable<Object> {
 				+ "month_zero_based="
 				+ month_zero_based
 				+ ", "
+				+ (receiverId != null ? "receiverId=" + receiverId + ", " : "")
+				+ (senderId != null ? "senderId=" + senderId + ", " : "")
 				+ (unit != null ? "unit=" + unit + ", " : "")
 				+ (unitBalance != null ? "unitBalance=" + unitBalance + ", "
 						: "") + "year=" + year + "]";

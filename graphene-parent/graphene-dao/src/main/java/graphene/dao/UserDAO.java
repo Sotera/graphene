@@ -19,8 +19,9 @@ public interface UserDAO {
 	 * Given a 'detached' User POJO, persist it however the implementation wants
 	 * to: if the user object exists, update it. If the user object didn't
 	 * already exist, create it. Returns the User object after it has been
-	 * saved. Note that it may now have updated timestamps or new data as a result of it
-	 * being persisted.  (Which is why we give it back to you as a convenience, so you don't have to query for it.)
+	 * saved. Note that it may now have updated timestamps or new data as a
+	 * result of it being persisted. (Which is why we give it back to you as a
+	 * convenience, so you don't have to query for it.)
 	 * 
 	 * @param user
 	 * @return
@@ -67,5 +68,13 @@ public interface UserDAO {
 	public G_User save(G_User person);
 
 	public boolean updatePassword(String username, String password);
+
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return Return the hash of the password, or null if there was an error.
+	 */
+	public String getPasswordHash(String username, String password);
 
 }

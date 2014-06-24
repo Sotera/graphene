@@ -57,7 +57,10 @@ public class PasswordHash {
 	public static final int PBKDF2_INDEX = 2;
 
 	/**
-	 * Returns a salted PBKDF2 hash of the password.
+	 * Returns a salted PBKDF2 hash of the password. Note that is is advisable
+	 * to store passwords in char arrays instead of Strings. This is a
+	 * convenience constructor in case you haven't already converted the
+	 * password to a char array.
 	 * 
 	 * @param password
 	 *            the password to hash
@@ -115,7 +118,8 @@ public class PasswordHash {
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		// Decode the hash into its parameters
 		String[] params = correctHash.split(":");
-		int iterations = FastNumberUtils.parseIntWithCheck(params[ITERATION_INDEX]);
+		int iterations = FastNumberUtils
+				.parseIntWithCheck(params[ITERATION_INDEX]);
 		byte[] salt = fromHex(params[SALT_INDEX]);
 		byte[] hash = fromHex(params[PBKDF2_INDEX]);
 		// Compute the hash of the provided password, using the same salt,

@@ -170,5 +170,19 @@ protocol G_UserDataAccess {
 	  */
 	 array<G_User> getByPartialUsername(string partialUsername, int offset,
 			int limit);
+			
+	/**
+	  * Given a username, return a list of Roles
+	  */
+	 array<G_Role> getRolesByUsername(string username);
 	
+	/**
+	  * Given a string role, return a list of G_Permission
+	  */
+	 array<G_Permission> getPermissionsByRole(string role);
+	 
+	/**
+	  * Given a G_Role, return a list of G_Permission
+	  */
+	 array<G_Permission> getPermissionsByRole(G_Role role);
 }

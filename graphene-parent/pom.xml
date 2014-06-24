@@ -30,7 +30,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<license-text.header>GPL-3-header.txt</license-text.header>
-		
+
 
 		<!-- properties for dependencies for web frameworks -->
 		<resteasy.version>3.0.1.Final</resteasy.version>
@@ -59,16 +59,16 @@
 		<commons-beanutils.version>1.9.0</commons-beanutils.version>
 		<commons-dbutils.version>1.5</commons-dbutils.version>
 		<avro.version>1.7.5</avro.version>
-		
+
 		<!-- properties for testing dependencies -->
 		<jettyVersion>9.0.0</jettyVersion>
 		<servlet-api-release-version>2.5</servlet-api-release-version>
 		<testng-release-version>6.3.1</testng-release-version>
 		<easymock-release-version>3.0</easymock-release-version>
-		
+
 		<!-- properties for github -->
 		<github.global.server>github</github.global.server>
-        <github.site.maven.plugin.version>0.9</github.site.maven.plugin.version>
+		<github.site.maven.plugin.version>0.9</github.site.maven.plugin.version>
 		<!-- Maven properties -->
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.site.plugin.version>3.0</maven.site.plugin.version>
@@ -356,7 +356,15 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
+			<!-- Provides a thin integration layer around Apache Shiro and allows 
+				annotations for page, component and method security, and the ability to easily 
+				alter the UI based on a users permissions. Also required for the Federated 
+				Authentication add-on -->
+			<dependency>
+				<groupId>org.tynamo</groupId>
+				<artifactId>tapestry-security</artifactId>
+				<version>0.5.1</version>
+			</dependency>
 			<dependency><!-- Tapestry integration with JQuery. This may be removed 
 					if we switch to Tapestry 5.4, which includes JQuery support by default -->
 				<groupId>org.got5</groupId>
@@ -812,23 +820,24 @@
 
 			</plugins>
 		</pluginManagement>
-		
+
 		<plugins>
 			<!-- enforce inclusion of source plugin to all children of Graphene-Parent -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>			
+				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
-						<plugin>
+			<plugin>
 				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-plugin</artifactId></plugin>
-				
-				<plugin>
+				<artifactId>site-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
-				
-				</plugin>
+
+			</plugin>
 		</plugins>
-		
+
 	</build>
 	<distributionManagement>
 		<repository>

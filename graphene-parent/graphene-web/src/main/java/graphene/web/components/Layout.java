@@ -1,12 +1,12 @@
 package graphene.web.components;
 
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.idl.G_User;
-import graphene.web.pages.Index;
-import graphene.web.services.Authenticator;
+import graphene.web.pages.pub.Login;
+import graphene.web.services.AuthenticatorHelper;
 
 import java.util.Locale;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -15,7 +15,6 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.func.Tuple;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -39,6 +38,7 @@ import com.trsvax.bootstrap.annotations.Exclude;
 		"context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
 		"context:/core/css/googlefonts.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
+//@RequiresAuthentication
 public class Layout {
 	@Property
 	@Inject
@@ -52,12 +52,6 @@ public class Layout {
 
 	@Inject
 	private AssetSource assetSource;
-
-	@Inject
-	private Authenticator authenticator;
-
-	// @Component(parameters = "user=user")
-	// private Menu menu;
 
 	@Inject
 	private ComponentClassResolver componentClassResolver;
@@ -141,37 +135,28 @@ public class Layout {
 	@Inject
 	private ComponentResources resources;
 
-//	@Property
-//	@Parameter(defaultPrefix = BindingConstants.LITERAL)
-//	private Block sidebar;
-
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.THEME_PATH)
 	private String themePath;
 
-	@SessionState(create=false)
-	private G_User user;
-
-	private boolean userExists;
-
+	/**
+	 * 
+	 * @return a link to be put inside a javascript component, which lets the
+	 *         user log out. This link will trigger the onLogout() event.
+	 */
 	public String getLogoutEventLink() {
 		Link l = resources.createEventLink("logout");
 		return l.toString();
 	}
 
-
-
+	@Inject
+	private AuthenticatorHelper authenticator;
 
 	@Log
 	public Object onLogout() {
-		if (userExists) {
-			logger.debug("Logging out for user " + user.toString());
-		} else {
-			logger.warn("Calling logout, but no user was logged in");
-		}
 		authenticator.logout();
-		return Index.class;
+		return Login.class;
 	}
 
 	/**
@@ -179,12 +164,12 @@ public class Layout {
 	 * 
 	 * @return
 	 */
-//	@SetupRender
-//	final void renderDocType(final MarkupWriter writer) {
-//		writer.getDocument().raw("<!DOCTYPE html>");
-//	}
+	// @SetupRender
+	// final void renderDocType(final MarkupWriter writer) {
+	// writer.getDocument().raw("<!DOCTYPE html>");
+	// }
 
-	public void setUser(G_User s) {
-		user = s;
-	}
+	// public void setUser(G_User s) {
+	// user = s;
+	// }
 }

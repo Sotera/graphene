@@ -37,6 +37,10 @@
 			<artifactId>graphene-dao-neo4j</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.tynamo</groupId>
+			<artifactId>tapestry-security</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-core</artifactId>
 		</dependency>
