@@ -1,7 +1,7 @@
 package graphene.web.components;
 
 import graphene.model.idl.G_SymbolConstants;
-import graphene.web.services.AuthenticatorHelper;
+import graphene.web.security.AuthenticatorHelper;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;

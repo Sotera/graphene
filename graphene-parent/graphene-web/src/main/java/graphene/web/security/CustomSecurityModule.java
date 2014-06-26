@@ -1,7 +1,6 @@
-package graphene.web.services;
+package graphene.web.security;
 
 import graphene.model.idl.G_Workspace;
-import graphene.web.security.AuthenticationFilter;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;

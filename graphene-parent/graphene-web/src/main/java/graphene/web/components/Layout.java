@@ -2,7 +2,7 @@ package graphene.web.components;
 
 import graphene.model.idl.G_SymbolConstants;
 import graphene.web.pages.pub.Login;
-import graphene.web.services.AuthenticatorHelper;
+import graphene.web.security.AuthenticatorHelper;
 
 import java.util.Locale;
 

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>graphene</groupId>
 	<artifactId>graphene-parent</artifactId>
-	<version>4.0.7-SNAPSHOT</version>
+	<version>4.0.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<prerequisites>
 		<maven>3.0.4</maven>
@@ -51,7 +51,7 @@
 		<joda-time.version>2.3</joda-time.version>
 		<opencsv.version>2.3</opencsv.version>
 		<disruptor.version>2.10.3</disruptor.version>
-		<guava.version>15.0</guava.version>
+		<guava.version>17.0</guava.version>
 		<sspace.version>2.0.4</sspace.version>
 		<mapdb.version>0.9.7</mapdb.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
@@ -59,6 +59,8 @@
 		<commons-beanutils.version>1.9.0</commons-beanutils.version>
 		<commons-dbutils.version>1.5</commons-dbutils.version>
 		<avro.version>1.7.5</avro.version>
+		<slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
+		<jxl.version>2.6.12</jxl.version>
 
 		<!-- properties for testing dependencies -->
 		<jettyVersion>9.0.0</jettyVersion>
@@ -75,6 +77,9 @@
 		<maven.project.info.reports.plugin.version>2.7</maven.project.info.reports.plugin.version>
 		<maven.dependency.plugin.version>2.1</maven.dependency.plugin.version>
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
+		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
+		<maven-enforcer-plugin.version>1.2</maven-enforcer-plugin.version>
+
 	</properties>
 
 	<dependencies>
@@ -109,7 +114,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.7.5</version>
+				<version>${slf4j-log4j12.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>graphene</groupId>
@@ -482,7 +487,7 @@
 			<dependency><!-- Library for exporting to MS Excel -->
 				<groupId>net.sourceforge.jexcelapi</groupId>
 				<artifactId>jxl</artifactId>
-				<version>2.6.12</version>
+				<version>${jxl.version}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>log4j</artifactId>
@@ -767,18 +772,18 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.14.1</version>
+					<version>${maven-surefire-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<!-- TODO: Switch to version >= 2.4 if we plan to build wars on a *nix 
 						machine -->
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.1.1</version>
+					<version>${maven-war-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>1.2</version>
+					<version>${maven-enforcer-plugin.version}</version>
 					<executions>
 						<execution>
 							<id>enforce-versions</id>

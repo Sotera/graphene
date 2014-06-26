@@ -5,7 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ValidationUtils {
+	private static final Logger logger = LoggerFactory
+			.getLogger(ValidationUtils.class);
 
 	/**
 	 * A convenience method for testing property (or other) maps. Makes sure the
@@ -210,4 +215,21 @@ public class ValidationUtils {
 		return isvalid;
 	}
 
+	public static Double getSafeDouble(Number d, double i) {
+		return d == null ? i : d.doubleValue();
+	}
+
+	public static long getSafeLong(Timestamp d, long i) {
+		return d == null ? i : d.getTime();
+	}
+
+	public static double getSafeDouble(String s, double i) {
+		double d = i;
+		try {
+			d = (Double.parseDouble(s));
+		} catch (Exception e) {
+			logger.debug("Error converting string to double :" + s);
+		}
+		return d;
+	}
 }

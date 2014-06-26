@@ -1,7 +1,7 @@
 package graphene.web.pages;
 
 import graphene.model.idl.G_User;
-import graphene.web.services.AuthenticatorHelper;
+import graphene.web.security.AuthenticatorHelper;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.tapestry5.annotations.Log;

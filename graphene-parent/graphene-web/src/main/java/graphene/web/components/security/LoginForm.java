@@ -20,7 +20,7 @@ package graphene.web.components.security;
 
 import graphene.model.idl.G_UserDataAccess;
 import graphene.web.model.BusinessException;
-import graphene.web.services.AuthenticatorHelper;
+import graphene.web.security.AuthenticatorHelper;
 
 import java.io.IOException;
 

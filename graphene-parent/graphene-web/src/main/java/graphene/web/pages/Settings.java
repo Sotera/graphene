@@ -3,7 +3,7 @@ package graphene.web.pages;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.web.pages.pub.Login;
-import graphene.web.services.AuthenticatorHelper;
+import graphene.web.security.AuthenticatorHelper;
 
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectPage;

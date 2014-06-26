@@ -5,11 +5,9 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.0.7-SNAPSHOT</version>
+		<version>4.0.8-SNAPSHOT</version>
 	</parent>
-	<groupId>graphene</groupId>
 	<artifactId>graphene-util</artifactId>
-	<version>4.0.7-SNAPSHOT</version>
 	<name>${project.artifactId}</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,6 +17,10 @@
 		<dependency>
 			<groupId>com.jolbox</groupId>
 			<artifactId>bonecp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>

@@ -5,10 +5,9 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.0.7-SNAPSHOT</version>
+		<version>4.0.8-SNAPSHOT</version>
 	</parent>
 	<artifactId>graphene-dao</artifactId>
-	<version>4.0.7-SNAPSHOT</version>
 	<name>${project.artifactId}</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

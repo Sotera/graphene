@@ -1,10 +1,6 @@
-package graphene.web.services;
+package graphene.web.security;
 
-import graphene.dao.PermissionDAO;
-import graphene.dao.RoleDAO;
 import graphene.model.idl.G_Workspace;
-import graphene.services.SimplePermissionDAOImpl;
-import graphene.services.SimpleRoleDAOImpl;
 
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -29,8 +25,7 @@ import org.tynamo.security.services.impl.SecurityFilterChain;
 @SubModule({ SecurityModule.class })
 public class ShiroSecurityModule {
 	public static void bind(ServiceBinder binder) {
-		binder.bind(RoleDAO.class, SimpleRoleDAOImpl.class);
-		binder.bind(PermissionDAO.class, SimplePermissionDAOImpl.class);
+
 		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class);
 		binder.bind(Realm.class, GrapheneSecurityRealm.class);
 	}

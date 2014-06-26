@@ -10,7 +10,6 @@ import graphene.web.pages.Index;
 import graphene.web.pages.infrastructure.PageDenied;
 import graphene.web.pages.pub.Login;
 import graphene.web.pages.pub.Register;
-import graphene.web.services.AuthenticatorHelper;
 
 import java.io.IOException;
 import java.io.OutputStream;

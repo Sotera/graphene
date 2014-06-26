@@ -1,4 +1,4 @@
-package graphene.web.services;
+package graphene.web.security;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -30,19 +30,20 @@ import org.slf4j.Logger;
  * sometimes done by called a different DAO for each of those object types.
  * 
  * With Graphene, we already had a similar object called G_UserDataAccess, which
- * talks to the appropriate DAOs. (G_UserDataAccess also does much more, and deals with workspaces and user groups, etc)
+ * talks to the appropriate DAOs. (G_UserDataAccess also does much more, and
+ * deals with workspaces and user groups, etc)
  * 
  * @author djue
  * 
  */
-public class GrapheneSecurityRealm extends AuthorizingRealm {
+public class NoSecurityRealm extends AuthorizingRealm {
 	@Inject
 	private G_UserDataAccess userDao;
 	@Inject
 	private Logger logger;
 	private static String REALM_NAME = "grapheneRealm";
 
-	public GrapheneSecurityRealm() {
+	public NoSecurityRealm() {
 		setName(REALM_NAME);
 		setCredentialsMatcher(new CredentialsMatcher() {
 			private PasswordHash hasher = new PasswordHash();
@@ -50,17 +51,7 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 			@Override
 			public boolean doCredentialsMatch(AuthenticationToken token,
 					AuthenticationInfo info) {
-				boolean doesMatch = false;
-				try {
-					doesMatch = hasher.validatePassword(
-							(char[]) token.getCredentials(),
-							(String) info.getCredentials());
-				} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-					logger.error("Could not perform credential match because of "
-							+ e.getMessage());
-					e.printStackTrace();
-				}
-				return doesMatch;
+				return true;
 			}
 		});
 	}
@@ -89,9 +80,9 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 						.getUsername())) {
 					info.addRole(role.getDescription());
 
-					for (G_Permission permition : userDao
+					for (G_Permission permission : userDao
 							.getPermissionsByRole(role)) {
-						info.addStringPermission(permition.getDescription());
+						info.addStringPermission(permission.getDescription());
 					}
 				}
 			} catch (AvroRemoteException e) {

@@ -60,51 +60,53 @@ public class SearchMatcher {
 	 */
 	public int calcScore(String target) {
 		int score = 0;
+		if (target != null) {
+			if (!this.caseSensitive) {
+				target = target.toLowerCase();
+			}
+			// Start by giving priority to complete matches
 
-		if (!this.caseSensitive) {
-			target = target.toLowerCase();
-		}
-		// Start by giving priority to complete matches
+			if (target.equals(searchStringWithoutQuotes)) {
+				return 90;
+			}
+			if (target.startsWith(searchStringWithoutQuotes)) {
+				return 80;
+			}
+			if (target.contains(searchStringWithoutQuotes)) {
+				return 70;
+			}
 
-		if (target.equals(searchStringWithoutQuotes)) {
-			return 90;
-		}
-		if (target.startsWith(searchStringWithoutQuotes)) {
-			return 80;
-		}
-		if (target.contains(searchStringWithoutQuotes)) {
-			return 70;
-		}
+			// No look at it on a word by word basis
 
-		// No look at it on a word by word basis
-
-		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(target);
-		List<String> words = new ArrayList<String>();
-		while (m.find()) {
-			String s = m.group(1).replace("\"", "");
-			words.add(s);
-		}
-		for (SearchCriterion sc : search) {
-			if (sc.str.contains(" ")) { // derived from a quoted string
-				if (target.contains(str)) {
+			Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(
+					target);
+			List<String> words = new ArrayList<String>();
+			while (m.find()) {
+				String s = m.group(1).replace("\"", "");
+				words.add(s);
+			}
+			for (SearchCriterion sc : search) {
+				if (sc.str.contains(" ")) { // derived from a quoted string
+					if (target.contains(str)) {
+						score++;
+					}
+					continue;
+				}
+				int count = 0;
+				for (String s : words) {
+					if (sc.match(s)) {
+						count++;
+					}
+				}
+				if (sc.isMustHave() && count == 0) {
+					return -1;
+				}
+				if (sc.isMustNotHave() && count > 0) {
+					return -1;
+				}
+				if (count > 0) {
 					score++;
 				}
-				continue;
-			}
-			int count = 0;
-			for (String s : words) {
-				if (sc.match(s)) {
-					count++;
-				}
-			}
-			if (sc.isMustHave() && count == 0) {
-				return -1;
-			}
-			if (sc.isMustNotHave() && count > 0) {
-				return -1;
-			}
-			if (count > 0) {
-				score++;
 			}
 		}
 

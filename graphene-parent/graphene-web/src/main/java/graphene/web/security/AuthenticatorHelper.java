@@ -1,4 +1,4 @@
-package graphene.web.services;
+package graphene.web.security;
 
 import graphene.model.idl.AuthenticationException;
 import graphene.web.model.BusinessException;
