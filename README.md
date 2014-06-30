@@ -1,6 +1,6 @@
 Graphene: Search and Graph your data 
 ======
- Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J, from your non-graph datastore (RDBMS, Solr, etc).
+ Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J, from your non-graph datastore (RDBMS, Solr, etc).<br>For configurations, building, and deployment instructions, view the [Graphene Wiki](https://github.com/Sotera/graphene/wiki).
  
 Using Graphene 
 ------
