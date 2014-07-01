@@ -14,7 +14,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 @Import(library = "context:core/js/testJSON.js")
-@PluginPage(visualType = G_VisualType.DEMO)
+@PluginPage(visualType = G_VisualType.EXPERIMENTAL, menuName = "Ajax test", icon = "fa fa-lg fa-fw fa-cogs")
 public class NewAjax {
 	@Inject
 	private ComponentResources resources;

@@ -2,17 +2,21 @@ package graphene.web.components.navigation;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_VisualType;
+import graphene.util.Triple;
 import graphene.web.annotations.PluginPage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.Tuple;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.AssetSource;
@@ -20,6 +24,9 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
 public class Menu {
+	private static final String EXPERIMENTAL = "experimental";
+	private static final String ACTION = "action";
+	private static final String META = "meta";
 	@Inject
 	private AssetSource assetSource;
 	@Inject
@@ -29,15 +36,27 @@ public class Menu {
 	boolean onlyPluginPages = false;
 
 	@Property
-	private Tuple<String, String> page;
+	private Triple<String, String, String> page;
 
 	@Property
 	private String pageName;
 
 	@Persist
-	private Collection<Tuple<String, String>> pageNames;
+	private Map<String, Collection<Triple<String, String, String>>> pageNames;
 
 	private boolean userExists;
+
+	public Collection<Triple<String, String, String>> getActionPages() {
+		return pageNames.get(ACTION);
+	}
+
+	public Collection<Triple<String, String, String>> getExperimentalPages() {
+		return pageNames.get(EXPERIMENTAL);
+	}
+
+	public Collection<Triple<String, String, String>> getMetaPages() {
+		return pageNames.get(META);
+	}
 
 	@Property
 	@SessionState(create = false)
@@ -57,13 +76,18 @@ public class Menu {
 	@Inject
 	private Logger logger;
 
-	public Collection<Tuple<String, String>> getPageNames() {
-		if (pageNames != null && pageNames.size() > 0) {
-			return pageNames;
-		} else {
+	@SetupRender
+	void initializeValue() {
+		if (pageNames == null) {
 			logger.info("Constructing page links for side menu items.");
 			List<String> pageList = this.componentClassResolver.getPageNames();
-			pageNames = new ArrayList<Tuple<String, String>>();
+			pageNames = new HashMap<String, Collection<Triple<String, String, String>>>();
+			pageNames.put("action",
+					new ArrayList<Triple<String, String, String>>(1));
+			pageNames.put("meta",
+					new ArrayList<Triple<String, String, String>>(1));
+			pageNames.put("experimental",
+					new ArrayList<Triple<String, String, String>>(1));
 			for (final String pageName : pageList) {
 				String className = this.componentClassResolver
 						.resolvePageNameToClassName(pageName);
@@ -74,35 +98,36 @@ public class Menu {
 
 					List<G_VisualType> vtlist = Arrays.asList(p.visualType());
 					if (!vtlist.contains(G_VisualType.HIDDEN)) {
-						String icon = "fa fa-lg fa-fw fa-zoom-in";
-						if (vtlist.contains(G_VisualType.GRAPH)) {
-							icon = "fa fa-lg fa-fw fa-code-fork"; //TODO: Find a better graph icon?
-						} else if (vtlist.contains(G_VisualType.CHART)) {
-							icon = "fa fa-lg fa-fw fa-chart"; //having to do with graphs
-						} else if (vtlist.contains(G_VisualType.LIST)) {
-							icon = "fa fa-lg fa-fw fa-code-fork"; //having to do with a list of things
-						} else if (vtlist.contains(G_VisualType.TEXT)) {
-							icon = "fa fa-lg fa-fw fa-code-fork"; //having to do with text or documents
-						} else if (vtlist.contains(G_VisualType.EVENT)) {
-							icon = "fa fa-lg fa-fw fa-calendar"; //TODO: Find a better icon for events
-						} else if (vtlist.contains(G_VisualType.MONEY)) {
-							icon = "fa fa-lg fa-fw fa-usd";  //If the page has anything to do with money, like an invoice or stocks
-						} else if (vtlist.contains(G_VisualType.SEARCH)) {
-							icon = "fa fa-lg fa-fw fa-zoom-in";  //if the page has anything to do with launching a search
+						if (vtlist.contains(G_VisualType.GRAPH)
+								|| vtlist.contains(G_VisualType.TOP)
+								|| vtlist.contains(G_VisualType.GEO)
+								|| vtlist.contains(G_VisualType.TEXT)
+								|| vtlist.contains(G_VisualType.EVENT)
+								|| vtlist.contains(G_VisualType.SEARCH)
+								|| vtlist.contains(G_VisualType.MONEY)
+								|| vtlist.contains(G_VisualType.LIST)) {
+							pageNames.get(ACTION).add(
+									new Triple<String, String, String>(
+											pageName, p.icon(), p.menuName()));
+
 						} else if (vtlist.contains(G_VisualType.META)) {
-							icon = "fa fa-lg fa-fw fa-question-sign"; //having to do with the state of the system
+							pageNames.get(META).add(
+									new Triple<String, String, String>(
+											pageName, p.icon(), p.menuName()));
+						} else if (vtlist.contains(G_VisualType.EXPERIMENTAL)) {
+							pageNames.get(EXPERIMENTAL).add(
+									new Triple<String, String, String>(
+											pageName, p.icon(), p.menuName()));
 						} else {
-							icon = "fa fa-lg fa-fw fa-code-fork";
+							pageNames.get(EXPERIMENTAL).add(
+									new Triple<String, String, String>(
+											pageName, p.icon(), p.menuName()));
 						}
-						// XXX: Map the library name to a variable so it matches
-						// the
-						// library name in the AppModule
-						pageNames
-								.add(new Tuple<String, String>(pageName, icon));
+
 					}
 				}
 			}
-			return pageNames;
+
 		}
 	}
 

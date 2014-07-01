@@ -46,7 +46,7 @@ import org.got5.tapestry5.jquery.internal.TableInformation;
 @Import(stylesheet = {
 		"context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
 		"context:core/js/plugin/datatables/media/css/TableTools.css" })
-@PluginPage(visualType = G_VisualType.LIST)
+
 public class DataTablesAjax {
 	@SessionState
 	private IDataSource dataSource;

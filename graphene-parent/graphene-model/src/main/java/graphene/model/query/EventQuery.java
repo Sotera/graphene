@@ -1,5 +1,6 @@
 package graphene.model.query;
 
+import graphene.model.idl.G_SearchTuple;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
@@ -34,13 +35,13 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * related
 	 */
 	private List<String> idList = new ArrayList<String>();
-	private List<EntitySearchTuple<String>> attributeList = new ArrayList<EntitySearchTuple<String>>(
+	private List<G_SearchTuple<String>> attributeList = new ArrayList<G_SearchTuple<String>>(
 			1);
 
 	/**
 	 * @return the attributeList
 	 */
-	public List<EntitySearchTuple<String>> getAttributeList() {
+	public List<G_SearchTuple<String>> getAttributeList() {
 		return attributeList;
 	}
 
@@ -48,7 +49,7 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * @param attributeList
 	 *            the attributeList to set
 	 */
-	public void setAttributeList(List<EntitySearchTuple<String>> attributeList) {
+	public void setAttributeList(List<G_SearchTuple<String>> attributeList) {
 		this.attributeList = attributeList;
 	}
 
@@ -76,6 +77,15 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 */
 	public EventQuery() {
 
+	}
+
+	public void addAttribute(
+			Collection<? extends G_SearchTuple<String>> attr) {
+		attributeList.addAll(attr);
+	}
+
+	public void addAttribute(G_SearchTuple<String> attr) {
+		attributeList.add(attr);
 	}
 
 	/**

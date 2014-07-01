@@ -44,7 +44,7 @@ import org.slf4j.Logger;
  * @author djue
  * 
  */
-@PluginPage(visualType = G_VisualType.SEARCH)
+@PluginPage(visualType = G_VisualType.EXPERIMENTAL, menuName = "EntitySearch 2", icon = "fa fa-lg fa-fw fa-cogs")
 public class EntitySearch2 {
 	@Property
 	@Persist

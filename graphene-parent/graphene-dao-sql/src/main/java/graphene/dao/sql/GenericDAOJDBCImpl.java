@@ -34,6 +34,10 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * If you need to change the database that is used, set it in the
 	 * constructor of your implementation. Otherwise it gets the default
 	 * connection pool that was marked with a MainDB annotation.
+	 * 
+	 * TODO: Change this to force the end user to supply the type of connection
+	 * pool from their DAO module. That will have the least tight
+	 * coupling.--djue
 	 */
 	@Inject
 	@MainDB
@@ -78,7 +82,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				if (q == null) {
 					// There was no query object, which mean just get
 					// everything.
-					
+
 					results = getAll(offset, maxResults);
 				} else {
 					// We have some sort of query object.

@@ -3,7 +3,8 @@ package graphene.dao;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.BasicQuery;
-import graphene.model.query.EntityRefQuery;
+import graphene.model.query.EntityQuery;
+import graphene.model.view.entities.BasicEntityRef;
 
 import java.util.List;
 import java.util.Set;
@@ -77,7 +78,7 @@ public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> 
 	 * @throws Exception
 	 */
 	@Deprecated
-	List<T> rowSearch(EntityRefQuery q) throws Exception;
+	List<T> rowSearch(EntityQuery q) throws Exception;
 
 	/**
 	 * 
@@ -105,5 +106,12 @@ public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> 
 	 */
 	Set<String> valueSearch(final Q q) throws Exception;
 
+	/**
+	 * Returns a flavor of entity ref that all implementations can agree on.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Set<BasicEntityRef> getBasicRowsForCustomer(String id);
 
 }

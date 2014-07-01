@@ -1,9 +1,10 @@
 package graphene.model.query;
 
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 
-public class EntitySearchTupleHelper extends EntitySearchTuple<String> {
+public class G_SearchTupleHelper extends G_SearchTuple<String> {
 	/**
 	 * Basic helper constructor. Usually specificPropertyType is null if a
 	 * family is specified.
@@ -13,7 +14,7 @@ public class EntitySearchTupleHelper extends EntitySearchTuple<String> {
 	 * @param specificPropertyType
 	 * @param value
 	 */
-	public EntitySearchTupleHelper(G_SearchType searchType,
+	public G_SearchTupleHelper(G_SearchType searchType,
 			G_CanonicalPropertyType family, String specificPropertyType,
 			String value) {
 		super(searchType, family, specificPropertyType, value);
@@ -26,7 +27,7 @@ public class EntitySearchTupleHelper extends EntitySearchTuple<String> {
 	 * @param family
 	 * @param value
 	 */
-	public EntitySearchTupleHelper(G_SearchType searchType,
+	public G_SearchTupleHelper(G_SearchType searchType,
 			G_CanonicalPropertyType family, String value) {
 		super(searchType, family, null, value);
 	}
@@ -39,7 +40,7 @@ public class EntitySearchTupleHelper extends EntitySearchTuple<String> {
 	 * @param family
 	 * @param value
 	 */
-	public EntitySearchTupleHelper(G_SearchType searchType,
+	public G_SearchTupleHelper(G_SearchType searchType,
 			String specificPropertyType, String value) {
 		super(searchType, null, specificPropertyType, value);
 	}

@@ -2,8 +2,8 @@ package graphene.services;
 
 import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
-import graphene.model.query.EntitySearchTuple;
 import graphene.model.query.EventQuery;
 
 import java.util.HashMap;
@@ -79,13 +79,13 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 		EventQuery eq = new EventQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
-		for (String id : graphQuery.getSearchIds()) {
+		//for (String id : graphQuery.getSearchIds()) {
 			eq.addIds(graphQuery.getSearchIds());
 			//lets try using ids instead of attributes.
-//			eq.getAttributeList().add(
-//					new EntitySearchTuple<String>(G_SearchType.COMPARE_EQUALS,
+//			eq.addAttribute(
+//					new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS,
 //							G_CanonicalPropertyType.ANY, id));
-		}
+	//	}
 
 		// aka traversals from legacy--djue
 		int hop = 0;
@@ -129,8 +129,8 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 						node.setCluster(true);
 					} else {
 						// we will search on it.
-						eq.getAttributeList().add(
-								new EntitySearchTuple<String>(
+						eq.addAttribute(
+								new G_SearchTuple<String>(
 										G_SearchType.COMPARE_EQUALS, nodeType,
 										valueToSearchOn));
 					}

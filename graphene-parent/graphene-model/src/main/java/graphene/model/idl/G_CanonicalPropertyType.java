@@ -10,7 +10,8 @@ package graphene.model.idl;
  * 
  * This is a sampling of property types taken from several open source datasets,
  * and is meant to be extended if needed in order to work with the customer
- * specific data. (Although it's a lot less work if you can find one in this list)
+ * specific data. (Although it's a lot less work if you can find one in this
+ * list)
  * 
  * In 3.x this would have been a string value that applied for all tuples in a
  * query. Because families are known outside of any particular data, we can
@@ -24,11 +25,15 @@ package graphene.model.idl;
 public enum G_CanonicalPropertyType {
 	ACCOUNT(10, "Account", "account"),
 	ACCOUNT_CLASS(11, "Account Class", "accountClass"),
-	ACCOUNT_TYPE(11, "Account Type", "accountType"),
+	ACCOUNT_TYPE(12, "Account Type", "accountType"),
+	REPORT_ID(15, "Report Id", "reportId"),
 	ADDRESS(2, "Address", "address"),
+	GEO(21, "Geolocation", "geo"),
+	EXPORTADDRESS(23, "Export Address", "export"),
+	IMPORTADDRESS(24, "Import Address", "import"),
 	ANY(0, "Any", "any"),
 	COMBO(3, "Combination", "combo"),
-	CONFIRMED(300, "Combination", "combo"),
+	CONFIRMED(300, "Confirmed", "confirmed"),
 	CONTEXT(400, "Context", "context"),
 	CORPORATE_CUSTOMER(401, "Corporate Customer", "corporateCustomer"),
 	CURRENCY(402, "Currency", "currency"),
@@ -53,6 +58,14 @@ public enum G_CanonicalPropertyType {
 	OCCUPATION(418, "Occupation", "occupation"),
 	OTHER(7, "Other", "other"),
 	PASSPORT(8, "Passport", "passport"),
+	TAXID(81, "Tax Id", "taxId"),
+	EIN(82, "EIN", "ein"),
+	SSN(83, "SSN", "ssn"),
+	GOVERNMENTID(84, "Government Id", "governmentId"),
+	VISA(85, "Visa", "visa"),
+	LICENSEPLATE(86, "License Plate", "licensePlate"),
+	VIN(87, "VIN", "vin"),
+	FLIGHT(87, "Airline or Ship", "flight"),
 	PHONE(9, "Phone", "phone"),
 	PROVIDER_COMPANY_NAME(421, "Provider Name", "providerName"),
 	PROVIDER_INDUSTRY(422, "Provider Industry", "providerIndustry"),
@@ -69,6 +82,7 @@ public enum G_CanonicalPropertyType {
 	VIP(427, "VIP", "vip"),
 	WALLET_ADDRESS(428, "Wallet Address", "walletAddress"),
 	USERNAME(429, "Username", "username"),
+	ENTITY(500,"Entity","entity"),
 	REDACTED(-1, "[REDACTED]", "REDACTED");
 
 	// For increased performance
@@ -84,6 +98,13 @@ public enum G_CanonicalPropertyType {
 		return ANY;
 	}
 
+	/**
+	 * Used by IdType DAO to register the types in the database (v) to a
+	 * Canonical type.
+	 * 
+	 * @param v
+	 * @return
+	 */
 	public static G_CanonicalPropertyType fromValue(String v) {
 		if (null == v || v.isEmpty()) {
 			return ANY;

@@ -1,5 +1,10 @@
-package graphene.model.query;
+package graphene.business.commons.exception;
 
+/**
+ * 
+ * @author djue
+ * 
+ */
 public class DataAccessException extends Exception {
 
 	public DataAccessException(String string) {

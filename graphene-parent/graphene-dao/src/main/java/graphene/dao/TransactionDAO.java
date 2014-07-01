@@ -20,4 +20,6 @@ public interface TransactionDAO<T, Q extends BasicQuery> extends
 
 	List<DirectedEventRow> getEvents(Q q);
 
+	DirectedEventRow findEventById(String id);
+
 }

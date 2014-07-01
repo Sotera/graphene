@@ -28,7 +28,15 @@ import com.mysema.query.sql.SQLServer2012Templates;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.types.EntityPath;
 
-public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
+/**
+ * A JDBC flavor of the disk cache
+ * 
+ * @author djue
+ * 
+ * @param <T>
+ * @param <Q>
+ */
+public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 		DiskCacheDAO<T, Q> implements GenericDAO<T, Q> {
 
 	private boolean ready;
@@ -38,20 +46,19 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 		this.ready = b;
 	}
 
-	public DiskCacheDAOJDBCImpl(DiskCache<T> diskCache) {
-		super(diskCache);
-
-	}
-
 	public abstract long getMaxIndexValue() throws Exception;
 
 	public boolean getCacheToDisk(boolean deleteExisting,
 			boolean trySerialized, boolean saveLocally, long maxResults) {
-		logger.debug("Starting getCacheToDisk");
+		if (!ValidationUtils.isValid(cacheFileLocation)) {
+			logger.error("Could not cache to disk because no cacheFileLocation was provided");
+			return false;
+		}
+		logger.debug("Starting getCacheToDisk at: " + cacheFileLocation);
 		// If we have already written to disk in this thread, don't delete
 		// existing this time.
 		if (diskCache.getNumberOfRecordsCached() == 0 && deleteExisting) {
-			if (diskCache.dropExisting(FILE_NAME)) {
+			if (diskCache.dropExisting(cacheFileLocation)) {
 				logger.debug("Deleted existing file");
 			} else {
 				logger.warn("Could not delete existing file");
@@ -59,7 +66,7 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 		}
 		boolean readerAvailable = false;
 		if (trySerialized) {
-			readerAvailable = diskCache.initializeReader(FILE_NAME);
+			readerAvailable = diskCache.initializeReader(cacheFileLocation);
 			logger.debug("readerAvailable=" + readerAvailable);
 		}
 		if (readerAvailable) {
@@ -68,7 +75,8 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 			diskCache.closeStreams();
 			TimeReporter tr = new TimeReporter(
 					"Loading from database into cache", logger);
-			boolean writerAvailable = diskCache.initializeWriter(FILE_NAME);
+			boolean writerAvailable = diskCache
+					.initializeWriter(cacheFileLocation);
 			if (writerAvailable) {
 				try {
 					// Note that the maxValue is the highest index number.
@@ -83,7 +91,7 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 				}
 				logger.debug("Preparing to make reader available.");
 				diskCache.closeStreams();
-				readerAvailable = diskCache.initializeReader(FILE_NAME);
+				readerAvailable = diskCache.initializeReader(cacheFileLocation);
 				logger.debug("readerAvailable=" + readerAvailable);
 			} else {
 				logger.error("Writer not available!");
@@ -144,16 +152,6 @@ public abstract class DiskCacheDAOJDBCImpl<T, Q extends BasicQuery> extends
 	public double getReadiness() {
 		return isReady() ? 1.0d : 0;
 	}
-
-	/**
-	 * This is now a default, but it is intended that implementaitons will
-	 * override and use a different callback if they want to.
-	 */
-	// @Override
-	// public boolean performCallback(long offset, long maxResults,
-	// G_CallBack<T> cb, Q q) {
-	// return basicCallback(offset, maxResults, cb, q);
-	// }
 
 	/**
 	 * 

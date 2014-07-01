@@ -19,6 +19,7 @@ package graphene.model.idl;
  * 
  */
 public enum G_VisualType {
+	TOP,
 	CHART,
 	DEFAULT,
 	GRAPH,
@@ -34,5 +35,7 @@ public enum G_VisualType {
 	EVENT,
 	META,
 	DEMO,
-	REDACTED
+	REDACTED,
+	GEO,
+	EXPERIMENTAL
 }

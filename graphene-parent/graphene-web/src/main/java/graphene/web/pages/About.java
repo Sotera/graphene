@@ -9,9 +9,8 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_VisualType;
 import graphene.web.annotations.PluginPage;
 
-@PluginPage(visualType = G_VisualType.META)
-public class About
-{
+@PluginPage(visualType = G_VisualType.META, menuName = "About Graphene", icon = "fa fa-lg fa-fw fa-question")
+public class About {
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)

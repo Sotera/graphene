@@ -8,7 +8,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
-@PluginPage(visualType = G_VisualType.META)
+@PluginPage(visualType = G_VisualType.META, menuName = "Contact", icon = "fa fa-lg fa-fw fa-info-circle")
 public class Contact {
 	@Property
 	@Inject

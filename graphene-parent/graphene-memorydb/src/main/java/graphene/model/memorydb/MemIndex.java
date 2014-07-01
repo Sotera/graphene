@@ -1,5 +1,7 @@
 package graphene.model.memorydb;
 
+import graphene.util.validator.ValidationUtils;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,8 +57,9 @@ public class MemIndex {
 	 * @return
 	 */
 	public int getIDForValue(String value) {
-		if (value == null || value.length() == 0)
+		if (!ValidationUtils.isValid(value)) {
 			return -1;
+		}
 		int result = Arrays.binarySearch(getValues(), value);
 		if (result < 0) {
 			logger.debug("Index " + name + " could not find Id for " + value

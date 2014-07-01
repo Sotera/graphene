@@ -5,9 +5,7 @@ import graphene.dao.IdTypeDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
-import graphene.model.query.EntityRefQuery;
 import graphene.model.query.SearchFilter;
-import graphene.model.query.StringQuery;
 import graphene.model.view.entities.CustomerDetails;
 import graphene.model.view.entities.IdType;
 import graphene.util.G_CallBack;
@@ -45,33 +43,36 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 	private static final int STATE_LOAD_GRID = 2;
 	protected static final int STATE_LOAD_STRINGS = 1;
 	protected Set<String> accountSet;
-	String[] communicationIdArray;
-	protected Set<String> communicationIdSet;
-	protected List<G_CanonicalPropertyType> communicationTypes;
+//	String[] communicationIdArray;
+//	protected Set<String> communicationIdSet;
+//	protected Map<String, List<G_CanonicalPropertyType>> groupsOfTypes = new HashMap<String, List<G_CanonicalPropertyType>>(
+//			2);
 
 	protected Set<String> customerSet;
 
 	@Inject
-	private EntityRefDAO<T, EntityRefQuery> dao;
+	private EntityRefDAO<T, ?> dao;
 
 	protected boolean enabled = false;
 
 	protected Set<String> identifierSet;
 
 	@Inject
-	protected IdTypeDAO<I, StringQuery> idTypeDAO;
+	protected IdTypeDAO<?, ?> idTypeDAO;
 
 	protected HashMap<Integer, Integer> invalidTypes = new HashMap<Integer, Integer>(
 			10);
 
 	private boolean loaded;
-	String[] nameArray;
-	protected Set<String> nameSet;
+//	String[] nameArray;
+	//protected Set<String> nameSet;
 	protected long numProcessed = 0;
 	protected int state;
 
-	public AbstractMemoryDB() {
+	public AbstractMemoryDB(EntityRefDAO<T, ?> dao, IdTypeDAO<?, ?> idTypeDAO) {
 		super();
+		this.dao = dao;
+		this.idTypeDAO = idTypeDAO;
 	}
 
 	public abstract boolean callBack(T p);
@@ -81,7 +82,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			String family, boolean rowPerAccount) {
 		Set<String> customersFound = new HashSet<String>();
 		List<CustomerDetails> results = new ArrayList<CustomerDetails>();
-		// MemoryDB mem = MemoryDB.getInstance();
 
 		Set<MemRow> dbResults = getRowsForIdentifier(identifier);
 		Set<String> accounts = new HashSet<String>();
@@ -248,7 +248,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		try {
 			dmcomp = (String) dm.encode((Object) name);
 		} catch (EncoderException e) {
-			// TODO report an error
 			e.printStackTrace();
 			return results;
 		}
@@ -293,6 +292,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		return id;
 
 	}
+
 
 	@Override
 	public int getAccountIDForNumber(String number) {
@@ -400,10 +400,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		} else {
 			logger.info("MemoryDB intends to load all records");
 		}
-		// TODO: expand this setup logic
-		communicationTypes = new ArrayList<G_CanonicalPropertyType>();
-		communicationTypes.add(G_CanonicalPropertyType.EMAIL);
-		communicationTypes.add(G_CanonicalPropertyType.PHONE);
 		/*
 		 * How this works: We do two passes through the database. On the first
 		 * pass we create sets of unique values for identifier,customer, and
@@ -548,8 +544,8 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		identifierSet = new HashSet<String>();
 		customerSet = new HashSet<String>();
 		accountSet = new HashSet<String>();
-		nameSet = new HashSet<String>();
-		communicationIdSet = new HashSet<String>();
+//		nameSet = new HashSet<String>();
+//		communicationIdSet = new HashSet<String>();
 		numProcessed = 0;
 		boolean loadStringsSuccessful = dao.performCallback(0, maxRecords,
 				this, null);
@@ -563,18 +559,18 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			String[] accountArray = (String[]) accountSet
 					.toArray(new String[accountSet.size()]);
 
-			logger.debug("Number of unique communication ids "
-					+ communicationIdSet.size());
+//			logger.debug("Number of unique communication ids "
+//					+ communicationIdSet.size());
 
-			nameArray = (String[]) nameSet.toArray(new String[nameSet.size()]);
-			communicationIdArray = (String[]) communicationIdSet
-					.toArray(new String[nameSet.size()]);
+//			nameArray = (String[]) nameSet.toArray(new String[nameSet.size()]);
+//			communicationIdArray = (String[]) communicationIdSet
+//					.toArray(new String[nameSet.size()]);
 
 			identifierSet = null; // give back the memory
 			customerSet = null;
 			accountSet = null;
-			nameSet = null;
-			communicationIdSet = null;
+//			nameSet = null;
+//			communicationIdSet = null;
 
 			identifiers.load(idArray);
 			customers.load(customerArray);

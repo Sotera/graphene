@@ -12,8 +12,9 @@ public class G_SymbolConstants {
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}
+
 	public static final String APPLICATION_NAME = "graphene.application-name";
-	//The string for who to contact about this application
+	// The string for who to contact about this application
 	public static final String APPLICATION_CONTACT = "graphene.application-contact";
 	public static final String THEME_PATH = "graphene.theme-path";
 	public static final String DATABASE_PROPERTIES_LOCATION = "graphene.database-properties-location";
@@ -31,5 +32,9 @@ public class G_SymbolConstants {
 	 * supplied by the core's app module, and it is hard coded into all the
 	 * core's components and T5 pages at this time.
 	 */
-	public static final String GRAPHENE_WEB_CORE_PREFIX = "graphene.core-web-prefix";;
+	public static final String GRAPHENE_WEB_CORE_PREFIX = "graphene.core-web-prefix";
+	/**
+	 * For diskCache, if you are going to use it.
+	 */
+	public static final String CACHEFILELOCATION = "graphene.cache-file-location";
 }

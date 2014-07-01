@@ -2,9 +2,9 @@ package graphene.services;
 
 import graphene.dao.EntityRefDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
-import graphene.model.query.EntityRefQuery;
-import graphene.model.query.EntitySearchTuple;
+import graphene.model.query.EntityQuery;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,8 +30,8 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
-	
+public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
+
 	@Inject
 	private Logger logger;
 
@@ -79,13 +79,13 @@ public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
 		// V_EdgeList savEdgeList = edgeList.clone();
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>(
 				edgeMap);
-		EntityRefQuery eq = new EntityRefQuery();
+		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		for (String id : graphQuery.getSearchIds()) {
-			eq.getAttributeList().add(
-					new EntitySearchTuple<String>(G_SearchType.COMPARE_EQUALS,
-							G_CanonicalPropertyType.ANY, id));
+			eq.addAttribute(new G_SearchTuple<String>(
+					G_SearchType.COMPARE_EQUALS, G_CanonicalPropertyType.ANY,
+					id));
 		}
 
 		// aka traversals from legacy--djue
@@ -102,38 +102,36 @@ public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
 
 				dao.performCallback(0, 0, this, eq);
 
-				for (EntitySearchTuple<String> tuple : eq.getAttributeList()) {
+				for (G_SearchTuple<String> tuple : eq.getAttributeList()) {
 					scannedActors.add(tuple.getValue());
 				}
 
 			}
 
-			eq = new EntityRefQuery();
+			eq = new EntityQuery();
 			// Iterate over each node found by the previous query and scan them.
 			for (V_GenericNode node : newNodeList) {
 
-				G_CanonicalPropertyType nodeType = G_CanonicalPropertyType
-						.fromValue(node.getFamily());
 				String valueToSearchOn = node.getIdVal();
-				// if we haven't scanned
-
 				// start scanning this id.
 				logger.debug("::::Scanning valueToSearchOn " + valueToSearchOn
 						+ "\t\t " + node);
-				// Make sure there aren't too many edges.
+
 				long count = 0;
 				try {
 					count = dao.countEdges(valueToSearchOn);
 					node.setNbrLinks((int) count);
+					// Make sure there aren't too many edges.
 					if (count > graphQuery.getMaxEdgesPerNode()) {
 						// we will not search on it.
 						node.setCluster(true);
 					} else {
+						G_CanonicalPropertyType nodeType = G_CanonicalPropertyType
+								.fromValue(node.getFamily());
 						// we will search on it.
-						eq.getAttributeList().add(
-								new EntitySearchTuple<String>(
-										G_SearchType.COMPARE_EQUALS, nodeType,
-										valueToSearchOn));
+						eq.addAttribute(new G_SearchTuple<String>(
+								G_SearchType.COMPARE_EQUALS, nodeType,
+								valueToSearchOn));
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -166,11 +164,21 @@ public abstract class PropertyGraphBuilder<T>extends AbstractGraphBuilder<T>  {
 			edgeList.addEdge(e);
 		}
 		nodeList.removeOrphans(edgeList);
+		performePostProcess();
 		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 		return g;
+	}
+
+	/**
+	 * Individual implementations can override this method to perform
+	 * modifications on the graph (or graph analysis) after the complete graph
+	 * has been built.
+	 */
+	public void performePostProcess() {
+
 	}
 
 }

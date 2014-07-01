@@ -31,11 +31,39 @@
 					documentation for details. -->
 
 				<ul>
-					<li class="" t:type="loop" source="pageNames" value="page">
+					<li class="" t:type="loop" source="actionPages" value="page">
 						<t:pagelink page="prop:page.first">
 							<i class="${page.second}"></i>
-							<span class="menu-item-parent"> ${page.first}</span>
+							<span class="menu-item-parent"> ${page.third}</span>
 						</t:pagelink>
+					</li>
+					<li>
+						<a href="#">
+							<i class="fa fa-lg fa-fw fa-windows"></i>
+							<span class="menu-item-parent">Miscellaneous</span>
+						</a>
+						<ul>
+							<li class="" t:type="loop" source="metaPages" value="page">
+								<t:pagelink page="prop:page.first">
+									<i class="${page.second}"></i>
+									<span class="menu-item-parent"> ${page.third}</span>
+								</t:pagelink>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#">
+							<i class="fa fa-lg fa-fw fa-cog"></i>
+							<span class="menu-item-parent">Labs</span>
+						</a>
+						<ul>
+							<li class="" t:type="loop" source="experimentalPages" value="page">
+								<t:pagelink page="prop:page.first">
+									<i class="${page.second}"></i>
+									<span class="menu-item-parent"> ${page.third}</span>
+								</t:pagelink>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</nav>
@@ -47,6 +75,6 @@
 		</aside>
 		<!-- END NAVIGATION -->
 
-	
+
 	</t:content>
 </html>

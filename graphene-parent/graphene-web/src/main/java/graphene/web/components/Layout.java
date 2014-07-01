@@ -6,7 +6,6 @@ import graphene.web.security.AuthenticatorHelper;
 
 import java.util.Locale;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;

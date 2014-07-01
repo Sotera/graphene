@@ -2,6 +2,7 @@ package graphene.model.query;
 
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_Delimiter;
+import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
@@ -41,12 +42,12 @@ public class EntitySearchTypeHelper {
 	 *            the {@link G_CanonicalPropertyType} if none is specified
 	 * @return
 	 */
-	public static List<EntitySearchTuple<String>> processSearchList(
+	public static List<G_SearchTuple<String>> processSearchList(
 			String multiTermString, G_SearchType defaultSearchType,
 			G_CanonicalPropertyType defaultPropertyType) {
 
 		// Start off with a small list by default, it will expand if necessary.
-		List<EntitySearchTuple<String>> list = new ArrayList<EntitySearchTuple<String>>(
+		List<G_SearchTuple<String>> list = new ArrayList<G_SearchTuple<String>>(
 				2);
 
 		/*
@@ -84,13 +85,13 @@ public class EntitySearchTypeHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public static EntitySearchTuple<String> processSearchType(
+	public static G_SearchTuple<String> processSearchType(
 			String originalString, G_SearchType defaultSearchType,
 			G_CanonicalPropertyType defaultPropertyType) throws Exception {
 
 		// Build from scratch since we don't know if it's malformed or missing
 		// values.
-		EntitySearchTuple<String> tuple = new EntitySearchTuple<String>();
+		G_SearchTuple<String> tuple = new G_SearchTuple<String>();
 
 		/*
 		 * Split the original string into it's SearchType and the remainder of

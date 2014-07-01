@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 		"context:core/js/infovis/js/T5AjaxBinding.js",
 		"context:core/js/infovis/js/jit-yc.js",
 		"context:core/js/infovis/js/jit-fd3.js" })
-@PluginPage(visualType = G_VisualType.GRAPH)
+@PluginPage(visualType = G_VisualType.EXPERIMENTAL, menuName = "Property Graph", icon = "fa fa-lg fa-fw fa-code-fork")
 public class AttributeGraph {
 
 	@Inject
@@ -97,7 +97,8 @@ public class AttributeGraph {
 					jar.put(0, new JSONObject("Error", "bad json"));
 				} catch (Exception ex) {
 					String message = ExceptionUtil.getRootCauseMessage(ex);
-					manager.alert(Duration.SINGLE, Severity.ERROR, "ERROR: " + message);
+					manager.alert(Duration.SINGLE, Severity.ERROR, "ERROR: "
+							+ message);
 					logger.error(message);
 				}
 			}

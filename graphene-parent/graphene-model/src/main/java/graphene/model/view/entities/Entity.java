@@ -10,12 +10,13 @@ import mil.darpa.vande.generic.V_IdProperty;
 
 /**
  * 
- * This is a more generic replacement for the Customer
- * object. It depends on an Entity DAO which is more of a virtual Entity
- * DAO because the Entity might not correspond to a single table.
- * <BR/>The list of attributes uses lazy loading. It only retrieves them when
- * requested, and until then the list is null. The DAO should return an
- * empty list if none found
+ * This is a more generic replacement for the Customer object. It depends on an
+ * Entity DAO which is more of a virtual Entity DAO because the Entity might not
+ * correspond to a single table. <BR/>
+ * The list of attributes uses lazy loading. It only retrieves them when
+ * requested, and until then the list is null. The DAO should return an empty
+ * list if none found
+ * 
  * @author PWG for DARPA
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,7 +29,7 @@ public class Entity {
 	// key
 	private boolean fullyLoaded = false;
 	private String id = null;
-	public Set<V_IdProperty> identList = null;// cannot use java.util.Properties
+	public Set<V_IdProperty> identList = null;
 	private Set<Name> nameList = null;
 	private Set<CommunicationId> communicationIds = null;
 
@@ -50,31 +51,37 @@ public class Entity {
 	}
 
 	public void addAddress(final Identifier e) {
-		if (addressList == null)
-			addressList = new HashSet<Identifier>();
+		if (addressList == null) {
+			addressList = new HashSet<Identifier>(2);
+		}
 		addressList.add(e);
 	}
 
 	public void addEmailAddress(final EmailAddress e) {
-		if (emailList == null)
-			emailList = new HashSet<EmailAddress>();
+		if (emailList == null) {
+			emailList = new HashSet<EmailAddress>(2);
+		}
 		emailList.add(e);
 	}
 
 	public void addName(final Name e) {
-		if (nameList == null)
-			nameList = new HashSet<Name>();
+		if (nameList == null) {
+			nameList = new HashSet<Name>(2);
+		}
 		nameList.add(e);
 	}
 
 	public void addCommunicationId(final CommunicationId communicationId) {
-		if (communicationIds == null)
-			communicationIds = new HashSet<CommunicationId>();
+		if (communicationIds == null) {
+			communicationIds = new HashSet<CommunicationId>(2);
+		}
 		communicationIds.add(communicationId);
 	}
+
 	public void addAccount(final Account e) {
-		if (accountList == null)
-			accountList = new HashSet<Account>();
+		if (accountList == null) {
+			accountList = new HashSet<Account>(2);
+		}
 		accountList.add(e);
 	}
 
@@ -146,7 +153,8 @@ public class Entity {
 		this.nameList = nameList;
 	}
 
-	public void setCommunicationIdList(final Set<CommunicationId> communicationIds) {
+	public void setCommunicationIdList(
+			final Set<CommunicationId> communicationIds) {
 		this.communicationIds = communicationIds;
 	}
 

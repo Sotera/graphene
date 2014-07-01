@@ -11,7 +11,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 
 @Import(stylesheet = { "context:core/js/neo_sigma/css/searchable_vis.css",
 		"context:core/js/neo_sigma/css/jquery.fancybox.css" })
-@PluginPage(visualType = G_VisualType.GRAPH)
+@PluginPage(visualType = G_VisualType.EXPERIMENTAL, menuName = "SigmaJs Test", icon = "fa fa-lg fa-fw fa-code-fork")
 public class ExampleSigma {
 	@Inject
 	@Path("context:core/js/neo_sigma/js/searchable_vis.js")
