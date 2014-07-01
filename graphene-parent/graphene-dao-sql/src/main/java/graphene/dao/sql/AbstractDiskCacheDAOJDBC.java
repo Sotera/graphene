@@ -6,7 +6,7 @@ import graphene.model.query.BasicQuery;
 import graphene.util.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
-import graphene.util.fs.DiskCache;
+import graphene.util.fs.FileUtils;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.stats.MemoryReporter;
 import graphene.util.stats.TimeReporter;
@@ -55,6 +55,11 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 			return false;
 		}
 		logger.debug("Starting getCacheToDisk at: " + cacheFileLocation);
+
+		cacheFileLocation = FileUtils
+				.convertSystemProperties(cacheFileLocation);
+		logger.debug("Resolved cache file location to this path: "
+				+ cacheFileLocation);
 		// If we have already written to disk in this thread, don't delete
 		// existing this time.
 		if (diskCache.getNumberOfRecordsCached() == 0 && deleteExisting) {

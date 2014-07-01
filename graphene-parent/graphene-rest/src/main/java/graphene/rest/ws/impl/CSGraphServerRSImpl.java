@@ -1,5 +1,6 @@
 package graphene.rest.ws.impl;
 
+import graphene.dao.FederatedEventGraph;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.services.EventGraphBuilder;
 import graphene.services.PropertyGraphBuilder;
@@ -18,16 +19,75 @@ import org.slf4j.Logger;
 
 public class CSGraphServerRSImpl implements CSGraphServerRS {
 
-	@InjectService("Property")
-	private PropertyGraphBuilder propertyGraphBuilder;
-
 	@InjectService("Event")
 	private EventGraphBuilder eventGraphBuilder;
 
 	@Inject
+	private FederatedEventGraph feg;
+
+	@Inject
 	private Logger logger;
 
+	@InjectService("Property")
+	private PropertyGraphBuilder propertyGraphBuilder;
+
 	public CSGraphServerRSImpl() {
+
+	}
+
+	@Override
+	public V_CSGraph getInteractionGraph(String objectType, String[] value,
+			String valueType, String degree, String maxNodes,
+			String maxEdgesPerNode, boolean showIcons, String minSecs,
+			String maxSecs, String minimumWeight) {
+		logger.debug("-------");
+		logger.debug("get Interaction Graph for type " + objectType);
+		logger.debug("Value     " + value);
+		logger.debug("Degrees   " + degree);
+		logger.debug("Max Nodes " + maxNodes);
+		logger.debug("Max Edges " + maxEdgesPerNode);
+		logger.debug("min weight " + minimumWeight);
+
+		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 6);
+		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
+		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 50);
+		int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);
+		long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
+		long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);
+
+		TemporalGraphQuery q = new TemporalGraphQuery();
+		q.setStartTime(startDate);
+		q.setEndTime(endDate);
+		q.setType(valueType); // new, --djue
+		q.setMinTransValue(minWeight); // new --djue
+		q.setMaxNodes(maxnodes);
+		q.setMaxEdgesPerNode(maxedges);
+		q.setMaxHops(maxdegree);
+		q.addSearchIds(value);
+		V_CSGraph m = null;
+		if (ValidationUtils.isValid(value)) {
+			try {
+				V_GenericGraph g=null;
+				EventGraphBuilder gb = feg
+						.getGraphBuilderForDataSource(objectType);
+				if (gb != null) {
+					 g = gb.makeGraphResponse(q);
+				} else {
+					// TODO: We won't do this default graph in the future, right
+					// now we are just testing out the federated graph builder
+					 g = eventGraphBuilder.makeGraphResponse(q);
+				}
+				m = new V_CSGraph(g, true);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			m = new V_CSGraph();
+			m.setStrStatus("A query was sent without any ids");
+			logger.error("A query was sent without any ids");
+		}
+		return m;
 
 	}
 
@@ -134,58 +194,6 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			logger.error("A query was sent without any ids");
 		}
 
-		return m;
-
-	}
-
-	@Override
-	public V_CSGraph getInteractionGraph(String objectType, String[] value,
-			String valueType, String degree, String maxNodes,
-			String maxEdgesPerNode, boolean showIcons, String minSecs,
-			String maxSecs, String minimumWeight) {
-		logger.debug("-------");
-		logger.debug("get Interaction Graph for type " + objectType);
-		logger.debug("Value     " + value);
-		logger.debug("Degrees   " + degree);
-		logger.debug("Max Nodes " + maxNodes);
-		logger.debug("Max Edges " + maxEdgesPerNode);
-		logger.debug("min weight " + minimumWeight);
-
-		// NB: min weight does not work. It is intended to say don't count edges
-		// unless they occur X times (i.e. a called b + b called a > X)
-		// However we are not iterating through the calls - we are using
-		// SELECT DISTINCT for now.
-
-		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 6);
-		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
-		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 50);
-		int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);
-		long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
-		long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);
-
-		TemporalGraphQuery q = new TemporalGraphQuery();
-		q.setStartTime(startDate);
-		q.setEndTime(endDate);
-		q.setType(valueType); // new, --djue
-		q.setMinTransValue(minWeight); // new --djue
-		q.setMaxNodes(maxnodes);
-		q.setMaxEdgesPerNode(maxedges);
-		q.setMaxHops(maxdegree);
-		q.addSearchIds(value);
-		V_CSGraph m = null;
-		if (ValidationUtils.isValid(value)) {
-			try {
-				V_GenericGraph g = eventGraphBuilder.makeGraphResponse(q);
-				m = new V_CSGraph(g, true);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
-		} else {
-			m = new V_CSGraph();
-			m.setStrStatus("A query was sent without any ids");
-			logger.error("A query was sent without any ids");
-		}
 		return m;
 
 	}

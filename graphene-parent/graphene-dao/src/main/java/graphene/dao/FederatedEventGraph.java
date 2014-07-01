@@ -16,4 +16,6 @@ public interface FederatedEventGraph {
 
 	public abstract void printDatasetsSupported();
 
+	public abstract EventGraphBuilder getGraphBuilderForDataSource(String datasource);
+
 }
