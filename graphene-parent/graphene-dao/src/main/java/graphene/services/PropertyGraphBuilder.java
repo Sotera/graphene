@@ -164,7 +164,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 			edgeList.addEdge(e);
 		}
 		nodeList.removeOrphans(edgeList);
-		performePostProcess();
+		performPostProcess(graphQuery);
 		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());
 		g.setIntStatus(intStatus);
@@ -176,8 +176,9 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	 * Individual implementations can override this method to perform
 	 * modifications on the graph (or graph analysis) after the complete graph
 	 * has been built.
+	 * @param graphQuery 
 	 */
-	public void performePostProcess() {
+	public void performPostProcess(V_GraphQuery graphQuery) {
 
 	}
 

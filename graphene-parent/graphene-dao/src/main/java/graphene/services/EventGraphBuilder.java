@@ -34,7 +34,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
+public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	@Inject
 	private Logger logger;
 	/**
@@ -79,13 +79,13 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 		EventQuery eq = new EventQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
-		//for (String id : graphQuery.getSearchIds()) {
-			eq.addIds(graphQuery.getSearchIds());
-			//lets try using ids instead of attributes.
-//			eq.addAttribute(
-//					new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS,
-//							G_CanonicalPropertyType.ANY, id));
-	//	}
+		// for (String id : graphQuery.getSearchIds()) {
+		eq.addIds(graphQuery.getSearchIds());
+		// lets try using ids instead of attributes.
+		// eq.addAttribute(
+		// new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS,
+		// G_CanonicalPropertyType.ANY, id));
+		// }
 
 		// aka traversals from legacy--djue
 		int hop = 0;
@@ -94,7 +94,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 				&& eq.getIdList().size() > 0; hop++) {
 
 			logger.debug("Processing hop " + hop);
-
+			// If we have some ids to look for
 			if (eq.getIdList().size() > 0) {
 				logger.debug("Found " + eq.getIdList().size()
 						+ " unscanned nodes to query on");
@@ -129,10 +129,9 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 						node.setCluster(true);
 					} else {
 						// we will search on it.
-						eq.addAttribute(
-								new G_SearchTuple<String>(
-										G_SearchType.COMPARE_EQUALS, nodeType,
-										valueToSearchOn));
+						eq.addAttribute(new G_SearchTuple<String>(
+								G_SearchType.COMPARE_EQUALS, nodeType,
+								valueToSearchOn));
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

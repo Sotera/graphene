@@ -62,5 +62,5 @@ public enum G_RelationshipType implements RelationshipType {
 	IN_SYSTEM, // ACCOUNT TO ENTITY (bank or ENTITY, etc)
 	HAS_GLOBAL_ACCOUNT_ID,
 	REDACTED,
-	IN_DOCUMENT,
+	IN_DOCUMENT, TRANSACTION,
 }
