@@ -1,11 +1,11 @@
 package graphene.dao;
 
-import graphene.services.PropertyGraphBuilder;
+import graphene.services.EventGraphBuilder;
 
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
-@UsesConfiguration(PropertyGraphBuilder.class)
-public interface FederatedPropertyGraph {
+@UsesConfiguration(EventGraphBuilder.class)
+public interface FederatedEventGraphServer {
 
 	/*
 	 * (non-Javadoc)
@@ -15,5 +15,7 @@ public interface FederatedPropertyGraph {
 	public abstract String toString();
 
 	public abstract void printDatasetsSupported();
+
+	public abstract EventGraphBuilder getGraphBuilderForDataSource(String datasource);
 
 }

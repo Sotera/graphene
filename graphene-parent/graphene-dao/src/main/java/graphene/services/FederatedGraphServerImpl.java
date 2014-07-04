@@ -1,6 +1,6 @@
 package graphene.services;
 
-import graphene.dao.FederatedEventGraphServer;
+import graphene.dao.FederatedGraphServer;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.Collection;
@@ -8,12 +8,12 @@ import java.util.Collection;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
-public class FederatedEventGraphImpl implements FederatedEventGraphServer {
-	private Collection<EventGraphBuilder> singletons;
+public class FederatedGraphServerImpl implements FederatedGraphServer {
+	private Collection<AbstractGraphBuilder> singletons;
 	@Inject
 	private Logger logger;
 
-	public FederatedEventGraphImpl(Collection<EventGraphBuilder> singletons) {
+	public FederatedGraphServerImpl(Collection<AbstractGraphBuilder> singletons) {
 		this.singletons = singletons;
 		printDatasetsSupported();
 	}
@@ -27,10 +27,10 @@ public class FederatedEventGraphImpl implements FederatedEventGraphServer {
 	 * @return
 	 */
 	@Override
-	public EventGraphBuilder getGraphBuilderForDataSource(String datasource) {
+	public AbstractGraphBuilder getGraphBuilderForDataSource(String datasource) {
 		if (ValidationUtils.isValid(datasource)) {
 			if (ValidationUtils.isValid(singletons)) {
-				for (EventGraphBuilder s : singletons) {
+				for (AbstractGraphBuilder s : singletons) {
 					if (s.getSupportedDatasets().contains(datasource)) {
 						logger.debug("Found service "
 								+ s.getClass().getCanonicalName()
@@ -59,7 +59,7 @@ public class FederatedEventGraphImpl implements FederatedEventGraphServer {
 		System.out.println("--------------------------------------");
 		System.out.println("FEDERATED GRAPH DATASETS -------------");
 		System.out.println("--------------------------------------");
-		for (EventGraphBuilder s : singletons) {
+		for (AbstractGraphBuilder s : singletons) {
 			System.out.println("Supports " + s.getSupportedDatasets());
 		}
 		System.out.println("--------------------------------------");

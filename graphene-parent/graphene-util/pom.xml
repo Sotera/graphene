@@ -29,7 +29,6 @@
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
-			<version>2.24.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -37,4 +36,25 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<resources>
+			<resource><!-- This is for picking up any Tapestry .tml templates, .properties 
+					or other resources which are in the src directory. Optionally these could 
+					be in the corresponding resources directory but we don't enforce that on 
+					developers. -->
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+					<exclude>**/*.class</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
 </project>

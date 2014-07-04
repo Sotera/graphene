@@ -59,6 +59,7 @@
 		<commons-beanutils.version>1.9.0</commons-beanutils.version>
 		<commons-dbutils.version>1.5</commons-dbutils.version>
 		<avro.version>1.7.5</avro.version>
+		<kryo.version>2.24.0</kryo.version>
 		<slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
 		<jxl.version>2.6.12</jxl.version>
 
@@ -245,6 +246,12 @@
 				<version>${avro.version}</version>
 			</dependency>
 
+			<dependency><!-- Super fast and compact serialization framework, used 
+					for communications and file system caching -->
+				<groupId>com.esotericsoftware.kryo</groupId>
+				<artifactId>kryo</artifactId>
+				<version>${kryo.version}</version>
+			</dependency>
 			<dependency><!-- Date and time library to replace JDK date handling. Will 
 					likely be the standard in Java 8. -->
 				<groupId>joda-time</groupId>

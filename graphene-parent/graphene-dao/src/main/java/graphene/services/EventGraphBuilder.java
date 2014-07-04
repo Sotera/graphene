@@ -15,6 +15,7 @@ import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
+import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
@@ -45,7 +46,11 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	public EventGraphBuilder() {
 		super();
 	}
-
+	@Override
+	public void performPostProcess(V_GraphQuery graphQuery) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * Unrolled version.
 	 * 
@@ -109,7 +114,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 
 			eq = new EventQuery();
 			// Iterate over each node found by the previous query and scan them.
-			for (V_GenericNode node : newNodeList) {
+			for (V_GenericNode node : unscannedNodeList) {
 
 				G_CanonicalPropertyType nodeType = G_CanonicalPropertyType
 						.fromValue(node.getFamily());
@@ -140,7 +145,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 
 			}
 			// very important!!
-			newNodeList.clear();
+			unscannedNodeList.clear();
 
 			logger.debug("At the end of onehop, " + nodeList.size()
 					+ " nodes and " + edgeMap.size() + " edges");

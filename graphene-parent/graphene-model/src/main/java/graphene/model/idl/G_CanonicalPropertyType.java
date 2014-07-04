@@ -43,6 +43,7 @@ public enum G_CanonicalPropertyType {
 	DECEASED(407, "Deceased", "deceased"),
 	DESCRIPTION(408, "Description", "description"),
 	EMAIL(4, "Email", "email"),
+	IP(41, "IP", "ip"),
 	FAMILYROLE(409, "Family Role", "familyRole"),
 	ID(5, "Id", "ID"),
 	IMPORTANCE(411, "Importance", "importance"),
@@ -82,7 +83,7 @@ public enum G_CanonicalPropertyType {
 	VIP(427, "VIP", "vip"),
 	WALLET_ADDRESS(428, "Wallet Address", "walletAddress"),
 	USERNAME(429, "Username", "username"),
-	ENTITY(500,"Entity","entity"),
+	ENTITY(500, "Entity", "entity"),
 	REDACTED(-1, "[REDACTED]", "REDACTED");
 
 	// For increased performance

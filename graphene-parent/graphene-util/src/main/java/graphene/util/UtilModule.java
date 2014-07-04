@@ -17,6 +17,7 @@ public class UtilModule {
 		// binder.bind(JavaDiskCache.class);
 		binder.bind(DiskCache.class, KryoDiskCache.class);
 		binder.bind(JDBCUtil.class).eagerLoad();
+		binder.bind(ColorUtil.class).eagerLoad();
 	}
 
 	public static Logger buildLogger(Class clazz) {

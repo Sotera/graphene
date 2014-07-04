@@ -4,6 +4,7 @@ import graphene.util.G_CallBack;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,9 @@ import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
+
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.slf4j.Logger;
 
 public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 
@@ -23,9 +27,11 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	 */
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
 	protected Map<String, V_GenericEdge> edgeMap;
-	protected ArrayList<V_GenericNode> newNodeList = new ArrayList<V_GenericNode>(
+	protected ArrayList<V_GenericNode> unscannedNodeList = new ArrayList<V_GenericNode>(
 			3);
 	protected V_NodeList nodeList;
+	@Inject
+	private Logger logger;
 
 	public AbstractGraphBuilder() {
 		super();
@@ -50,7 +56,10 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	protected String generateEdgeId(String... addendIds) {
 		String key = null;
 		if (ValidationUtils.isValid(addendIds)) {
-			key = addendIds.toString();
+			key = Arrays.toString(addendIds);
+		} else {
+			logger.error("Unable to contruct an generateEdgeId for "
+					+ addendIds);
 		}
 		return key;
 	}
@@ -58,7 +67,10 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	protected String generateNodeId(String... addendIds) {
 		String key = null;
 		if (ValidationUtils.isValid(addendIds)) {
-			key = addendIds.toString();
+			key = Arrays.toString(addendIds);
+		} else {
+			logger.error("Unable to contruct an generateNodeId for "
+					+ addendIds);
 		}
 		return key;
 	}
