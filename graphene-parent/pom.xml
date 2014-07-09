@@ -648,10 +648,6 @@
 			<url>http://nexus.devlab722.net/nexus/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
-	<issueManagement>
-		<system>JIRA</system>
-		<url>lesnet-jira:8080/secure/Dashboard.jspa</url>
-	</issueManagement>
 	<build>
 		<pluginManagement>
 			<!-- pluginManagement is used to specify common plugin settings for all 
