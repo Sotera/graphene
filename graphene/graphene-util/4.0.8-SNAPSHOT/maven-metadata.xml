@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>graphene</groupId>
+  <artifactId>graphene-util</artifactId>
+  <version>4.0.8-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20140709.145857</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20140709145857</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>4.0.8-20140709.145857-1</value>
+        <updated>20140709145857</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>4.0.8-20140709.145857-1</value>
+        <updated>20140709145857</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <classifier>sources</classifier>
+        <extension>jar</extension>
+        <value>4.0.8-20140709.145857-1</value>
+        <updated>20140709145857</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
