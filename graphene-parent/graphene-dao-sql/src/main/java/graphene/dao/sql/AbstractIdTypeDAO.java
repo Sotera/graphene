@@ -37,9 +37,10 @@ public abstract class AbstractIdTypeDAO<T> extends
 	public List<Integer> getSkipTypes() {
 		// Note, we're calling this here so that skiptypes will be initialized
 		// if it was never accessed before.
-		if (loadedTypes == null || loadedTypes.isEmpty()) {
-			init();
-		}
+		// if (loadedTypes == null || loadedTypes.isEmpty()) {
+		// logger.debug("Loading types before returning getSkipTypes()");
+		// init();
+		// }
 		return skipTypes;
 	}
 
@@ -175,7 +176,7 @@ public abstract class AbstractIdTypeDAO<T> extends
 	@Override
 	public Map<Integer, IdType> getLoadedTypes() {
 		if (loadedTypes == null || loadedTypes.isEmpty()) {
-
+			logger.debug("Loading types before returning getLoadedTypes()");
 			init();
 		}
 		return loadedTypes;
@@ -186,16 +187,18 @@ public abstract class AbstractIdTypeDAO<T> extends
 		logger.debug("Starting initialization");
 
 		try {
-			Map<Integer, IdType> types = new HashMap<Integer, IdType>(10);
-			for (T id : getAll(0, 0)) {
+			Map<Integer, IdType> typeMap = new HashMap<Integer, IdType>(10);
+			List<T> typeList = getAll(0, 0);
+			for (T id : typeList) {
 				if (applySkipRule(id) == false) {
 					IdType idType = convertFrom(id);
 					// each idTypeId is unique.
-					types.put(idType.getIdType_id(), idType);
+					typeMap.put(idType.getIdType_id(), idType);
 				}
+
 			}
 
-			setLoadedTypes(types);
+			setLoadedTypes(typeMap);
 			logger.debug("Will use " + getLoadedTypes().size()
 					+ " Type definitions");
 			logger.debug(getLoadedTypes().values().toString());

@@ -40,7 +40,7 @@ public interface GraphmlServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/xml")
-	public abstract GraphmlContainer getPropertyGraph(
+	public abstract GraphmlContainer getProperties(
 			@PathParam("type") String type, @PathParam("value") String value,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,
@@ -69,9 +69,9 @@ public interface GraphmlServerRS {
 	@GET
 	@Path("/directed/{objectType}/{value}")
 	@Produces("application/xml")
-	public abstract GraphmlContainer getDirected(
+	public abstract GraphmlContainer getEvents(
 			@PathParam("objectType") String objectType, // Dataset name etc
-			@PathParam("value") String value,
+			@PathParam("value") String[] value,
 			@QueryParam("Type") String valueType,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,

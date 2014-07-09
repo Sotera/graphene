@@ -27,6 +27,7 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	 */
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
 	protected Map<String, V_GenericEdge> edgeMap;
+	//TODO: Change this to a V_NodeList or a map so that we don't add the same node to scan within the same iteration
 	protected ArrayList<V_GenericNode> unscannedNodeList = new ArrayList<V_GenericNode>(
 			3);
 	protected V_NodeList nodeList;
@@ -55,22 +56,34 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	 */
 	protected String generateEdgeId(String... addendIds) {
 		String key = null;
-		if (ValidationUtils.isValid(addendIds)) {
+		// Allow for null values as part of the id.
+		if (addendIds != null && addendIds.length > 0) {
 			key = Arrays.toString(addendIds);
 		} else {
 			logger.error("Unable to contruct an generateEdgeId for "
-					+ addendIds);
+					+ Arrays.toString(addendIds));
 		}
 		return key;
 	}
 
 	protected String generateNodeId(String... addendIds) {
 		String key = null;
-		if (ValidationUtils.isValid(addendIds)) {
-			key = Arrays.toString(addendIds);
+		boolean foundValue = false;
+		// Allow for null values as part of the id.
+		if (addendIds != null && addendIds.length > 0) {
+			for (String a : addendIds) {
+				// make sure something is non null.
+				if (a != null && !a.isEmpty()) {
+					foundValue = true;
+					break;
+				}
+			}
+			if (foundValue) {
+				key = Arrays.toString(addendIds);
+			}
 		} else {
 			logger.error("Unable to contruct an generateNodeId for "
-					+ addendIds);
+					+ Arrays.toString(addendIds));
 		}
 		return key;
 	}

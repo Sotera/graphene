@@ -36,10 +36,11 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 
 	public KryoDiskCache() {
 		kryo = new Kryo();
-	
+
 	}
+
 	@Override
-	public void init(Class<T> clazz){
+	public void init(Class<T> clazz) {
 		kryo.register(clazz);
 		this.clazz = clazz;
 	}
@@ -65,8 +66,15 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 	}
 
 	public boolean dropExisting(String fileName) {
-		File f = new File(fileName);
-		return f.delete();
+		boolean deleted = false;
+		try {
+			logger.debug("Attempting to delete " + fileName);
+			File f = new File(fileName);
+			deleted = f.delete();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return deleted;
 	}
 
 	@Override
@@ -81,7 +89,7 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 				logger.error("Expected to find the file " + fileName);
 			}
 		} else {
-			logger.debug("File not found: " + fileName);
+			logger.debug("File not found: '" + fileName + "'");
 		}
 
 		return input != null ? true : false;
@@ -99,14 +107,13 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 		return output != null ? true : false;
 	}
 
-
 	@Override
 	public T read() {
-		//logger.debug("Reading with Kryo");
+		// logger.debug("Reading with Kryo");
 		T t = null;
 		if (!input.eof()) {
 			t = kryo.readObject(input, clazz);
-		//	logger.debug("Read " + t);
+			// logger.debug("Read " + t);
 		} else {
 			logger.debug("EOF Reached");
 		}
@@ -117,7 +124,7 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 	public boolean write(T s) {
 		kryo.writeObject(output, s);
 		numberOfRecordsCached++;
-		if(numberOfRecordsCached%FLUSH_THRESHOLD==0){
+		if (numberOfRecordsCached % FLUSH_THRESHOLD == 0) {
 			output.flush();
 		}
 		return true;

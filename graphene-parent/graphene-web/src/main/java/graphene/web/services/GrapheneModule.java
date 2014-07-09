@@ -18,6 +18,7 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -268,11 +269,11 @@ public class GrapheneModule {
 	@Contribute(ValueEncoderSource.class)
 	public static void provideEncoders(
 			MappedConfiguration<Class, ValueEncoderFactory> configuration,
-			@Inject final TransactionDAO blogService) {
+			@InjectService("Primary") final TransactionDAO transactionService) {
 		ValueEncoderFactory<DirectedEventRow> factory = new ValueEncoderFactory<DirectedEventRow>() {
 			public ValueEncoder<DirectedEventRow> create(
 					Class<DirectedEventRow> clazz) {
-				return new EventEncoder(blogService);
+				return new EventEncoder(transactionService);
 			}
 		};
 		configuration.add(DirectedEventRow.class, factory);

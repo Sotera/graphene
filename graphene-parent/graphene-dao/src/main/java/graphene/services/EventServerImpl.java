@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
@@ -45,7 +46,7 @@ public class EventServerImpl implements EventServer {
 	private TransactionDAO transferDAO;
 
 	@Inject
-	public EventServerImpl(TransactionDAO dao) {
+	public EventServerImpl(@InjectService("Primary") TransactionDAO dao) {
 		this.transferDAO = dao;
 	}
 

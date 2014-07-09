@@ -5,7 +5,6 @@ package graphene.web.model;
 
 import graphene.dao.TransactionDAO;
 import graphene.model.view.events.DirectedEventRow;
-import graphene.util.FastNumberUtils;
 
 import org.apache.tapestry5.ValueEncoder;
 

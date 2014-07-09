@@ -73,6 +73,7 @@
 		<github.global.server>github</github.global.server>
 		<github.site.maven.plugin.version>0.9</github.site.maven.plugin.version>
 		<!-- Maven properties -->
+		<maven.version>3.0.4</maven.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.site.plugin.version>3.0</maven.site.plugin.version>
 		<maven.project.info.reports.plugin.version>2.7</maven.project.info.reports.plugin.version>
@@ -80,6 +81,9 @@
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
 		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
 		<maven-enforcer-plugin.version>1.2</maven-enforcer-plugin.version>
+		<maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
+		<maven-jetty-plugin.version>6.1.16</maven-jetty-plugin.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
 
 	</properties>
 
