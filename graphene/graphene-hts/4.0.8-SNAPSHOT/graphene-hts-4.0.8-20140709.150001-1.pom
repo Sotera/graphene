@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>graphene-parent</artifactId>
+		<groupId>graphene</groupId>
+		<version>4.0.8-SNAPSHOT</version>
+	</parent>
+	<artifactId>graphene-hts</artifactId>
+	<name>${project.artifactId}</name>
+	<dependencies>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-util</artifactId>
+		</dependency>
+	</dependencies>
+	<description>Experimental module for use during ingest, to extract implied and contextual information using known cultural and social patterns.</description>
+</project>
