@@ -7,11 +7,11 @@
 		<groupId>graphene</groupId>
 		<version>4.0.8-SNAPSHOT</version>
 	</parent>
-	<artifactId>graphene-dao-neo4j</artifactId>
+	<artifactId>graphene-dao-sql</artifactId>
 	<name>${project.artifactId}</name>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>graphene</groupId>
@@ -22,23 +22,21 @@
 			<artifactId>graphene-dao</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-search</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-rest-graphdb</artifactId>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-ioc</artifactId>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-sql-codegen</artifactId>
 		</dependency>
-
 	</dependencies>
-
-	<description>Module for Neo4J query implementations of DAOs in the core module.  Most classes make use of Cypher query language, but they can also use API or Cypher via REST.</description>
+	<description>Module for SQL implementations of DAOs in the core module.  Most classes make use of QueryDSL generated classes in the model.</description>
 </project>
