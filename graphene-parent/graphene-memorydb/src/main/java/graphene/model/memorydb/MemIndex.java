@@ -62,8 +62,8 @@ public class MemIndex {
 		}
 		int result = Arrays.binarySearch(getValues(), value);
 		if (result < 0) {
-			logger.debug("Index " + name + " could not find Id for " + value
-					+ " using binary search");
+			logger.debug("Index '" + name + "' could not find Id for '" + value
+					+ "' using binary search");
 			if (DEBUG) {
 				// Try direct search - just for debugging
 				for (String s : getValues()) {
@@ -82,7 +82,6 @@ public class MemIndex {
 			}
 		}
 		return result;
-		// return bSearch(values, value);
 	}
 
 	public int getCount() {

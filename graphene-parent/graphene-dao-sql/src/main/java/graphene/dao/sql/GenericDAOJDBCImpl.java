@@ -227,6 +227,8 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 
 	/**
 	 * A safe way of adding offset and limit, directly using long values.
+	 * Deprecated: Use the version setOffsetAndLimit(Q extends BasicQuery q,
+	 * SQLQuery sq)
 	 * 
 	 * @param offset
 	 * @param limit
@@ -236,11 +238,17 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	@Deprecated
 	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
 			@Nonnegative long limit, SQLQuery sq) {
-		if (ValidationUtils.isValid(offset)) {
-			sq = sq.offset(offset);
-		}
-		if (ValidationUtils.isValid(limit)) {
-			sq = sq.limit(limit);
+		if (limit > 0 && offset == limit) {
+			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
+					+ sq.toString());
+			sq = null;
+		} else {
+			if (ValidationUtils.isValid(offset)) {
+				sq = sq.offset(offset);
+			}
+			if (ValidationUtils.isValid(limit)) {
+				sq = sq.limit(limit);
+			}
 		}
 		return sq;
 	}

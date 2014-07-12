@@ -39,7 +39,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 	protected static MemIndex identifiers;
 	private static Logger logger = LoggerFactory
 			.getLogger(AbstractMemoryDB.class);
-	//private static long nRows;
+	// private static long nRows;
 	private static final int STATE_LOAD_GRID = 2;
 	protected static final int STATE_LOAD_STRINGS = 1;
 	protected Set<String> accountSet;
@@ -139,35 +139,46 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		// one of multiple filters
 		String val;
 		int pass = 0;
-
+		int limit = srch.getLimit();
+		int numberFound = 0;
 		for (SearchFilter f : filters) {
-
-			++pass;
-
+			pass++;
 			logger.trace("About to scan grid with filter " + f);
 			results.clear();
 
 			for (MemRow r : grid) {
-				if (r == null)
+				if (r == null) {
 					break; // TODO: find out why we are getting a null and
 							// whether it means we are at the end
+				}
 				if ((pass > 1)
 						&& (!pastResults
-								.contains(getCustomerNumberForID(r.entries[CUSTOMER]))))
+								.contains(getCustomerNumberForID(r.entries[CUSTOMER])))) {
 					continue; // This is not the first pass and not found in
 								// earlier pass
+				}
 				val = getIdValueForID(r.entries[IDENTIFIER]);
-				if (val == null)
+				if (val == null) {
 					continue;
-
+				}
 				String family = idTypeDAO.getFamily(r.getIdType());
-				if (family == null)
+				if (family == null) {
 					continue;
+				}
 				found = f.doCompare(val, family);
-				if (found)
-					results.add(getCustomerNumberForID(r.entries[CUSTOMER]));
+				if (found) {
+					numberFound++;
+					if (numberFound >= srch.getStart()) {
+						results.add(getCustomerNumberForID(r.entries[CUSTOMER]));
+					}
+				}
+				if ((results.size() + pastResults.size()) > limit) {
+					logger.info("There were more results than will be returned.  Only returning "
+							+ limit);
+					break;
+				}
 			} // each row
-			logger.trace("Done scan grid with " + results.size() + "results");
+			logger.debug("Done scan grid with " + results.size() + "results");
 			pastResults.clear();
 			pastResults.addAll(results);
 
@@ -217,8 +228,9 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		Set<String> results = new HashSet<String>();
 		for (String s : identifiers.getValues()) {
 			ms = p.matcher(s);
-			if (ms.find(0) && isIdFamily(s, family))
+			if (ms.find(0) && isIdFamily(s, family)) {
 				results.add(s);
+			}
 		}
 		return results;
 	}
@@ -285,7 +297,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		return id;
 
 	}
-
 
 	@Override
 	public int getAccountIDForNumber(String number) {
@@ -419,7 +430,8 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 				// Only make an array for the total number of rows we will
 				// actually load
-				logger.debug("Creating an array of memrows with size "+numProcessed);
+				logger.debug("Creating an array of memrows with size "
+						+ numProcessed);
 				grid = new MemRow[(int) numProcessed];
 				boolean successOnLoadGrid = loadGrid(maxRecords);
 
@@ -537,7 +549,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			String[] accountArray = (String[]) accountSet
 					.toArray(new String[accountSet.size()]);
 
-			identifierSet = null; 
+			identifierSet = null;
 			customerSet = null;
 			accountSet = null;
 

@@ -54,7 +54,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 6);
 		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
-		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 50);
+		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 1000);
 		int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);
 		long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
 		long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);

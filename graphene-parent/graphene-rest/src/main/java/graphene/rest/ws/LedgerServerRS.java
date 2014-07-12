@@ -25,6 +25,7 @@ public interface LedgerServerRS {
 			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
 			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
 			@QueryParam("comments") @DefaultValue(value = "") String comments,
+			@QueryParam("unit") @DefaultValue(value = "") String unit,
 			@QueryParam("sortColumn") @DefaultValue(value = "trn_dt") String sortColumn);
 
 

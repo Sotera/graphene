@@ -37,7 +37,6 @@ import com.trsvax.bootstrap.annotations.Exclude;
 		"context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
 		"context:/core/css/googlefonts.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
-//@RequiresAuthentication
 public class Layout {
 	@Property
 	@Inject

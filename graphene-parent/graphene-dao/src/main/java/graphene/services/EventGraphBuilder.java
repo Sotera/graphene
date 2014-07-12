@@ -131,9 +131,13 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 					long count = 0;
 					try {
 						count = dao.countEdges(valueToSearchOn);
+						logger.debug("Found " + count + " results for value "
+								+ valueToSearchOn);
 						node.setNbrLinks((int) count);
 						if (count > graphQuery.getMaxEdgesPerNode()) {
-							// we will not search on it.
+							logger.debug("There would be too many links created with this node (max "
+									+ graphQuery.getMaxEdgesPerNode()
+									+ "), setting clustered to true.");
 							node.setCluster(true);
 						} else {
 							// we will search on it.

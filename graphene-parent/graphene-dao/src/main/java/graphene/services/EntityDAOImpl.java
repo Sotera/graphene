@@ -8,6 +8,7 @@ import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EntityQuery;
+import graphene.model.query.EventQuery;
 import graphene.model.view.entities.Account;
 import graphene.model.view.entities.BasicEntityRef;
 import graphene.model.view.entities.CommunicationId;
@@ -151,6 +152,17 @@ public class EntityDAOImpl implements EntityDAO {
 			}
 		}
 		e.setFullyLoaded(true);
+	}
+
+	@Override
+	public long count(EventQuery q) {
+		try {
+			return dao.count(q);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }

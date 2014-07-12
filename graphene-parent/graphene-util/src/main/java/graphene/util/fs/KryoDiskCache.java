@@ -84,9 +84,11 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 		if (f.exists() && f.length() > 0) {
 			logger.debug("File found: " + fileName);
 			try {
+				logger.debug("Creating file: " + fileName);
 				input = new Input(new FileInputStream(fileName));
 			} catch (FileNotFoundException e) {
-				logger.error("Expected to find the file " + fileName);
+				logger.error("Expected to create the file " + fileName+", but could not.");
+				e.printStackTrace();
 			}
 		} else {
 			logger.debug("File not found: '" + fileName + "'");
