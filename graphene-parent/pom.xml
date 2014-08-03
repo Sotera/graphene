@@ -594,26 +594,6 @@
 
 	<repositories>
 		<repository>
-			<id>mysema snapshots</id>
-			<url>http://source.mysema.com/maven2/snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>sonatype-snapshots</id>
-			<name>sonatype repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-		<repository><!-- This is very, very strange. neo4j-rest-graphdb will not 
-				resolve without this repo being included, even in offline mode! -->
-			<id>mvn-neo4j</id>
-			<url>http://m2.neo4j.org/content/groups/everything</url>
-		</repository>
-		<repository>
 			<releases>
 				<enabled>false</enabled>
 			</releases>

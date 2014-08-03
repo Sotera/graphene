@@ -11,6 +11,14 @@
 	<name>${project.artifactId}</name>
 	<properties>
 	</properties>
+	
+	<repositories>
+		<repository><!-- This is very, very strange. neo4j-rest-graphdb will not 
+				resolve without this repo being included, even in offline mode! -->
+			<id>mvn-neo4j</id>
+			<url>http://m2.neo4j.org/content/groups/everything</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
