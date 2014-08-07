@@ -132,8 +132,9 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 		if (filters.size() == 1) {
 			SearchFilter f = srch.getFilters().get(0);
-			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS)
+			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS) {
 				return exactMatch(f);
+			}
 		}
 		// TODO: can improve by doing the exact match first if it is
 		// one of multiple filters
@@ -178,7 +179,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 					break;
 				}
 			} // each row
-			logger.debug("Done scan grid with " + results.size() + "results");
+			logger.debug("Done scan grid with " + results.size() + " results");
 			pastResults.clear();
 			pastResults.addAll(results);
 

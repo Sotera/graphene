@@ -87,7 +87,8 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 				logger.debug("Creating file: " + fileName);
 				input = new Input(new FileInputStream(fileName));
 			} catch (FileNotFoundException e) {
-				logger.error("Expected to create the file " + fileName+", but could not.");
+				logger.error("Expected to create the file " + fileName
+						+ ", but could not.");
 				e.printStackTrace();
 			}
 		} else {
@@ -113,13 +114,19 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 	public T read() {
 		// logger.debug("Reading with Kryo");
 		T t = null;
-		if (!input.eof()) {
-			t = kryo.readObject(input, clazz);
-			// logger.debug("Read " + t);
-		} else {
-			logger.debug("EOF Reached");
+		try {
+			if (input != null && !input.eof()) {
+				t = kryo.readObject(input, clazz);
+				// logger.debug("Read " + t);
+			} else {
+				if (input == null) {
+					logger.error("The input stream was null for the kryo cache");
+				}
+				logger.debug("EOF Reached");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
-
 		return t;
 	}
 

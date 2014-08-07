@@ -60,7 +60,7 @@ public class Register {
 	private Asset imgLogo;
 	@Property
 	@Inject
-	@Symbol(SymbolConstants.APPLICATION_VERSION)
+	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
 	//
 	// @Inject

@@ -82,7 +82,7 @@
 									<t:label for="lastmodified" />
 									<input class="form-control" t:type="DateField" t:id="lastmodified"
 										t:clientid="clastmodified" placeholder="(required, ${datePattern})"
-										value="workspace.lastmodified" t:format="prop:dateFormat"
+										value="workspace.lastmodified" t:format="prop:dateFormat" formState="none"
 										t:validate="required" />
 								</div>
 

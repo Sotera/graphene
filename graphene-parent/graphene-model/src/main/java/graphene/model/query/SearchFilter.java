@@ -21,29 +21,29 @@ import org.slf4j.LoggerFactory;
  */
 public class SearchFilter {
 	private static Logger logger = LoggerFactory.getLogger(SearchFilter.class);
-	private boolean caseSensitive;
+	private boolean caseSensitive = false;
 	@XmlTransient
 	private G_SearchType compareType = G_SearchType.COMPARE_INVALID;
 	private String dmcomp = null; // soundalike
 	private DataSetField field = null; // looked up after the remaining
-	private String fieldName;
-	private String fieldType; // string, date, number,
-	private String operator;
+	private String fieldName = null;
+	private String fieldType = null; // string, date, number,
+	private String operator = null;
 	private Pattern pattern = null; // regex
 
 	// TODO: set family and use it for comparisons
 
-	private String value; // blank space delimited
+	private String value = null; // blank space delimited
 
 	public boolean doCompare(String v, String family) {
-		if (!family.equals(fieldName))
-			return false;
+		if (!family.equals(fieldName)){
+			return false;}
 
 		String myval = caseSensitive ? value : value.toLowerCase();
 		boolean result = false;
 
-		if (!caseSensitive)
-			v = v.toLowerCase();
+		if (!caseSensitive){
+			v = v.toLowerCase();}
 		switch (compareType) {
 		case COMPARE_EQUALS:
 			result = v.equals(myval);
@@ -51,10 +51,14 @@ public class SearchFilter {
 		case COMPARE_INCLUDE:
 			result = v.indexOf(myval) >= 0;
 			break;
+		case COMPARE_CONTAINS:
+			result = v.indexOf(myval) >= 0;
+			break;
 		case COMPARE_NOTINCLUDE:
 			result = v.indexOf(myval) == -1;
 			break;
 		case COMPARE_SOUNDSLIKE:
+			//TODO: Improve the efficiency of this
 			DoubleMetaphone dm = new DoubleMetaphone();
 			String dm2;
 			if (dmcomp == null)

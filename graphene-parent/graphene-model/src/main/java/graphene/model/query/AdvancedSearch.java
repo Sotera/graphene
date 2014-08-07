@@ -27,6 +27,10 @@ public class AdvancedSearch {
 	private String source = null;
 	private int start = 0;
 
+	public AdvancedSearch() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getDataSet() {
 		return dataSet;
 	}

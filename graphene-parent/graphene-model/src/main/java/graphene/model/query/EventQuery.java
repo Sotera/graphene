@@ -64,12 +64,20 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 */
 	private double minAmount = 0;
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "EventQuery [comments=" + comments + ", findRelatedIds="
-				+ findRelatedIds + ", idList=" + idList + ", intersectionOnly="
-				+ intersectionOnly + ", maxAmount=" + maxAmount
-				+ ", minAmount=" + minAmount + "]";
+		return "EventQuery ["
+				+ (comments != null ? "comments=" + comments + ", " : "")
+				+ "findRelatedIds="
+				+ findRelatedIds
+				+ ", "
+				+ (idList != null ? "idList=" + idList + ", " : "")
+				+ (attributeList != null ? "attributeList=" + attributeList
+						+ ", " : "") + "intersectionOnly=" + intersectionOnly
+				+ ", maxAmount=" + maxAmount + ", minAmount=" + minAmount + "]";
 	}
 
 	/**

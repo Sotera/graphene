@@ -19,11 +19,15 @@ package graphene.util;
  * under the License.
  */
 
+import java.text.BreakIterator;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * <p>
@@ -37,6 +41,63 @@ import java.util.StringTokenizer;
  * @since 0.9
  */
 public class StringUtils {
+	/**
+	 * If the input contains a fraction of uppercase characters above the
+	 * threshold, we will apply title case to all the words in the string.
+	 * 
+	 * @param input
+	 * @param threshold
+	 * @return
+	 */
+	public static String cleanUpAllCaps(final String input,
+			final double threshold) {
+		int numUpper = 0;
+		for (int i = 0; i < input.length(); i++) {
+			if (Character.isUpperCase(input.charAt(i))) {
+				numUpper++;
+			}
+		}
+		float fractionUpper = (float) numUpper / (float) input.length();
+		if (fractionUpper >= threshold) {
+			return WordUtils.capitalizeFully(input);
+		} else {
+			return input;
+		}
+	}
+
+	/**
+	 * Convert a string to a list of strings broken up by end of sentence tokens
+	 * using the US locale
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public static List<String> convertToSentences(final String input) {
+		return convertToSentences(input, Locale.US);
+	}
+
+	/**
+	 * Convert a string to a list of strings broken up by end of sentence
+	 * tokens.
+	 * 
+	 * @param input
+	 * @param locale
+	 * @return
+	 */
+	public static List<String> convertToSentences(final String input,
+			Locale locale) {
+		BreakIterator iterator = BreakIterator.getSentenceInstance(locale);
+		iterator.setText(input);
+		ArrayList<String> sentences = new ArrayList<String>();
+
+		int start = iterator.first();
+
+		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator
+				.next()) {
+			sentences.add(input.substring(start, end));
+		}
+		return sentences;
+	}
 
 	// TODO - complete JavaDoc
 
@@ -363,7 +424,7 @@ public class StringUtils {
 		String[] values;
 		// Something like valueType.contains("list")
 		if (enable) {
-			values = split(value,delimiter);
+			values = split(value, delimiter);
 		} else {
 			values = new String[] { value };
 		}

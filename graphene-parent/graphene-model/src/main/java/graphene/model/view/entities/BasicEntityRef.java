@@ -2,7 +2,7 @@ package graphene.model.view.entities;
 
 
 public class BasicEntityRef {
-	private String accountNumber;;
+	private String accountNumber;
 
 	private String accountType;
 

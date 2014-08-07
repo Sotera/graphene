@@ -3,11 +3,7 @@ package graphene.services;
 import graphene.dao.EntityDAO;
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
-import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.idl.G_SearchTuple;
-import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
-import graphene.model.query.EntityQuery;
 import graphene.model.query.EventQuery;
 import graphene.model.view.entities.Account;
 import graphene.model.view.entities.BasicEntityRef;
@@ -72,33 +68,35 @@ public class EntityDAOImpl implements EntityDAO {
 	}
 
 	// @Override
-	public List<Entity> getEntitiesByProperty(G_CanonicalPropertyType property,
-			String value) {
-		List<Entity> results = new ArrayList<Entity>();
-		List<String> entityIds = null;
-
-		EntityQuery q = new EntityQuery();
-		G_SearchTuple<String> srch = new G_SearchTuple<String>();
-		srch.setSearchType(G_SearchType.COMPARE_EQUALS);
-		srch.setFamily(property);
-		srch.setValue(value);
-		List<G_SearchTuple<String>> attrs = new ArrayList<G_SearchTuple<String>>();
-		attrs.add(srch);
-		q.setAttributeList(attrs);
-
-		try {
-			entityIds = dao.findByQuery(q);
-			for (String id : entityIds) {
-				results.add(getById(id));
-			}
-		} catch (Exception e) {
-			logger.error("Error on rowSearch with query " + q);
-			e.printStackTrace();
-			return results;
-		}
-
-		return results;
-	}
+	// public List<Entity> getEntitiesByProperty(G_CanonicalPropertyType
+	// property,
+	// String value) {
+	// List<Entity> results = new ArrayList<Entity>();
+	// List<String> entityIds = null;
+	//
+	// EntityQuery q = new EntityQuery();
+	// G_SearchTuple<String> srch = new G_SearchTuple<String>();
+	// srch.setSearchType(G_SearchType.COMPARE_EQUALS);
+	// srch.setFamily(property);
+	// srch.setValue(value);
+	// List<G_SearchTuple<String>> attrs = new
+	// ArrayList<G_SearchTuple<String>>();
+	// attrs.add(srch);
+	// q.setAttributeList(attrs);
+	//
+	// try {
+	// entityIds = dao.findByQuery(q);
+	// for (String id : entityIds) {
+	// results.add(getById(id));
+	// }
+	// } catch (Exception e) {
+	// logger.error("Error on rowSearch with query " + q);
+	// e.printStackTrace();
+	// return results;
+	// }
+	//
+	// return results;
+	// }
 
 	@Override
 	public void updateAllFields(Entity e) {
@@ -116,42 +114,45 @@ public class EntityDAOImpl implements EntityDAO {
 		Set<BasicEntityRef> rows;
 		try {
 			rows = dao.getBasicRowsForCustomer(e.getId());
+
+			for (BasicEntityRef r : rows) {
+				String val = r.getIdentifier();
+
+				String family = idTypeDAO.getFamily(r.getIdtypeId());
+
+				if (family.equals("name")) {
+					Name ad = new Name(e.getDatasourceId(), val, val);
+					e.addName(ad);
+				}
+
+				else if (family.equals("address")) {
+					Identifier ad = new Identifier(e.getDatasourceId(), val,
+							val);
+					e.addAddress(ad);
+				} else if (family.equals("communicationId")) {
+					CommunicationId communicationId = new CommunicationId(
+							e.getDatasourceId(), val, val);
+					e.addCommunicationId(communicationId);
+				} else if (family.equals("email")) {
+					EmailAddress ad = new EmailAddress(e.getDatasourceId(),
+							val, val);
+					e.addEmailAddress(ad);
+				} else {
+					e.getIdentList().add(new V_IdProperty(family, val));
+				}
+				if (r.getAccountNumber() != null) {
+					Account ac = new Account(e.getDatasourceId(),
+							r.getAccountNumber(), r.getAccountNumber());
+					e.addAccount(ac);
+				}
+			}
+			e.setFullyLoaded(true);
 		} catch (Exception e1) {
 			// TODO FIXME Auto-generated catch block
 			e1.printStackTrace();
 			return;
 		}
-		for (BasicEntityRef r : rows) {
-			String val = r.getIdentifier();
 
-			String family = idTypeDAO.getFamily(r.getIdtypeId());
-
-			if (family.equals("name")) {
-				Name ad = new Name(e.getDatasourceId(), val, val);
-				e.addName(ad);
-			}
-
-			else if (family.equals("address")) {
-				Identifier ad = new Identifier(e.getDatasourceId(), val, val);
-				e.addAddress(ad);
-			} else if (family.equals("communicationId")) {
-				CommunicationId communicationId = new CommunicationId(
-						e.getDatasourceId(), val, val);
-				e.addCommunicationId(communicationId);
-			} else if (family.equals("email")) {
-				EmailAddress ad = new EmailAddress(e.getDatasourceId(), val,
-						val);
-				e.addEmailAddress(ad);
-			} else {
-				e.getIdentList().add(new V_IdProperty(family, val));
-			}
-			if (r.getAccountNumber() != null) {
-				Account ac = new Account(e.getDatasourceId(),
-						r.getAccountNumber(), r.getAccountNumber());
-				e.addAccount(ac);
-			}
-		}
-		e.setFullyLoaded(true);
 	}
 
 	@Override

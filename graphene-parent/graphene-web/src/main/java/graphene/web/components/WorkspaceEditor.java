@@ -12,6 +12,9 @@ import java.text.SimpleDateFormat;
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.alerts.Duration;
+import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Log;
@@ -37,7 +40,10 @@ import org.slf4j.Logger;
 		WorkspaceEditor.FAILED_CONFIRM_DELETE })
 public class WorkspaceEditor {
 	public enum Mode {
-		CONFIRM_DELETE, CREATE, REVIEW, UPDATE;
+		CONFIRM_DELETE,
+		CREATE,
+		REVIEW,
+		UPDATE;
 	}
 
 	public static final String CANCEL_CONFIRM_DELETE = "cancelConfirmDelete";
@@ -631,6 +637,9 @@ public class WorkspaceEditor {
 		}
 	}
 
+	@Inject
+	private AlertManager manager;
+
 	@SetupRender
 	@Log
 	void switchModes() {
@@ -638,11 +647,13 @@ public class WorkspaceEditor {
 			if (workspaceId == null) {
 				workspace = null;
 				// Handle null workspace in the template.
-			} else {
+			} else if (user != null) {
+
 				try {
 					logger.info("Attempting to retrieve workspace "
 							+ workspaceId + " for user " + user.getUsername());
-					//FIXME: Something is awry here; we sometimes get 'core' as a workspace id, and that fails of course.
+					// FIXME: Something is awry here; we sometimes get 'core' as
+					// a workspace id, and that fails of course.
 					workspace = userService.getWorkspace(user.getUsername(),
 							workspaceId);
 				} catch (AvroRemoteException e) {
@@ -651,6 +662,20 @@ public class WorkspaceEditor {
 					workspace = null;
 				}
 				// Handle null workspace in the template.
+			} else {
+				/*
+				 * This can happen if all of these are true:
+				 * 
+				 * 1) the server is restarted
+				 * 
+				 * 2) the user goes to a review url
+				 * 
+				 * 3) the No Security Module is enabled, so it doesn't force
+				 * them to log in.
+				 */
+				logger.error("User was not logged in, but needs to be logged in to view this page.");
+				manager.alert(Duration.UNTIL_DISMISSED, Severity.ERROR,
+						"User was not logged in, but needs to be logged in to view this page.");
 			}
 		}
 

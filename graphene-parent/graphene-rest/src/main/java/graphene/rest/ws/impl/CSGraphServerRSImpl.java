@@ -19,9 +19,6 @@ import org.slf4j.Logger;
 
 public class CSGraphServerRSImpl implements CSGraphServerRS {
 
-//	@InjectService("Event")
-//	private EventGraphBuilder eventGraphBuilder;
-
 	@Inject
 	private FederatedEventGraphServer feg;
 

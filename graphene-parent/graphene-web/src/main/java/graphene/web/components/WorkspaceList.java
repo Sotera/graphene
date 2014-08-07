@@ -19,6 +19,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Request;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 
 /**
@@ -32,7 +34,8 @@ public class WorkspaceList {
 	public static final String SELECTED = "selected";
 
 	// Parameters
-
+	@Property
+	private DateTimeFormatter ISODate = ISODateTimeFormat.date();
 	@Inject
 	private BeanModelSource beanModelSource;
 

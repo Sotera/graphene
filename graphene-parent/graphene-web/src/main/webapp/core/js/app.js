@@ -1089,7 +1089,7 @@ function runAllCharts() {
 
     /*
      * EASY PIE CHARTS
-     * DEPENDENCY: js/plugins/easy-pie-chart/jquery.easy-pie-chart.min.js
+     * DEPENDENCY: context:core/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js
      * Usage: <div class="easy-pie-chart txt-color-orangeDark" data-pie-percent="33" data-pie-size="72" data-size="72">
      *			<span class="percent percent-sign">35</span>
      * 	  	  </div>

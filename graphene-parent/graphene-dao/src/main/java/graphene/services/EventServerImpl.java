@@ -43,11 +43,11 @@ public class EventServerImpl implements EventServer {
 	@Inject
 	private Logger logger;
 
-	private TransactionDAO transferDAO;
+	private TransactionDAO eventDAO;
 
 	@Inject
 	public EventServerImpl(@InjectService("Primary") TransactionDAO dao) {
-		this.transferDAO = dao;
+		this.eventDAO = dao;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class EventServerImpl implements EventServer {
 		// can get
 		// the statistics
 		q.setIntersectionOnly(true);
-		rows = transferDAO.getEvents(q);
+		rows = eventDAO.getEvents(q);
 		rows = deDupeRows(rows);
 		// MFM The below BREAKs column sorting
 		// Collections.sort(rows);
@@ -147,7 +147,7 @@ public class EventServerImpl implements EventServer {
 		// If we have a new query, perform it. Else we look at the previous full
 		// results;
 
-		rows = transferDAO.getEvents(q);
+		rows = eventDAO.getEvents(q);
 		rows = deDupeRows(rows);
 		// MFM The below BREAKs column sorting
 		// Collections.sort(rows);
@@ -175,7 +175,7 @@ public class EventServerImpl implements EventServer {
 	private DirectedEvents processSingleAccount(EventQuery q) throws Exception {
 		DirectedEvents transactions = new DirectedEvents();
 
-		List<DirectedEventRow> rows = transferDAO.getEvents(q);
+		List<DirectedEventRow> rows = eventDAO.getEvents(q);
 		double localUnitBalance = 0;
 		double unitBalance = 0;
 

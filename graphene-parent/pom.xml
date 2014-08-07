@@ -25,6 +25,7 @@
 		<module>graphene-web</module>
 		<module>graphene-archetype</module>
 		<module>graphene-memorydb</module>
+		<module>graphene-dao-titan</module>
 	</modules>
 
 	<properties>

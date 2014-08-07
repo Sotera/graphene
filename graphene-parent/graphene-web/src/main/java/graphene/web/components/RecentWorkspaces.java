@@ -31,7 +31,7 @@ public class RecentWorkspaces {
 	private G_UserDataAccess dao;
 
 	@Property
-	private DateTimeFormatter ISODate;
+	private DateTimeFormatter ISODate = ISODateTimeFormat.date();
 	@SessionState(create = false)
 	private G_User user;
 
@@ -52,8 +52,6 @@ public class RecentWorkspaces {
 	@SetupRender
 	boolean listWorkspaces() {
 
-		// updateTitle();
-		ISODate = ISODateTimeFormat.date();
 		if (userExists) {
 			try {
 				workspaces = dao.getWorkspacesForUser(user.getUsername());

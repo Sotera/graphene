@@ -30,8 +30,9 @@ public class DataSet {
 
 	public DataSetField findField(String name) {
 		for (DataSetField d : fields) {
-			if (d.name.equals(name))
+			if (d.name.equals(name)) {
 				return d;
+			}
 		}
 		return null;
 	}

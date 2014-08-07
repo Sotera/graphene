@@ -34,6 +34,7 @@ import com.trsvax.bootstrap.annotations.Exclude;
 @Import(stylesheet = { "context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css",
 		"context:/core/css/graphene-production.css",
+		"context:/core/css/pace-radar.css",
 		"context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
 		"context:/core/css/googlefonts.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
@@ -45,7 +46,7 @@ public class Layout {
 
 	@Property
 	@Inject
-	@Symbol(SymbolConstants.APPLICATION_VERSION)
+	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
 
 	@Inject
@@ -61,10 +62,10 @@ public class Layout {
 	@Path("context:/core/js/demo.js")
 	@Property
 	private Asset jsDemo;
-	@Inject
-	@Path("context:/core/js/libs/jquery-2.0.2.min.js")
-	@Property
-	private Asset jsLib1;
+//	@Inject
+//	@Path("context:/core/js/libs/jquery-2.0.2.min.js")
+//	@Property
+//	private Asset jsLib1;
 	@Inject
 	@Path("context:/core/js/plugin/select2/select2.min.js")
 	@Property
@@ -77,10 +78,10 @@ public class Layout {
 	@Path("context:/core/js/plugin/msie-fix/jquery.mb.browser.min.js")
 	@Property
 	private Asset jsLib12;
-	@Inject
-	@Path("context:/core/js/libs/jquery-ui-1.10.3.min.js")
-	@Property
-	private Asset jsLib2;
+//	@Inject
+//	@Path("context:/core/js/libs/jquery-ui-1.10.3.min.js")
+//	@Property
+//	private Asset jsLib2;
 	@Inject
 	@Path("context:/core/js/bootstrap/bootstrap.min.js")
 	@Property
@@ -118,7 +119,7 @@ public class Layout {
 	@Path("context:/core/js/plugin/pace/pace.min.js")
 	@Property
 	private Asset jsLibPace;
-
+	
 	@Inject
 	private Locale locale;
 	@Inject

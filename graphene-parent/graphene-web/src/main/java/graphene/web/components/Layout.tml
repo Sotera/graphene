@@ -23,6 +23,7 @@
 		<link rel="icon" href="${themePath}img/favicon/favicon.ico" type="image/x-icon" />
 
 
+
 	</head>
 
 
@@ -66,11 +67,9 @@
 		<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: 
 			uses lots of memory on iDevices) <script data-pace-options='{ "restartOnRequestAfter": 
 			true }' src="js/plugin/pace/pace.min.js"></script> -->
-		<script src="${jsLibPace}" />
+		<script data-pace-options='{ "restartOnRequestAfter": true }'
+			src="${jsLibPace}" />
 
-		<script src="${jsLib1}" />
-
-		<script src="${jsLib2}" />
 
 		<!-- JS TOUCH : include this plugin for mobile drag / drop touch events 
 			<script src="js/plugin/jquery-touch/jquery.ui.touch-punch.min.js"></script> -->
@@ -107,12 +106,19 @@
 
 		<script src="${jsDemo}" />
 		<script src="${jsApp}" />
-		<script>data-pace-options='{ "restartOnRequestAfter": true }' </script>
-		<script>
+
+		<script type="text/javascript">
 			function logout() {
-			window.location = '${LogoutEventLink}';
-			<!-- window.location = $.loginURL; -->
-			}
+			window.location =
+			'${LogoutEventLink}';
+			};
+		</script>
+		<script type="text/javascript">
+			// DO NOT REMOVE : GLOBAL FUNCTIONS!
+			pageSetUp();
+
+			// PAGE RELATED SCRIPTS
+
 		</script>
 	</body>
 

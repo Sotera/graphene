@@ -1,0 +1,1 @@
+graphene.application-version=${project.version}

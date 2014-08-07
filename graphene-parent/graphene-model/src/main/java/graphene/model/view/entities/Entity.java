@@ -29,7 +29,7 @@ public class Entity {
 	// key
 	private boolean fullyLoaded = false;
 	private String id = null;
-	public Set<V_IdProperty> identList = null;
+	private Set<V_IdProperty> identList = null;
 	private Set<Name> nameList = null;
 	private Set<CommunicationId> communicationIds = null;
 

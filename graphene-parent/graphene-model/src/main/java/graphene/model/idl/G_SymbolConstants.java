@@ -16,6 +16,7 @@ public class G_SymbolConstants {
 	public static final String APPLICATION_NAME = "graphene.application-name";
 	// The string for who to contact about this application
 	public static final String APPLICATION_CONTACT = "graphene.application-contact";
+	public static final String APPLICATION_VERSION = "graphene.application-version";
 	public static final String THEME_PATH = "graphene.theme-path";
 	public static final String DATABASE_PROPERTIES_LOCATION = "graphene.database-properties-location";
 

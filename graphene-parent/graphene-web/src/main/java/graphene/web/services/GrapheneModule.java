@@ -4,12 +4,15 @@ import graphene.dao.DAOModule;
 import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.view.events.DirectedEventRow;
+import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
 import graphene.web.model.EventEncoder;
 import graphene.web.services.javascript.CytoscapeStack;
 import graphene.web.services.javascript.NeoCytoscapeStack;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
@@ -24,6 +27,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.EditBlockContribution;
@@ -36,6 +40,7 @@ import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.got5.tapestry5.jquery.JQuerySymbolConstants;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -71,18 +76,25 @@ public class GrapheneModule {
 
 	public static void contributeApplicationDefaults(
 			MappedConfiguration<String, Object> configuration) {
-		// The application version number is incorporated into URLs for some
-		// assets. Web browsers will cache assets because of the far future
-		// expires
-		// header. If existing assets are changed, the version number should
-		// also
-		// change, to force the browser to download new versions. This overrides
-		// Tapesty's default
-		// (a random hexadecimal number), but may be further overridden by
-		// DevelopmentModule or
-		// QaModule.
-		// configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene");
-		// configuration.override(SymbolConstants.APPLICATION_VERSION, "4.0.8");
+		/*
+		 * The application version number is incorporated into URLs for some
+		 * assets. Web browsers will cache assets because of the far future
+		 * expires header. If existing assets are changed, the version number
+		 * should also change, to force the browser to download new versions.
+		 * This overrides Tapesty's default (a random hexadecimal number), but
+		 * may be further overridden by DevelopmentModule or QaModule.
+		 * 
+		 * 
+		 * Note: These are the defaults. To override this in a customer
+		 * implementation, repeat this method (and it's annotations) in a
+		 * customer module, but use configuration.override() instead of
+		 * configuration.add() to override this default and use the values you
+		 * want.
+		 */
+		configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene");
+		configuration.add(SymbolConstants.APPLICATION_VERSION, "${graphene.application-version}");
+		configuration.add(G_SymbolConstants.APPLICATION_CONTACT,
+				"Sotera Defense Solutions, DFA");
 		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
 		configuration.add(G_SymbolConstants.THEME_PATH, "core/");
 		configuration.add(SymbolConstants.PRODUCTION_MODE, false);
@@ -92,8 +104,8 @@ public class GrapheneModule {
 		configuration.add(SymbolConstants.HMAC_PASSPHRASE,
 				"ad4c17c4ec6da4afe3aad15660abaf8e");
 
-		// configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
-		// configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
+		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
+		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
 	}
 
 	public static void contributeComponentClassResolver(
@@ -144,23 +156,16 @@ public class GrapheneModule {
 		};
 	}
 
-	/**
-	 * This is a contribution to the RequestHandler service configuration. This
-	 * is how we extend Tapestry using the timing filter. A common use for this
-	 * kind of filter is transaction management or security. The @Local
-	 * annotation selects the desired service by type, but only from the same
-	 * module. Without @Local, there would be an error due to the other
-	 * service(s) that implement RequestFilter (defined in other modules).
-	 */
-	public void contributeRequestHandler(
-			OrderedConfiguration<RequestFilter> configuration,
-			@Local RequestFilter filter) {
-		// Each contribution to an ordered configuration has a name, When
-		// necessary, you may
-		// set constraints to precisely control the invocation order of the
-		// contributed filter
-		// within the pipeline.
-		// configuration.add("Timing", filter);
+	public PropertiesFileSymbolProvider buildVersionSymbolProvider(Logger logger) {
+		return new PropertiesFileSymbolProvider(logger,
+				"version.prop", true);
+	}
+
+	public static void contributeSymbolSource(
+			OrderedConfiguration<SymbolProvider> configuration,
+			@InjectService("VersionSymbolProvider") SymbolProvider c) {
+		configuration.add("VersionPropertiesFile", c, "after:SystemProperties",
+				"before:ApplicationDefaults");
 	}
 
 	/**
@@ -201,7 +206,9 @@ public class GrapheneModule {
 		configuration.add(new CoercionTuple<>(LocalDate.class,
 				java.util.Date.class, fromLocalDate));
 		// End LocalDate ///////////////////////////
-
+		
+		
+		///////////////////////////////////////
 		// DateTime ///////////////////////////
 		// From java.util.Date to DateTime
 
@@ -224,6 +231,33 @@ public class GrapheneModule {
 
 		configuration.add(new CoercionTuple<>(DateTime.class,
 				java.util.Date.class, fromDateTime));
+		// End DateTime ///////////////////////////
+		
+		
+		
+		///////////////////////////////////////
+		// DateTime ///////////////////////////
+		// From java.lang.Long to DateTime
+
+		Coercion<java.lang.Long, DateTime> longToDateTime = new Coercion<java.lang.Long, DateTime>() {
+			public DateTime coerce(java.lang.Long input) {
+				return JodaTimeUtil.toDateTime(input);
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(java.lang.Long.class,
+				DateTime.class, longToDateTime));
+
+		// From DateTime to java.util.Date
+
+		Coercion<DateTime, java.lang.Long> fromDateTimetoLong = new Coercion<DateTime, java.lang.Long>() {
+			public java.lang.Long coerce(DateTime input) {
+				return JodaTimeUtil.toJavaDate(input).getTime();
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(DateTime.class,
+				java.lang.Long.class, fromDateTimetoLong));
 		// End DateTime ///////////////////////////
 	}
 
