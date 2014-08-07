@@ -552,8 +552,9 @@ public class Neo4JEmbeddedService {
 			logger.info("Defined Neo4j Embedded Database Service with parameters: "
 					+ this.toString());
 		} catch (Exception e) {
-			logger.error("Could not load properties file "
+			logger.error("Problem with loading or finding properties file at "
 					+ propertiesFileLocation + ":" + e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 		return true;

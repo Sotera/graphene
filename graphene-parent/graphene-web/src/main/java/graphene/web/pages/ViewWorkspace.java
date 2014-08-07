@@ -17,7 +17,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
-@PluginPage(visualType = G_VisualType.META)
+@PluginPage(visualType = G_VisualType.TOP, menuName = "View Workspace", icon = "fa fa-lg fa-fw fa-list-alt")
 public class ViewWorkspace {
 	@Property
 	private G_Workspace currentWorkspace = null;

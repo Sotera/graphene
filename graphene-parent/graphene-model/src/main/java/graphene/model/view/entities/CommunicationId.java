@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * 
  * TODO: This is a duplicate of a more generic IDL class, replace this one.
  */
+@Deprecated
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CommunicationId {
 
@@ -31,7 +32,7 @@ public class CommunicationId {
 	 * @param datasourceId
 	 *            String datasource ID
 	 * @param uid
-	 *            String unique ID for the phone within the source
+	 *            String unique ID for the communication id within the source
 	 * @param value
 	 *            String the communication id
 	 */

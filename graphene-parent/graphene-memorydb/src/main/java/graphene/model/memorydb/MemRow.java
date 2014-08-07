@@ -21,39 +21,6 @@ public class MemRow {
 
 	}
 
-//	@Deprecated
-//	public String getIdValue() {
-//		return MemoryDB.getIdValueForID(entries[MemoryDB.IDENTIFIER]);
-//	}
-
-//	@Deprecated
-//	public void setIdValue(String idValue) {
-//		entries[MemoryDB.IDENTIFIER] = MemoryDB
-//				.getIdentifierIDForValue(idValue);
-//	}
-
-//	@Deprecated
-//	public String getCustomerNumber() {
-//		return MemoryDB.getCustomerNumberForID(entries[MemoryDB.CUSTOMER]);
-//	}
-
-//	@Deprecated
-//	public void setCustomerNumber(String customerNumber) {
-//		entries[MemoryDB.CUSTOMER] = MemoryDB
-//				.getCustomerIDForNumber(customerNumber);
-//	}
-
-//	@Deprecated
-//	public String getAccountNumber() {
-//		return MemoryDB.getAccountNumberForID(entries[MemoryDB.ACCOUNT]);
-//	}
-
-//	@Deprecated
-//	public void setAccountNumber(String accountNumber) {
-//		entries[MemoryDB.ACCOUNT] = MemoryDB
-//				.getAccountIDForNumber(accountNumber);
-//	}
-
 	public int getIdType() {
 		return idType;
 	}
@@ -66,41 +33,6 @@ public class MemRow {
 		this.offset = offset;
 	}
 
-//	@Deprecated
-//	public void setCustno(int custno) {
-//		entries[MemoryDB.CUSTOMER] = custno;
-//	}
-//
-//	@Deprecated
-//	public void setAcno(int acno) {
-//		entries[MemoryDB.ACCOUNT] = acno;
-//	}
-//
-//	@Deprecated
-//	public void setidNo(int idno) {
-//		entries[MemoryDB.IDENTIFIER] = idno;
-//	}
-
-//	@Deprecated
-//	public int getCustno() {
-//		return entries[MemoryDB.CUSTOMER];
-//	}
-
-//	@Deprecated
-//	public int getAcno() {
-//		return entries[MemoryDB.ACCOUNT];
-//	}
-
-//	@Deprecated
-//	public int getIdno() {
-//		return entries[MemoryDB.IDENTIFIER];
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -123,11 +55,7 @@ public class MemRow {
 						: "") + "]";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

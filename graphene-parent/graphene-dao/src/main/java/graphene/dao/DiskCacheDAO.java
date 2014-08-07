@@ -8,52 +8,75 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
 public abstract class DiskCacheDAO<T, Q> {
-	protected final boolean DELETE_EXISTING = false;
-	protected final String FILE_NAME = "T:/data/entityRefCache.data";
-
-	protected final long MAX_RESULTS = 0;
-
-	protected final boolean SAVE_LOCALLY = true;
-
-	protected final boolean TRY_SERIALIZED = true;
-
-	public DiskCacheDAO(DiskCache<T> diskCache) {
-		this.diskCache = diskCache;
-	}
+	protected String cacheFileLocation = null;
+	protected boolean deleteExisting = false;
 
 	protected DiskCache<T> diskCache;
 
 	@Inject
 	private Logger logger;
 
-	// public long count(Q q) throws Exception {
-	// TimeReporter t = new TimeReporter("Counting all rows in DiskCacheDAO",
-	// logger);
-	//
-	// T e = null;
-	// if (diskCache.getNumberOfRecordsCached() == 0) {
-	// boolean readerAvailable = getCacheToDisk(DELETE_EXISTING,
-	// TRY_SERIALIZED, SAVE_LOCALLY, 0);
-	// // while (readerAvailable && (e = diskCache.read()) != null) {
-	// // // TODO: we are disregarding the query object now, because we
-	// // // never use it this way. However, the code should do what you
-	// // // would think it does, so put this in the bucket list. --djue
-	// // numRows++;
-	// // if (numRows % 1000 == 0) {
-	// // t.getSpeed(numRows, "Count EnronEntityref100");
-	// // }
-	// // }
-	// diskCache.closeStreams();
-	// }
-	// return diskCache.getNumberOfRecordsCached();
-	// }
+	protected long maxResults = 0;
+
+	protected boolean saveLocally = true;
+
+	protected boolean trySerialized = true;
+
+	public DiskCacheDAO() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @return the cacheFileLocation
+	 */
+	public final String getCacheFileLocation() {
+		return cacheFileLocation;
+	}
+
+	public abstract boolean getCacheToDisk(boolean deleteExisting,
+			boolean trySerialized, boolean saveLocally, long maxResults);
+
+	/**
+	 * @return the diskCache
+	 */
+	public final DiskCache<T> getDiskCache() {
+		return diskCache;
+	}
+
+	/**
+	 * @return the maxResults
+	 */
+	public final long getMaxResults() {
+		return maxResults;
+	}
+
+	/**
+	 * @return the deleteExisting
+	 */
+	public final boolean isDeleteExisting() {
+		return deleteExisting;
+	}
+
+	/**
+	 * @return the saveLocally
+	 */
+	public final boolean isSaveLocally() {
+		return saveLocally;
+	}
+
+	/**
+	 * @return the trySerialized
+	 */
+	public final boolean isTrySerialized() {
+		return trySerialized;
+	}
 
 	public boolean performCallback(final long offset, final long maxResults,
 			final G_CallBack<T> cb, final Q q) {
 		logger.debug("Performing callback at the Disk Cache level...");
 
-		boolean readerAvailable = getCacheToDisk(DELETE_EXISTING,
-				TRY_SERIALIZED, SAVE_LOCALLY, maxResults);
+		boolean readerAvailable = getCacheToDisk(deleteExisting, trySerialized,
+				saveLocally, maxResults);
 		if (readerAvailable) {
 			logger.debug("Disk cache thinks there are "
 					+ diskCache.getNumberOfRecordsCached()
@@ -79,6 +102,51 @@ public abstract class DiskCacheDAO<T, Q> {
 		return readerAvailable;
 	}
 
-	public abstract boolean getCacheToDisk(boolean deleteExisting,
-			boolean trySerialized, boolean saveLocally, long maxResults);
+	/**
+	 * @param cacheFileLocation
+	 *            the cacheFileLocation to set
+	 */
+	public final void setCacheFileLocation(String cacheFileLocation) {
+		this.cacheFileLocation = cacheFileLocation;
+	}
+
+	/**
+	 * @param deleteExisting
+	 *            the deleteExisting to set
+	 */
+	public final void setDeleteExisting(boolean deleteExisting) {
+		this.deleteExisting = deleteExisting;
+	}
+
+	/**
+	 * @param diskCache
+	 *            the diskCache to set
+	 */
+	public final void setDiskCache(DiskCache<T> diskCache) {
+		this.diskCache = diskCache;
+	}
+
+	/**
+	 * @param maxResults
+	 *            the maxResults to set
+	 */
+	public final void setMaxResults(long maxResults) {
+		this.maxResults = maxResults;
+	}
+
+	/**
+	 * @param saveLocally
+	 *            the saveLocally to set
+	 */
+	public final void setSaveLocally(boolean saveLocally) {
+		this.saveLocally = saveLocally;
+	}
+
+	/**
+	 * @param trySerialized
+	 *            the trySerialized to set
+	 */
+	public final void setTrySerialized(boolean trySerialized) {
+		this.trySerialized = trySerialized;
+	}
 }

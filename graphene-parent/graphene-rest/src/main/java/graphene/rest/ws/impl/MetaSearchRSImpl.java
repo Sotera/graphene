@@ -32,7 +32,7 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 
 	@Property
 	@Inject
-	@Symbol(SymbolConstants.APPLICATION_VERSION)
+	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
 
 	@Override

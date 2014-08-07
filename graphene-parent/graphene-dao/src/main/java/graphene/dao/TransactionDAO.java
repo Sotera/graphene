@@ -20,4 +20,12 @@ public interface TransactionDAO<T, Q extends BasicQuery> extends
 
 	List<DirectedEventRow> getEvents(Q q);
 
+	/**
+	 * For finding by internal pair id
+	 * 
+	 * @param id
+	 * @return
+	 */
+	DirectedEventRow findEventById(String id);
+
 }

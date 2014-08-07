@@ -63,8 +63,10 @@ public class ShiroSecurityModule {
 		// Allow access to the login and registration pages
 		configuration.add(factory.createChain("/graphene/pub/**")
 				.add(factory.anon()).build());
-		configuration.add(factory.createChain("/").add(factory.roles(),
-				"user").build()); 
+//		configuration.add(factory.createChain("/").add(factory.roles(),
+//				"user").build()); 
+		configuration.add(factory.createChain("/").add(factory.authc())
+				.build());
 		configuration.add(factory.createChain("/graphene/**").add(factory.authc())
 				.build());
 		configuration.add(factory.createChain("/assets/**").add(factory.anon())

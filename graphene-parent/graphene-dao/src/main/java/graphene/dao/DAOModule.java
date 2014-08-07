@@ -22,9 +22,9 @@ public class DAOModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(G_UserDataAccess.class, UserServiceImpl.class).eagerLoad();
 		binder.bind(EventServer.class, EventServerImpl.class);
-		binder.bind(FederatedPropertyGraph.class,
+		binder.bind(FederatedPropertyGraphServer.class,
 				FederatedPropertyGraphImpl.class);
-		binder.bind(FederatedEventGraph.class, FederatedEventGraphImpl.class);
+		binder.bind(FederatedEventGraphServer.class, FederatedEventGraphImpl.class);
 
 	}
 }

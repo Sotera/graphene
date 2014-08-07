@@ -7,6 +7,7 @@ import org.neo4j.graphdb.RelationshipType;
  * is no way to extend or subclass RelationshipType at a later time.
  * 
  * Sampling from several open source datasets
+ * 
  * @author djue
  * 
  */
@@ -61,4 +62,5 @@ public enum G_RelationshipType implements RelationshipType {
 	IN_SYSTEM, // ACCOUNT TO ENTITY (bank or ENTITY, etc)
 	HAS_GLOBAL_ACCOUNT_ID,
 	REDACTED,
+	IN_DOCUMENT, TRANSACTION,
 }

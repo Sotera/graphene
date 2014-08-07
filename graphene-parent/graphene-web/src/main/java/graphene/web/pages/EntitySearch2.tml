@@ -36,7 +36,8 @@
 						<div t:type="ajaxformloop" t:id="options" source="query.options"
 							encoder="SearchFilterEncoder" value="option">
 							<t:select t:id="type" value="option.comparetype" />
-							<t:select t:id="field" value="option.field" model="fieldSelectModel" /> 
+							<t:select t:id="field" value="option.field" model="fieldSelectModel"
+								encoder="DataSetFieldEncoder" />
 							<t:textfield t:id="value" value="option.value" />
 							<input t:type="jquery/checkbox" t:id="casesensitive"
 								t:value="option.casesensitive" />

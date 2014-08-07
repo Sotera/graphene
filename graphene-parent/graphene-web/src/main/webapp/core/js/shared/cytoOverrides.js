@@ -23,6 +23,15 @@ var overrideCOSE = function() {
 			options.onFeedback = function(){};
 		}
 		
+		if (!options.intervalRate || options.intervalRate < 1) {
+			options.intervalRate = 1;
+		}
+		
+		if (!options.edgeElasticity || options.edgeElasticity == 0) {
+			console.error("divisor edgeElasticity cannot be zero");
+			return;
+		}
+		
 		// Get start time
 		var startTime = new Date();
 
@@ -37,26 +46,17 @@ var overrideCOSE = function() {
 		// If required, randomize node positions
 		if (true == options.randomize) {
 			randomizePositions(layoutInfo, cy);
-			if (0 < options.refresh) {
-				refreshPositions(layoutInfo, cy, options);
-			}
 		}
 
-		
 		var i = 0, limit = options.numIter, busy = false, done = false;
 		
-		activeInterval = setInterval( function() {
+		var intervalFn = function() {
 			if (!busy) {
 				busy = true;
 				
-				// Do one step in the phisical simulation
+				// Do one step in the physical simulation
 				step(layoutInfo, cy, options, i);
 
-				// If required, update positions
-				if (0 < options.refresh && 0 == (i % options.refresh)) {
-					refreshPositions(layoutInfo, cy, options);
-				}
-				
 				// Update temperature
 				layoutInfo.temperature = layoutInfo.temperature * options.coolingFactor;
 				logDebug("New temperature: " + layoutInfo.temperature);
@@ -67,35 +67,53 @@ var overrideCOSE = function() {
 					//break;
 				}
 				
-				if (i % options.feedbackRate == 0) {
+				// If required, update positions
+				if (0 < options.refresh && 0 == (i % options.refresh) && !done) {
 					refreshPositions(layoutInfo, cy, options);
-				}
-				
-				if (true == options.fit) {
-					cy.fit();
+					if (true == options.fit) {
+						cy.fit();
+					}
 				}
 				
 				// if you you've reached the max number of executions or if the temperature has 
 				// cooled significantly, you've finished with the layout
 				if (++i == limit || done) {
 					clearInterval(activeInterval);
+					
+					refreshPositions(layoutInfo, cy, options);
+					
 					// Fit the graph if necessary
 					if (true == options.fit) {
 						cy.fit();
 					}
 					
+					if (done) {
+						console.log("Successfully reached specified minimum temperature.");
+						console.log("Total iterations: " + i + ".");
+					} else {
+						console.log("Exhausted specificied maximum number of iterations.");
+					}
+					
 					// Get end time
 					var endTime = new Date();
-
 					console.info("Layout took " + (endTime - startTime) + " ms");
 					
 					// Layout has finished
 					cy.one("layoutstop", options.stop);
 					cy.trigger("layoutstop");
+				} else {
+					// The idea here is eliminate idle downtime by resetting the activeInterval
+					// once intervalFn finishes a single execution.
+					// Note:  it does not seem to significantly affect overall layout time 
+				
+					//clearInterval(activeInterval);
+					//activeInterval = setInterval(intervalFn, 1);
 				}
 				busy = false;
 			}
-		}, 1);
+		}
+		
+		activeInterval = setInterval(intervalFn, options.intervalRate);
     };
 	
     CoseLayout.prototype.stop = function(){
@@ -486,19 +504,36 @@ var overrideCOSE = function() {
 		logDebug(s);
 
 		// Calculate node repulsions
+		// var time = new Date();
 		calculateNodeForces(layoutInfo, cy, options);
+		// time = new Date() - time;
+		// console.log("--calculateNodeForces: " + time + " ms.");
+		
 		// Calculate edge forces
+		// time = new Date();
 		calculateEdgeForces(layoutInfo, cy, options);
+		// time = new Date() - time;
+		// console.log("--calculateEdgeForces: " + time + " ms.");
+		
 		// Calculate gravity forces
+		// time = new Date();
 		calculateGravityForces(layoutInfo, cy, options);
+		// time = new Date() - time;
+		// console.log("--calculateGravityForces: " + time + " ms.");
+		
 		// Propagate forces from parent to child
+		// time = new Date();
 		propagateForces(layoutInfo, cy, options);
+		// time = new Date() - time;
+		// console.log("--propagationForces: " + time + " ms.");
+		
 		// Update positions based on calculated forces
+		// time = new Date();
 		updatePositions(layoutInfo, cy, options);
+		// time = new Date() - time;
+		// console.log("--updatePositions: " + time + " ms.");
 		
 		if ( step % options.feedbackRate == 0 ) {
-			// TODO: pass desired values to options.onFeedback depending on what the function
-			// defined in cytoGraphSubs COSE handler requires
 			options.onFeedback({
 				step: step,
 				iter: options.numIter,
@@ -514,23 +549,24 @@ var overrideCOSE = function() {
     function calculateNodeForces(layoutInfo, cy, options) {
 		// Go through each of the graphs in graphSet
 		// Nodes only repel each other if they belong to the same graph
-		var s = "calculateNodeForces";
-		logDebug(s);
-		for (var i = 0; i < layoutInfo.graphSet.length; i ++) {
-			var graph    = layoutInfo.graphSet[i];
-			var numNodes = graph.length;
-
-			s = "Set: " + graph.toString();
-			logDebug(s);
+    	// FIXME: This function (and nodeRepulsion()) is the most time-intensive subfunction of step().  Optimize in any way possible.
+    	
+    	var i, j, k, node1, node2, graph, numNodes;
+    	var l = layoutInfo.graphSet.length;
+    	
+		for (i = 0; i < l; i += 1) {
+			graph    = layoutInfo.graphSet[i];
+			numNodes = graph.length;
 
 			// Now get all the pairs of nodes 
 			// Only get each pair once, (A, B) = (B, A)
-			for (var j = 0; j < numNodes; j++) {
-			var node1 = layoutInfo.layoutNodes[layoutInfo.idToIndex[graph[j]]];
-			for (var k = j + 1; k < numNodes; k++) {
-				var node2 = layoutInfo.layoutNodes[layoutInfo.idToIndex[graph[k]]];
-				nodeRepulsion(node1, node2, layoutInfo, cy, options);
-			} 
+			for (j = 0; j < numNodes; j += 1) {
+				node1 = layoutInfo.layoutNodes[layoutInfo.idToIndex[graph[j]]];
+				
+				for (k = j + 1; k < numNodes; k += 1) {
+					node2 = layoutInfo.layoutNodes[layoutInfo.idToIndex[graph[k]]];
+					nodeRepulsion(node1, node2, layoutInfo, cy, options);
+				} 
 			}
 		} 
     }
@@ -540,36 +576,29 @@ var overrideCOSE = function() {
      * @brief : Compute the node repulsion forces between a pair of nodes
      */
     function nodeRepulsion(node1, node2, layoutInfo, cy, options) {
-		var s = "Node repulsion. Node1: " + node1.id + " Node2: " + node2.id;
 
 		// Get direction of line connecting both node centers
 		var directionX = node2.positionX - node1.positionX;
 		var directionY = node2.positionY - node1.positionY;
-		s += "\ndirectionX: " + directionX + ", directionY: " + directionY;
 
 		// If both centers are the same, apply a random force
 		if (0 == directionX && 0 == directionY) {
-			s += "\nNodes have the same position.";
 			return; // TODO
 		}
 
 		overlap = nodesOverlap(node1, node2, directionX, directionY);
 		
 		if (overlap > 0) {
-			s += "\nNodes DO overlap.";
-			s += "\nOverlap: " + overlap;
 			// If nodes overlap, repulsion force is proportional 
 			// to the overlap
 			var force    = options.nodeOverlap * overlap;
 
 			// Compute the module and components of the force vector
 			var distance = Math.sqrt(directionX * directionX + directionY * directionY);
-			s += "\nDistance: " + distance;
 			var forceX   = force * directionX / distance;
 			var forceY   = force * directionY / distance;
 
 		} else {
-			s += "\nNodes do NOT overlap.";
 			// If there's no overlap, force is inversely proportional 
 			// to squared distance
 
@@ -582,7 +611,6 @@ var overrideCOSE = function() {
 			var distanceY   = point2.y - point1.y;
 			var distanceSqr = distanceX * distanceX + distanceY * distanceY;
 			var distance    = Math.sqrt(distanceSqr);
-			s += "\nDistance: " + distance;
 
 			// Compute the module and components of the force vector
 			var force  = options.nodeRepulsion / distanceSqr;
@@ -595,9 +623,6 @@ var overrideCOSE = function() {
 		node1.offsetY -= forceY;
 		node2.offsetX += forceX;
 		node2.offsetY += forceY;
-
-		s += "\nForceX: " + forceX + " ForceY: " + forceY;
-		logDebug(s);
 
 		return;
     }

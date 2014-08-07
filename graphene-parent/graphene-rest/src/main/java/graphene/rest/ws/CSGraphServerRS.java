@@ -32,7 +32,7 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/json")
-	public abstract V_CSGraph getPropertyGraph(@PathParam("type") String type,
+	public abstract V_CSGraph getProperties(@PathParam("type") String type,
 			@PathParam("value") String[] value,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,
@@ -44,7 +44,7 @@ public interface CSGraphServerRS {
 
 	/**
 	 * REST service to return a interaction-type graph.
-	 * 
+	 * TODO: Rename this method
 	 * @param objectType
 	 * @param value
 	 * @param valueType
@@ -61,7 +61,7 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/directed/{objectType}/{value}")
 	@Produces("application/json")
-	public abstract V_CSGraph getInteractionGraph(
+	public abstract V_CSGraph getEvents(
 			@PathParam("objectType") String objectType, // Dataset name etc
 			@PathParam("value") String[] value,
 			@QueryParam("Type") String valueType,
@@ -104,7 +104,7 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/interactiongraph/{objectType}")
 	@Produces("application/json")
-	public V_CSGraph getTemporalInteractionGraph(
+	public V_CSGraph getTemporalEvents(
 			@PathParam("objectType") String objectType,
 			@QueryParam("ids") String[] ids,
 			@QueryParam("Type") String valueType,

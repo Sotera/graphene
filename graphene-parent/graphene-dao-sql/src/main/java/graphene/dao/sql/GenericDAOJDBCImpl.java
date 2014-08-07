@@ -34,6 +34,10 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * If you need to change the database that is used, set it in the
 	 * constructor of your implementation. Otherwise it gets the default
 	 * connection pool that was marked with a MainDB annotation.
+	 * 
+	 * TODO: Change this to force the end user to supply the type of connection
+	 * pool from their DAO module. That will have the least tight
+	 * coupling.--djue
 	 */
 	@Inject
 	@MainDB
@@ -78,7 +82,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				if (q == null) {
 					// There was no query object, which mean just get
 					// everything.
-					
+
 					results = getAll(offset, maxResults);
 				} else {
 					// We have some sort of query object.
@@ -223,6 +227,8 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 
 	/**
 	 * A safe way of adding offset and limit, directly using long values.
+	 * Deprecated: Use the version setOffsetAndLimit(Q extends BasicQuery q,
+	 * SQLQuery sq)
 	 * 
 	 * @param offset
 	 * @param limit
@@ -232,11 +238,17 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	@Deprecated
 	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
 			@Nonnegative long limit, SQLQuery sq) {
-		if (ValidationUtils.isValid(offset)) {
-			sq = sq.offset(offset);
-		}
-		if (ValidationUtils.isValid(limit)) {
-			sq = sq.limit(limit);
+		if (limit > 0 && offset == limit) {
+			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
+					+ sq.toString());
+			sq = null;
+		} else {
+			if (ValidationUtils.isValid(offset)) {
+				sq = sq.offset(offset);
+			}
+			if (ValidationUtils.isValid(limit)) {
+				sq = sq.limit(limit);
+			}
 		}
 		return sq;
 	}

@@ -19,12 +19,49 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class AdvancedSearch {
+	static Logger logger = LoggerFactory.getLogger(AdvancedSearch.class);
 	// Do not rename these properties. They are used in the REST call
 	private String dataSet = null;
-	private String source = null;
 	private List<SearchFilter> filters = new ArrayList<SearchFilter>();
-	static Logger logger = LoggerFactory.getLogger(AdvancedSearch.class);
+	private int limit = 1000;
+	private String source = null;
+	private int start = 0;
 
+	public AdvancedSearch() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getDataSet() {
+		return dataSet;
+	}
+
+	public List<SearchFilter> getFilters() {
+		return filters;
+	}
+
+	/**
+	 * @return the limit
+	 */
+	public final int getLimit() {
+		return limit;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	/**
+	 * @return the start
+	 */
+	public final int getStart() {
+		return start;
+	}
+
+	public void setDataSet(String dataSet) {
+		this.dataSet = dataSet;
+	}
+
+	//
 	/**
 	 * Call this after parsing the request string so that the field definition
 	 * can be retrieved for each filter
@@ -43,36 +80,36 @@ public class AdvancedSearch {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "AdvancedSearch ["
-				+ (dataSet != null ? "dataSet=" + dataSet + ", " : "")
-				+ (source != null ? "source=" + source + ", " : "")
-				+ (filters != null ? "filters=" + filters : "") + "]";
+	public void setFilters(List<SearchFilter> filters) {
+		this.filters = filters;
 	}
 
-	public String getDataSet() {
-		return dataSet;
-	}
-
-	public void setDataSet(String dataSet) {
-		this.dataSet = dataSet;
-	}
-
-	public String getSource() {
-		return source;
+	/**
+	 * @param limit
+	 *            the limit to set
+	 */
+	public final void setLimit(int limit) {
+		this.limit = limit;
 	}
 
 	public void setSource(String source) {
 		this.source = source;
 	}
 
-	public List<SearchFilter> getFilters() {
-		return filters;
+	/**
+	 * @param start
+	 *            the start to set
+	 */
+	public final void setStart(int start) {
+		this.start = start;
 	}
 
-	public void setFilters(List<SearchFilter> filters) {
-		this.filters = filters;
+	@Override
+	public String toString() {
+		return "AdvancedSearch ["
+				+ (dataSet != null ? "dataSet=" + dataSet + ", " : "")
+				+ (source != null ? "source=" + source + ", " : "")
+				+ (filters != null ? "filters=" + filters : "") + "]";
 	}
 
 }

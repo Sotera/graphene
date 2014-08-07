@@ -19,4 +19,8 @@ import java.lang.annotation.Target;
 @Documented
 public @interface PluginPage {
 	G_VisualType[] visualType() default { G_VisualType.DEFAULT };
+
+	String icon() default "";
+	
+	String menuName();
 }

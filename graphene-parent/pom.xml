@@ -25,6 +25,7 @@
 		<module>graphene-web</module>
 		<module>graphene-archetype</module>
 		<module>graphene-memorydb</module>
+		<module>graphene-dao-titan</module>
 	</modules>
 
 	<properties>
@@ -59,6 +60,7 @@
 		<commons-beanutils.version>1.9.0</commons-beanutils.version>
 		<commons-dbutils.version>1.5</commons-dbutils.version>
 		<avro.version>1.7.5</avro.version>
+		<kryo.version>2.24.0</kryo.version>
 		<slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
 		<jxl.version>2.6.12</jxl.version>
 
@@ -72,6 +74,7 @@
 		<github.global.server>github</github.global.server>
 		<github.site.maven.plugin.version>0.9</github.site.maven.plugin.version>
 		<!-- Maven properties -->
+		<maven.version>3.0.4</maven.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.site.plugin.version>3.0</maven.site.plugin.version>
 		<maven.project.info.reports.plugin.version>2.7</maven.project.info.reports.plugin.version>
@@ -79,6 +82,9 @@
 		<maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
 		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
 		<maven-enforcer-plugin.version>1.2</maven-enforcer-plugin.version>
+		<maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
+		<maven-jetty-plugin.version>6.1.16</maven-jetty-plugin.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
 
 	</properties>
 
@@ -245,6 +251,12 @@
 				<version>${avro.version}</version>
 			</dependency>
 
+			<dependency><!-- Super fast and compact serialization framework, used 
+					for communications and file system caching -->
+				<groupId>com.esotericsoftware.kryo</groupId>
+				<artifactId>kryo</artifactId>
+				<version>${kryo.version}</version>
+			</dependency>
 			<dependency><!-- Date and time library to replace JDK date handling. Will 
 					likely be the standard in Java 8. -->
 				<groupId>joda-time</groupId>
@@ -617,10 +629,6 @@
 			<url>http://nexus.devlab722.net/nexus/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
-	<issueManagement>
-		<system>JIRA</system>
-		<url>lesnet-jira:8080/secure/Dashboard.jspa</url>
-	</issueManagement>
 	<build>
 		<pluginManagement>
 			<!-- pluginManagement is used to specify common plugin settings for all 

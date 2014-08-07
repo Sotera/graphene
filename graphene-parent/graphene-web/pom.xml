@@ -96,20 +96,44 @@
 	<build>
 		<finalName>graphene-web</finalName>
 		<resources>
+			<resource><!-- This is for picking up any Tapestry .tml templates, .properties 
+					or other resources which are in the src directory. Optionally these could 
+					be in the corresponding resources directory but we don't enforce that on 
+					developers. -->
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+					<exclude>**/*.class</exclude>
+				</excludes>
+			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/version.prop</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/version.prop</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>src/test/conf</directory>
 				<filtering>true</filtering>
 				<targetPath>${basedir}/target/test-classes/</targetPath>
 			</resource>
-			<!-- <resource> <directory>src/main/webapp</directory> </resource> -->
 			<resource>
 				<directory>src/main/filtered-resources</directory>
+				<targetPath>filtered</targetPath>
 				<filtering>true</filtering>
 			</resource>
-			<!-- <resource> <directory>META-INF</directory> </resource> -->
 		</resources>
 		<plugins>
 			<plugin>

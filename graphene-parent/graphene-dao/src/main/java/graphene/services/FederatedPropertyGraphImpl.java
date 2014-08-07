@@ -1,10 +1,10 @@
 package graphene.services;
 
-import graphene.dao.FederatedPropertyGraph;
+import graphene.dao.FederatedPropertyGraphServer;
 
 import java.util.Collection;
 
-public class FederatedPropertyGraphImpl implements FederatedPropertyGraph {
+public class FederatedPropertyGraphImpl implements FederatedPropertyGraphServer {
 	private Collection<PropertyGraphBuilder> singletons;
 	
 	public FederatedPropertyGraphImpl(Collection<PropertyGraphBuilder> singletons) {

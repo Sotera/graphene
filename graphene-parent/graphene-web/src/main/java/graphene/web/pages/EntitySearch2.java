@@ -3,6 +3,7 @@ package graphene.web.pages;
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.EntityDAO;
 import graphene.model.datasourcedescriptors.DataSet;
+import graphene.model.datasourcedescriptors.DataSetField;
 import graphene.model.datasourcedescriptors.DataSource;
 import graphene.model.datasourcedescriptors.DataSourceList;
 import graphene.model.idl.G_SearchType;
@@ -44,7 +45,7 @@ import org.slf4j.Logger;
  * @author djue
  * 
  */
-@PluginPage(visualType = G_VisualType.SEARCH)
+@PluginPage(visualType = G_VisualType.EXPERIMENTAL, menuName = "EntitySearch 2", icon = "fa fa-lg fa-fw fa-cogs")
 public class EntitySearch2 {
 	@Property
 	@Persist
@@ -56,7 +57,8 @@ public class EntitySearch2 {
 	private EntityDAO entitydao;
 	@Property
 	private SearchFilter option;
-
+	@Property
+	private DataSetField field;
 	@Property
 	private Boolean deleted;
 
@@ -78,11 +80,33 @@ public class EntitySearch2 {
 
 	void setupRender() {
 		DataSourceList dsl = dataSourceListDAO.getList();
+		if (dsl != null && dsl.getDataSources().size() > 0) {
+			datasourceSelectModel = selectModelFactory.create(
+					dsl.getDataSources(), "friendlyName");
+			currentDataset = dsl.getDataSources().get(0).getDataSets().get(0);
+			fieldSelectModel = selectModelFactory.create(
+					currentDataset.getFields(), "friendlyName");
+		}
+	}
 
-		datasourceSelectModel = selectModelFactory.create(dsl.getDataSources(),
-				"friendlyName");
-		fieldSelectModel = selectModelFactory.create(currentDataset.getFields(),
-				"friendlyName");
+	public ValueEncoder<DataSetField> getDataSetFieldEncoder() {
+		return new ValueEncoder<DataSetField>() {
+			public String toClient(DataSetField value) {
+				return value.friendlyName;
+			}
+
+			public DataSetField toValue(String clientValue) {
+				for (DataSetField currentSearchFilter : currentDataset
+						.getFields()) {
+					if (currentSearchFilter.getFriendlyName() != null
+							&& clientValue.equals(currentSearchFilter
+									.getFriendlyName()))
+						return currentSearchFilter;
+				}
+
+				return null;
+			}
+		};
 	}
 
 	public ValueEncoder<SearchFilter> getSearchFilterEncoder() {

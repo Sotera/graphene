@@ -1,15 +1,18 @@
 package graphene.rest.ws.impl;
 
+import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.GraphmlServerRS;
 import graphene.services.EventGraphBuilder;
 import graphene.services.PropertyGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
+import graphene.util.validator.ValidationUtils;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 import mil.darpa.vande.converters.graphml.GraphmlContainer;
 import mil.darpa.vande.converters.graphml.GraphmlGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
@@ -32,8 +35,8 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 	@InjectService("Property")
 	private PropertyGraphBuilder propertyGraphBuilder;
 
-	@InjectService("Event")
-	private EventGraphBuilder eventGraphBuilder;
+	@Inject
+	private FederatedEventGraphServer feg;
 
 	@Inject
 	private Logger logger;
@@ -43,7 +46,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 	}
 
 	@Override
-	public GraphmlContainer getPropertyGraph(@PathParam("type") String type,
+	public GraphmlContainer getProperties(@PathParam("type") String type,
 			@PathParam("value") String value,
 			@QueryParam("degree") String degree,
 			@QueryParam("maxNodes") String maxNodes,
@@ -77,7 +80,6 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 			q.setMaxNodes(maxnodes);
 			q.setMaxEdgesPerNode(maxedges);
 			q.setMaxHops(maxdegree);
-			// g = entityGraphBuilder.makeGraphResponse(q, propertyFinder);
 			g = propertyGraphBuilder.makeGraphResponse(q);
 			m = new GraphmlGraph(g, true);
 			c = new GraphmlContainer(m);
@@ -91,26 +93,22 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 	}
 
 	@Override
-	public GraphmlContainer getDirected(
-			@PathParam("objectType") String objectType,
-			@PathParam("value") String value,
-			@QueryParam("Type") String valueType,
-			@QueryParam("degree") String degree,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-			@QueryParam("showIcons") boolean showIcons,
-			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
-			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
-			@QueryParam("minWeight") String minimumWeight) {
-		logger.trace("-------");
-		logger.trace("getGraph for type " + objectType);
-		logger.trace("Value     " + value);
-		logger.trace("Degrees   " + degree);
-		logger.trace("Max Nodes " + maxNodes);
-		logger.trace("Max Edges " + maxEdgesPerNode);
-		logger.trace("min weight " + minimumWeight);
+	public GraphmlContainer getEvents(String objectType, String[] value,
+			String valueType, String degree, String maxNodes,
+			String maxEdgesPerNode, boolean showIcons, String minSecs,
+			String maxSecs, String minimumWeight) {
+		logger.debug("-------");
+		logger.debug("get Interaction Graph for type " + objectType);
+		logger.debug("Value     " + value);
+		logger.debug("valueType     " + valueType);
+		logger.debug("Degrees   " + degree);
+		logger.debug("Max Nodes " + maxNodes);
+		logger.debug("Max Edges per node" + maxEdgesPerNode);
+		logger.debug("showIcons " + showIcons);
+		logger.debug("minSecs " + minSecs);
+		logger.debug("maxSecs " + maxSecs);
+		logger.debug("minimumWeight " + minimumWeight);
 
-		// FIXME: Min weight is not working
 		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 6);
 		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 50);
@@ -118,36 +116,45 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 		long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
 		long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);
 
-		String[] values;
-
-		if (valueType.contains("list")) {
-			values = value.split("_");
-		} else
-			values = new String[] { value };
-
 		TemporalGraphQuery q = new TemporalGraphQuery();
-
-		q.addSearchIds(values);
-
-		q.setMaxEdgesPerNode(maxedges);
-		q.setMaxHops(maxdegree);
-		q.setMaxNodes(maxnodes);
 		q.setStartTime(startDate);
 		q.setEndTime(endDate);
 		q.setType(valueType); // new, --djue
 		q.setMinTransValue(minWeight); // new --djue
+		q.setMaxNodes(maxnodes);
+		q.setMaxEdgesPerNode(maxedges);
+		q.setMaxHops(maxdegree);
+		q.addSearchIds(value);
 
-		V_GenericGraph g = null;
 		GraphmlGraph m = null;
-		try {
-			g = eventGraphBuilder.makeGraphResponse(q);
-			m = new GraphmlGraph(g, true);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		GraphmlContainer c = null;
+		if (ValidationUtils.isValid(value)) {
+			try {
+				V_GenericGraph g = null;
+				EventGraphBuilder gb = feg
+						.getGraphBuilderForDataSource(objectType);
+				if (gb != null) {
+					logger.debug("Found Graph Builder for " + objectType + ": "
+							+ gb.getClass().getName());
+					g = gb.makeGraphResponse(q);
+				} else {
+					logger.error("Unable to handle graph request for type "
+							+ objectType);
+				}
+				g = gb.makeGraphResponse(q);
+				m = new GraphmlGraph(g, true);
+				c = new GraphmlContainer(m);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+
+		} else {
+			c = new GraphmlContainer();
+			// c.setStrStatus("A query was sent without any ids");
+			logger.error("A query was sent without any ids");
 		}
 
-		GraphmlContainer c = new GraphmlContainer(m);
 		return c;
 
 	}

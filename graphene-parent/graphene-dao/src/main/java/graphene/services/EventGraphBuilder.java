@@ -2,9 +2,10 @@ package graphene.services;
 
 import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
-import graphene.model.query.EntitySearchTuple;
 import graphene.model.query.EventQuery;
+import graphene.util.validator.ValidationUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
+import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
@@ -34,7 +36,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
+public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	@Inject
 	private Logger logger;
 	/**
@@ -44,6 +46,12 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 
 	public EventGraphBuilder() {
 		super();
+	}
+
+	@Override
+	public void performPostProcess(V_GraphQuery graphQuery) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
@@ -79,13 +87,13 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 		EventQuery eq = new EventQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
-		for (String id : graphQuery.getSearchIds()) {
-			eq.addIds(graphQuery.getSearchIds());
-			//lets try using ids instead of attributes.
-//			eq.getAttributeList().add(
-//					new EntitySearchTuple<String>(G_SearchType.COMPARE_EQUALS,
-//							G_CanonicalPropertyType.ANY, id));
-		}
+		// for (String id : graphQuery.getSearchIds()) {
+		eq.addIds(graphQuery.getSearchIds());
+		// lets try using ids instead of attributes.
+		// eq.addAttribute(
+		// new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS,
+		// G_CanonicalPropertyType.ANY, id));
+		// }
 
 		// aka traversals from legacy--djue
 		int hop = 0;
@@ -94,7 +102,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 				&& eq.getIdList().size() > 0; hop++) {
 
 			logger.debug("Processing hop " + hop);
-
+			// If we have some ids to look for
 			if (eq.getIdList().size() > 0) {
 				logger.debug("Found " + eq.getIdList().size()
 						+ " unscanned nodes to query on");
@@ -109,39 +117,46 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 
 			eq = new EventQuery();
 			// Iterate over each node found by the previous query and scan them.
-			for (V_GenericNode node : newNodeList) {
+			for (V_GenericNode node : unscannedNodeList) {
 
 				G_CanonicalPropertyType nodeType = G_CanonicalPropertyType
 						.fromValue(node.getFamily());
 				String valueToSearchOn = node.getIdVal();
 				// if we haven't scanned
-
-				// start scanning this id.
-				logger.debug("::::Scanning valueToSearchOn " + valueToSearchOn
-						+ "\t\t " + node);
-				// Make sure there aren't too many edges.
-				long count = 0;
-				try {
-					count = dao.countEdges(valueToSearchOn);
-					node.setNbrLinks((int) count);
-					if (count > graphQuery.getMaxEdgesPerNode()) {
-						// we will not search on it.
-						node.setCluster(true);
-					} else {
-						// we will search on it.
-						eq.getAttributeList().add(
-								new EntitySearchTuple<String>(
-										G_SearchType.COMPARE_EQUALS, nodeType,
-										valueToSearchOn));
+				if (ValidationUtils.isValid(valueToSearchOn)) {
+					// start scanning this id.
+					logger.debug("::::Scanning valueToSearchOn '"
+							+ valueToSearchOn + "'\t\t " + node);
+					// Make sure there aren't too many edges.
+					long count = 0;
+					try {
+						count = dao.countEdges(valueToSearchOn);
+						logger.debug("Found " + count + " results for value "
+								+ valueToSearchOn);
+						node.setNbrLinks((int) count);
+						if (count > graphQuery.getMaxEdgesPerNode()) {
+							logger.debug("There would be too many links created with this node (max "
+									+ graphQuery.getMaxEdgesPerNode()
+									+ "), setting clustered to true.");
+							node.setCluster(true);
+						} else {
+							// we will search on it.
+							eq.addAttribute(new G_SearchTuple<String>(
+									G_SearchType.COMPARE_EQUALS, nodeType,
+									valueToSearchOn));
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				} else {
+					logger.warn("The value '" + valueToSearchOn
+							+ "' was invalid and was not searched on");
 				}
 				// we're done scanning this id.
 
 			}
 			// very important!!
-			newNodeList.clear();
+			unscannedNodeList.clear();
 
 			logger.debug("At the end of onehop, " + nodeList.size()
 					+ " nodes and " + edgeMap.size() + " edges");
@@ -165,8 +180,8 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T>  {
 			edgeList.addEdge(e);
 		}
 		nodeList.removeOrphans(edgeList);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
-				edgeList.getEdges());
+		performPostProcess(graphQuery);
+		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 		return g;

@@ -2,6 +2,7 @@ package graphene.dao.sql;
 
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.db.DBConnectionPoolService;
+import graphene.util.db.JDBCUtil;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
 
@@ -34,7 +35,6 @@ public class DAOSQLModule {
 
 	}
 
-
 	@Contribute(SymbolSource.class)
 	public void contributePropertiesFileAsSymbols(
 			OrderedConfiguration<SymbolProvider> configuration) {
@@ -61,13 +61,14 @@ public class DAOSQLModule {
 	@Marker(MainDB.class)
 	public static DBConnectionPoolService buildGrapheneConnectionPool(
 			RegistryShutdownHub ptm,
+			@Inject JDBCUtil util,
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_URL) String serverUrl,
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) String userName,
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_PASSWORD) String userPassword,
 			final Logger logger) throws Exception {
 
 		final DBConnectionPoolService cps = new DBConnectionPoolService(logger,
-				serverUrl, userName, userPassword, true);
+				util, serverUrl, userName, userPassword, true);
 
 		ptm.addRegistryShutdownListener(new Runnable() {
 			public void run() {

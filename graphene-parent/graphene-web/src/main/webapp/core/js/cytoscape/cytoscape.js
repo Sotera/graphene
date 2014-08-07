@@ -8260,7 +8260,7 @@ var cytoscape;
 			link.style['-webkit-tap-highlight-color'] = 'transparent';
 			link.style.background = 'red';
 
-			link.href = 'http://cytoscape.github.io/cytoscape.js/';
+			link.href = 'http://github.com/Sotera/graphene/';
 			link.target = '_blank';
 
 		}

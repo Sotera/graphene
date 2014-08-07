@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class EmailAddress {
 
 	private String datasource_id;
+	@Deprecated
 	private String fulladdress = null;
 	private String id;
 

@@ -68,7 +68,7 @@ public class DirectedEventDataSource implements GridDataSource {
 			q.setFirstResult(startIndex);
 			q.setMaxResult(endIndex - startIndex + 1);
 			q.addId(partialName);
-			// q.getAttributeList().add(
+			// q.addAttribute(
 			// new G_SearchTuple<String>(partialName, searchType));
 			try {
 				// FIXME: Need to set limit and offset in query object

@@ -12174,7 +12174,6 @@ opacity
 html {
 	margin: 0;
 	padding: 0;
-	height: 100%;
 	overflow-x: hidden !important;
 	background: url(../img/mybg.png) #fff
 }
@@ -12182,7 +12181,6 @@ html {
 body {
 	margin: 0;
 	padding: 0;
-	height: 100%;
 	overflow: hidden;
 	background: url(../img/mybg.png) #fff;
 	direction: ltr
@@ -14609,6 +14607,7 @@ img.away {
 
 .btn {
 	border-radius: 2px;
+	margin: 2px;
 	box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .05);
 	-webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .05)
 }

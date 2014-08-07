@@ -22,6 +22,9 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Taken largely from Neo4J 2.0, with our own additions.
  * 
@@ -32,6 +35,8 @@ import java.util.regex.Pattern;
 public class FileUtils {
 
 	private static int WINDOWS_RETRY_COUNT = 3;
+	private static final Logger logger = LoggerFactory
+			.getLogger(FileUtils.class);
 
 	public static ArrayList<File> getFiles(String path, String ext) {
 
@@ -60,6 +65,7 @@ public class FileUtils {
 	 */
 	public static String convertSystemProperties(String path) {
 		if (null == path) {
+			logger.error("A null path was provided");
 			return null;
 		}
 		// match ${ENV_VAR_NAME} or $ENV_VAR_NAME or %ENV_VAR_NAME%
@@ -80,7 +86,14 @@ public class FileUtils {
 			m.appendReplacement(sb, null == envVarValue ? "" : envVarValue);
 		}
 		m.appendTail(sb);
-		return sb.toString();
+		String newPath = sb.toString();
+		if (newPath.contains(" ")) {
+			logger.debug("Resolved path [" + newPath
+					+ "] contains spaces, so wrapping it in quotes for Windows");
+			newPath = "\"" + newPath + "\"";
+		}
+		logger.debug("New path = " + newPath);
+		return newPath;
 	}
 
 	public static void deleteRecursively(File directory) throws IOException {

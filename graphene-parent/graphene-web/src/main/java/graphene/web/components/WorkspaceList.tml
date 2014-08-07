@@ -105,6 +105,10 @@
 												${workspace.title}
 											</a>
 										</p:titleCell>
+										<p:lastModifiedCell>
+											<t:graphene.jodatimeoutput value="workspace.lastmodified"
+												formatter="ISODate" />
+										</p:lastModifiedCell>
 									</t:jquery.datatable>
 									<!-- end table content -->
 								</div>

@@ -1,14 +1,32 @@
 package graphene.util;
 
-public class Triple<A, B, C> {
+import java.io.Serializable;
+
+/**
+ * A generic structure for holding a triple of related data
+ * 
+ * @author djue
+ * 
+ * @param <A>
+ * @param <B>
+ * @param <C>
+ */
+public class Triple<A, B, C> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private A first;
 
 	private B second;
 
 	private C third;
+
 	public Triple() {
 		// TODO Auto-generated constructor stub
 	}
+
 	public Triple(A a, B b, C c) {
 		first = a;
 		second = b;
@@ -88,6 +106,18 @@ public class Triple<A, B, C> {
 
 	public void setThird(C third) {
 		this.third = third;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Triple [" + (first != null ? "first=" + first + ", " : "")
+				+ (second != null ? "second=" + second + ", " : "")
+				+ (third != null ? "third=" + third : "") + "]";
 	}
 
 }

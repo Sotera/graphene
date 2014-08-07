@@ -8176,7 +8176,7 @@ var cytoscape;
 			overlay.appendChild( link );
 			this.data.link = link;
 
-			link.innerHTML = 'cytoscape.js';
+			link.innerHTML = 'graphene';
 			link.style.font = '14px helvetica';
 			link.style.position = 'absolute';
 			link.style.right = 0;
@@ -8188,7 +8188,7 @@ var cytoscape;
 			link.style['-webkit-tap-highlight-color'] = 'transparent';
 			link.style.background = 'red';
 
-			link.href = 'http://cytoscape.github.io/cytoscape.js/';
+			link.href = 'http://github.com/Sotera/graphene/';
 			link.target = '_blank';
 
 		}

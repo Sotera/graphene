@@ -33,25 +33,16 @@ public class CytoscapeStack implements JavaScriptStack {
 			}
 		};
 
-		final String path = String.format(
-				"context:core/js/cytoscape/cytoscape%s.js", minified ? ".min"
-						: "");
-
 		javaScriptStack = F
-				.flow(path,
-						"context:core/js/cytoscape/cytoscape.js",
-						"context:core/js/cytoscape/arbor.js",
-						"context:core/js/cytoscape/jquery.cxtmenu.min.js",
-						"context:core/js/cytoscape/jquery.cytoscape-edgehandles.min.js",
-						"context:core/js/cytoscape/jquery.cytoscape-navigator.min.js",
-						"context:core/js/cytoscape/jquery.cytoscape-panzoom.min.js"
+				.flow("context:js/cytoscape.2.2.11/cytoscape.js",
+						"context:js/cytoscape.2.2.11/arbor.js"
 
 				).map(pathToAsset).toList();
 
 		final Mapper<String, StylesheetLink> pathToStylesheetLink = F.combine(
 				pathToAsset, JQueryUtils.assetToStylesheetLink);
 		cssStack = F
-				.flow("context:core/js/cytoscape/cytoscape.css",
+				.flow("context:core/css/cytoscapeT5.css",
 						"context:core/js/cytoscape/jquery.cytoscape-navigator.css",
 						"context:core/js/cytoscape/jquery.cytoscape-panzoom.css")
 				.map(pathToStylesheetLink).toList();

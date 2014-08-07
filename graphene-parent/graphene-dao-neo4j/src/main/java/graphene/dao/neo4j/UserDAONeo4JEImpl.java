@@ -1,5 +1,6 @@
 package graphene.dao.neo4j;
 
+import graphene.business.commons.exception.DataAccessException;
 import graphene.dao.UserDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.model.idl.AuthenticationException;
@@ -7,7 +8,6 @@ import graphene.model.idl.G_GroupFields;
 import graphene.model.idl.G_RelationshipType;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserFields;
-import graphene.model.query.DataAccessException;
 import graphene.util.ExceptionUtil;
 import graphene.util.crypto.PasswordHash;
 import graphene.util.validator.ValidationUtils;

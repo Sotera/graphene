@@ -108,7 +108,7 @@ public class AbstractTable implements ClientElement {
 	 * are case-insensitive. This parameter is only used when a default model is
 	 * created automatically.
 	 */
-	@SuppressWarnings("unused")
+
 	@Parameter(defaultPrefix = BindingConstants.LITERAL)
 	private String include;
 
@@ -134,7 +134,7 @@ public class AbstractTable implements ClientElement {
 	/**
 	 * The current value, set before the component renders its body.
 	 */
-	@SuppressWarnings("unused")
+
 	@Parameter
 	private Object value;
 

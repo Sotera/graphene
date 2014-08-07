@@ -52,7 +52,7 @@ public enum G_SearchType {
 	COMPARE_CONTAINS(
 			10,
 			"contains",
-			"CONTAINS in uses a special text index and can be faster than LIKE, it set up correctly."),
+			"CONTAINS in uses a special text index and can be faster than LIKE, if set up correctly."),
 
 	COMPARE_INVALID(999, "", "Invalid Search Type");
 	private int index;

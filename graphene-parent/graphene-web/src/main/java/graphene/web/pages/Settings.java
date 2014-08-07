@@ -3,7 +3,6 @@ package graphene.web.pages;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.web.pages.pub.Login;
-import graphene.web.security.AuthenticatorHelper;
 
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -39,13 +38,8 @@ public class Settings {
 	@Component
 	private Form settingsForm;
 
-	private String userId;
-
 	@SessionState(create = false)
 	private G_User user;
-
-	private boolean userExists;
-
 
 	@Inject
 	private Logger logger;

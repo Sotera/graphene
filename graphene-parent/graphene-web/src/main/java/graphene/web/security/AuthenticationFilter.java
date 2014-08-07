@@ -3,7 +3,6 @@ package graphene.web.security;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
-import graphene.web.annotations.AnonymousAccess;
 import graphene.web.annotations.ProtectedPage;
 import graphene.web.commons.IIntermediatePage;
 import graphene.web.pages.Index;

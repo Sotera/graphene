@@ -1,9 +1,5 @@
 package graphene.dao.neo4j;
 
-import graphene.dao.EntityGraphDAO;
-import graphene.dao.GroupDAO;
-import graphene.dao.UserDAO;
-import graphene.dao.WorkspaceDAO;
 import graphene.dao.neo4j.advice.Neo4JTransactionalAdvisor;
 import graphene.dao.neo4j.advice.Neo4JTransactionalAdvisorImpl;
 import graphene.dao.neo4j.annotations.DataGraph;
@@ -25,19 +21,13 @@ import org.apache.tapestry5.ioc.annotations.Match;
  */
 public class DAONeo4JEModule {
 	public static void bind(ServiceBinder binder) {
-		binder.bind(EntityGraphDAO.class, EntityGraphDAONeo4JEImpl.class);
+
 		binder.bind(Neo4JEmbeddedService.class).withId("UnifiedEntity")
 				.withMarker(DataGraph.class).scope(ScopeConstants.DEFAULT);
 		binder.bind(Neo4JEmbeddedService.class).withId("UserGraph")
 				.withMarker(UserGraph.class).scope(ScopeConstants.DEFAULT);
-		binder.bind(GroupDAO.class, GroupDAONeo4JEImpl.class);
-		binder.bind(WorkspaceDAO.class, WorkspaceDAONeo4JEImpl.class);
-		binder.bind(UserDAO.class, UserDAONeo4JEImpl.class).eagerLoad();
-		
 	}
 
-	
-	
 	/**
 	 * Builds the advisor for the UserGraph database. Note that since we can
 	 * have multiple Neo4J instances running, we have to build the advise for
@@ -76,6 +66,13 @@ public class DAONeo4JEModule {
 	@DataGraph
 	public static void contributeDataGraph(
 			MappedConfiguration<String, String> configuration) {
+		/*
+		 * Note: this is the default location. To override this in a customer
+		 * implementation, repeat this method (and it's annotations) in a
+		 * customer module, but use configuration.override() instead of
+		 * configuration.add() to override this default and use the path you
+		 * want.
+		 */
 		configuration.add("propertiesFileLocation", "DataGraph.properties");
 	}
 
@@ -89,6 +86,13 @@ public class DAONeo4JEModule {
 	@UserGraph
 	public static void contributeUserGraph(
 			MappedConfiguration<String, String> configuration) {
+		/*
+		 * Note: this is the default location. To override this in a customer
+		 * implementation, repeat this method (and it's annotations) in a
+		 * customer module, but use configuration.override() instead of
+		 * configuration.add() to override this default and use the path you
+		 * want.
+		 */
 		configuration.add("propertiesFileLocation", "UserGraph.properties");
 	}
 }

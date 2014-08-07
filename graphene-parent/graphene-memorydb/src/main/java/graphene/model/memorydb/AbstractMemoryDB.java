@@ -5,9 +5,7 @@ import graphene.dao.IdTypeDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
-import graphene.model.query.EntityRefQuery;
 import graphene.model.query.SearchFilter;
-import graphene.model.query.StringQuery;
 import graphene.model.view.entities.CustomerDetails;
 import graphene.model.view.entities.IdType;
 import graphene.util.G_CallBack;
@@ -41,37 +39,33 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 	protected static MemIndex identifiers;
 	private static Logger logger = LoggerFactory
 			.getLogger(AbstractMemoryDB.class);
-	private static long nRows;
+	// private static long nRows;
 	private static final int STATE_LOAD_GRID = 2;
 	protected static final int STATE_LOAD_STRINGS = 1;
 	protected Set<String> accountSet;
-	String[] communicationIdArray;
-	protected Set<String> communicationIdSet;
-	protected List<G_CanonicalPropertyType> communicationTypes;
 
 	protected Set<String> customerSet;
 
 	@Inject
-	private EntityRefDAO<T, EntityRefQuery> dao;
+	private EntityRefDAO<T, ?> dao;
 
 	protected boolean enabled = false;
 
 	protected Set<String> identifierSet;
 
 	@Inject
-	protected IdTypeDAO<I, StringQuery> idTypeDAO;
+	protected IdTypeDAO<?, ?> idTypeDAO;
 
 	protected HashMap<Integer, Integer> invalidTypes = new HashMap<Integer, Integer>(
 			10);
 
 	private boolean loaded;
-	String[] nameArray;
-	protected Set<String> nameSet;
 	protected long numProcessed = 0;
 	protected int state;
 
-	public AbstractMemoryDB() {
-		super();
+	public AbstractMemoryDB(EntityRefDAO<T, ?> dao, IdTypeDAO<?, ?> idTypeDAO) {
+		this.dao = dao;
+		this.idTypeDAO = idTypeDAO;
 	}
 
 	public abstract boolean callBack(T p);
@@ -81,7 +75,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			String family, boolean rowPerAccount) {
 		Set<String> customersFound = new HashSet<String>();
 		List<CustomerDetails> results = new ArrayList<CustomerDetails>();
-		// MemoryDB mem = MemoryDB.getInstance();
 
 		Set<MemRow> dbResults = getRowsForIdentifier(identifier);
 		Set<String> accounts = new HashSet<String>();
@@ -139,42 +132,54 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 		if (filters.size() == 1) {
 			SearchFilter f = srch.getFilters().get(0);
-			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS)
+			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS) {
 				return exactMatch(f);
+			}
 		}
 		// TODO: can improve by doing the exact match first if it is
 		// one of multiple filters
 		String val;
 		int pass = 0;
-
+		int limit = srch.getLimit();
+		int numberFound = 0;
 		for (SearchFilter f : filters) {
-
-			++pass;
-
+			pass++;
 			logger.trace("About to scan grid with filter " + f);
 			results.clear();
 
 			for (MemRow r : grid) {
-				if (r == null)
+				if (r == null) {
 					break; // TODO: find out why we are getting a null and
 							// whether it means we are at the end
+				}
 				if ((pass > 1)
 						&& (!pastResults
-								.contains(getCustomerNumberForID(r.entries[CUSTOMER]))))
+								.contains(getCustomerNumberForID(r.entries[CUSTOMER])))) {
 					continue; // This is not the first pass and not found in
 								// earlier pass
+				}
 				val = getIdValueForID(r.entries[IDENTIFIER]);
-				if (val == null)
+				if (val == null) {
 					continue;
-
+				}
 				String family = idTypeDAO.getFamily(r.getIdType());
-				if (family == null)
+				if (family == null) {
 					continue;
+				}
 				found = f.doCompare(val, family);
-				if (found)
-					results.add(getCustomerNumberForID(r.entries[CUSTOMER]));
+				if (found) {
+					numberFound++;
+					if (numberFound >= srch.getStart()) {
+						results.add(getCustomerNumberForID(r.entries[CUSTOMER]));
+					}
+				}
+				if ((results.size() + pastResults.size()) > limit) {
+					logger.info("There were more results than will be returned.  Only returning "
+							+ limit);
+					break;
+				}
 			} // each row
-			logger.trace("Done scan grid with " + results.size() + "results");
+			logger.debug("Done scan grid with " + results.size() + " results");
 			pastResults.clear();
 			pastResults.addAll(results);
 
@@ -224,8 +229,9 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		Set<String> results = new HashSet<String>();
 		for (String s : identifiers.getValues()) {
 			ms = p.matcher(s);
-			if (ms.find(0) && isIdFamily(s, family))
+			if (ms.find(0) && isIdFamily(s, family)) {
 				results.add(s);
+			}
 		}
 		return results;
 	}
@@ -248,7 +254,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		try {
 			dmcomp = (String) dm.encode((Object) name);
 		} catch (EncoderException e) {
-			// TODO report an error
 			e.printStackTrace();
 			return results;
 		}
@@ -400,10 +405,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		} else {
 			logger.info("MemoryDB intends to load all records");
 		}
-		// TODO: expand this setup logic
-		communicationTypes = new ArrayList<G_CanonicalPropertyType>();
-		communicationTypes.add(G_CanonicalPropertyType.EMAIL);
-		communicationTypes.add(G_CanonicalPropertyType.PHONE);
 		/*
 		 * How this works: We do two passes through the database. On the first
 		 * pass we create sets of unique values for identifier,customer, and
@@ -424,27 +425,15 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 		if (success) {
 			test(100000);
-			try {
-				logger.debug("Counting rows...");
-				nRows = dao.count(null);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
-			if (nRows == 0) {
+			if (numProcessed == 0) {
 				logger.error("There were no rows to load. ");
 			} else {
-				if (nRows > Integer.MAX_VALUE) {
-					logger.warn("There were too many rows.  Application will only load up to  "
-							+ maxRecords);
-					nRows = maxRecords;
-				} else {
-					logger.info("There are a maximum of " + nRows + " to load.");
-				}
 
 				// Only make an array for the total number of rows we will
 				// actually load
-				grid = new MemRow[(int) nRows];
+				logger.debug("Creating an array of memrows with size "
+						+ numProcessed);
+				grid = new MemRow[(int) numProcessed];
 				boolean successOnLoadGrid = loadGrid(maxRecords);
 
 				if (successOnLoadGrid) {
@@ -548,8 +537,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		identifierSet = new HashSet<String>();
 		customerSet = new HashSet<String>();
 		accountSet = new HashSet<String>();
-		nameSet = new HashSet<String>();
-		communicationIdSet = new HashSet<String>();
 		numProcessed = 0;
 		boolean loadStringsSuccessful = dao.performCallback(0, maxRecords,
 				this, null);
@@ -563,18 +550,9 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			String[] accountArray = (String[]) accountSet
 					.toArray(new String[accountSet.size()]);
 
-			logger.debug("Number of unique communication ids "
-					+ communicationIdSet.size());
-
-			nameArray = (String[]) nameSet.toArray(new String[nameSet.size()]);
-			communicationIdArray = (String[]) communicationIdSet
-					.toArray(new String[nameSet.size()]);
-
-			identifierSet = null; // give back the memory
+			identifierSet = null;
 			customerSet = null;
 			accountSet = null;
-			nameSet = null;
-			communicationIdSet = null;
 
 			identifiers.load(idArray);
 			customers.load(customerArray);

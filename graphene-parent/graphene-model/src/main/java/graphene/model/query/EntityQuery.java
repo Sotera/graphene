@@ -1,50 +1,63 @@
 package graphene.model.query;
 
-import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_SearchTuple;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class EntityQuery extends BasicQuery {
 	private List<G_SearchTuple<String>> attributeList = new ArrayList<G_SearchTuple<String>>(
 			1);
 
-	private G_CanonicalPropertyType family;
 	private boolean caseSensitive = false;
 	private boolean customerQueryFlag = true;
 
-	/**
-	 * Change all settings to their default values.
-	 */
-	public void clearSettings() {
-		attributeList.clear();
-		family = null;
-		caseSensitive = false;
-		customerQueryFlag = true;
+	public void addAttribute(Collection<G_SearchTuple<String>> attr) {
+		attributeList.addAll(attr);
 	}
 
-	public List<G_SearchTuple<String>> getAttributeList() {
+	public void addAttribute(G_SearchTuple<String> attr) {
+		attributeList.add(attr);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EntityQuery other = (EntityQuery) obj;
+		if (attributeList == null) {
+			if (other.attributeList != null)
+				return false;
+		} else if (!attributeList.equals(other.attributeList))
+			return false;
+		if (caseSensitive != other.caseSensitive)
+			return false;
+		if (customerQueryFlag != other.customerQueryFlag)
+			return false;
+		return true;
+	}
+
+	/**
+	 * @return the attributeList
+	 */
+	public final List<G_SearchTuple<String>> getAttributeList() {
 		return attributeList;
 	}
 
-	public void setAttributeList(List<G_SearchTuple<String>> attributeList) {
-		this.attributeList = attributeList;
-	}
-
-	/**
-	 * @return the family
-	 */
-	public G_CanonicalPropertyType getFamily() {
-		return family;
-	}
-
-	/**
-	 * @param family
-	 *            the family to set
-	 */
-	public void setFamily(G_CanonicalPropertyType family) {
-		this.family = family;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((attributeList == null) ? 0 : attributeList.hashCode());
+		result = prime * result + (caseSensitive ? 1231 : 1237);
+		result = prime * result + (customerQueryFlag ? 1231 : 1237);
+		return result;
 	}
 
 	/**
@@ -52,6 +65,17 @@ public class EntityQuery extends BasicQuery {
 	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
+	}
+
+	/**
+	 * @return the customerQueryFlag
+	 */
+	public boolean isCustomerQueryFlag() {
+		return customerQueryFlag;
+	}
+
+	public void setAttributeList(List<G_SearchTuple<String>> attributeList) {
+		this.attributeList = attributeList;
 	}
 
 	/**
@@ -63,18 +87,18 @@ public class EntityQuery extends BasicQuery {
 	}
 
 	/**
-	 * @return the customerQueryFlag
-	 */
-	public boolean isCustomerQueryFlag() {
-		return customerQueryFlag;
-	}
-
-	/**
 	 * @param customerQueryFlag
 	 *            the customerQueryFlag to set
 	 */
 	public void setCustomerQueryFlag(boolean customerQueryFlag) {
 		this.customerQueryFlag = customerQueryFlag;
+	}
+
+	@Override
+	public String toString() {
+		return "EntityRefQuery [attributeList=" + attributeList
+				+ ", caseSensitive=" + caseSensitive + ", customerQueryFlag="
+				+ customerQueryFlag + "]";
 	}
 
 }

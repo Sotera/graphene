@@ -18,13 +18,6 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
-/**
- * The services that let you search for a Ledger This is the only service
- * returning JSON. See LedgerXLS and LedgerCVS for other available formats.
- * 
- * @author pgofton
- * 
- */
 
 public class EventServerRSImpl implements EventServerRS {
 
