@@ -34,8 +34,8 @@ public class CytoscapeStack implements JavaScriptStack {
 		};
 
 		javaScriptStack = F
-				.flow("context:js/cytoscape.2.2.11/cytoscape.js",
-						"context:js/cytoscape.2.2.11/arbor.js"
+				.flow("context:core/js/cytoscape.2.2.11/cytoscape.js",
+						"context:core/js/cytoscape.2.2.11/arbor.js"
 
 				).map(pathToAsset).toList();
 
