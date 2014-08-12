@@ -10,7 +10,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-core</artifactId>
+			<artifactId>titan-all</artifactId>
 			<version>0.4.4</version>
 		</dependency>
 		<dependency>
@@ -23,11 +23,22 @@
 			<artifactId>rexster-protocol</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>com.tinkerpop.rexster</groupId>
-			<artifactId>rexster-kibbles</artifactId>
-			<version>2.5.0</version>
-		</dependency> -->
 
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-ioc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+		</dependency>
 	</dependencies>
 </project>

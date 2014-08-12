@@ -16,10 +16,10 @@ import com.tinkerpop.rexster.client.RexsterClientFactory;
  * @author djue
  * 
  */
-public class TitanConnection {
+public class RexterConnectionTest {
 
 	public static  Logger logger = LoggerFactory
-			.getLogger(TitanConnection.class);
+			.getLogger(RexterConnectionTest.class);
 
 	/**
 	 * @param args

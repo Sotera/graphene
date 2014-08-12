@@ -633,6 +633,21 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		<!-- T5 Jquery integration (only needed for <= 5.3.x) -->
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>devlab722-repo</id>
+			<url>http://nexus.devlab722.net/nexus/content/repositories/releases</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<id>devlab722-snapshot-repo</id>
+			<url>http://nexus.devlab722.net/nexus/content/repositories/snapshots</url>
+		</repository>
 	</repositories>
 	<build>
 		<pluginManagement>
