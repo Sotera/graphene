@@ -109,6 +109,10 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<!-- This section defines the specific versions of dependencies, and allows 
@@ -613,20 +617,21 @@
 			<name>GitHub</name>
 			<url>http://trsvax.github.com/tapestry-bootstrap/repository/</url>
 		</repository>
-		<!-- T5 Jquery integration (only needed for <= 5.3.x) -->
 		<repository>
+			<id>vande-mvn-repo</id>
+			<url>https://raw.github.com/Sotera/vande/mvn-repo/</url>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
 			</snapshots>
-			<id>devlab722-repo</id>
-			<url>http://nexus.devlab722.net/nexus/content/repositories/releases</url>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<id>devlab722-snapshot-repo</id>
-			<url>http://nexus.devlab722.net/nexus/content/repositories/snapshots</url>
+			<id>batch-insert-graphene-mvn-repo</id>
+			<url>https://raw.github.com/danieljue/batch-import-graphene/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 		</repository>
 	</repositories>
 	<build>
