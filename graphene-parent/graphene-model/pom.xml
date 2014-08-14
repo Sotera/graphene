@@ -115,13 +115,13 @@
 	<profiles>
 		<profile>
 			<id>codegen</id>
-			<!-- use mvn -Pcodegen to create Avro classes. -->
+			<!-- use 'mvn -Pcodegen generate-sources' to create Avro classes. -->
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.avro</groupId>
 						<artifactId>avro-maven-plugin</artifactId>
-						<version>1.7.6</version>
+						<version>${avro.version}</version>
 						<executions>
 							<execution>
 								<phase>generate-sources</phase>
@@ -160,18 +160,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>UTF-8</encoding>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-					</archive>
-				</configuration>
 			</plugin>
-
 		</plugins>
 
 		<pluginManagement>
@@ -189,7 +178,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.avro</groupId>
 										<artifactId>avro-maven-plugin</artifactId>
-										<versionRange>[1.7.5,)</versionRange>
+										<versionRange>[${avro.version},)</versionRange>
 										<goals>
 											<goal>schema</goal>
 											<goal>idl-protocol</goal>

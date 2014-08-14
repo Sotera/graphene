@@ -59,7 +59,7 @@
 		<commons-logging.version>1.1.1</commons-logging.version>
 		<commons-beanutils.version>1.9.0</commons-beanutils.version>
 		<commons-dbutils.version>1.5</commons-dbutils.version>
-		<avro.version>1.7.5</avro.version>
+		<avro.version>1.7.6</avro.version>
 		<kryo.version>2.24.0</kryo.version>
 		<slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
 		<jxl.version>2.6.12</jxl.version>
@@ -778,10 +778,7 @@
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>${maven.dependency.plugin.version}</version>
 				</plugin>
-				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${maven-surefire-plugin.version}</version>
-				</plugin>
+
 				<plugin>
 					<!-- TODO: Switch to version >= 2.4 if we plan to build wars on a *nix 
 						machine -->

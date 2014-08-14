@@ -212,7 +212,12 @@ protocol G_DataTypes {
 		CREATOR_OF,
 		FRIEND_OF,
 		ENEMY_OF,
-		KNOWS
+		KNOWS,
+		SENT,
+		TO,
+		CC,
+		BCC,
+		ALIAS_OF
 		
 	}
 	

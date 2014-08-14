@@ -300,9 +300,9 @@ public class UserServiceImpl implements G_UserDataAccess {
 		return pDao.getForRole(role);
 	}
 
-	@Override
-	public String getPasswordHash(String username, String password) {
-		return uDao.getPasswordHash(username, password);
-	}
+//	@Override
+//	public String getPasswordHash(String username, String password) {
+//		return uDao.getPasswordHash(username, password);
+//	}
 
 }
