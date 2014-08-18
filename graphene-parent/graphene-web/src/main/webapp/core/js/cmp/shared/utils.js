@@ -38,7 +38,7 @@ var utils = {
 		if (undefined==frame.originalTitle)
 			frame.originalTitle=frame.title;
 		if (blink)
-			frame.setIcon("extjs/resources/themes/images/access/grid/wait.gif");
+			frame.setIcon("core/js/libs/extjs/resources/themes/images/access/grid/wait.gif");
 		else
 			frame.setIcon("");
 	},
