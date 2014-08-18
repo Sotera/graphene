@@ -45,7 +45,7 @@ Ext.define("DARPA.GraphLayoutMenu", {
 				} // END DEFAULT GRID LAYOUT
 			}] // END GRID LAYOUT MENUS
 		}, {
-			text: "Heirarchical Layouts",
+			text: "Hierarchical Layouts",
 			menu: [{
 				text: "Breadth-First",
 				handler: function(item) {
