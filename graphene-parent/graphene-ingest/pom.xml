@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.0.8-SNAPSHOT</version>
+		<version>4.0.9-SNAPSHOT</version>
 	</parent>
 	<artifactId>graphene-ingest</artifactId>
 	<name>${project.artifactId}</name>
@@ -31,23 +31,9 @@
         </resource>
 		</resources>
 	</build>
-	<repositories>
-		<repository>
-			<id>batch-insert-graphene-mvn-repo</id>
-			<url>https://raw.github.com/danieljue/batch-import-graphene/mvn-repo/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
+
 	<dependencies>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>batch-import</artifactId><!-- Note that for now, this is being 
-				manually synced to the neo4j version used elsewhere. -->
-			<version>2.0.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>graphene</groupId>
 			<artifactId>graphene-model</artifactId>
@@ -60,10 +46,7 @@
 			<groupId>graphene</groupId>
 			<artifactId>graphene-dao</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>graphene</groupId>
-			<artifactId>graphene-dao-neo4j</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>graphene</groupId>
 			<artifactId>graphene-dao-sql</artifactId>

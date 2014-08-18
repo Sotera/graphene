@@ -26,7 +26,7 @@
  Services for clustering
 */
 protocol G_Clustering {
-	import idl "DataTypes_v4.0.avdl";
+	import idl "DataTypes_v4.1.avdl";
 	
 	/**
 	 Clusters are associated with a context.  This method creates a context and returns the unique context id that must be used for other cluster api methods

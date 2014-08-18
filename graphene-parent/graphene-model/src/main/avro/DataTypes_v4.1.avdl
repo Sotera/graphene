@@ -182,43 +182,141 @@ protocol G_DataTypes {
 	}
 
 	/**
-	 * This is the current list of tags for Links (aka edges):
-	 */
-	enum G_LinkTag {
-		FINANCIAL,
-		SOCIAL,
-		COMMUNICATION,
-		EVENT,
-		OTHER,
-		REDACTED,	 	/**
-						 * The 21st century meaning, "conceal from unauthorized
-						 * view; censor but do not destroy"
-						 */
-		FATHER_OF,
-		SON_OF,
-		MOTHER_OF,
-		DAUGHTER_OF,
-		BROTHER_OF,
-		SISTER_OF,
-		GUARDIAN_OF,
-		KIN_OF,
-		COUSIN_OF,
-		WIFE_OF,
-		HUSBAND_OF,
-		EMPLOYEE_OF,
-		OWNER_OF,
-		SELLER_OF,
-		BUYER_OF,
-		CREATOR_OF,
-		FRIEND_OF,
-		ENEMY_OF,
-		KNOWS,
-		SENT,
-		TO,
-		CC,
-		BCC,
-		ALIAS_OF
+	 * This is the current list of tags for Links (aka edges). 
+	 * Probing the Internet for an expansive list of definitions quickly gets us into philosophical territory.  
+	 * Instead we propose to add to the list as necessary, and gain wisdom as developers as the list expands and contracts.
+	 * As you can see we try to stay human centered since many applications revolve around humans.
+	 *  
+ 	 * What can be said to exist?
+ 	 * 
+ 	 * Into what categories, if any, can we sort existing things?
+ 	 * 
+ 	 * What are the meanings of being?
+	 * 
+ 	 * What are the various modes of being of entities?
+	 * 
+ 	 * What is existence, i.e. what does it mean for a being to be?
+	 * 
+ 	 * Is existence a property?
+	 * 
+ 	 * Is existence a genus or general class that is simply divided up by specific differences?
+	 * 
+ 	 * Which entities, if any, are fundamental?
+	 * 
+ 	 * Are all entities objects?
+	 * 
+ 	 * How do the properties of an object relate to the object itself?
+	 * 
+ 	 * What features are the essential, as opposed to merely accidental attributes of a given object?
+	 * 
+ 	 * How many levels of existence or ontological levels are there? And what constitutes a 'level'?
+	 * 
+ 	 * What is a physical object?
+	 * 
+ 	 * Can one give an account of what it means to say that a physical object exists?
+	 * 
+ 	 * Can one give an account of what it means to say that a non-physical entity exists?
+	 * 
+ 	 * What constitutes the identity of an object?
+	 * 
+ 	 * When does an object go out of existence, as opposed to merely changing?
+	 * 
+ 	 * Do beings exist other than in the modes of objectivity and subjectivity, i.e. is the subject/object split of modern philosophy inevitable?
+	 * 
+ 	 */
+	enum G_RelationshipType {
+		ISA, 				// ENTITY to def
+		SUPERSEDES, 		// n to n_old
+		HAS_ID,				// n to n		
+		MAY_BE_THE_SAME, 	// n to n
+		RELATED_TO_ID, 		// id to id
+		HAS_GLOBAL_ID,		// n to n
+		OTHER,				// n to n
+		STARTED_ON,			// date to n
+		ENDED_ON,			// date to n
+		BORN_ON,			// date to ENTITY
+		DIED_ON,			// date to ENTITY
+		IN_REPORT,			// ENTITY to report
+		IN_DOCUMENT, 		// ENTITY to document
+		IN_EVENT,			// ENTITY to event
 		
+
+		CREATOR_OF,			// ENTITY to n
+		FRIEND_OF,			// ENTITY to ENTITY
+		ENEMY_OF,			// ENTITY to ENTITY
+		LOVES, 				// ENTITY to ENTITY
+		HATES, 				// ENTITY to ENTITY
+		KNOWS, 				// ENTITY to ENTITY
+		FAMILIAL_TIE, 		// ENTITY to ENTITY
+		KIN_OF,				// ENTITY to ENTITY
+		GUARDIAN_OF,		// ENTITY to ENTITY
+		FATHER_OF,			// ENTITY to ENTITY
+		SON_OF,				// ENTITY to ENTITY
+		MOTHER_OF,			// ENTITY to ENTITY
+		DAUGHTER_OF,		// ENTITY to ENTITY
+		BROTHER_OF,			// ENTITY to ENTITY
+		SISTER_OF,			// ENTITY to ENTITY
+		COUSIN_OF,			// ENTITY to ENTITY
+		WIFE_OF,			// ENTITY to ENTITY
+		HUSBAND_OF,			// ENTITY to ENTITY
+		MARRIED_TO, 		// ENTITY to ENTITY
+		SKILL_OF, 			// skill to ENTITY
+		PERSONAL_FACTOR_OF, // personal factor to ENTITY
+		ATTRIBUTE_OF, 		// attribute to ENTITY
+		COMMUNICATION_ID_OF,// id to ENTITY
+		DEVICE_OF,			// id to ENTITY
+		PROPER_NAME_OF,		// name to ENTITY
+		USERNAME_OF,		// name to ENTITY
+		ALIAS_OF,			// name to ENTITY
+		ADDRESS_OF, 		// address to ENTITY
+		GEOLOCATION_OF, 	// geolocation to ENTITY
+		GOVERNMENT_ID_OF, 	// id to ENTITY
+		MEMBER_OF, 			// ENTITY to group||company||government
+		PART_OF, 			// ENTITY to group||company||government
+		COMMERCIAL_ID_OF, 	// id to ENTITY
+		HAS_PATRONAGE, 		// ENTITY to company
+		SELLER_OF,			// ENTITY to n
+		BUYER_OF,			// ENTITY to n
+		TRANSACTION,		// ENTITY to ENTITY (shortcut for non bipartite graphs)
+				
+		PHYSICAL_PROPERTY_OF, 	// physical property to n
+		BIOLOGICAL_PROPERTY_OF, // biological property to n
+		GENETIC_TRAIT_OF, 	// genetic fragment to n
+		PRECURSOR_OF, 		// genetic fragment to n
+		DECAY_PRODUCT_OF, 	// atom to atom
+		ISOTOPE_OF, 		// atom to atom
+		USED_IN,	 		// n to subject
+		EFFECT_OF,	 		// n to subject
+		
+		PLACED_CALL, 		// ENTITY to ENTITY
+		RECEIVED_CALL, 		// ENTITY to ENTITY
+		SENT_MAIL, 			// ENTITY to ENTITY
+		EMAIL_FORWARD_OF, 	// EMAIL_CONTENTS to EMAIL_CONTENTS
+		EMAIL_REPLY_TO, 	// EMAIL_CONTENTS to EMAIL_CONTENTS
+		SENT_EMAIL, 		// EMAIL_ADDRESS to EMAIL_CONTENTS
+		EMAIL_TO, 			// EMAIL_CONTENTS to EMAIL_ADDRESS
+		EMAIL_BCC, 			// EMAIL_CONTENTS to EMAIL_ADDRESS
+		EMAIL_CC, 			// EMAIL_CONTENTS to EMAIL_ADDRESS
+		WORKED_ON,			// ENTITY to Subject
+		WORKS_FOR,			// ENTITY to ENTITY
+		EMPLOYEE_OF,		// ENTITY to ENTITY
+		OWNER_OF,			// ENTITY to ENTITY
+		INTERESTED_IN,		// ENTITY to Subject
+		WORKED_WITH,		// ENTITY to ENTITY
+		MANAGES,			// ENTITY to ENTITY
+		CONTROLS,			// ENTITY to ENTITY
+		PEER_OF,			// ENTITY to ENTITY
+		POSITIVELY_BENEFITS,// n to n (mutualism)
+		NEUTRALLY_BENEFITS,	// n to n (commensalism)
+		NEGATIVELY_BENEFITS,// n to n (parasitsm)
+		
+	
+		REDACTED			/**
+							 * The 21st century meaning, "conceal from unauthorized
+							 * view; censor but do not destroy"
+							 */
+
+
 	}
 	
 	/**
@@ -680,7 +778,7 @@ protocol G_DataTypes {
 		array<G_Property> properties;
 		
 		/** Link Tags */
-		array<G_LinkTag> tags;
+		array<G_RelationshipType> tags;
 	}
 	/**
 	 * Cluster of nodes in the social, financial, communications or other

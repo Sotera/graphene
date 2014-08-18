@@ -25,7 +25,7 @@
 /**
 */
 protocol G_DataAccess {
-	import idl "DataTypes_v4.0.avdl";
+	import idl "DataTypes_v4.1.avdl";
 
 	/**
 	 Sort type for temporal data with a numeric payload
@@ -153,7 +153,7 @@ protocol G_DataAccess {
 		union {array<string>, null} focusEntities,
 		G_DirectionFilter direction,
 		G_LinkEntityTypeFilter entityType,
-		union {G_LinkTag, null} tag,
+		union {G_RelationshipType, null} tag,
 		union {G_DateRange, null} date);
 	
 	/**
@@ -174,7 +174,7 @@ protocol G_DataAccess {
 	map<array<G_Link>> getTimeSeriesAggregation(
 		array<string> entities,
 		union {array<string>, null} focusEntities,
-		union {G_LinkTag, null} tag,
+		union {G_RelationshipType, null} tag,
 		G_DateRange date);
 	
 	/**
@@ -201,7 +201,7 @@ protocol G_DataAccess {
 	 */
 	G_TransactionResults getAllTransactions(
 			array<string> entities,
-			union {G_LinkTag, null} tag,
+			union {G_RelationshipType, null} tag,
 			union {G_DateRange, null} date,
 			union {G_SortBy, null} sort,
 			union {array<string>, null} linkFilter, // ADDED IN 1.4

@@ -1,11 +1,11 @@
-package graphene.ingest;
+package graphene.ingest.neo4j;
 
 import graphene.dao.UserDAO;
-import graphene.ingest.neo4j.Neo4JTestModuleMinimum;
 import graphene.model.idl.G_RelationshipType;
 
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -24,7 +24,7 @@ public class SimpleNeo4JTest {
 
 	int numberOfRandomUpdates = 500;
 
-	//private Neo4JService service;
+	// private Neo4JService service;
 	private GraphDatabaseFactory graphDatabaseFactory;
 	private GraphDatabaseService graphDb;
 
@@ -35,16 +35,15 @@ public class SimpleNeo4JTest {
 		builder.add(Neo4JTestModuleMinimum.class);
 		Registry registry = builder.build();
 		registry.performRegistryStartup();
-		//service = registry.getService(Neo4JService.class, UserGraph.class);
-		//service.connectToGraph();
-		
+		// service = registry.getService(Neo4JService.class, UserGraph.class);
+		// service.connectToGraph();
+
 		if (graphDatabaseFactory == null) {
 			graphDatabaseFactory = new GraphDatabaseFactory();
 		}
 		graphDb = graphDatabaseFactory
 				.newEmbeddedDatabase("target/reallysimpletest");
-		
-		
+
 	}
 
 	@Test
@@ -54,11 +53,12 @@ public class SimpleNeo4JTest {
 			Node firstNode = graphDb.createNode();
 			firstNode.setProperty("message", "Hello, ");
 			Node secondNode = graphDb.createNode();
-			//secondNode.setProperty("message", "World!");
-			Relationship relationship = firstNode.createRelationshipTo( secondNode, G_RelationshipType.KNOWS );
+			// secondNode.setProperty("message", "World!");
+			Relationship relationship = firstNode.createRelationshipTo(
+					secondNode, DynamicRelationshipType
+							.withName(G_RelationshipType.KNOWS.name()));
 			tx.success();
 		}
 	}
-
 
 }

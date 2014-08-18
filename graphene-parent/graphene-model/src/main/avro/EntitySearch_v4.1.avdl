@@ -25,7 +25,7 @@
 /**
  */
 protocol G_EntitySearch {
-	import idl "Search_v4.0.avdl";
+	import idl "Search_v4.1.avdl";
 	
 	/**
 	 Used to add constraints for entity searches. The key indicates the property to make the constraint on, while the

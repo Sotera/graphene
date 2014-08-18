@@ -9,10 +9,6 @@ import mil.darpa.vande.converters.infovis.InfoVisGraphAdjacency;
 
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import com.thinkaurelius.titan.core.TitanGraph;
 
 public class EntityGraphDAOTitanTest {

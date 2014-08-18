@@ -23,7 +23,7 @@
 @namespace("graphene.model.idl")
 
 protocol G_DataTypes {
-	import idl "DataTypes_v4.0.avdl";
+	import idl "DataTypes_v4.1.avdl";
 
 
 	/**

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>graphene-parent</artifactId>
     <groupId>graphene</groupId>
-    <version>4.0.8-SNAPSHOT</version>
+    <version>4.0.9-SNAPSHOT</version>
   </parent>
   <artifactId>graphene-search</artifactId>
   <name>${project.artifactId}</name>

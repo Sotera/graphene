@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
@@ -36,7 +37,8 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		try (Transaction tx = beginTx()) {
 			Node u = getUserNodeByUsername(username);
 			Node g = getGroupNodeByGroupname(groupname);
-			u.createRelationshipTo(g, G_RelationshipType.MEMBER_OF);
+			u.createRelationshipTo(g, DynamicRelationshipType
+					.withName(G_RelationshipType.MEMBER_OF.name()));
 			tx.success();
 			return true;
 		}
@@ -138,9 +140,10 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.traversalDescription()
 						.depthFirst()
 						.evaluator(Evaluators.excludeStartPosition())
-						.relationships(G_RelationshipType.MEMBER_OF,
-								Direction.OUTGOING)
-						.relationships(G_RelationshipType.PART_OF,
+						.relationships(
+								DynamicRelationshipType.withName(G_RelationshipType.MEMBER_OF
+										.name()), Direction.OUTGOING)
+						.relationships(DynamicRelationshipType.withName(G_RelationshipType.PART_OF.name()),
 								Direction.OUTGOING);
 				Traverser traverser = traversalDescription.traverse(j);
 				for (Path path : traverser) {
@@ -178,7 +181,8 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		}
 		try (Transaction tx = beginTx()) {
 			for (Relationship r : u.getRelationships(Direction.OUTGOING,
-					G_RelationshipType.MEMBER_OF)) {
+					DynamicRelationshipType
+							.withName(G_RelationshipType.MEMBER_OF.name()))) {
 				if (r.getEndNode().hasLabel(GrapheneNeo4JConstants.groupLabel)
 						&& r.getEndNode().equals(g)) {
 					r.delete();

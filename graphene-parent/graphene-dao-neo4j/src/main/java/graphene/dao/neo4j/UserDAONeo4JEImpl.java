@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
@@ -237,7 +238,9 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.breadthFirst()
 						.evaluator(
 								Evaluators
-										.includeWhereLastRelationshipTypeIs(G_RelationshipType.MEMBER_OF));
+										.includeWhereLastRelationshipTypeIs(DynamicRelationshipType
+												.withName(G_RelationshipType.MEMBER_OF
+														.name())));
 
 				Traverser traverser = traversalDescription.traverse(j);
 				for (Path path : traverser) {

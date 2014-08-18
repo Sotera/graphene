@@ -26,8 +26,8 @@
  This defines an API for searching a graph-like database based on patterns.
  */
 protocol G_PatternSearch {
-	import idl "Search_v4.0.avdl";
-	import idl "FutureResults_v4.0.avdl";
+	import idl "Search_v4.1.avdl";
+	import idl "FutureResults_v4.1.avdl";
 	
 	/**
 	 Description of entity match criteria within a pattern.
@@ -106,7 +106,7 @@ protocol G_PatternSearch {
 		union{string, null} target;
 
 		/** entities should match AT LEAST ONE OF the given tags (e.g FINANCIAL, COMMUNICATION, SOCIAL), if provided */
-		union{array<G_LinkTag>, null} tags = null;
+		union{array<G_RelationshipType>, null} tags = null;
 		
 		/** entities should match ALL of the provided property descriptors (e.g. LABEL, etc), if provided */
 		union{array<G_PropertyMatchDescriptor>, null} properties = null;

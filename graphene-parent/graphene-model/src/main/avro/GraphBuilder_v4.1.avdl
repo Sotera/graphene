@@ -23,26 +23,11 @@
 @namespace("graphene.model.idl")
 
 /**
- Services for geocoding.
 */
-protocol G_Geocoding {
-	import idl "DataTypes_v4.0.avdl";
+protocol G_GraphBuilder {
+	import idl "GraphDataTypes_v4.1.avdl";
 	
-	
-	/**
-	 Geocodes the specified locations, populating missing properties in place. 
-	 
-	 @param locations	the locations to geocode.
-	 */
-	boolean geocode(array<G_GeoData> locations);
-	
-	/**
-	 Returns a list of country objects for the previously geolocated locations specified, based
-	 on country code.
-	 
-	 @param locations	the locations to lookup, which must contain a country code.
-	 @return 			a list of geocoded countries, in the same order as requested.
-	 */
-	array<G_Country> getCountries(array<G_GeoData> locations);
-	
+	G_Graph makeGraphResponse(string type,
+			array<string> values, int maxDegree, string nodeType);
+
 }

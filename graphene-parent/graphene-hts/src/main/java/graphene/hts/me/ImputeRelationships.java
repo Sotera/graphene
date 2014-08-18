@@ -33,10 +33,10 @@ public class ImputeRelationships {
 			fprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(),
 					G_CanonicalTruthValues.TRUE.toString());
 			createSafeRelationship(imputedFatherTriple.getFirst(),
-					G_RelationshipType.HAS_KIN, customerId1, fprops,
+					G_RelationshipType.KIN_OF, customerId1, fprops,
 					relationship_bf, hasKinRels);
 			createSafeRelationship(imputedFatherTriple.getFirst(),
-					G_RelationshipType.HAS_KIN, customerId2, fprops,
+					G_RelationshipType.KIN_OF, customerId2, fprops,
 					relationship_bf, hasKinRels);
 			/*
 			 * This below is a tricky experimental part, so hold on to your

@@ -26,8 +26,7 @@
  Data Access for clusters
 */
 protocol G_ClusteringDataAccess {
-	import idl "DataTypes_v4.0.avdl";
-
+	import idl "DataTypes_v4.1.avdl";
 	/**
 	 Sort type for transactions
 	 */
@@ -128,7 +127,7 @@ protocol G_ClusteringDataAccess {
 		array<string> entities,
 		union {array<string>, null} focusEntities,
 		G_DirectionFilter direction,
-		union {G_LinkTag, null} tag,
+		union {G_RelationshipType, null} tag,
 		union {G_DateRange, null} date,
 		string entitiesContextId,
 		union {string, null} focusContextId,
@@ -155,7 +154,7 @@ protocol G_ClusteringDataAccess {
 	map<array<G_Link>> getTimeSeriesAggregation(
 		array<string> entities,
 		union {array<string>, null} focusEntities,
-		union {G_LinkTag, null} tag,
+		union {G_RelationshipType, null} tag,
 		G_DateRange date,
 		string entitiesContextId,
 		union {string, null} focusContextId,
@@ -183,7 +182,7 @@ protocol G_ClusteringDataAccess {
 	 */
 	map<array<G_Link>> getAllTransactions(
 			array<string> entities,
-			union {G_LinkTag, null} tag,
+			union {G_RelationshipType, null} tag,
 			union {G_DateRange, null} date,
 			union {G_SortBy, null} sort,
 			union {array<string>, null} linkFilter, 

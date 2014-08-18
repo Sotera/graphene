@@ -3,7 +3,7 @@
 /**
 */
 protocol G_UserDataAccess {
-	import idl "UserSpaceDataTypes_v4.0.avdl";
+	import idl "UserSpaceDataTypes_v4.1.avdl";
 	error AuthenticationException {
 		string message;
 	}

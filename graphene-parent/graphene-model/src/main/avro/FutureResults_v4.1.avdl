@@ -26,7 +26,7 @@
  This defines an API for 
  */
 protocol G_FutureResults {
-	import idl "DataTypes_v4.0.avdl";
+	import idl "DataTypes_v4.1.avdl";
 	
 	/**
 	 Set a timeout for the task.

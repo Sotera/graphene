@@ -1,5 +1,6 @@
 package graphene.dao.neo4j;
 
+import graphene.model.idl.G_RelationshipType;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.validator.ValidationUtils;
 
@@ -17,6 +18,7 @@ import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.ConstraintViolationException;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -429,17 +431,17 @@ public class Neo4JEmbeddedService {
 	}
 
 	public Relationship getOrCreateUniqueRelationship(final Node startNode,
-			final Node endNode, final RelationshipType type, Direction d,
+			final Node endNode, final G_RelationshipType type, Direction d,
 			final Map<String, Object> properties) {
 		if (startNode != null && endNode != null && type != null) {
 			for (Relationship relationship : startNode
-					.getRelationships(type, d)) {
+					.getRelationships(DynamicRelationshipType.withName(type.name()), d)) {
 				if (relationship.getEndNode().equals(endNode)) {
 					// don't make a new relationship
 					return relationship;
 				}
 			}
-			Relationship r = startNode.createRelationshipTo(endNode, type);
+			Relationship r = startNode.createRelationshipTo(endNode, DynamicRelationshipType.withName(type.name()));
 			setProperties(r, properties);
 			return r;
 		} else {
