@@ -607,6 +607,27 @@ Ext.define("DARPA.TransactionGraph", {
 		return settingsPanel.items.items[0];
 	},
 	
+	hideNode : function(node) {
+		var self = this;
+		self.GraphVis.hideNode(node);
+		
+		var unhide = self.getUnHideButton();
+		if (unhide) {
+			unhide.setDisabled(false);
+		}
+	},
+	unhide : function() {
+		var self = this;
+		if (self, prevNode) {
+			self.GraphVis.showNode(prevNode);
+			
+			var unhide = self.getUnHideButton();
+			if (unhide) {
+				unhide.setDisabled(true);
+			}
+		}
+	},
+	
 	pivot:function(node)
 	{
 		var self=this;

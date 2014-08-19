@@ -642,7 +642,7 @@ Ext.define("DARPA.GraphVis",
                                         // 'width': 20,  
                                         //'height': 20 
                                 }).selector('.toggled-show').css({  // Workaround for showing and hiding edge labels
-                                        'content':'data(amount)'
+                                        'content':'data(label)'
                                 }).selector('.toggled-hide').css({
                                         'content':' '
                                 }).selector('.faded').css({
@@ -653,6 +653,71 @@ Ext.define("DARPA.GraphVis",
 
                     scope.gv = $("#" + scope.id).cytoscape("get");
                     scope.initialized = true;
+					
+					// if the plug-in is not included for any reason, do not try to initialize it
+					if (scope.gv.cxtmenu) {
+						
+						// radial context menu plug in
+						scope.gv.cxtmenu({
+							// menuRadius: 100, // the radius of the circular menu in pixels
+							// selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
+							// fillColor: 'rgba(0, 0, 0, 0.75)', // the background colour of the menu
+							// activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
+							// activePadding: 20, // additional size in pixels for the active command
+							// indicatorSize: 24, // the size in pixels of the pointer to the active command
+							// separatorWidth: 3, // the empty spacing in pixels between successive commands
+							// spotlightPadding: 4, // extra spacing in pixels between the element and the spotlight
+							// minSpotlightRadius: 24, // the minimum radius in pixels of the spotlight
+							// maxSpotlightRadius: 38, // the maximum radius in pixels of the spotlight
+							// itemColor: 'white', // the colour of text in the command's content
+							// itemTextShadowColor: 'black', // the text shadow colour of the command's content
+							// zIndex: 9999 // the z-index of the ui div
+							commands: [{
+								content: "Expand",
+								select: function() {
+									var node = this;
+									if (scope.owner.expand) {
+										scope.owner.expand(node);
+									} else {
+										console.log("expand() is undefined");
+									}
+								}
+							}, {
+								content: "Pivot",
+								select: function() {
+									var node = this;
+									if (scope.owner.pivot) {
+										scope.owner.pivot(node);
+									} else {
+										console.log("pivot() is undefined");
+									}
+								}
+							}, {
+								content: "Hide",
+								select: function() {
+									var node = this;
+									if (scope.owner.hideNode) {
+										scope.owner.hideNode(node);
+									} else {
+										console.log("hideNode() is undefined");
+									}
+								}
+							}, {
+								content: "Show Details",
+								select: function() {
+									var node = this;
+									var disp = scope.owner.getNodeDisplay();
+									
+									if (disp && disp.setAttrs) {
+										disp.setAttrs(node.data());
+									} else {
+										console.log("showDetails() is undefined");
+									}
+								}
+							}],
+						});
+					}
+					
                     scope.reset();
                    
                 }
@@ -1162,12 +1227,14 @@ Ext.define("DARPA.GraphVis",
             scope.owner.nodeClick(node);
         });
 
+		
+		/* Temporarily disabled for radial context menu to function *//*
         scope.gv.on('cxttapend','node', function(e) {
             var node = e.cyTarget;   // the current selected node
             if (!(scope.owner.nodeRightClick==undefined))
 	            scope.owner.nodeRightClick(node);
         
-        });
+        }); */
         
         scope.gv.on('cxttapend', 'edge', function(e) {
         	var edge = e.cyTarget;
@@ -1254,8 +1321,8 @@ Ext.define("DARPA.GraphVis",
             //scope.owner.nodeClick(e.cyTarget);
         });
 
+		/* Temporarily disabled for radial context menu to function *//*
         var timeoutFn = null;
-		
 		scope.gv.on('mouseover', 'node', function(e) {
 			var x = e.originalEvent.layerX;
 			var y = e.originalEvent.layerY;
@@ -1280,13 +1347,14 @@ Ext.define("DARPA.GraphVis",
 				}
 			}, 1000); // hover for one second
 			
-		});
+		}); */
 
+		/* Temporarily disabled for radial context menu to function *//*
 		scope.gv.on('mouseout', 'node', function(e) {
 			clearTimeout(timeoutFn);
 			if (scope.owner.mouseOverPopUp)
 				scope.owner.mouseOverPopUp.hide();
-		});         
+		}); */  
     }
         
 }); // define
