@@ -127,13 +127,8 @@ Ext
 							id : config.id + '-settings'
 
 						});
-
-						// Have to delay this call a bit since the Graph Frame
-						// (see PB_Frame) is not defined yet
-						var wtimeout3 = window.setTimeout(function() {
-							window.clearTimeout(wtimeout3);
-							graphSettings.setGraph(self); // MFM
-						}, 7000);
+						
+						graphSettings.setGraph(self); // MFM
 
 						// MFM The Entity (customer) graph does not have a
 						// concept of time - so disable dates and animation
@@ -216,8 +211,7 @@ Ext
 						};
 						var addFilterFields = [ addfilter1, addfilter2,
 								addfilter3, addfilter4, addfilter5, addfilter6 ];
-						var ret = filterSettings
-								.setAdditionalFields(addFilterFields);
+						var ret = filterSettings.setAdditionalFields(addFilterFields);
 						// DEBUG
 						// console.log("filterSettings.setAdditionalFields
 						// returned = " + ret);
@@ -226,23 +220,14 @@ Ext
 						// 
 						// Have to delay this call a bit since the Graph Frame
 						// (see PB_Frame) is not defined yet
-						var wtimeout2 = window
-								.setTimeout(
-										function() {
-											window.clearTimeout(wtimeout2);
-											filterSettings.setGraph(self);
-											filterSettings
-													.enableTimeFilter(false); // is
-											// enabled
-											// by
-											// default
-											// ,
-											// disable
-											// it
-											// here
-											filterSettings
-													.setSearchFieldLabel("Identifier(s)");
-										}, 7500);
+						//var wtimeout2 = window.setTimeout(
+						//	function() {
+						//		window.clearTimeout(wtimeout2);
+								filterSettings.setGraph(self);
+								filterSettings.enableTimeFilter(false); // is
+								// enabled by default, disable it here
+								filterSettings.setSearchFieldLabel("Identifier(s)");
+						//	}, 7500);
 
 						var graphContainer = Ext.create("Ext.Container", { // MFM
 							width : 'auto',
@@ -413,15 +398,9 @@ Ext
 								botBorder : 80
 							};
 
-							self.GraphVis.initGraph(config, self); // initialize
-							// the graph
-							// display
-							// lib
-							var dgt = window.setTimeout(function() {
-								window.clearTimeout(dgt);
-								self.GraphVis.zoom(0.8);
+							self.GraphVis.initGraph(config, self, function () {
 								self.showjson(self.prevLoadParams.value);
-							}, 5000);
+							});
 						} else {
 							self.showjson(self.prevLoadParams.value);
 							self.showjson1Hop(false, null);
@@ -764,6 +743,7 @@ Ext
 
 						// Count the node's adjacencies and don't allow expand
 						// if the count is > 1
+						/*
 						var countAdjacent = 0;
 						var edges = node.connectedEdges();
 						if (edges) {
@@ -780,17 +760,16 @@ Ext
 								pb.reset();
 							}
 							return;
-						}
+						}*/
 
 						// for feedback while the query and graph display is in
 						// progress
 
-						var mbox = Ext.Msg
-								.show({
-									title : 'Expand',
-									msg : 'The expanded data is being obtained and prepared for display. Please wait...',
-									buttons : Ext.Msg.OK
-								});
+						var mbox = Ext.Msg.show({
+							title : 'Expand',
+							msg : 'The expanded data is being obtained and prepared for display. Please wait...',
+							buttons : Ext.Msg.OK
+						});
 
 						// PWG OR TRY: utils.setBlink(self, true);
 
@@ -800,8 +779,7 @@ Ext
 						// hop out
 						// from this
 						// node
-						graphStore.proxy.extraParams.maxEdgesPerNode = s
-								.getMaxEdgesPerNode();
+						graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
 						graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
 						if (graphStore.proxy.extraParams.maxNodes > 200) {
 							graphStore.proxy.extraParams.maxNodes = 200; // hard
@@ -813,8 +791,7 @@ Ext
 						if (maxNewCallsAlertThresh > graphStore.proxy.extraParams.maxEdgesPerNode) {
 							maxNewCallsAlertThresh = graphStore.proxy.extraParams.maxEdgesPerNode;
 						}
-						graphStore.proxy.extraParams.minWeight = s
-								.getMinWeight();
+						graphStore.proxy.extraParams.minWeight = s.getMinWeight();
 						// MFM The Rest Service expects this:
 						// @QueryParam("fromdt") @DefaultValue(value = "0")
 						// String minSecs,
@@ -829,8 +806,7 @@ Ext
 						graphStore.proxy.extraParams.Type = intype;
 
 						// Type must be set in the URL
-						graphStore.proxy.url = Config.entityGraphUrl + intype
-								+ '/' + node.name;
+						graphStore.proxy.url = Config.entityGraphUrl + intype + '/' + node.name;
 
 						// DEBUG
 						// console.log("loadOneHop: Service URL = " +
