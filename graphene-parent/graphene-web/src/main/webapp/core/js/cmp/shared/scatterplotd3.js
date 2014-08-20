@@ -190,7 +190,7 @@ Ext.define('DARPA.Scatterplot', {
             for (var col = 0; col < this.data.length; col++) {
                 datum = this.data[col];
                 
-                if (sourceType == "Default") {
+                if (sourceType == "Walker") {
 
                     // Need to match on date - DAY OF THE MONTH and not the exct time
                     var dDate = new Date(datum.time);

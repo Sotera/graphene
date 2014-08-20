@@ -137,7 +137,48 @@ Ext.define("DARPA.NodeAttributes",
 			//value:'500',
 			width: 200
 		}
-             
+                /* This info is not avail yet
+		{
+			xtype:'textfield',
+                        id: 'nafld[REDACTED]',
+			fieldLabel:'[REDACTED]',
+			labelLength:150,
+			//value:'20',
+			width: 100
+		},
+                {
+			xtype:'textfield',
+                        id: 'nafld[REDACTED]',
+			fieldLabel:'[REDACTED]',
+			labelLength:150,
+			//value:'20',
+			width: 100
+		},
+                {
+			xtype:'textfield',
+                        id: 'nafldCountryCode',
+			fieldLabel:'Country Code',
+			labelLength:150,
+			//value:'20',
+			width: 100
+		},
+                {
+			xtype:'textfield',
+                        id: 'nafldEventTimestamp',
+			fieldLabel:'Event Timestamp',
+			labelLength:150,
+			//value:'2',
+			width: 100
+		},
+                {
+			xtype:'textfield',
+                        id: 'nafldEventDuration',
+			fieldLabel:'Event Duration',
+			labelLength:100,
+			//value:'2',
+			width: 100
+		}
+                **/
 	],
 	getCommunicationId:function()
 	{
@@ -211,4 +252,81 @@ Ext.define("DARPA.NodeAttributes",
                     nitem.setValue(inString);
                 }
 	}
+ /* This info is not avail yet
+        get[REDACTED]:function()
+	{
+		var nitem = Ext.getCmp('nafld[REDACTED]');
+                if (nitem) {
+                    return nitem.getValue();
+                }
+                else return null;
+	},
+        set[REDACTED]:function(inString)
+	{
+		var nitem = Ext.getCmp('nafld[REDACTED]');
+                if (nitem) {
+                    nitem.setValue(inString);
+                }
+	},	
+        get[REDACTED]:function()
+	{
+		var nitem = Ext.getCmp('nafld[REDACTED]');
+                if (nitem) {
+                    return nitem.getValue();
+                }
+                else return null;
+	},
+        set[REDACTED]:function(inString)
+	{
+		var nitem = Ext.getCmp('nafld[REDACTED]');
+                if (nitem) {
+                    nitem.setValue(inString);
+                }
+	},  
+        getCountryCode:function()
+	{
+		var nitem = Ext.getCmp('nafldCountryCode');
+                if (nitem) {
+                    return nitem.getValue();
+                }
+                else return null;
+	},
+        setCountryCode:function(inString)
+	{
+		var nitem = Ext.getCmp('nafldCountryCode');
+                if (nitem) {
+                    nitem.setValue(inString);
+                }
+	},
+        getEventTimestamp:function()
+	{
+		var nitem = Ext.getCmp('nafldEventTimestamp');
+                if (nitem) {
+                    return nitem.getValue();
+                }
+                else return null;
+	},
+        setEventTimestamp:function(inString)
+	{
+		var nitem = Ext.getCmp('nafldEventTimestamp');
+                if (nitem) {
+                    nitem.setValue(inString);
+                }
+	}, 
+        getEventDuration:function()
+	{
+		var nitem = Ext.getCmp('nafldEventDuration');
+                if (nitem) {
+                    return nitem.getValue();
+                }
+                else return null;
+	},
+        setEventDuration:function(inString)
+	{
+		var nitem = Ext.getCmp('nafldDuration');
+                if (nitem) {
+                    nitem.setValue(inString);
+                }
+	}
+        ***/
 });

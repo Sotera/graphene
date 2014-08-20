@@ -35,7 +35,7 @@
 			},
 			{
 				xtype:'button',
-				icon: 'extjs/resources/themes/images/default/shared/calendar.gif',
+				icon: 'core/js/libs/extjs/resources/themes/images/default/shared/calendar.gif',
 				listeners: {
 					click: function(b)
 					{

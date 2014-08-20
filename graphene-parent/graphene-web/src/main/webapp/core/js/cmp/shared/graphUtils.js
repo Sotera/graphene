@@ -239,8 +239,7 @@ function interactionPreprocess(searchTarget, data, maxrow)
 			continue;
 
 		// normalize so if our target didn't have area code we modify
-		// Note that this is a little dangerous because conceivably there could be a matching number with the wrong
-		// area code.
+		
 		if (searchTarget.indexOf(",") == -1) {	// A single number
 			if (d.source.indexOf(searchTarget) != -1 || searchTarget.indexOf(d.source) != -1)
 				d.source = searchTarget;
@@ -323,7 +322,7 @@ function scatterplotPreprocess(data, maxrow)
 		    else
 			    ++obj[d.target];
 	}
-	    // obj is now a deduplicated list of identifiers, with the count for each
+	   // obj is now a deduplicated list of identifiers, with the count for each
 	    // now we need to calculate the top maxrow identifiers.
 
 	var tosort=[];
@@ -383,37 +382,64 @@ function importGraph(context) {
 }
         
 function exportGraph(context, defaultFileName) {
-        var self = context; 
-        var outj = self.GraphVis.exportGraph();
+    var self = context; 
+	if (self.GraphVis) {
+	
+		var outj;
+		try {
+			outj = self.GraphVis.exportGraph();
+		} catch (e) {
+			console.error("ERROR GETTING GRAPH JSON.");
+			outj = undefined;
+		}
+		
+		var outPNG;
+		try {
+			outPNG = self.GraphVis.gv.png();
+		} catch (e) {
+			console.error("ERROR GETTING GRAPH PNG.");
+			outPNG = undefined;
+		}
+		
+		var exportWindow = Ext.create("DARPA.exportDialog", {
+			title: 'Export Window',
+			border: true
+		});
 
-        var exportWindow = Ext.create("DARPA.exportDialog", {
-                title: 'Export Window',
-                border: true
-        });
-
-        exportWindow.setGraphJSON(outj);
-
-        //TODO: work some magic with scope so you can build default file name with query parameters with this.getSearch().getName()
-        exportWindow.setFileName(defaultFileName);
-        exportWindow.show();
-        exportWindow.center();
+		exportWindow.setGraphJSON(outj);
+		exportWindow.setGraphPNG(outPNG);
+		//TODO: work some magic with scope so you can build default file name with query parameters with this.getSearch().getName()
+		exportWindow.setFileName(defaultFileName);
+		exportWindow.show();
+		exportWindow.center();
+	}
+	else {
+		Ext.Msg.alert("No graph data is available for this Entity.");
+	}
 }
         
 function saveGraph(context, userid) {
         var self = context; 
-        var outj = self.GraphVis.exportGraph();
-        var uid = (userid != null && userid.length > 0)? userid : "unknown";
+        if (self.GraphVis) {
+            var outj = self.GraphVis.exportGraph();
+            var uid = (userid != null && userid.length > 0)? userid : "unknown";
 
-        UDSIF.init();
-        var UDSAction = { type: "sg", data: { graphJSON: outj } };
-        UDSIF.addToUDSession(UDSAction);
-        UDSIF.saveUDSession(uid, null);
+            UDSIF.init();
+            var UDSAction = { type: "sg", data: { graphJSON: outj } };
+            UDSIF.addToUDSession(UDSAction);
+            UDSIF.saveUDSession(uid, null);
+        }
+        else {
+            Ext.Msg.alert("No graph data is available for this Entity.");
+        }
 }
         
 function restoreGraph(context, userid, butid) {
         var self = context;
-        var uid = (userid != null && userid.length > 0)? userid : "unknown";
-        UDSIF.restoreUDSession(uid, self.GraphVis, butid);
+        if (self.GraphVis) {
+            var uid = (userid != null && userid.length > 0)? userid : "unknown";
+            UDSIF.restoreUDSession(uid, self.GraphVis, butid);
+        }
 }
 
 // check if the amount matches or is within the specified min and max range
@@ -447,6 +473,188 @@ function numberInList(number, numbers) {
         }
         return false;
 }
+
+// MFM JIRA-29
+// applyAdditionalFieldsFilter is meant to hide items in the graph canvas
+// context          - The specific graph instance
+// filterItems      - array of additional attributes (fields) to filter on
+// Each filter data item has these elements:
+//   dataSourceField    - data element name in a node or an edge
+//   dataSourceType     - "nodes" | "edges"
+//   dispFieldName      - field name (key) - used only when dataSourceField == "attrs"
+//   value              - the user specified value to filter on. Empty values are skipped.
+// compareType      -  "exact" | "fuzzy"
+function applyAdditionalFieldsFilter(context, filterItems, compareType) {
+
+    var self = context;
+    var i, j;
+    var gv;
+    
+    if (self.GraphVis) {
+       gv = self.GraphVis.getGv();
+    }
+    else {
+        Ext.Msg.alert("No graph data is available for this Entity.");
+        return;
+    }
+    var filterItem, fvalue;
+    var nodes2Hide = []; 
+    var edges2Hide = [];
+    var nonEmptyFilterItems = [];
+    
+    // Prune the filter items. Don't waste time repeatedly iterating over filter items with empty values
+    for (i = 0; i < filterItems.length; i++) {
+        filterItem = filterItems[i].data;
+        fvalue = filterItem.value.trim();
+        if (fvalue.length > 0) {
+            filterItem.value = fvalue;
+            nonEmptyFilterItems.push(filterItem);
+        }
+    }
+    
+    if (gv) {
+        // iterate over the nodes and edges only once
+        gv.nodes().each(function(indx, node) {
+            if (node) {
+                var allMatch = true;
+                for (i = 0; i < nonEmptyFilterItems.length; i++) {
+                    filterItem = nonEmptyFilterItems[i];
+                    fvalue = filterItem.value;  // value has already been trimmed above
+                    var fvalUpper, nvalUpper;
+                    
+                    if (filterItem.dataSourceType == "nodes") {
+                        if (filterItem.dataSourceField == "attrs") {
+                            var attrs = node.data().attrs;
+                            var attrItem;
+                                          
+                            // more than one attribute could be specified
+                            for (j = 0; j < attrs.length; j++) {
+                                attrItem = attrs[j];
+                                if (attrItem.key == filterItem.dispFieldName) {
+                                    if (compareType == "exact") {       // and case sensitive
+                                        if (attrItem.val != fvalue) { 
+                                            allMatch = false;
+                                            nodes2Hide.push(node);
+                                            break;  // match failed, no need to check other attributes
+                                        }
+                                    }
+                                    else {
+                                         fvalUpper = fvalue.toUpperCase();
+                                         nvalUpper = attrItem.val.toUpperCase();                                         
+                                         if (nvalUpper.indexOf(fvalUpper) < 0) {  // case insensitive
+                                            allMatch = false;
+                                            nodes2Hide.push(node);
+                                            break;  // match failed, no need to check other attributes
+                                        }
+                                    }
+                                }
+                            }
+                            if (allMatch == false) {
+                                break;
+                            }
+                        }
+                        else {
+                            var nodeValue = node.data()[filterItem.dataSourceField];
+                            if (compareType == "exact") {
+                                if (nodeValue != fvalue) {  // TODO case insensitive
+                                    allMatch = false;
+                                    nodes2Hide.push(node);
+                                    break;  // match failed, no need to check other fields
+                                }
+                            }
+                            else {  
+                                fvalUpper = fvalue.toUpperCase();
+                                nvalUpper = nodeValue.toUpperCase();
+                                if (nvalUpper.indexOf(fvalUpper) < 0) {  // case insensitive
+                                    allMatch = false;
+                                    nodes2Hide.push(node);
+                                    break;  // match failed, no need to check other fields
+                                }
+                            }
+                        }
+                    }
+                }
+                if (allMatch) {
+                    self.GraphVis.showNode(node);
+                }
+            }
+        });  // end for each node
+        
+        gv.edges().each(function(indx, edge) {
+            if (edge) {
+                var allMatch = true;
+                for (i = 0; i < nonEmptyFilterItems.length; i++) {
+                    filterItem = nonEmptyFilterItems[i];
+                    fvalue = filterItem.value;  // value has already been trimmed above
+                    var fvalUpper, evalUpper;
+                    
+                    if (filterItem.dataSourceType == "edges") {
+                        if (filterItem.dataSourceField == "attrs") {
+                            var attrs = edge.data().attrs;
+                            var attrItem;
+                            
+                            // more than one attribute could be specified
+                            for (j = 0; j < attrs.length; j++) {
+                                attrItem = attrs[j];
+                                if (attrItem.key == filterItem.dispFieldName) {
+                                    if (compareType == "exact") {
+                                        if (attrItem.val != fvalue) {  // and case sensitive
+                                            allMatch = false;
+                                            edges2Hide.push(edge);
+                                            break;  // match failed, no need to check other attributes
+                                        }
+                                    }
+                                    else {
+                                       fvalUpper = fvalue.toUpperCase();
+                                       evalUpper = attrItem.val.toUpperCase();
+                                       if (evalUpper.indexOf(fvalUpper) < 0) {  // case insensitive
+                                            allMatch = false;
+                                            edges2Hide.push(edge);
+                                            break;  // match failed, no need to check other attributes
+                                       } 
+                                    }
+                                }
+                            }
+                            if (allMatch == false) {
+                                break;
+                            }
+                        }
+                        else {
+                            var edgeValue = edge.data()[filterItem.dataSourceField];
+                            if (compareType == "exact") {
+                                if (edgeValue != fvalue) {  // and case sensitive
+                                    allMatch = false;
+                                    edges2Hide.push(edge);
+                                    break;  // match failed, no need to check other fields
+                                }
+                            }
+                            else {
+                                fvalUpper = fvalue.toUpperCase();
+                                evalUpper = edgeValue.toUpperCase();
+                                if (evalUpper.indexOf(fvalue) < 0) {  // case insensitive
+                                    allMatch = false;
+                                    edges2Hide.push(edge);
+                                    break;  // match failed, no need to check other fields
+                                }
+                            }
+                        }
+                    }
+                }
+                if (allMatch) {
+                    self.GraphVis.showNode(edge);
+                }
+            }
+        });  // end for each edge
+        
+        // now the hides (if any)
+        for (var h = 0; h < nodes2Hide.length; h++) {
+           self.GraphVis.hideNode(nodes2Hide[h]); 
+        }
+        for (h = 0; h < edges2Hide.length; h++) {
+           self.GraphVis.hideEdge(edges2Hide[h]); 
+        }
+    }
+}
         
 // filter is meant to hide items in the graph canvas
 // searchItems          - is a string that may contain a partial or full string (anything), or a comma separated list of strings
@@ -454,7 +662,9 @@ function numberInList(number, numbers) {
 function applyFilter(context, searchItems, amount, fromDate, toDate) {            
         // iterate over all the nodes in the graph
          // if the node attributes do NOT match the filter criteria, hide the node
-         var self = context;
+    var self = context;
+    
+    if (self && self.GraphVis) {
          var gv = self.GraphVis.getGv();
          var checkNumbers = (searchItems && searchItems.length > 0);
          var checkAmount = (amount && amount.length > 0);
@@ -474,9 +684,6 @@ function applyFilter(context, searchItems, amount, fromDate, toDate) {
                     }
 
                     // Amount is checked on the Edges and not the nodes
-// DEBUG
-console.log("graphUtils applyFilter");
-
                     if (checkDates) {    
                         if (eventTimeInDateRange(node.data().name, fromDate, toDate)) {
                             dateMatch = true;
@@ -525,14 +732,20 @@ console.log("graphUtils applyFilter");
              for (h = 0; h < edges2Hide.length; h++) {
                 self.GraphVis.hideEdge(edges2Hide[h]); 
              }
-          }      
+         }
+     }
+     else {
+        Ext.Msg.alert("No graph data is available for this Entity.");
+     }
 }  
         
 // clear filter is meant to unhide all items in the graph canvas
 function clearFilter(context) {            
     // iterate over all the nodes in the graph and show them (unhide)
     var self = context;
-    self.GraphVis.showAll();
+    if (self && self.GraphVis) {
+        self.GraphVis.showAll();
+    }
 }
 
 function getNodeIdType(node)
