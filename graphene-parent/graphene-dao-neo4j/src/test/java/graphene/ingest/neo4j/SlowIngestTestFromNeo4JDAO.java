@@ -34,8 +34,8 @@ public class SlowIngestTestFromNeo4JDAO {
 			G_User u = new G_User();
 			u.setAvatar("bugatti.png");
 			u.setUsername("djue");
-			u=dao.createOrUpdate(u);
-			dao.updatePassword(u.getUsername(), "password");
+			u = dao.createOrUpdate(u);
+			dao.updatePassword(u.getId(), "password");
 			u.setAvatar("venom.png");
 			u.setUsername("wjue");
 			dao.createOrUpdate(u);
@@ -46,7 +46,7 @@ public class SlowIngestTestFromNeo4JDAO {
 
 			AssertJUnit.assertEquals(1, dao.countUsers("w"));
 
-			logger.debug(dao.getByPartialUsername("y").toString());
+			logger.debug(dao.getByPartialUsername("y", 0, 0).toString());
 			AssertJUnit.assertEquals(0, dao.countUsers("y"));
 			tx.success();
 		}
@@ -60,7 +60,7 @@ public class SlowIngestTestFromNeo4JDAO {
 			u.setAvatar("bugatti.png");
 			u.setUsername("djue");
 			G_User x = dao.createOrUpdate(u);
-			dao.updatePassword(u.getUsername(), "password");
+			dao.updatePassword(u.getId(), "password");
 			// logger.debug("Explicit tx from a separate injection");
 
 			logger.info(x.toString());
@@ -88,7 +88,7 @@ public class SlowIngestTestFromNeo4JDAO {
 			u.setAvatar("bugatti.png");
 			u.setUsername("sampleUser2");
 			G_User x = dao.createOrUpdate(u);
-			dao.updatePassword(u.getUsername(), "password");
+			dao.updatePassword(u.getId(), "password");
 			logger.info("About to print");
 
 			for (int i = 1; i < numberOfRandomUpdates; i++) {
@@ -104,7 +104,7 @@ public class SlowIngestTestFromNeo4JDAO {
 		try (Transaction tx = service.getGraphDb().beginTx()) {
 			G_User u = new G_User();
 			u.setAvatar("bugatti.png");
-			
+
 			for (int i = 0; i < 10; i++) {
 				logger.debug("Adding user " + i);
 				u.setUsername("complexChange01-" + i);

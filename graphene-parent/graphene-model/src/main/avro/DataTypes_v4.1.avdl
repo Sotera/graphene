@@ -231,7 +231,7 @@ protocol G_DataTypes {
 		MAY_BE_THE_SAME, 	// n to n
 		RELATED_TO_ID, 		// id to id
 		HAS_GLOBAL_ID,		// n to n
-		OTHER,				// n to n
+		OTHER_RELATION,		// n to n
 		STARTED_ON,			// date to n
 		ENDED_ON,			// date to n
 		BORN_ON,			// date to ENTITY
@@ -287,9 +287,11 @@ protocol G_DataTypes {
 		ISOTOPE_OF, 		// atom to atom
 		USED_IN,	 		// n to subject
 		EFFECT_OF,	 		// n to subject
+		SENT, 				// ENTITY to n (communication, financial, goods, etc)
+		RECEIVED, 			// ENTITY to n (communication, financial, goods, etc)
 		
-		PLACED_CALL, 		// ENTITY to ENTITY
-		RECEIVED_CALL, 		// ENTITY to ENTITY
+		PLACED_CALL, 		// ENTITY to n
+		RECEIVED_CALL, 		// ENTITY to n
 		SENT_MAIL, 			// ENTITY to ENTITY
 		EMAIL_FORWARD_OF, 	// EMAIL_CONTENTS to EMAIL_CONTENTS
 		EMAIL_REPLY_TO, 	// EMAIL_CONTENTS to EMAIL_CONTENTS

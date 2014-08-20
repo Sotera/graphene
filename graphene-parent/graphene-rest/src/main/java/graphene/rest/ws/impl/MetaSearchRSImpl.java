@@ -6,10 +6,10 @@ import graphene.model.idl.G_CanonicalTruthValues;
 import graphene.model.idl.G_Delimiter;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Gender;
-import graphene.model.idl.G_LinkTag;
 import graphene.model.idl.G_NodeType;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
+import graphene.model.idl.G_RelationshipType;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.rest.ws.MetaSearchRS;
@@ -17,7 +17,6 @@ import graphene.rest.ws.MetaSearchRS;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -66,8 +65,8 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	}
 
 	@Override
-	public List<G_LinkTag> getLinkTags() {
-		return Arrays.asList(G_LinkTag.values());
+	public List<G_RelationshipType> getRelationshipTypes() {
+		return Arrays.asList(G_RelationshipType.values());
 	}
 
 	@Override

@@ -218,10 +218,11 @@ public class Register {
 	@OnEvent(value = EventConstants.SUCCESS, component = "RegisterForm")
 	public Object proceedSignup() {
 		try {
-			if (dao.userExists(username)) {
+			if (dao.usernameExists(username)) {
 				registerForm.recordError(messages.get("error.userexists"));
 				return null;
 			} else {
+				
 				String fullName = firstName + " " + lastName;
 				G_User tempUser = new G_User();
 				tempUser.setFullname(fullName);
@@ -230,9 +231,9 @@ public class Register {
 
 				// Get the version that has been registered, because it will
 				// have added business logic.
-				if (dao.registerUser(tempUser) != null) {
+				if ((tempUser = dao.registerUser(tempUser)) != null) {
 					// tempUser = null;
-					dao.setUserPassword(username, password);
+					dao.setUserPassword(tempUser.getId(), password);
 					return loginNewRegisteredUser(username, password, true);
 				}
 				return Index.class;

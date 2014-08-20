@@ -29,7 +29,7 @@ public class ViewWorkspace {
 	@Inject
 	private G_UserDataAccess service;
 	@Persist
-	private String workspaceId;
+	private int workspaceId;
 
 	@Inject
 	private AlertManager alertManager;
@@ -43,15 +43,15 @@ public class ViewWorkspace {
 	@Property
 	private boolean currentSelectedWorkspaceExists;
 
-	void onActivate(final String workspaceId) {
+	void onActivate(final int workspaceId) {
 		this.workspaceId = workspaceId;
 		if (userExists) {
-			if (workspaceId != null) {
+			if (workspaceId != 0) {
 				try {
 					logger.info("Attempting to retrieve workspace "
 							+ workspaceId + " for user " + user.getUsername());
 					this.currentWorkspace = service.getWorkspace(
-							user.getUsername(), workspaceId);
+							user.getId(), workspaceId);
 				} catch (AvroRemoteException e) {
 					logger.error(ExceptionUtil.getRootCauseMessage(e));
 					alertManager.alert(Duration.SINGLE, Severity.ERROR,
@@ -69,9 +69,9 @@ public class ViewWorkspace {
 
 	// onPassivate() is called by Tapestry to get the activation context to put
 	// in the id.
-	String onPassivate() {
+	Integer onPassivate() {
 		if (currentWorkspace != null) {
-			return currentWorkspace.getWorkspaceid();
+			return currentWorkspace.getId();
 		} else {
 			return null;
 		}

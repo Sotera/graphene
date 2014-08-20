@@ -174,8 +174,7 @@ public class AuthenticationFilter implements ComponentRequestFilter {
 		// Lazy-load the business services locator because it is only needed for
 		// auto-login
 		try {
-			G_User user = service.getUser("eli");
-
+			G_User user = service.getByUsername("eli");
 			// Visit visit = new Visit(user);
 			logger.info(user.getUsername() + " has been auto-logged-in.");
 			sessionStateManager.set(G_User.class, user);

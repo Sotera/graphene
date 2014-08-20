@@ -54,7 +54,7 @@ public class RecentWorkspaces {
 
 		if (userExists) {
 			try {
-				workspaces = dao.getWorkspacesForUser(user.getUsername());
+				workspaces = dao.getWorkspacesForUser(user.getId());
 			} catch (AvroRemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -69,11 +69,11 @@ public class RecentWorkspaces {
 	private AlertManager alertManager;
 
 	@OnEvent("makecurrent")
-	private void makeCurrent(String workspaceId) {
+	private void makeCurrent(int workspaceId) {
 		try {
 			// TODO: instead of hitting the service layer again, just pull from
 			// the list of workspaces we got before.
-			currentSelectedWorkspace = dao.getWorkspace(user.getUsername(),
+			currentSelectedWorkspace = dao.getWorkspace(user.getId(),
 					workspaceId);
 			if (currentSelectedWorkspace == null) {
 				String warnMessage = "Unable to load workspace id "

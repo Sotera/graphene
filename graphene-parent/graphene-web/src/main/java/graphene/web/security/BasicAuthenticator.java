@@ -39,20 +39,17 @@ public class BasicAuthenticator implements AuthenticatorHelper {
 
 	public void login(String username, String password)
 			throws AvroRemoteException, BusinessException {
-
-		G_User user = service.loginUser(username, password);
-		applicationStateManager.set(G_User.class, user);
-		request.getSession(true).setAttribute(AUTH_TOKEN, user);
-
+		G_User user = service.getByUsername(username);
+		if (user != null) {
+			user = service.loginUser(user.getId(), password);
+			applicationStateManager.set(G_User.class, user);
+			request.getSession(true).setAttribute(AUTH_TOKEN, user);
+		}
 	}
 
 	public boolean isUserObjectCreated() {
 		return applicationStateManager.exists(G_User.class);
-		// Session session = request.getSession(false);
-		// if (session != null) {
-		// return session.getAttribute(AUTH_TOKEN) != null;
-		// }
-		// return false;
+
 	}
 
 	public void logout() {
@@ -66,18 +63,5 @@ public class BasicAuthenticator implements AuthenticatorHelper {
 			session.invalidate();
 		}
 	}
-
-//	public G_User getLoggedUser() {
-//		G_User user = null;
-//
-//		if (isLoggedIn()) {
-//
-//			user = (G_User) request.getSession(true).getAttribute(AUTH_TOKEN);
-//			logger.info("User was found in the session");
-//		} else {
-//			throw new IllegalStateException("The user is not logged in! ");
-//		}
-//		return user;
-//	}
 
 }

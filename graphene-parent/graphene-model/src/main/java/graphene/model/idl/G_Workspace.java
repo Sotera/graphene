@@ -7,17 +7,19 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"creatorusername\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"workspaceid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastmodified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"createddate\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"queries\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"datamap\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private boolean active;
-   private java.lang.String creatorusername;
+   private java.lang.String description;
    private java.lang.String json;
+   private java.lang.String queries;
+   private java.lang.String datamap;
    private java.lang.String title;
-   private java.lang.String workspaceid;
+   private int id;
   /** workspace's modified datetime */
-   private java.lang.Long lastmodified;
+   private java.lang.Long modified;
   /** workspace's created datetime */
-   private java.lang.Long createddate;
+   private java.lang.Long created;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -29,14 +31,16 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public G_Workspace(java.lang.Boolean active, java.lang.String creatorusername, java.lang.String json, java.lang.String title, java.lang.String workspaceid, java.lang.Long lastmodified, java.lang.Long createddate) {
+  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String json, java.lang.String queries, java.lang.String datamap, java.lang.String title, java.lang.Integer id, java.lang.Long modified, java.lang.Long created) {
     this.active = active;
-    this.creatorusername = creatorusername;
+    this.description = description;
     this.json = json;
+    this.queries = queries;
+    this.datamap = datamap;
     this.title = title;
-    this.workspaceid = workspaceid;
-    this.lastmodified = lastmodified;
-    this.createddate = createddate;
+    this.id = id;
+    this.modified = modified;
+    this.created = created;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -44,12 +48,14 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return active;
-    case 1: return creatorusername;
+    case 1: return description;
     case 2: return json;
-    case 3: return title;
-    case 4: return workspaceid;
-    case 5: return lastmodified;
-    case 6: return createddate;
+    case 3: return queries;
+    case 4: return datamap;
+    case 5: return title;
+    case 6: return id;
+    case 7: return modified;
+    case 8: return created;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -58,12 +64,14 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: active = (java.lang.Boolean)value$; break;
-    case 1: creatorusername = (java.lang.String)value$; break;
+    case 1: description = (java.lang.String)value$; break;
     case 2: json = (java.lang.String)value$; break;
-    case 3: title = (java.lang.String)value$; break;
-    case 4: workspaceid = (java.lang.String)value$; break;
-    case 5: lastmodified = (java.lang.Long)value$; break;
-    case 6: createddate = (java.lang.Long)value$; break;
+    case 3: queries = (java.lang.String)value$; break;
+    case 4: datamap = (java.lang.String)value$; break;
+    case 5: title = (java.lang.String)value$; break;
+    case 6: id = (java.lang.Integer)value$; break;
+    case 7: modified = (java.lang.Long)value$; break;
+    case 8: created = (java.lang.Long)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -84,18 +92,18 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'creatorusername' field.
+   * Gets the value of the 'description' field.
    */
-  public java.lang.String getCreatorusername() {
-    return creatorusername;
+  public java.lang.String getDescription() {
+    return description;
   }
 
   /**
-   * Sets the value of the 'creatorusername' field.
+   * Sets the value of the 'description' field.
    * @param value the value to set.
    */
-  public void setCreatorusername(java.lang.String value) {
-    this.creatorusername = value;
+  public void setDescription(java.lang.String value) {
+    this.description = value;
   }
 
   /**
@@ -114,6 +122,36 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
+   * Gets the value of the 'queries' field.
+   */
+  public java.lang.String getQueries() {
+    return queries;
+  }
+
+  /**
+   * Sets the value of the 'queries' field.
+   * @param value the value to set.
+   */
+  public void setQueries(java.lang.String value) {
+    this.queries = value;
+  }
+
+  /**
+   * Gets the value of the 'datamap' field.
+   */
+  public java.lang.String getDatamap() {
+    return datamap;
+  }
+
+  /**
+   * Sets the value of the 'datamap' field.
+   * @param value the value to set.
+   */
+  public void setDatamap(java.lang.String value) {
+    this.datamap = value;
+  }
+
+  /**
    * Gets the value of the 'title' field.
    */
   public java.lang.String getTitle() {
@@ -129,48 +167,48 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'workspaceid' field.
+   * Gets the value of the 'id' field.
    */
-  public java.lang.String getWorkspaceid() {
-    return workspaceid;
+  public java.lang.Integer getId() {
+    return id;
   }
 
   /**
-   * Sets the value of the 'workspaceid' field.
+   * Sets the value of the 'id' field.
    * @param value the value to set.
    */
-  public void setWorkspaceid(java.lang.String value) {
-    this.workspaceid = value;
+  public void setId(java.lang.Integer value) {
+    this.id = value;
   }
 
   /**
-   * Gets the value of the 'lastmodified' field.
+   * Gets the value of the 'modified' field.
    * workspace's modified datetime   */
-  public java.lang.Long getLastmodified() {
-    return lastmodified;
+  public java.lang.Long getModified() {
+    return modified;
   }
 
   /**
-   * Sets the value of the 'lastmodified' field.
+   * Sets the value of the 'modified' field.
    * workspace's modified datetime   * @param value the value to set.
    */
-  public void setLastmodified(java.lang.Long value) {
-    this.lastmodified = value;
+  public void setModified(java.lang.Long value) {
+    this.modified = value;
   }
 
   /**
-   * Gets the value of the 'createddate' field.
+   * Gets the value of the 'created' field.
    * workspace's created datetime   */
-  public java.lang.Long getCreateddate() {
-    return createddate;
+  public java.lang.Long getCreated() {
+    return created;
   }
 
   /**
-   * Sets the value of the 'createddate' field.
+   * Sets the value of the 'created' field.
    * workspace's created datetime   * @param value the value to set.
    */
-  public void setCreateddate(java.lang.Long value) {
-    this.createddate = value;
+  public void setCreated(java.lang.Long value) {
+    this.created = value;
   }
 
   /** Creates a new G_Workspace RecordBuilder */
@@ -195,12 +233,14 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     implements org.apache.avro.data.RecordBuilder<G_Workspace> {
 
     private boolean active;
-    private java.lang.String creatorusername;
+    private java.lang.String description;
     private java.lang.String json;
+    private java.lang.String queries;
+    private java.lang.String datamap;
     private java.lang.String title;
-    private java.lang.String workspaceid;
-    private java.lang.Long lastmodified;
-    private java.lang.Long createddate;
+    private int id;
+    private java.lang.Long modified;
+    private java.lang.Long created;
 
     /** Creates a new Builder */
     private Builder() {
@@ -214,29 +254,37 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         this.active = data().deepCopy(fields()[0].schema(), other.active);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.creatorusername)) {
-        this.creatorusername = data().deepCopy(fields()[1].schema(), other.creatorusername);
+      if (isValidValue(fields()[1], other.description)) {
+        this.description = data().deepCopy(fields()[1].schema(), other.description);
         fieldSetFlags()[1] = true;
       }
       if (isValidValue(fields()[2], other.json)) {
         this.json = data().deepCopy(fields()[2].schema(), other.json);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.title)) {
-        this.title = data().deepCopy(fields()[3].schema(), other.title);
+      if (isValidValue(fields()[3], other.queries)) {
+        this.queries = data().deepCopy(fields()[3].schema(), other.queries);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.workspaceid)) {
-        this.workspaceid = data().deepCopy(fields()[4].schema(), other.workspaceid);
+      if (isValidValue(fields()[4], other.datamap)) {
+        this.datamap = data().deepCopy(fields()[4].schema(), other.datamap);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.lastmodified)) {
-        this.lastmodified = data().deepCopy(fields()[5].schema(), other.lastmodified);
+      if (isValidValue(fields()[5], other.title)) {
+        this.title = data().deepCopy(fields()[5].schema(), other.title);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.createddate)) {
-        this.createddate = data().deepCopy(fields()[6].schema(), other.createddate);
+      if (isValidValue(fields()[6], other.id)) {
+        this.id = data().deepCopy(fields()[6].schema(), other.id);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.modified)) {
+        this.modified = data().deepCopy(fields()[7].schema(), other.modified);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.created)) {
+        this.created = data().deepCopy(fields()[8].schema(), other.created);
+        fieldSetFlags()[8] = true;
       }
     }
     
@@ -247,29 +295,37 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         this.active = data().deepCopy(fields()[0].schema(), other.active);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.creatorusername)) {
-        this.creatorusername = data().deepCopy(fields()[1].schema(), other.creatorusername);
+      if (isValidValue(fields()[1], other.description)) {
+        this.description = data().deepCopy(fields()[1].schema(), other.description);
         fieldSetFlags()[1] = true;
       }
       if (isValidValue(fields()[2], other.json)) {
         this.json = data().deepCopy(fields()[2].schema(), other.json);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.title)) {
-        this.title = data().deepCopy(fields()[3].schema(), other.title);
+      if (isValidValue(fields()[3], other.queries)) {
+        this.queries = data().deepCopy(fields()[3].schema(), other.queries);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.workspaceid)) {
-        this.workspaceid = data().deepCopy(fields()[4].schema(), other.workspaceid);
+      if (isValidValue(fields()[4], other.datamap)) {
+        this.datamap = data().deepCopy(fields()[4].schema(), other.datamap);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.lastmodified)) {
-        this.lastmodified = data().deepCopy(fields()[5].schema(), other.lastmodified);
+      if (isValidValue(fields()[5], other.title)) {
+        this.title = data().deepCopy(fields()[5].schema(), other.title);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.createddate)) {
-        this.createddate = data().deepCopy(fields()[6].schema(), other.createddate);
+      if (isValidValue(fields()[6], other.id)) {
+        this.id = data().deepCopy(fields()[6].schema(), other.id);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.modified)) {
+        this.modified = data().deepCopy(fields()[7].schema(), other.modified);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.created)) {
+        this.created = data().deepCopy(fields()[8].schema(), other.created);
+        fieldSetFlags()[8] = true;
       }
     }
 
@@ -297,27 +353,27 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Gets the value of the 'creatorusername' field */
-    public java.lang.String getCreatorusername() {
-      return creatorusername;
+    /** Gets the value of the 'description' field */
+    public java.lang.String getDescription() {
+      return description;
     }
     
-    /** Sets the value of the 'creatorusername' field */
-    public graphene.model.idl.G_Workspace.Builder setCreatorusername(java.lang.String value) {
+    /** Sets the value of the 'description' field */
+    public graphene.model.idl.G_Workspace.Builder setDescription(java.lang.String value) {
       validate(fields()[1], value);
-      this.creatorusername = value;
+      this.description = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
     
-    /** Checks whether the 'creatorusername' field has been set */
-    public boolean hasCreatorusername() {
+    /** Checks whether the 'description' field has been set */
+    public boolean hasDescription() {
       return fieldSetFlags()[1];
     }
     
-    /** Clears the value of the 'creatorusername' field */
-    public graphene.model.idl.G_Workspace.Builder clearCreatorusername() {
-      creatorusername = null;
+    /** Clears the value of the 'description' field */
+    public graphene.model.idl.G_Workspace.Builder clearDescription() {
+      description = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -347,6 +403,56 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
+    /** Gets the value of the 'queries' field */
+    public java.lang.String getQueries() {
+      return queries;
+    }
+    
+    /** Sets the value of the 'queries' field */
+    public graphene.model.idl.G_Workspace.Builder setQueries(java.lang.String value) {
+      validate(fields()[3], value);
+      this.queries = value;
+      fieldSetFlags()[3] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'queries' field has been set */
+    public boolean hasQueries() {
+      return fieldSetFlags()[3];
+    }
+    
+    /** Clears the value of the 'queries' field */
+    public graphene.model.idl.G_Workspace.Builder clearQueries() {
+      queries = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'datamap' field */
+    public java.lang.String getDatamap() {
+      return datamap;
+    }
+    
+    /** Sets the value of the 'datamap' field */
+    public graphene.model.idl.G_Workspace.Builder setDatamap(java.lang.String value) {
+      validate(fields()[4], value);
+      this.datamap = value;
+      fieldSetFlags()[4] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'datamap' field has been set */
+    public boolean hasDatamap() {
+      return fieldSetFlags()[4];
+    }
+    
+    /** Clears the value of the 'datamap' field */
+    public graphene.model.idl.G_Workspace.Builder clearDatamap() {
+      datamap = null;
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
     /** Gets the value of the 'title' field */
     public java.lang.String getTitle() {
       return title;
@@ -354,96 +460,95 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'title' field */
     public graphene.model.idl.G_Workspace.Builder setTitle(java.lang.String value) {
-      validate(fields()[3], value);
+      validate(fields()[5], value);
       this.title = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'title' field has been set */
     public boolean hasTitle() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'title' field */
     public graphene.model.idl.G_Workspace.Builder clearTitle() {
       title = null;
-      fieldSetFlags()[3] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'workspaceid' field */
-    public java.lang.String getWorkspaceid() {
-      return workspaceid;
-    }
-    
-    /** Sets the value of the 'workspaceid' field */
-    public graphene.model.idl.G_Workspace.Builder setWorkspaceid(java.lang.String value) {
-      validate(fields()[4], value);
-      this.workspaceid = value;
-      fieldSetFlags()[4] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'workspaceid' field has been set */
-    public boolean hasWorkspaceid() {
-      return fieldSetFlags()[4];
-    }
-    
-    /** Clears the value of the 'workspaceid' field */
-    public graphene.model.idl.G_Workspace.Builder clearWorkspaceid() {
-      workspaceid = null;
-      fieldSetFlags()[4] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'lastmodified' field */
-    public java.lang.Long getLastmodified() {
-      return lastmodified;
-    }
-    
-    /** Sets the value of the 'lastmodified' field */
-    public graphene.model.idl.G_Workspace.Builder setLastmodified(java.lang.Long value) {
-      validate(fields()[5], value);
-      this.lastmodified = value;
-      fieldSetFlags()[5] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'lastmodified' field has been set */
-    public boolean hasLastmodified() {
-      return fieldSetFlags()[5];
-    }
-    
-    /** Clears the value of the 'lastmodified' field */
-    public graphene.model.idl.G_Workspace.Builder clearLastmodified() {
-      lastmodified = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'createddate' field */
-    public java.lang.Long getCreateddate() {
-      return createddate;
+    /** Gets the value of the 'id' field */
+    public java.lang.Integer getId() {
+      return id;
     }
     
-    /** Sets the value of the 'createddate' field */
-    public graphene.model.idl.G_Workspace.Builder setCreateddate(java.lang.Long value) {
+    /** Sets the value of the 'id' field */
+    public graphene.model.idl.G_Workspace.Builder setId(int value) {
       validate(fields()[6], value);
-      this.createddate = value;
+      this.id = value;
       fieldSetFlags()[6] = true;
       return this; 
     }
     
-    /** Checks whether the 'createddate' field has been set */
-    public boolean hasCreateddate() {
+    /** Checks whether the 'id' field has been set */
+    public boolean hasId() {
       return fieldSetFlags()[6];
     }
     
-    /** Clears the value of the 'createddate' field */
-    public graphene.model.idl.G_Workspace.Builder clearCreateddate() {
-      createddate = null;
+    /** Clears the value of the 'id' field */
+    public graphene.model.idl.G_Workspace.Builder clearId() {
       fieldSetFlags()[6] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'modified' field */
+    public java.lang.Long getModified() {
+      return modified;
+    }
+    
+    /** Sets the value of the 'modified' field */
+    public graphene.model.idl.G_Workspace.Builder setModified(java.lang.Long value) {
+      validate(fields()[7], value);
+      this.modified = value;
+      fieldSetFlags()[7] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'modified' field has been set */
+    public boolean hasModified() {
+      return fieldSetFlags()[7];
+    }
+    
+    /** Clears the value of the 'modified' field */
+    public graphene.model.idl.G_Workspace.Builder clearModified() {
+      modified = null;
+      fieldSetFlags()[7] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'created' field */
+    public java.lang.Long getCreated() {
+      return created;
+    }
+    
+    /** Sets the value of the 'created' field */
+    public graphene.model.idl.G_Workspace.Builder setCreated(java.lang.Long value) {
+      validate(fields()[8], value);
+      this.created = value;
+      fieldSetFlags()[8] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'created' field has been set */
+    public boolean hasCreated() {
+      return fieldSetFlags()[8];
+    }
+    
+    /** Clears the value of the 'created' field */
+    public graphene.model.idl.G_Workspace.Builder clearCreated() {
+      created = null;
+      fieldSetFlags()[8] = false;
       return this;
     }
 
@@ -452,12 +557,14 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
       try {
         G_Workspace record = new G_Workspace();
         record.active = fieldSetFlags()[0] ? this.active : (java.lang.Boolean) defaultValue(fields()[0]);
-        record.creatorusername = fieldSetFlags()[1] ? this.creatorusername : (java.lang.String) defaultValue(fields()[1]);
+        record.description = fieldSetFlags()[1] ? this.description : (java.lang.String) defaultValue(fields()[1]);
         record.json = fieldSetFlags()[2] ? this.json : (java.lang.String) defaultValue(fields()[2]);
-        record.title = fieldSetFlags()[3] ? this.title : (java.lang.String) defaultValue(fields()[3]);
-        record.workspaceid = fieldSetFlags()[4] ? this.workspaceid : (java.lang.String) defaultValue(fields()[4]);
-        record.lastmodified = fieldSetFlags()[5] ? this.lastmodified : (java.lang.Long) defaultValue(fields()[5]);
-        record.createddate = fieldSetFlags()[6] ? this.createddate : (java.lang.Long) defaultValue(fields()[6]);
+        record.queries = fieldSetFlags()[3] ? this.queries : (java.lang.String) defaultValue(fields()[3]);
+        record.datamap = fieldSetFlags()[4] ? this.datamap : (java.lang.String) defaultValue(fields()[4]);
+        record.title = fieldSetFlags()[5] ? this.title : (java.lang.String) defaultValue(fields()[5]);
+        record.id = fieldSetFlags()[6] ? this.id : (java.lang.Integer) defaultValue(fields()[6]);
+        record.modified = fieldSetFlags()[7] ? this.modified : (java.lang.Long) defaultValue(fields()[7]);
+        record.created = fieldSetFlags()[8] ? this.created : (java.lang.Long) defaultValue(fields()[8]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

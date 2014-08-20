@@ -6,10 +6,10 @@ import graphene.model.idl.G_CanonicalTruthValues;
 import graphene.model.idl.G_Delimiter;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Gender;
-import graphene.model.idl.G_LinkTag;
 import graphene.model.idl.G_NodeType;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
+import graphene.model.idl.G_RelationshipType;
 import graphene.model.idl.G_SearchType;
 
 import java.util.List;
@@ -53,8 +53,8 @@ public interface MetaSearchRS {
 
 	@Produces("application/json")
 	@GET
-	@Path("/linktags")
-	public abstract List<G_LinkTag> getLinkTags();
+	@Path("/relationshiptypes")
+	public abstract List<G_RelationshipType> getRelationshipTypes();
 
 	@Produces("application/json")
 	@GET

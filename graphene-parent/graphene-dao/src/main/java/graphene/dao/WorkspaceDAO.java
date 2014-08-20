@@ -6,25 +6,27 @@ import graphene.model.idl.G_Workspace;
 import java.util.List;
 
 public interface WorkspaceDAO {
-	public G_Workspace addNewWorkspace(String username, G_Workspace w);
+	public G_Workspace addNewWorkspace(int userId, G_Workspace w);
 
 	/**
-	 * TODO: Consider changing this to a string based relation/permission, to remove tie to Neo4J
+	 * TODO: Consider changing this to a string based relation/permission, to
+	 * remove tie to Neo4J
+	 * 
 	 * @param username
 	 * @param rel
 	 * @param workspaceid
 	 * @return
 	 */
-	public boolean addRelationToWorkspace(String username,
-			G_UserSpaceRelationshipType rel, String workspaceid);
+	public boolean addRelationToWorkspace(int id,
+			G_UserSpaceRelationshipType rel, int workspaceid);
 
 	public long countWorkspaces(String partialName);
 
-	public long countWorkspaces(String userId, String partialName);
+	public long countWorkspaces(int id, String partialName);
 
-	public boolean deleteWorkspaceById(String workspaceId);
+	public boolean deleteWorkspaceById(int id);
 
-	public boolean deleteWorkspaceIfUnused(String workspaceId);
+	public boolean deleteWorkspaceIfUnused(int id);
 
 	/**
 	 * Find workspaces by partial name of the title
@@ -47,16 +49,16 @@ public interface WorkspaceDAO {
 	 * @param limit
 	 * @return
 	 */
-	public List<G_Workspace> findWorkspaces(String userId, String partialName,
+	public List<G_Workspace> findWorkspaces(int userId, String partialName,
 			int offset, int limit);
 
 	public List<G_Workspace> getAllWorkspaces();
 
 	public G_Workspace getOrCreateWorkspace(G_Workspace g);
 
-	public G_Workspace getWorkspaceById(String id);
+	public G_Workspace getWorkspaceById(int id);
 
-	public List<G_Workspace> getWorkspacesForUser(String username);
+	public List<G_Workspace> getWorkspacesForUser(int userId);
 
 	/**
 	 * Return true if the workspace has any of the provided relations to the
@@ -68,13 +70,13 @@ public interface WorkspaceDAO {
 	 * @param rel
 	 * @return true if the user had one or more of the rels to the workspace
 	 */
-	public boolean hasRelationship(String username, String workspaceid,
+	public boolean hasRelationship(int userId, int workspaceid,
 			G_UserSpaceRelationshipType... rel);
 
-	public boolean removeUserFromWorkspace(String username, String workspaceId);
+	public boolean removeUserFromWorkspace(int userId, int workspaceId);
 
-	public boolean removeUserPermissionFromWorkspace(String username,
-			String permission, String workspaceId);
+	public boolean removeUserPermissionFromWorkspace(int userId,
+			String permission, int workspaceId);
 
 	/**
 	 * 

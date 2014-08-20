@@ -9,4 +9,6 @@ import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 public interface BlueprintImporter {
 		public void CreateSchema(TitanGraph g);
 		public void Import(BatchGraph<TransactionalGraph> g) throws IOException;
+	
+		public void Import(TitanGraph g)throws IOException;
 }

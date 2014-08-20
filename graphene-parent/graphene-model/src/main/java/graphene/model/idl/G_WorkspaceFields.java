@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public enum G_WorkspaceFields { 
-  active, creatorusername, json, title, workspaceid, lastmodified, createddate  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_WorkspaceFields\",\"namespace\":\"graphene.model.idl\",\"symbols\":[\"active\",\"creatorusername\",\"json\",\"title\",\"workspaceid\",\"lastmodified\",\"createddate\"]}");
+  active, json, queries, datamap, description, title, id, modified, created  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_WorkspaceFields\",\"namespace\":\"graphene.model.idl\",\"symbols\":[\"active\",\"json\",\"queries\",\"datamap\",\"description\",\"title\",\"id\",\"modified\",\"created\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

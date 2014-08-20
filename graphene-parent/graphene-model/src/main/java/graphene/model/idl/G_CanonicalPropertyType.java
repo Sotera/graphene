@@ -45,7 +45,7 @@ public enum G_CanonicalPropertyType {
 	EMAIL_ADDRESS(4, "Email Address", "emailAddress"),
 	IP(41, "IP", "ip"),
 	FAMILYROLE(409, "Family Role", "familyRole"),
-	ID(5, "Id", "ID"),
+	OTHER_ID(5, "Id", "ID"),
 	IMPORTANCE(411, "Importance", "importance"),
 	JSONVALUE(414, "JSON", "json"),
 	LINK(415, "Link", "link"),

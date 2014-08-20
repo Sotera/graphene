@@ -63,10 +63,13 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	public void login(String username, String password)
 			throws AvroRemoteException, BusinessException {
 
-		G_User user = service.loginUser(username, password);
-		applicationStateManager.set(G_User.class, user);
-		// request.getSession(true).setAttribute(AUTH_TOKEN, user);
+		G_User user = service.getByUsername(username);
+		if (user != null) {
+			user = service.loginUser(user.getId(), password);
 
+			applicationStateManager.set(G_User.class, user);
+			// request.getSession(true).setAttribute(AUTH_TOKEN, user);
+		}
 	}
 
 	public void logout() {

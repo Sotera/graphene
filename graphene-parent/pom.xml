@@ -53,6 +53,7 @@
 		<opencsv.version>2.3</opencsv.version>
 		<disruptor.version>2.10.3</disruptor.version>
 		<guava.version>17.0</guava.version>
+		<guice.version>3.0</guice.version>
 		<sspace.version>2.0.4</sspace.version>
 		<mapdb.version>0.9.7</mapdb.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
@@ -474,6 +475,13 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
+			</dependency>
+			<dependency><!-- Guice is a google Dependency injection framework that 
+					is much like Tapestry IOC. It can be used as the need arises or for personal 
+					preference. -->
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>${guice.version}</version>
 			</dependency>
 			<dependency>
 				<!-- The S-Space Package is a Natural Language Processing library for 

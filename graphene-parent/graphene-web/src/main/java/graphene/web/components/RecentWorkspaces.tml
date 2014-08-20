@@ -39,7 +39,7 @@
 		<div>
 			<h1>&nbsp;&nbsp;
 				<small>Current Workspace:</small>&nbsp;&nbsp;
-				<a t:type="pagelink" page="graphene/ViewWorkspace" context="currentSelectedWorkspace?.workspaceid">${currentSelectedWorkspace?.title}
+				<a t:type="pagelink" page="graphene/ViewWorkspace" context="currentSelectedWorkspace?.id">${currentSelectedWorkspace?.title}
 				</a>
 			</h1>
 		</div>

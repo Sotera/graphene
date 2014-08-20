@@ -6,14 +6,13 @@ protocol G_UserSpaceDataTypes {
 	import idl "SecurityDataTypes_v4.1.avdl";
 	
 	enum G_UserFields {
-		active,username,avatar,email,fullname,hashedpassword,lastlogin,lastmodified,accountcreated,numberlogins,provenance,uncertainty
+		id,active,username,avatar,email,fullname,hashedpassword,lastlogin,modified,created,numberlogins
 	}
-	
 	
 	record G_User {
 		/** */
 		boolean active = true;
-		
+		int id;
 		string username = "notset";
 		/**
 		 * some id of an avatar (could be a file name or other string to look
@@ -34,41 +33,49 @@ protocol G_UserSpaceDataTypes {
 		union { long, null} lastlogin = 0;
 		
 		/** user's modified datetime */
-		union { long, null} lastmodified = 0;
+		union { long, null} modified = 0;
 		
 		/** user's account created datetime */
-		union { long, null} accountcreated = 0;
+		union { long, null} created = 0;
 		
 		/** user's numberlogins */
 		int numberlogins = 0;
-		
 	}
+	
 	enum G_GroupFields {
-		groupname
+		id,name,description
 	}
+	
 	record G_Group {
-		string groupname = "notset";
+		int id;
+		string name = "notset";
+		string description = "notset";
 	}
+	
 	enum G_WorkspaceFields {
-		active,creatorusername,json,title,workspaceid,lastmodified,createddate
+		active,json,queries, datamap,description,title,id,modified,created
+	}
+	
+	enum G_UserSpaceRelationshipType {
+		CREATOR_OF, // For user to workspace relations
+		EDITOR_OF, // For user to workspace relations
+		REVIEWER_OF // For user to workspace relations
 	}
 	
 	record G_Workspace {
 		boolean active =true;
-
-		union {string, null} creatorusername = null;
-		
+		union {string, null} description=null;
 		union {string, null} json=null;
-		
+		union {string, null} queries=null;
+		union {string, null} datamap=null;
 		string title="untitled";
 		
-		string workspaceid;
+		int id;
 			
 		 /** workspace's modified datetime */
-		union { long, null} lastmodified = 0;
+		union { long, null} modified = 0;
 		 /** workspace's created datetime */
-		union { long, null} createddate = 0;
+		union { long, null} created = 0;
 			
-		
 	}
 }

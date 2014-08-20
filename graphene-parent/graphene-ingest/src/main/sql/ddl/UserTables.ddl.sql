@@ -1,48 +1,58 @@
-drop table g_user_groups;
-drop table g_user_workspace;
-drop table g_groups;
-drop table g_workspace;
-drop table g_user;
+drop table G_USER_GROUP;
+drop table G_USER_WORKSPACE;
+drop table G_GROUP;
+drop table G_WORKSPACE;
+drop table G_USER;
 
 
---We call the table g_user because 'user' is a keyword in TSQL, and I didn't want developer to have to deal with knowing to put it in brackets.
-create table g_user (
-username nvarchar(50) PRIMARY KEY,
+--We call the table G_USER because 'user' is a keyword in TSQL, and I didn't want developer to have to deal with knowing to put it in brackets.
+create table G_USER (
+id int not null auto_increment PRIMARY KEY,
+username VARCHAR(50),
 active bit,
-email nvarchar(100) ,
-salt nvarchar(128),
-hashedpassword nvarchar(128), --for SHA512 hash
-accountcreated datetime,
+email VARCHAR(100) ,
+salt VARCHAR(128),
+hashedpassword VARCHAR(128),
+created datetime,
+modified datetime,
 lastlogin datetime, 
-numberlogins integer,
-avatar nvarchar(100),
-fullname nvarchar(100)
+numberlogins int,
+avatar VARCHAR(100),
+fullname VARCHAR(100)
 );
 
 
 --defines a group
-CREATE TABLE g_groups (
-    groupname VARCHAR PRIMARY KEY 
+CREATE TABLE G_GROUP (
+    id int not null auto_increment PRIMARY KEY,
+    name VARCHAR(200),
+    description TEXT
 );
-
 
 --defines a workspace
-create table g_workspace (
- workspace_id int PRIMARY KEY,
- creator_username nvarchar(50), --note: not a reference on purpose.  If we delete a user we don't want the workspace to disappear by cascading.
- title nvarchar(100),
- json nvarchar(MAX)
+--note: not a reference on purpose.  If we delete a user we don't want the workspace to disappear by cascading.
+create table G_WORKSPACE (
+ id int not null auto_increment PRIMARY KEY,
+ title VARCHAR(100),
+ created datetime,
+ modified datetime,
+ description TEXT,
+ json TEXT,
+ queries TEXT,
+ map TEXT
 );
---ties usernames to groups
-CREATE TABLE g_user_groups (
-    username nvarchar(50) FOREIGN KEY REFERENCES g_user(username),
-    groupname VARCHAR FOREIGN KEY REFERENCES g_groups(groupname)
+--ties usernames to GROUP
+CREATE TABLE G_USER_GROUP (
+  user_id int REFERENCES G_USER(id),
+  group_id int REFERENCES G_GROUP(id),
+  role VARCHAR(200)
 );
 
 --ties usernames to workspaces
-create table g_user_workspace (
-  username nvarchar(50) FOREIGN KEY REFERENCES g_user(username),
-  workspace_id int FOREIGN KEY REFERENCES g_workspace(workspace_id)
+create table G_USER_WORKSPACE (
+  user_id int  REFERENCES G_USER(id),
+  workspace_id int  REFERENCES G_WORKSPACE(id),
+  role VARCHAR(200)
 );
 
 
@@ -52,7 +62,7 @@ create table g_user_workspace (
 --
 --CREATE TABLE g_group_permission (
 --    permissionname VARCHAR PRIMARY KEY REFERENCES g_permission(permissionname),
---    groupname VARCHAR PRIMARY KEY REFERENCES g_groups(groupname),
+--    groupname VARCHAR PRIMARY KEY REFERENCES G_GROUP(groupname),
 --    priority INTEGER,
 --    policy BOOLEAN );
     
@@ -62,7 +72,7 @@ create table g_user_workspace (
 --    (
 --SELECT policy, priority 
 --FROM g_group_permission
---JOIN g_user_groups ON g_user_groups.groupname = g_group_permissions.groupname
+--JOIN G_USER_GROUP ON G_USER_GROUP.groupname = g_group_permissions.groupname
 --WHERE username = :username
 --AND permissionname = :perm
 --
