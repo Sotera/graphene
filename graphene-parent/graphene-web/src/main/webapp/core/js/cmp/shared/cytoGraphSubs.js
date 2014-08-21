@@ -718,9 +718,6 @@ Ext.define("DARPA.GraphVis",
 										console.log("showDetails() is undefined");
 									}
 								}
-							}, {
-								content: "Rabble Rabble!",
-								select: function() {}
 							}],
 						});
 					}
