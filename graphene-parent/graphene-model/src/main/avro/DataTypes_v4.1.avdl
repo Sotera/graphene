@@ -223,6 +223,8 @@ protocol G_DataTypes {
 	 * 
  	 * Do beings exist other than in the modes of objectivity and subjectivity, i.e. is the subject/object split of modern philosophy inevitable?
 	 * 
+	 *
+	 * See schema.org and cyc ontologies
  	 */
 	enum G_RelationshipType {
 		ISA, 				// ENTITY to def
@@ -270,6 +272,8 @@ protocol G_DataTypes {
 		ALIAS_OF,			// name to ENTITY
 		ADDRESS_OF, 		// address to ENTITY
 		GEOLOCATION_OF, 	// geolocation to ENTITY
+		CONTAINED_IN,       // place to place
+		
 		GOVERNMENT_ID_OF, 	// id to ENTITY
 		MEMBER_OF, 			// ENTITY to group||company||government
 		PART_OF, 			// ENTITY to group||company||government
@@ -304,6 +308,7 @@ protocol G_DataTypes {
 		EMPLOYEE_OF,		// ENTITY to ENTITY
 		OWNER_OF,			// ENTITY to ENTITY
 		INTERESTED_IN,		// ENTITY to Subject
+		PARTICIPATED_IN,	// ENTITY to n
 		WORKED_WITH,		// ENTITY to ENTITY
 		MANAGES,			// ENTITY to ENTITY
 		CONTROLS,			// ENTITY to ENTITY

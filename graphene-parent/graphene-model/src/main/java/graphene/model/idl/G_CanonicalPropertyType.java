@@ -28,6 +28,15 @@ public enum G_CanonicalPropertyType {
 	ACCOUNT_TYPE(12, "Account Type", "accountType"),
 	REPORT_ID(15, "Report Id", "reportId"),
 	ADDRESS(2, "Address", "address"),
+	ADDRESS_CITY(21, "Address City", "addressCity"),
+	ADDRESS_STREET(22, "Address Street", "addressStreet"),
+	ADDRESS_BLDG(23, "Address Bldg", "addressBldg"),
+	ADDRESS_POSTAL_CODE(24, "Address Postal Code", "addressPostalCode"),
+	ADDRESS_COUNTY(25, "Address County", "addressCounty"),
+	ADDRESS_STATE_PROVINCE(26, "Address State or Province",
+			"addressStateProvince"),
+	ADDRESS_COUNTRY(27, "Address Country", "addressCountry"),
+	ADDRESS_OTHER(29, "Address Other", "addressOther"),
 	GEO(21, "Geolocation", "geo"),
 	EXPORTADDRESS(23, "Export Address", "export"),
 	IMPORTADDRESS(24, "Import Address", "import"),
@@ -70,6 +79,7 @@ public enum G_CanonicalPropertyType {
 	VIN(87, "VIN", "vin"),
 	FLIGHT(87, "Airline or Ship", "flight"),
 	PHONE(9, "Phone", "phone"),
+
 	PROVIDER_COMPANY_NAME(421, "Provider Name", "providerName"),
 	PROVIDER_INDUSTRY(422, "Provider Industry", "providerIndustry"),
 	SEX(424, "Sex", "sex"),
@@ -86,6 +96,8 @@ public enum G_CanonicalPropertyType {
 	WALLET_ADDRESS(428, "Wallet Address", "walletAddress"),
 	USERNAME(429, "Username", "username"),
 	ENTITY(500, "Entity", "entity"),
+	TYPE(501, "Type", "type"),
+	URL(502, "URL", "url"),
 	REDACTED(-1, "[REDACTED]", "REDACTED");
 
 	// For increased performance
