@@ -387,6 +387,12 @@
 				<artifactId>tapestry-security</artifactId>
 				<version>0.5.1</version>
 			</dependency>
+			<dependency>
+				<groupId>org.lazan</groupId>
+				<artifactId>tapestry-atmosphere</artifactId>
+				<!-- lookup latest version at https://github.com/uklance/releases/tree/master/org/lazan/tapestry-atmosphere -->
+				<version>0.0.4</version>
+			</dependency>
 			<dependency><!-- Tapestry integration with JQuery. This may be removed 
 					if we switch to Tapestry 5.4, which includes JQuery support by default -->
 				<groupId>org.got5</groupId>
@@ -617,6 +623,10 @@
 	</dependencyManagement>
 
 	<repositories>
+		<repository>
+			<id>lazan-releases</id>
+			<url>https://raw.github.com/uklance/releases/master</url>
+		</repository>
 		<repository>
 			<releases>
 				<enabled>false</enabled>
