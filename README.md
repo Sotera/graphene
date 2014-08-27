@@ -1,12 +1,12 @@
 Graphene: Search and Graph your data 
 ======
- Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J, from your non-graph datastore (RDBMS, Solr, etc).<br>For configurations, building, and deployment instructions, view the [Graphene Wiki](https://github.com/Sotera/graphene/wiki).
+ Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J or Titan (and to that extent, Tinkerpop Blueprints), from your non-graph datastore (RDBMS, Solr, etc).<br>For configurations, building, and deployment instructions, view the [Graphene Wiki](https://github.com/Sotera/graphene/wiki).
+Please see the road maps in the wiki for new features and their slated order.
  
 Using Graphene 
 ------
- The core of Graphene (this project) is to be used as a WAR overlay for your Java based web application.  We will be providing two examples using the Kiva and Enron (limited) datasets.
- In the future we will be fleshing out a complete Maven archetype to get you going more quickly.
- 
+ The core of Graphene (this project) is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.
+
  It is our goal that you should not have to modify this project in order to suit your individual needs (although we welcome ideas and suggestions).  The intent is that this project be used as an underlying framework, and that your individual implementations can be wired within your code using IOC.
  
 Building Graphene 
@@ -46,7 +46,12 @@ Building Graphene
      </li>
      <li><h4>graphene-dao-neo4j</h4>
         <ul> 
-          <li>Defines some DAO implementations for a standardized Neo4J property graph, and graph querying abilities using Cypher</li>
+          <li>Defines some DAO implementations for a standardized Neo4J property graph, and graph querying abilities using Cypher and the Neo4J Java API</li>
+        </ul>
+     </li>
+     <li><h4>graphene-dao-titan</h4>
+        <ul> 
+          <li>Defines some helper classes for working with the Titan graph database for property and event graphs, and graph querying abilities using the Tinkerpop/Gremlin APIs</li>
         </ul>
      </li>
      <li><h4>graphene-dao-sql</h4>
