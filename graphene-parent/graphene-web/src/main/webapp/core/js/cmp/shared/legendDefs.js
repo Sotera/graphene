@@ -3,147 +3,141 @@
 // - Added groupName for support of different legends in different tabs and
 // - added display of colored icons instead of colored text
 
-var GLegend = {    
-    legendItems: [],
-    
-    // This function creates and returns a single line item (Ext fieldset) for the Legend.
-    // groupName     - Name of the group this legend item belongs to
-    // colorDispName - The color name to display to the user (can be anything) ** NO LONGER USED/IGNORED **
-    // textDesc      - Short description of the legend item
-    // color         - HTML color name or hex value. The color of the icon for this item
-    // fontSize      - text font size (default is 'small')
-    // Returns:      JSON object containing the Ext fieldset for the legend item
-    makeLegendItem: function(groupName, colorDispName, textDesc, color, fontSize) {
+function Legend() {
 
-        //var cnameMaxLen = 9;       // max length of a specified color display name - not a hard limit
-        
-        // NOTE: Placing everything in a table would align things better at the expense of additional markup and code.
-        //       Decided to keep it simple for now.
-        //var spacingLen = cnameMaxLen - colorDispName.length;
-        //if (spacingLen < 1) {
-        //    spacingLen = 1;
-        //}
-        var spacing = "&nbsp;"; 
-        //for (var s = 0; s < spacingLen; s++) {
-        //    spacing = spacing + "&nbsp;&nbsp;"; // good for now
-            //if (s % 2 == 0) {
-            //    spacing = spacing + "&nbsp;";
-            //}
-        //}
-        
-        var iconName = Config.imagesUrl + groupName + "_" + color + ".png"; // MFM 6/19/14
-        
-        // DEBUG
-        //console.log("makeLegendItem: iconName = " + iconName);
-        
-	var legendItem = {
-            xtype: 'fieldset',
-            layout:{
-               type:'hbox'
-            },
-            width:'auto',
-            height:'auto',
-            groupName: groupName,
-            margin: 0,
-            padding: 0,
-            border: 0,
-            items:[
-                {
-                    xtype: 'label',
-                    margin: 2,
-                    padding: 1,
-                    border: false,
-                    html: '<img src="' + iconName + '" align="top">' + spacing + '- ' + textDesc + ' <br/>',
-                    style: { fontsize: (fontSize && fontSize.length > 3)? fontSize: 'small' }
-                }
-            ]
-        };
+	// private fields.  can only be manipulated by public functions
+	var _legendItems = {};
 	
-        return legendItem;
-    },
-    
-    // MFM 6/19/14
-    // groupName    - The group name
-    // RETURNS      - An array of legend items for the specified group name
-    getLegendByGroup: function(groupName) {
-         var self = this;
-         var litemsOut = [];
-         var litem;
-         
-         for (var i = 0; i < self.legendItems.length; i++) {
-             litem = self.legendItems[i];
-             if (litem.groupName == groupName) {
-                 litemsOut.push(litem);
-             }
-         }
-         return litemsOut;
-    },
-    
-    // Returns:     an array of legend items
-    getLegend: function(groupName) {
-        
-        var self = this;
-        
-        if (groupName == undefined) {
-        	groupName = "default";
-        }
-        
-        if (self.legendItems.length == 0 ) {
-            self.createLegend("default"); 
-        }
-        
-        return self.getLegendByGroup(groupName);
-    },
-    
-    // TODO FUTURE - generate the legend from a config file at startup time
-    // create the legend items - singleton
-    // groupName    - The group this legend belongs to
-    // slitems      - Optional. Legend items for this group. Each item is a string containing comma separated fields
-    // Returns:     - an array of legend items
-    createLegend: function(groupName, slitems) {        
-        var self = this;
-        
-        if (self.legendItems.length == 0 ) {    // Create only once
-            var legendItem = self.makeLegendItem(groupName, "Red", "Item you searched for.", "red", "small");
-            self.legendItems.push(legendItem);
-
-            legendItem = self.makeLegendItem(groupName, "Green", "Email Address.", "palegreen", "small");
-            self.legendItems.push(legendItem);
-           
-            legendItem = self.makeLegendItem(groupName, "Gray", "Shared Attribute.", "gray", "small");         
-            self.legendItems.push(legendItem);
-            
-            legendItem = self.makeLegendItem(groupName, "Navy Blue", "Selected Item(s).", "darkblue", "small");         
-            self.legendItems.push(legendItem);
-            
-            legendItem = self.makeLegendItem(groupName, "Magenta", "Expanded Nodes.", "magenta", "small");         
-            self.legendItems.push(legendItem);
-            
-            legendItem = self.makeLegendItem(groupName, "Black", "Selected Link.", "blackline", "small");         
-            self.legendItems.push(legendItem);
-            
-            // ADD MORE
-        }
-        
-        // Avoid creation of duplicate legends
-        var litems = self.getLegendByGroup(groupName);
-        if (litems.length > 0) {
-            return litems;
-        }
-        else { // Create legend for a new group
-            // slitems - Optional legend items for this group. Each item is a string containing comma separated fields
-            if (slitems && slitems.length > 0) {
-                var slitem;
-                for (var i = 0; i < slitems.length; i++) {
-                    slitem = slitems[i];
-                    var sliParts = slitem.split(",");
-                    if (sliParts.length == 4) {
-                        legendItem = self.makeLegendItem(groupName, sliParts[0], sliParts[1], sliParts[2], sliParts[3]);
-                        self.legendItems.push(legendItem);
-                    }
-                }
-            }
-        }
-        return self.getLegendByGroup(groupName);
-    }
-};
+	var _defaultGroupName = "";
+	
+	var _makeLegendItem = function(iconPath, desc) {
+		var html = "<img src='" + iconPath + "' align='top'>" + desc + "<br/>";
+		
+		return {
+			xtype: 'fieldset',
+			layout: {
+				type: 'hbox'
+			},
+			width: 'auto',
+			height: 'auto',
+			margin: 0,
+			padding: 0,
+			border: 0,
+			items: [{
+				xtype: 'label',
+				margin: 2,
+				padding: 1,
+				border: false,
+				html: html,
+				style: {
+					fontsize: "small"
+				}
+			}]
+		};
+	};
+	
+	/*
+	 * Get this legend's default group's name (not the legend itself)
+	 * 
+	 * returns String _defaultGroupName
+	 */
+	this.getDefaultGroupName = function() {
+		return _defaultGroupName;
+	};
+	
+	/*
+	 * Set's the legend's default group's name.
+	 * If the legend does not currently have a groupName matching
+	 * the passed name, _defaultGroupName will not be changed.
+	 * 
+	 * name - String: groupName key to be made the default legend
+	 */
+	this.setDefaultGroupName = function(name) {
+		if (_legendItems.hasOwnProperty(name)) {
+			_defaultGroupName = name;
+		}
+	};
+	
+	/*
+	 *	Return a name/value map of all registered legends.
+	 *	
+	 *	returns {
+	 *		"groupName1" : [ legendItems1, legendItems2, ... ],
+	 *		"groupName2" : [ legendItems1, legendItems2, ... ],
+	 *		...
+	 *	};
+	 */
+	this.getAllLegendItems = function() {
+		return _legendItems;
+	};
+	
+	/*
+	 *	Return an array of legend items matching the passed groupName
+	 *	groupName - String name of the group to be returned.
+	 *	returns Array
+	 */
+	this.getLegendByGroup = function(groupName) {
+		if (_legendItems.hasOwnProperty(groupName)) {
+			return _legendItems[groupName];
+		} else {
+			console.error("Can not find a legend group with the name '" + groupName + "'");
+			return [];
+		}
+	};
+	
+	/*
+	 *	Add a single legend item to the specified legend group
+	 *	groupName - String: name of the group to be added to.
+	 *	iconPath - String: path to the icon resource representing this legend item
+	 *	text - (Optional) String: text description following the icon of this legend item
+	 */
+	this.addLegendItem = function(groupName, iconPath, text) {
+		var desc = "";
+		
+		if (typeof text !== "undefined") {
+			desc = "&nbsp;- " + text;
+		}
+		
+		var legendItem = _makeLegendItem(iconPath, desc);
+		
+		if (_legendItems.hasOwnProperty(groupName)) {
+			try {
+				_legendItems[groupName].push(legendItem);
+			} catch (e) {
+				// TODO: handle exception
+			}
+		} else {
+			_legendItems[groupName] = [];
+			_legendItems[groupName].push(legendItem);
+		}
+	};
+	
+	/*
+	 *	Iterates over an array of objects, each one containing parameters to define a legend item
+	 *	items - Array: each item is an Object with three fields...
+	 *			groupName - String or Array<String>: groupName(s) to insert into
+	 *			iconPath - String: path to the icon resource representing this legend item
+	 *			text - (Optional) String: text description following the icon of this legend item
+	 */
+	this.addLegendItems = function(items) {
+		var i, l, j, groupNames, iconPath, text;
+		
+		l = items.length;
+		
+		for (i = 0; i < l; i++) {
+		
+			// TODO: verify and fail softly
+			groupNames = items[i].groupNames;
+			iconPath = items[i].iconPath;
+			text = items[i].text;
+			
+			if ($.isArray(groupNames)) {
+				for (j = 0; j < groupNames.length; j++) {
+					this.addLegendItem(groupNames[j], iconPath, text);
+				}
+			} else {
+				this.addLegendItem(groupNames, iconPath, text);
+			}
+		}
+	}
+}

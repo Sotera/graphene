@@ -117,11 +117,6 @@ Ext
 
 						this.nodesExpanded = 0;
 
-						var legend = Ext.create("Ext.panel.Panel", {
-							title : 'LEGEND',
-							items : GLegend.getLegend()
-						});
-
 						// MFM
 						var graphSettings = Ext.create("DARPA.GraphSettings", {
 							id : config.id + '-settings'

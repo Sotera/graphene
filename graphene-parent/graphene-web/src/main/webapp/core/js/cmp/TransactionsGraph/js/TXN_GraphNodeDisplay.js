@@ -47,7 +47,7 @@ Ext.define("DARPA.TXNGNodeDisplay",
 			}),
 			Ext.create("Ext.panel.Panel", {
 				title: 'LEGEND',
-				items: GLegend.getLegend()
+				items: GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
 			})
 		];
 		

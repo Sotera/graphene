@@ -42,7 +42,7 @@ Ext.define("DARPA.PBNodeDisplay", {
 			height : 'auto'
 		}), Ext.create("Ext.panel.Panel", {
 			title : 'LEGEND',
-			items : GLegend.getLegend()
+			items : GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
 		})
 
 		]; // end
