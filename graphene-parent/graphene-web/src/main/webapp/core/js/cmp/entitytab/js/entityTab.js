@@ -14,13 +14,15 @@ Ext.define("DARPA.EntityTab", {
 			title:'ENTITY DETAILS',
 			id:config.id + '-Details',			
 			entityname:config.title, 
-                        institution: config.institution,
+			institution: config.institution,
+			resizable: false,
 			entity:config.entity});
 /*			
 		var transactions = Ext.create("DARPA.Ledger", {
 			title:'TRANSACTIONS',
 			id:config.id + "-Ledger",
-                        institution: config.institution,
+			institution: config.institution,
+			resizable: false,
 			disabled:true
 			
 		});
@@ -28,7 +30,8 @@ Ext.define("DARPA.EntityTab", {
 		var transfers = Ext.create("DARPA.TransfersLedger", {
 			title:'EMAILS',
 			id:config.id + '-Transfers',
-                        institution: config.institution,
+			institution: config.institution,
+			resizable: false,
 			disabled:true			
 		});
 
@@ -36,7 +39,8 @@ Ext.define("DARPA.EntityTab", {
 			title:'EMAIL GRAPH', 
 			id:config.id + '-TransGraph',
 			entityId: config.id, 	
-                        institution: config.institution,
+			institution: config.institution,
+			resizable: false,
 			disabled:true			
 		});
 		
@@ -44,7 +48,8 @@ Ext.define("DARPA.EntityTab", {
 			title:'ENTITY GRAPH', 
 			entityId: config.id, 
 			id:config.id + '-EntityGraph',
-                        institution: config.institution
+			institution: config.institution,
+			resizable: false
 		});
 
 		this.items = [
