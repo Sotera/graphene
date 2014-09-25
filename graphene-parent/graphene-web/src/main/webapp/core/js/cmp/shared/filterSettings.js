@@ -1156,6 +1156,9 @@ Ext.define("DARPA.FilterSettings",
         updateGraphFilterDates: function(owner, fromDate, toDate) {
             var fdate = owner.getComponent('graphfilterFromDate');
             var tdate = owner.getComponent('graphfilterToDate');
+			
+			if (typeof fdate == "undefined" || typeof tdate == "undefined") return;
+			
             if (fdate.isDisabled() == false && tdate.isDisabled() == false) {   // MFM bug fix
                 var self = this;
                 if (fdate) {

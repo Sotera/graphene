@@ -98,7 +98,7 @@ Ext.define("DARPA.GraphVis",
             // Convert json to format that cytoscape.js expects
             var node;
 	    for (var n = 0; n < nodes.length; n++) {
-		node = nodes[n];
+		node = nodes[n].data;
 		var nodeEntry = { 
                     "data": {
                         "id": node.id,
@@ -117,7 +117,7 @@ Ext.define("DARPA.GraphVis",
             
             var edge;
             for (var e = 0; e < edges.length; e++) {
-                edge = edges[e];
+                edge = edges[e].data;
                 var data;
                 
                 var edgeEntry = {
@@ -125,7 +125,8 @@ Ext.define("DARPA.GraphVis",
                         "type": "line",
                         "source": edge.source,
                         "target": edge.target,
-                        "amount": (edge.amount)? edge.amount : ((edge.weight)? edge.weight : 0), // placeholder for $ amount
+                        //"amount": (edge.amount)? edge.amount : ((edge.weight)? edge.weight : 0), // placeholder for $ amount
+						"label": edge.label,
                         "weight": (edge.weight)? edge.weight : 0,
                         "lineWidth": graphVisCommon.setEdgeLineWidth(2, (edge.weight)? edge.weight : 0),
                         "visible": true,
@@ -395,7 +396,7 @@ Ext.define("DARPA.GraphVis",
                 }
 
                 var dir = adj.data.direction;  // direction array conatins the node ids of the 2 connected nodes
-                if (dir.length == 2) {
+                if (dir && dir.length == 2) {
                     if (dir[0] != oldSelectedNodeId) {
                         dir[0] = innumber + 'X' + dir[0];
                     }
@@ -426,7 +427,11 @@ Ext.define("DARPA.GraphVis",
         }
         var eNList = { expandFrom: innumber, nodeIds: expNodeIdList};
         scope.expandedNodes.push(eNList);
-           
+        
+		var retJson = {};
+		retJson.nodes = scope.gv.nodes().jsons();
+		retJson.edges = scope.gv.edges().jsons();
+		return retJson;
     }, // function showGraph1Hop
 	
     // remove nodes and connected edges for the specified node ids
@@ -558,7 +563,7 @@ Ext.define("DARPA.GraphVis",
     //          other params - TBD
     //          
     // owner    - Pointer to the caller's context
-    initGraph: function(config, owner) {
+    initGraph: function(config, owner, onLoadCallback, onLoadParams) {
         var scope = this;        
         if (config) {
             if (config.width) {
@@ -598,72 +603,71 @@ Ext.define("DARPA.GraphVis",
                 	overrideARBOR();
                 	
                     $("#" + scope.id).cytoscape({
-							showOverlay: false,
-                            style: cytoscape.stylesheet()
-                                .selector('node').css({
-                                        'content': 'data(name)',
-                                        'text-valign': 'bottom',
-                                        'color': 'black',
-                                        'background-color': 'data(color)',
-                                        'font-size': 10,
-                                        'text-outline-width': 1,
-                                        'text-outline-color': 'white',
-                                        'shape': 'data(type)',  // added
-                                        'width': 16,  
-                                        'height': 16   
-                                }).selector('edge').css({
-                                        'content':'data(label)',   
-                                        'text-valign': 'center',
-                                        'color': 'black',   // color of the edge label
-                                        'text-outline-width': 1,
-                                        'font-size': 10,
-                                        'text-outline-color': 'white',
-                                        'line-color': graphVisCommon.Colors.defaultEdge, 
-                                        'target-arrow-color': 'DarkBlue',
-                                        'target-arrow-shape': 'triangle',
-                                        'width': 'data(lineWidth)'   
-                                }).selector('node:selected').css({
-                                        'background-color': graphVisCommon.Colors.selectedNode,
-                                        'line-color': 'black',
-                                        'text-outline-color': 'yellow',
-                                        'target-arrow-color': 'black',
-                                        'source-arrow-color': 'black',
-                                        'border-color': 'black',
-                                        'shape': 'data(type)',  // added
-                                        'font-size': 12
-                                }).selector('edge:selected').css({
-                                        'background-color': graphVisCommon.Colors.selectedEdge,
-                                        'line-color': 'black',
-                                        'text-outline-color': 'yellow',
-                                        'target-arrow-color': 'black',
-                                        'source-arrow-color': 'black',
-                                        'border-color': 'black',
-                                        'font-size': 12
-                                        // 'width': 20,  
-                                        //'height': 20 
-                                }).selector('.toggled-show').css({  // Workaround for showing and hiding edge labels
-                                        'content':'data(label)'
-                                }).selector('.toggled-hide').css({
-                                        'content':' '
-                                }).selector('.faded').css({
-                                        'opacity': 0.25,
-                                        'text-opacity': 0
-                                })
+						showOverlay: false,
+						style: cytoscape.stylesheet()
+							.selector('node').css({
+								'content': 'data(name)',
+								'text-valign': 'bottom',
+								'color': 'black',
+								'background-color': 'data(color)',
+								'font-size': 10,
+								'text-outline-width': 1,
+								'text-outline-color': 'white',
+								'shape': 'data(type)',  // added
+								'width': 16,  
+								'height': 16   
+							}).selector('edge').css({
+								'content':'data(label)',   
+								'text-valign': 'center',
+								'color': 'black',   // color of the edge label
+								'text-outline-width': 1,
+								'font-size': 10,
+								'text-outline-color': 'white',
+								'line-color': graphVisCommon.Colors.defaultEdge, 
+								'target-arrow-color': 'DarkBlue',
+								'target-arrow-shape': 'triangle',
+								'width': 'data(lineWidth)'   
+							}).selector('node:selected').css({
+								'background-color': graphVisCommon.Colors.selectedNode,
+								'line-color': 'black',
+								'text-outline-color': 'yellow',
+								'target-arrow-color': 'black',
+								'source-arrow-color': 'black',
+								'border-color': 'black',
+								'shape': 'data(type)',  // added
+								'font-size': 12
+							}).selector('edge:selected').css({
+								'background-color': graphVisCommon.Colors.selectedEdge,
+								'line-color': 'black',
+								'text-outline-color': 'yellow',
+								'target-arrow-color': 'black',
+								'source-arrow-color': 'black',
+								'border-color': 'black',
+								'font-size': 12
+								// 'width': 20,  
+								//'height': 20 
+							}).selector('.toggled-show').css({  // Workaround for showing and hiding edge labels
+								'content':'data(label)'
+							}).selector('.toggled-hide').css({
+								'content':' '
+							}).selector('.faded').css({
+								'opacity': 0.25,
+								'text-opacity': 0
+							})
                     });
 
                     scope.gv = $("#" + scope.id).cytoscape("get");
-                    scope.initialized = true;
 					
 					// if the plug-in is not included for any reason, do not try to initialize it
 					if (scope.gv.cxtmenu) {
 						
 						// radial context menu plug in
 						scope.gv.cxtmenu({
-							// menuRadius: 100, // the radius of the circular menu in pixels
-							// selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
-							// fillColor: 'rgba(0, 0, 0, 0.75)', // the background colour of the menu
-							// activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
-							// activePadding: 20, // additional size in pixels for the active command
+							menuRadius: 75, // the radius of the circular menu in pixels
+							selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
+							fillColor: 'rgba(0, 0, 200, 0.75)', // the background colour of the menu
+							activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
+							activePadding: 0, // additional size in pixels for the active command
 							// indicatorSize: 24, // the size in pixels of the pointer to the active command
 							// separatorWidth: 3, // the empty spacing in pixels between successive commands
 							// spotlightPadding: 4, // extra spacing in pixels between the element and the spotlight
@@ -718,6 +722,11 @@ Ext.define("DARPA.GraphVis",
 						});
 					}
 					
+					if (onLoadCallback) {
+						onLoadCallback();
+					}
+					
+                    scope.initialized = true;
                     scope.reset();
                    
                 }
@@ -1227,14 +1236,13 @@ Ext.define("DARPA.GraphVis",
             scope.owner.nodeClick(node);
         });
 
-		
-		/* Temporarily disabled for radial context menu to function *//*
+		/*
         scope.gv.on('cxttapend','node', function(e) {
             var node = e.cyTarget;   // the current selected node
             if (!(scope.owner.nodeRightClick==undefined))
 	            scope.owner.nodeRightClick(node);
         
-        }); */
+        });*/
         
         scope.gv.on('cxttapend', 'edge', function(e) {
         	var edge = e.cyTarget;
@@ -1311,7 +1319,7 @@ Ext.define("DARPA.GraphVis",
             }
 
         });
-
+/*
         // MOUSEUP This function is called when a node is selected and also for every node dragged when dragging is completed
         scope.gv.on('mouseup','node', function(e) {
             var data = e.cyTarget.data();   // the current selected edge
@@ -1319,10 +1327,11 @@ Ext.define("DARPA.GraphVis",
             scope.gv.$("node[id = " + data.id + "]").trigger('select'); 
 
             //scope.owner.nodeClick(e.cyTarget);
-        });
+        });*/
 
-		/* Temporarily disabled for radial context menu to function *//*
         var timeoutFn = null;
+		
+		/*
 		scope.gv.on('mouseover', 'node', function(e) {
 			var x = e.originalEvent.layerX;
 			var y = e.originalEvent.layerY;
@@ -1347,14 +1356,13 @@ Ext.define("DARPA.GraphVis",
 				}
 			}, 1000); // hover for one second
 			
-		}); */
+		});
 
-		/* Temporarily disabled for radial context menu to function *//*
 		scope.gv.on('mouseout', 'node', function(e) {
 			clearTimeout(timeoutFn);
 			if (scope.owner.mouseOverPopUp)
 				scope.owner.mouseOverPopUp.hide();
-		}); */  
+		});  */       
     }
         
 }); // define

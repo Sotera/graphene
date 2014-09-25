@@ -45,128 +45,136 @@ Ext.define("DARPA.TransactionGraph", {
         
 	constructor:function(config)
 	{
-                var self = this;
-	        // MFM Add a View menu to the top toolbar to allow changing the Graph Layout
-                this.institution = config.institution;
-        	this.tbar = Ext.create("DARPA.TXNGToolbar", { institution: this.institution }),
-	
+		var self = this;
+		// MFM Add a View menu to the top toolbar to allow changing the Graph Layout
+		this.institution = config.institution;
+		this.tbar = Ext.create("DARPA.TXNGToolbar", {
+			institution: this.institution 
+		}),
+
 		this.GraphVis = Ext.create("DARPA.GraphVis", { 
 			id: config.id + "-TXNcygraph",
-                	setBusy:function(busy) {
-                		var tab = Ext.getCmp(config.entityId).getTransactionGraph();
-                		utils.setBlink(tab, busy);
-                		tab.setStatus(busy ? "CALCULATING LAYOUT" : "CALCULATED LAYOUT");
-               		}
-			});
-                this.graphStore = makeTXNGraphStore(); // made this part of the object and only created once per instance
-                this.nodesExpanded = 0;
-                
-                // DEBUG
-                //console.log("TransactionGraph constructor called");
-                
-                    
-                // MFM
-                var graphSettings = Ext.create("DARPA.GraphSettings", {
-                	id:config.id+'-settings'
-                });
-                // Have to delay this call a bit since the Graph Frame (see PB_Frame) is not defined yet
-                var wtimeout3 = window.setTimeout(function() {
-                    window.clearTimeout(wtimeout3);
-                    graphSettings.setGraph(self);   // MFM
-                }, 7600);
-                
-                // MFM The Entity (customer) graph does not have a concept of time - so disable dates and animation
-                var filterSettings = Ext.create("DARPA.FilterSettings", {id:config.id+'-TransactionGraphFilter'});
-                
-                // MFM JIRA-29 Additional filter settings. 
-                /**
-                {
-                   dispFieldName:	string | "getfromkey"	// name to display in the grid
-                                                            // getfromkey: get the display text from the attrs[j].key  value
-                   dispFieldType:	"text" | "dropdown" | "other"
-                   dispFieldWidth:	width of the input field (not yet used)
-                   dispFieldChoices:    string | "getfromnode",  // comma separated choices, or get the choices from the node's field
-                   dataSourceType:	"nodes" | "edges" | "other TBD"
-                   dataSourceField:	"color" | "idType" | "name" | "amount" | "weight" | "attrs"
-                                        // Special case: when "attrs" - this iterates over all of the attrs and builds the
-                                        // fields in the grid from each attribute (key, value) pair
-                }
-                **/
-           
-                // Specify the additional attributes that can be used for filtering
-                var addfilter1 = {      // NODE
-                    dispFieldName:	"Node Color",
-                    dispFieldType:	"dropdown",
-                    dispFieldWidth:	100,
-                    dispFieldChoices:   "getfromnode",       
-                    dataSourceType:	"nodes",
-                    dataSourceField:	"color"
-                 };
-                 
-                 var addfilter2 = {     // NODE
-                    dispFieldName:	"Node Name",
-                    dispFieldType:	"dropdown",
-                    dispFieldWidth:	100,
-                    dispFieldChoices:   "getfromnode",   
-                    dataSourceType:	"nodes",
-                    dataSourceField:	"name"
-                 };
-               
-                 var addfilter3 = {     // NODE
-                    dispFieldName:	"Identifier Type",
-                    dispFieldType:	"dropdown",
-                    dispFieldWidth:	100,
-                    dispFieldChoices:   "getfromnode",   
-                    dataSourceType:	"nodes",
-                    dataSourceField:	"idType"
-                 };
-                 
-                 var addfilter4 = {     // NODE
-                    dispFieldName:	"getfromkey",
-                    dispFieldType:	"text",
-                    dispFieldWidth:	100,
-                    dispFieldChoices:   "",       
-                    dataSourceType:	"nodes",
-                    dataSourceField:	"attrs" // array of attributes
-                 };
-                 var addfilter5 = {     // EDGE
-                    dispFieldName:	"Amount",   // TODO: maybe edge weight as another attribute
-                    dispFieldType:	"text",
-                    dispFieldWidth:	100,
-                    dispFieldChoices:   "",       
-                    dataSourceType:	"edges",
-                    dataSourceField:	"amount"
-                 };
-                 var addfilter6 = {     // EDGE
-                    dispFieldName:	"getfromkey",  
-                    dispFieldType:	"text",
-                    dispFieldWidth:	100,
-                    dispFieldChoices:   "",       
-                    dataSourceType:	"edges",
-                    dataSourceField:	"attrs" // array of attributes
-                 };
-                 var addFilterFields = [addfilter1, addfilter2, addfilter3, addfilter4, addfilter5, addfilter6];
-                 var ret = filterSettings.setAdditionalFields(addFilterFields);
-                 // DEBUG
-                 console.log("filterSettings.setAdditionalFields returned = " + ret);
-                 
-                 // END MFM JIRA-29 Additional filter settings
-                 // 
-                // Have to delay this call a bit since the Graph Frame (see PB_Frame) is not defined yet
-                var wtimeout2 = window.setTimeout(function() {
-                    window.clearTimeout(wtimeout2);
-                    filterSettings.setGraph(self);  // must be self and not this
-                    filterSettings.enableTimeFilter(false); // is enabled by default , disable it here 
-                    filterSettings.setSearchFieldLabel("Identifier(s)");
-                }, 7000);
-                
-                var graphContainer = Ext.create("Ext.Container", {
-                            width: 'auto', 
-                            height: 'auto',
-                            id: config.id+'-TXNcygraph',  // This is the dom element that contains the graph. 
-                            flex:1 
-                });
-                
+			setBusy:function(busy) {
+				var tab = Ext.getCmp(config.entityId).getTransactionGraph();
+				utils.setBlink(tab, busy);
+				tab.setStatus(busy ? "CALCULATING LAYOUT" : "CALCULATED LAYOUT");
+			}
+		});
+		
+		this.graphStore = makeTXNGraphStore(); // made this part of the object and only created once per instance
+		this.nodesExpanded = 0;
+
+		// DEBUG
+		//console.log("TransactionGraph constructor called");
+
+
+		// MFM
+		var graphSettings = Ext.create("DARPA.GraphSettings", {
+			id:config.id+'-settings'
+		});
+		// Have to delay this call a bit since the Graph Frame (see PB_Frame) is not defined yet
+		//var wtimeout3 = window.setTimeout(function() {
+		//	window.clearTimeout(wtimeout3);
+			graphSettings.setGraph(self);   // MFM
+		//}, 7600);
+
+		// MFM The Entity (customer) graph does not have a concept of time - so disable dates and animation
+		var filterSettings = Ext.create("DARPA.FilterSettings", {
+			id:config.id+'-TransactionGraphFilter'
+		});
+
+		// MFM JIRA-29 Additional filter settings. 
+		/**
+		{
+		dispFieldName:	string | "getfromkey"	// name to display in the grid
+			// getfromkey: get the display text from the attrs[j].key  value
+			dispFieldType:	"text" | "dropdown" | "other"
+			dispFieldWidth:	width of the input field (not yet used)
+			dispFieldChoices:    string | "getfromnode",  // comma separated choices, or get the choices from the node's field
+			dataSourceType:	"nodes" | "edges" | "other TBD"
+			dataSourceField:	"color" | "idType" | "name" | "amount" | "weight" | "attrs"
+			// Special case: when "attrs" - this iterates over all of the attrs and builds the
+			// fields in the grid from each attribute (key, value) pair
+		}
+		**/
+
+		// Specify the additional attributes that can be used for filtering
+		var addfilter1 = {      // NODE
+			dispFieldName:	"Node Color",
+			dispFieldType:	"dropdown",
+			dispFieldWidth:	100,
+			dispFieldChoices:   "getfromnode",       
+			dataSourceType:	"nodes",
+			dataSourceField:	"color"
+		};
+
+		var addfilter2 = {     // NODE
+			dispFieldName:	"Node Name",
+			dispFieldType:	"dropdown",
+			dispFieldWidth:	100,
+			dispFieldChoices:   "getfromnode",   
+			dataSourceType:	"nodes",
+			dataSourceField:	"name"
+		};
+
+		var addfilter3 = {     // NODE
+			dispFieldName:	"Identifier Type",
+			dispFieldType:	"dropdown",
+			dispFieldWidth:	100,
+			dispFieldChoices:   "getfromnode",   
+			dataSourceType:	"nodes",
+			dataSourceField:	"idType"
+		};
+
+		var addfilter4 = {     // NODE
+			dispFieldName:	"getfromkey",
+			dispFieldType:	"text",
+			dispFieldWidth:	100,
+			dispFieldChoices:   "",       
+			dataSourceType:	"nodes",
+			dataSourceField:	"attrs" // array of attributes
+		};
+		
+		var addfilter5 = {     // EDGE
+			dispFieldName:	"Amount",   // TODO: maybe edge weight as another attribute
+			dispFieldType:	"text",
+			dispFieldWidth:	100,
+			dispFieldChoices:   "",       
+			dataSourceType:	"edges",
+			dataSourceField:	"amount"
+		};
+		
+		var addfilter6 = {     // EDGE
+			dispFieldName:	"getfromkey",  
+			dispFieldType:	"text",
+			dispFieldWidth:	100,
+			dispFieldChoices:   "",       
+			dataSourceType:	"edges",
+			dataSourceField:	"attrs" // array of attributes
+		};
+		
+		var addFilterFields = [addfilter1, addfilter2, addfilter3, addfilter4, addfilter5, addfilter6];
+		var ret = filterSettings.setAdditionalFields(addFilterFields);
+		// DEBUG
+		console.log("filterSettings.setAdditionalFields returned = " + ret);
+
+		// END MFM JIRA-29 Additional filter settings
+		// 
+		// Have to delay this call a bit since the Graph Frame (see PB_Frame) is not defined yet
+		//var wtimeout2 = window.setTimeout(function() {
+		//	window.clearTimeout(wtimeout2);
+			filterSettings.setGraph(self);  // must be self and not this
+			filterSettings.enableTimeFilter(false); // is enabled by default , disable it here 
+			filterSettings.setSearchFieldLabel("Identifier(s)");
+		//}, 7000);
+
+		var graphContainer = Ext.create("Ext.Container", {
+			width: 'auto', 
+			height: 'auto',
+			id: config.id+'-TXNcygraph',  // This is the dom element that contains the graph. 
+			flex:1 
+		});
+
 		var details =  	Ext.create("Ext.tab.Panel", {
 			width:320,
 			height:'auto',
@@ -177,10 +185,10 @@ Ext.define("DARPA.TransactionGraph", {
 					title:'DETAILS/ACTIONS',
 					layout: 'fit',
 					items: [
-					        Ext.create("DARPA.TXNGNodeDisplay", {
-					        	id:config.id+'-NodeDisplay',
-					        	height: 'auto'
-					        })
+						Ext.create("DARPA.TXNGNodeDisplay", {
+							id:config.id+'-NodeDisplay',
+							height: 'auto'
+						})
 					]
 				}),
 				Ext.create("Ext.panel.Panel", {
@@ -201,11 +209,11 @@ Ext.define("DARPA.TransactionGraph", {
 		this.bbar = Ext.create("Ext.ProgressBar", {
 			id:config.id+'-ProgressBar',
 			text: 'Ready',
-	        height: 20,
-	        width: 200
+			height: 20,
+			width: 200
 		});
 		this.callParent(arguments);
-		
+
 	},
 	
 	getProgressBar: function() {
@@ -279,55 +287,50 @@ Ext.define("DARPA.TransactionGraph", {
                     })
                 }   
 */            
-		graphStore.load(
-		{
+		graphStore.load({
 			scope:this, //?
 			callback: function(records,operation,success) {
-			
-			
 				utils.setBlink(this, false); 
 
-                            
-//                            var pb2 = Ext.getCmp(self.id+"-TGgraphpgb");
-                            
-                            if (success == false || records == null || records.length == 0) {
-                            	if (success == false)
-                            		this.setStatus("SERVER ERROR REQUESTING GRAPH");
-                            	else if (records == null) 
-                            		this.setStatus("SERVER RETURNED NULL GRAPH");
-                            	else if (records.length == 0)
-                            		this.setStatus("SERVER RETURNED EMPTY GRAPH");                            	
 
-//                                if (pb2) {
-//                                    pb2.updateText("Search failed due to server error.");
-//                                    pb2.reset();
-//                                }
-                                self.clear();
-                            }
-                            else {
-				this.setStatus("LOADED DATA");
-				self.json=records[0].raw;
-//                                var graph = xmlToGraph(records[0].raw); // read the xml into graph structure
-//                                self.json= self.GraphVis.graphToJSON(graph);   // create the graph json object. 
-                                    
-                                // results could be empty, check for this here
-                                if (self.json && self.json.nodes.length == 0) {
-                                    this.setStatus("NO DATA FOUND TO PLOT");
-                                    //self.clear(); // don't clear what is already shown
-                                }
-                                else { 
-                                    self.clear();
-                                    self.showjson(self.prevLoadParams.number);
-                                }
+				//                            var pb2 = Ext.getCmp(self.id+"-TGgraphpgb");
 
-                                var nodeCount = self.json.nodes.length;
-                                self.appendTabTitle("(" + nodeCount.toString() + ")");
-                                
-                                // DRAPER API
-                                // Send a System Activity Message with optional metadata
-                                //activityLogger.logSystemActivity('Graph results returned and displayed', 
-                                //    {'Tab':'Transaction Graph', 'searchResults': { 'nodesFound': graph.nodes.length.toString() }});
-                            }
+				if (success == false || records == null || records.length == 0) {
+					if (success == false)
+						this.setStatus("SERVER ERROR REQUESTING GRAPH");
+					else if (records == null) 
+						this.setStatus("SERVER RETURNED NULL GRAPH");
+					else if (records.length == 0)
+						this.setStatus("SERVER RETURNED EMPTY GRAPH");                            	
+
+					//                                if (pb2) {
+					//                                    pb2.updateText("Search failed due to server error.");
+					//                                    pb2.reset();
+					//                                }
+					self.clear();
+				} else {
+					this.setStatus("LOADED DATA");
+					self.json=records[0].raw;
+					//                                var graph = xmlToGraph(records[0].raw); // read the xml into graph structure
+					//                                self.json= self.GraphVis.graphToJSON(graph);   // create the graph json object. 
+
+					// results could be empty, check for this here
+					if (self.json && self.json.nodes.length == 0) {
+						this.setStatus("NO DATA FOUND TO PLOT");
+						//self.clear(); // don't clear what is already shown
+					} else { 
+						self.clear();
+						self.showjson(self.prevLoadParams.number);
+					}
+
+					var nodeCount = self.json.nodes.length;
+					self.appendTabTitle("(" + nodeCount.toString() + ")");
+
+					// DRAPER API
+					// Send a System Activity Message with optional metadata
+					//activityLogger.logSystemActivity('Graph results returned and displayed', 
+					//    {'Tab':'Transaction Graph', 'searchResults': { 'nodesFound': graph.nodes.length.toString() }});
+				}
 			}
 		});
 	},
@@ -340,28 +343,23 @@ Ext.define("DARPA.TransactionGraph", {
             }  
 	},
         
-	afterLayout:function()
-	{
+	afterLayout: function() {
 		var self=this;
-                
-		if (self.GraphVis.getGv() == null) {                        
-                        // TODO May want to override some styling attributes in this config
-                        var config = { width: self.getWidth(), height: self.getHeight(),
-                                       rightBorder: 320, leftBorder: 5, topBorder: 5, botBorder: 80
-                        };
-                        
-			self.GraphVis.initGraph(config, self);  // initialize the graph display lib
-                        var dgt = window.setTimeout(function() {
-                            window.clearTimeout(dgt);
-                            self.GraphVis.zoom(0.8);
-                            self.showjson(self.prevLoadParams.number);
-                        },5000);        
+
+		if (self.GraphVis.getGv() == null) {
+			// TODO May want to override some styling attributes in this config
+			var config = { width: self.getWidth(), height: self.getHeight(),
+				rightBorder: 320, leftBorder: 5, topBorder: 5, botBorder: 80
+			};
+
+			self.GraphVis.initGraph(config, self, function() {
+				self.showjson(self.prevLoadParams.number);
+			});
+		} else {
+			self.showjson(self.prevLoadParams.number);
+			self.showjson1Hop(false, null);
 		}
-		else {
-                        self.showjson(self.prevLoadParams.number);
-                        self.showjson1Hop(false, null);
-                }
-                
+
 		this.callParent(arguments);
 	},
 	afterRender:function() 
@@ -605,6 +603,7 @@ Ext.define("DARPA.TransactionGraph", {
 		return settingsPanel.items.items[0];
 	},
 	
+	
 	hideNode : function(node) {
 		var self = this;
 		self.GraphVis.hideNode(node);
@@ -656,7 +655,7 @@ Ext.define("DARPA.TransactionGraph", {
             
             if (self.json1Hop != null && node != null) {
                 // Don't NEED: self.fd.canvas.resize(this.items.items[0].getWidth(),this.items.items[0].getHeight());				
-                self.GraphVis.showGraph1Hop(self.json1Hop, node);	// display the graph
+                self.json = self.GraphVis.showGraph1Hop(self.json1Hop, node);	// display the graph
                 if (userInitiated && userInitiated == true) {
                     self.nodesExpanded++;
                 }
@@ -672,156 +671,119 @@ Ext.define("DARPA.TransactionGraph", {
         
             graph1HopStore = Ext.create('Ext.data.Store', {
                 id: 'TGgraph1HopDataStore', 
-		proxy: {
-			type:'ajax',
-			model:'Graph',  
-			timeout:120000,
-			url:'', 
-			reader: {
-				type:'xml',
-				record:'graph',
-				root:'graphml'
-			}
-		}
-            });
+				proxy: {
+					type:'ajax',
+					model:'Graph',  
+					timeout:120000,
+					url:'', 
+					reader: {
+						type:'xml',
+						record:'graph',
+						root:'graphml'
+					}
+				}
+					});
             return graph1HopStore;
         },
         
         // load data for specified node expanded 1 hop out
-        loadOneHop:function(intype, node, pb, fromDate, toDate, butid)
-	{	
-		var self=this;
-		var graphStore = self.graphOneHopStoreInit(); 
-		var s = self.getSettings(); 
-                var maxNewCallsAlertThresh = 30;    // Adjust as needed
-                
-                // DEBUG
-                //console.log("loadOneHop");
-                
-                // Count the node's adjacencies and don't allow expand if the count is > 1
-                var countAdjacent = 0;
-                var edges = node.connectedEdges();
-                if (edges) {
-                    edges.each(function(indx, edge) {
-                        countAdjacent++;
-                    });
-                }
-                
-                if (countAdjacent > 1) {
-                    alert("This item can't be expanded because it already has more than 1 connection.");
-                    
-                    if (pb) {
-                        pb.updateText(".");
-                        pb.reset();
-                    }
-                    if (butid) {
-                        var but = Ext.getCmp(butid);
-                        if (but)
-                            but.enable();
-                    }
-                    return;
-                }
-                
-                // for feedback while the query and graph display is in progress
-                var mbox = Ext.Msg.show({
-                    title: 'Expand',
-                    msg: 'The expanded data is being obtained and prepared for display. Please wait...',
-                    buttons: Ext.Msg.OK
-                });
-                
-		graphStore.proxy.extraParams.degree = 1; // labelled hops. only 1 hop out from this node
-		graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
-		graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
-                if (graphStore.proxy.extraParams.maxNodes > 200) {
-                    graphStore.proxy.extraParams.maxNodes = 200;    // hard limit for this case
-                }
-                if (maxNewCallsAlertThresh > graphStore.proxy.extraParams.maxEdgesPerNode) {
-                    maxNewCallsAlertThresh = graphStore.proxy.extraParams.maxEdgesPerNode;
-                }
-		graphStore.proxy.extraParams.minWeight  = s.getMinWeight();
-                // MFM The Rest Service expects this:
-                // @QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
-		// @QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
-	
-                // Dates not used yet
-                //graphStore.proxy.extraParams.fromdt	= fromDate; 
-		//graphStore.proxy.extraParams.todt	= toDate;
-                
-                //-------
-                if (intype == null || intype.length == 0) {
-                    intype = "customer";
-                }
-		graphStore.proxy.extraParams.Type	= intype;	
-                
-                // Type must be set in the URL
-                // TODO - REVISIT THE URL
-		//graphStore.proxy.url = Config.entityGraphUrl + intype + '/' + node.data().name;           
-		graphStore.proxy.url = Config.transferGraphCSUrl + intype + '/' + node.data().id; 
-                self.json1Hop=null; // prevents us from trying to display the previous graph if we switch to this tab
-                                    // before we have fully loaded the new graph
-                self.json1HopNode = node;
-                                
-		graphStore.load(
-		{
-			scope:this, //?
-			callback: function(records,operation,success) {
-                            
-                            if (success == false || records == null || records.length == 0) {
-                                alert("Failed to retrieve graph results due to a server error. Please contact your System Administrator.");  // MFM
-                                self.json1HopNode = null;
-                                if (pb) {
-                                    pb.updateText("Search failed due to server error.");
-                                    pb.reset();
-                                }                                
-                                // don't alter or clear the existing graph
-                            }
-                            else {
-                                var graph = xmlToGraph(records[0].raw);     // read the xml into graph structure
-                                self.json1Hop = self.GraphVis.graphToJSON(graph);   // create the graph json object. 
-            
-                                // results could be empty, check for this here
-                                if (self.json1Hop && self.json1Hop.nodes.length <= 2) { //  don't include this node already connected to another node in the graph
-                                    alert("No additional items were found for this id.");
-                                    self.json1HopNode = null;
-                                    // don't alter the existing graph
-                                }
-                                else {
-                                    if (self.json1Hop.length > maxNewCallsAlertThresh) { 
-                                        if (mbox) {
-                                            mbox.close();
-                                        }
-                                        Ext.Msg.confirm('Confirm', 
-                                            'This number has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?', 
-                                            function(ans) {
-                                                if (ans == 'yes') {
-                                                    self.showjson1Hop(true);
-                                                }
-                                            }
-                                        );
-                                    }
-                                    else {
-                                        self.showjson1Hop(true);
-                                    }
-                                }
-                                if (pb) {
-                                    pb.updateText(graph.nodes.length + " nodes");
-                                    pb.reset();
-                                }
-                                // Update title to display the communication id and number of nodes found 
-                                //self.updateTitle(graph.nodes.length, self.prevLoadParams.number );
-                            }
-                            if (mbox) {
-                                mbox.close();
-                            }
-                            if (butid) {
-                                var but = Ext.getCmp(butid);
-                                if (but)
-                                    but.enable();
-                            }
+        loadOneHop:function(intype, node, pb, fromDate, toDate, butid) {	
+			var self=this;
+			var graphStore = TGgraphInit(); 
+			var s = self.getSettings(); 
+			var maxNewCallsAlertThresh = 30;    // Adjust as needed
+
+			// for feedback while the query and graph display is in progress
+			/* var mbox = Ext.Msg.show({
+				title: 'Expand',
+				msg: 'The expanded data is being obtained and prepared for display. Please wait...',
+				buttons: Ext.Msg.OK
+			}); */
+			var mbox = undefined;
+			
+			graphStore.proxy.extraParams.degree = 1; // labelled hops. only 1 hop out from this node
+			graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
+			graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
+			graphStore.proxy.extraParams.minWeight  = s.getMinWeight();
+			graphStore.proxy.extraParams.Type	= "account";	
+			graphStore.proxy.url = Config.transferGraphCSUrl + node.data().id;
+			
+			if (graphStore.proxy.extraParams.maxNodes > 200) {
+				graphStore.proxy.extraParams.maxNodes = 200;    // hard limit for this case
 			}
-		});
-              
-	},
+			
+			if (maxNewCallsAlertThresh > graphStore.proxy.extraParams.maxEdgesPerNode) {
+				maxNewCallsAlertThresh = graphStore.proxy.extraParams.maxEdgesPerNode;
+			}
+			
+			
+			self.json1Hop=null; // prevents us from trying to display the previous graph if we switch to this tab
+			// before we have fully loaded the new graph
+			self.json1HopNode = node;
+
+			graphStore.load({
+				scope:this, //?
+				callback: function(records,operation,success) {
+
+					if (success == false || records == null || records.length == 0) {
+						alert("Failed to retrieve graph results due to a server error. Please contact your System Administrator.");  // MFM
+						self.json1HopNode = null;
+						
+						if (pb) {
+							pb.updateText("Search failed due to server error.");
+							pb.reset();
+						}                                
+					// don't alter or clear the existing graph
+					} else {
+						var graph = records[0].raw;    // read the xml into graph structure
+						self.json1Hop = self.GraphVis.graphToJSON(graph);   // create the graph json object. 
+
+						// results could be empty, check for this here
+						if (self.json1Hop && self.json1Hop.nodes.length <= 2) { //  don't include this node already connected to another node in the graph
+							alert("No additional items were found for this id.");
+							self.json1HopNode = null;
+							// don't alter the existing graph
+						} else {
+							if (self.json1Hop.length > maxNewCallsAlertThresh) { 
+								if (mbox) {
+									mbox.close();
+								}
+								
+								Ext.Msg.confirm('Confirm', 
+									'This number has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display.'
+									+ 'Do you want to continue displaying it?', 
+									function(ans) {
+										if (ans == 'yes') {
+											self.showjson1Hop(true);
+										}
+									}
+								);
+							}
+							else {
+								self.showjson1Hop(true);
+							}
+						}
+						if (pb) {
+							pb.updateText(graph.nodes.length + " nodes");
+							pb.reset();
+						}
+						// Update title to display the communication id and number of nodes found 
+						//self.updateTitle(graph.nodes.length, self.prevLoadParams.number );
+					}
+					
+					if (mbox) {
+						mbox.close();
+					}
+					
+					if (butid) {
+						var but = Ext.getCmp(butid);
+						if (but)
+							ut.enable();
+					}
+				}
+			});
+
+		},
         
         // Expand out 1 hop for selected node only
         // pb   - Reference to Progress bar (if any)
