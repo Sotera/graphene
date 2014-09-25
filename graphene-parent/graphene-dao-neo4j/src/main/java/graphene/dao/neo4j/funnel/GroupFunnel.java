@@ -13,7 +13,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 
-public class GroupFunnel implements Funnel<G_Group, Node> {
+public class GroupFunnel implements Funnel<Node,G_Group> {
 
 	private Neo4JEmbeddedService n4jService;
 

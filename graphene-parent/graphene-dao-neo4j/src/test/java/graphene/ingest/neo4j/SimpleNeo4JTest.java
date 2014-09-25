@@ -1,7 +1,7 @@
 package graphene.ingest.neo4j;
 
 import graphene.dao.UserDAO;
-import graphene.model.idl.G_RelationshipType;
+import graphene.model.idl.G_CanonicalRelationshipType;
 
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
@@ -56,7 +56,7 @@ public class SimpleNeo4JTest {
 			// secondNode.setProperty("message", "World!");
 			Relationship relationship = firstNode.createRelationshipTo(
 					secondNode, DynamicRelationshipType
-							.withName(G_RelationshipType.KNOWS.name()));
+							.withName(G_CanonicalRelationshipType.KNOWS.name()));
 			tx.success();
 		}
 	}

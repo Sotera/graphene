@@ -60,10 +60,14 @@
 	<filter>
 		<filter-name>graphene</filter-name>
 		<filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 	<filter-mapping>
 		<filter-name>graphene</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<listener>
+		<listener-class>graphene.web.services.ChatHttpSessionListener</listener-class>
+	</listener>
 </web-app>
       

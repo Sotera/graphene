@@ -29,7 +29,7 @@
   display: block;
   border-width: 30px;
   border-style: double;
-  border-color: #ed12e8 transparent transparent;
+  border-color: #A90329 transparent transparent;
   border-radius: 50%;
 
   -webkit-animation: spin 1s linear infinite;
@@ -48,7 +48,7 @@
   display: block;
   border-width: 10px;
   border-style: solid;
-  border-color: #ed12e8 transparent transparent;
+  border-color: #A90329 transparent transparent;
   border-radius: 50%;
 }
 

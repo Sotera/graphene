@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 import org.neo4j.graphdb.Node;
 
-public class UserFunnel implements Funnel<G_User, Node> {
+public class UserFunnel implements Funnel<Node, G_User> {
 
 	@Override
 	public G_User from(Node f) {

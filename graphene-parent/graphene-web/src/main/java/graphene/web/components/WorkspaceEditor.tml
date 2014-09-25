@@ -62,16 +62,15 @@
 										t:validate="required ,minlength= 3, maxlength=200" />
 								</div>
 								<div class="form-group">
-									<t:label for="creatorusername" />
-									<input class="form-control" t:type="TextField" t:id="creatorusername"
-										t:clientid="cCreatorUsername" value="workspace.creatorusername"
-										t:validate="required, maxlength=50" size="30" />
-								</div>
-								<div class="form-group">
 									<t:label for="json" />
 									<input class="form-control" t:type="textarea" rows="5"
-										placeholder="JSON" t:id="json" t:clientid="cCreatorUsername"
-										value="workspace.json" />
+										placeholder="JSON" t:id="json" t:clientid="json" value="workspace.json" />
+								</div>
+								<div class="form-group">
+									<t:label for="queries" />
+									<input class="form-control" t:type="textarea" rows="5"
+										placeholder="Queries" t:id="queries" t:clientid="queries"
+										value="workspace.queries" />
 								</div>
 								<div class="form-group">
 									<label>Readonly Test</label>
@@ -82,8 +81,8 @@
 									<t:label for="lastmodified" />
 									<input class="form-control" t:type="DateField" t:id="lastmodified"
 										t:clientid="clastmodified" placeholder="(required, ${datePattern})"
-										value="workspace.lastmodified" t:format="prop:dateFormat" formState="none"
-										t:validate="required" />
+										value="workspace.modified" t:format="prop:dateFormat"
+										formState="none" t:validate="required" />
 								</div>
 
 
@@ -173,36 +172,51 @@
 							<table>
 								<tr>
 									<th>Id:</th>
-									<td>${workspace.workspaceid}</td>
+									<td>${workspace.id}</td>
 								</tr>
 								<tr>
 									<th>Title:</th>
-									<td>${workspace.title} by ${workspace.creatorusername}</td>
+									<td>${workspace.title}</td>
+								</tr>
+								<tr>
+									<th>Description:</th>
+									<td>${workspace.description}</td>
 								</tr>
 								<tr>
 									<th>Json:</th>
 									<td>${workspace.json}</td>
 								</tr>
 								<tr>
-									<th>Last Updated:</th>
+									<th>Queries:</th>
+									<td>${workspace.queries}</td>
+								</tr>
+								<tr>
+									<th>Created:</th>
 									<td>
-										<t:graphene.jodatimeoutput value="workspace?.lastmodified"
+										<t:graphene.jodatimeoutput value="workspace?.created"
+											style="LL" />
+									</td>
+								</tr>
+								<tr>
+									<th>Last Modified:</th>
+									<td>
+										<t:graphene.jodatimeoutput value="workspace?.modified"
 											style="LL" />
 									</td>
 								</tr>
 							</table>
 
 							<div class="buttons">
-								<a t:type="eventLink" t:event="toUpdate" t:context="workspace.workspaceid"
+								<a t:type="eventLink" t:event="toUpdate" t:context="workspace.id"
 									t:zone="^" href="#">Update...</a>
 								<a t:type="eventLink" t:event="delete"
-									t:context="[workspace.workspaceid,workspace.creatorusername]"
-									t:zone="^" href="#">
+									t:context="[workspace.id]" t:zone="^"
+									href="#">
 									<!-- The Confirm mixin can't cancel an EventLink that specifies 
 										a Zone, so we put the Confirm inside the EventLink. -->
 									<!-- See http://tapestry-users.832.n2.nabble.com/Confirm-mixin-won-t-cancel-when-in-zone-td5048950.html#a5048950 -->
 									<span t:type="any" t:mixins="jquery/Confirm"
-										t:message="Delete ${workspace.title} ${workspace.creatorusername}?">
+										t:message="Delete ${workspace.title} ${workspace.id}?">
 										Delete...
 									</span>
 								</a>
@@ -294,24 +308,7 @@
 											<t:graphene.CustomError for="updTitle" />
 										</td>
 									</tr>
-									<tr>
-										<th>
-											<t:label for="updCreatorUsername" />
-											:
-										</th>
-										<td>
-											<input t:type="TextField" t:id="updCreatorUsername"
-												value="workspace.creatorusername" t:validate="required, maxlength=10"
-												size="10" />
-										</td>
-										<td>(required)</td>
-									</tr>
-									<tr class="err">
-										<th></th>
-										<td colspan="2">
-											<t:graphene.CustomError for="updCreatorUsername" />
-										</td>
-									</tr>
+			
 									<tr>
 										<th>
 											<t:label for="updJson" />
@@ -335,7 +332,7 @@
 											:
 										</th>
 										<td>
-											<input t:type="DateField" t:id="updlastmodified" value="workspace.lastmodified"
+											<input t:type="DateField" t:id="updlastmodified" value="workspace.modified"
 												t:format="prop:dateFormat" t:validate="required" />
 										</td>
 										<td>(required, ${datePattern})</td>
@@ -385,11 +382,11 @@
 
 
 					<div class="buttons">
-						Delete ${workspace.title} by ${workspace.creatorusername}?
+						Delete ${workspace.title} (${workspace.id})?
 						<br />
 						<br />
 
-						<a t:type="eventLink" t:event="cancelConfirmDelete" t:context="workspace.workspaceid"
+						<a t:type="eventLink" t:event="cancelConfirmDelete" t:context="workspace.id"
 							t:zone="^" href="#">Cancel</a>
 						<input type="submit" value="Delete" />
 					</div>

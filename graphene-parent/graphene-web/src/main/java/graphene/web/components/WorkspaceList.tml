@@ -100,13 +100,13 @@
 										t:empty="block:emptyWorkspaces" t:inplace="ajax">
 										[Grid here]
 										<p:titleCell>
-											<a t:type="eventLink" t:event="selected" t:context="workspace.workspaceId"
+											<a t:type="eventLink" t:event="selected" t:context="workspace.id"
 												class="prop:linkCSSClass" t:zone="^" href="#">
 												${workspace.title}
 											</a>
 										</p:titleCell>
 										<p:lastModifiedCell>
-											<t:graphene.jodatimeoutput value="workspace.lastmodified"
+											<t:graphene.jodatimeoutput value="workspace.modified"
 												formatter="ISODate" />
 										</p:lastModifiedCell>
 									</t:jquery.datatable>

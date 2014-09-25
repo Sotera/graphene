@@ -5,10 +5,12 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** Amount of detail requested */
+/** Amount of detail requested
+	 
+	 ADDED IN 1.6 */
 @org.apache.avro.specific.AvroGenerated
 public enum G_LevelOfDetail { 
   SUMMARY, FULL  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_LevelOfDetail\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Amount of detail requested\",\"symbols\":[\"SUMMARY\",\"FULL\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_LevelOfDetail\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Amount of detail requested\\r\\n\\t \\r\\n\\t ADDED IN 1.6\",\"symbols\":[\"SUMMARY\",\"FULL\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

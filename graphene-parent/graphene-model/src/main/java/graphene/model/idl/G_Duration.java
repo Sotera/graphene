@@ -5,11 +5,12 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * A temporal duration
-	 * */
+/** A temporal duration
+	 
+	 ADDED IN 1.5 */
 @org.apache.avro.specific.AvroGenerated
 public class G_Duration extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Duration\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* A temporal duration\\r\\n\\t *\",\"fields\":[{\"name\":\"interval\",\"type\":{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"doc\":\"* Temporal resolution of a duration\\r\\n\\t *\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]},\"doc\":\"time aggregation level, e.g. use monthly data\"},{\"name\":\"numIntervals\",\"type\":\"long\",\"doc\":\"number of intervals, e.g. 12 monthly intervals is a 1 year duration\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Duration\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A temporal duration\\r\\n\\t \\r\\n\\t ADDED IN 1.5\",\"fields\":[{\"name\":\"interval\",\"type\":{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"doc\":\"Temporal resolution of a duration\\r\\n\\t \\r\\n\\t CHANGED IN 1.5\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]},\"doc\":\"time aggregation level, e.g. use monthly data\"},{\"name\":\"numIntervals\",\"type\":\"long\",\"doc\":\"number of intervals, e.g. 12 monthly intervals is a 1 year duration\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** time aggregation level, e.g. use monthly data */
    private graphene.model.idl.G_DateInterval interval;

@@ -2,6 +2,7 @@ package graphene.web.model;
 
 import graphene.dao.EntityDAO;
 import graphene.dao.TransactionDAO;
+import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SortCriterion;
 import graphene.model.idl.G_SortOrder;
@@ -22,7 +23,7 @@ public class EntityDataSource implements GridDataSource {
 
 	private String partialName = null;
 
-	private List<Entity> preparedResults;
+	private List<G_Entity> preparedResults;
 
 	private G_SearchType searchType = G_SearchType.COMPARE_CONTAINS;
 
@@ -66,7 +67,7 @@ public class EntityDataSource implements GridDataSource {
 	public void prepare(final int startIndex, final int endIndex,
 			final List<SortConstraint> sortConstraints) {
 		if (partialName == null) {
-			preparedResults = new ArrayList<Entity>();
+			preparedResults = new ArrayList<G_Entity>();
 		} else {
 			AdvancedSearch srch = new AdvancedSearch();
 			List<SearchFilter> filters = new ArrayList<SearchFilter>();
@@ -81,7 +82,6 @@ public class EntityDataSource implements GridDataSource {
 			// q.addAttribute(
 			// new G_SearchTuple<String>(partialName, searchType));
 			try {
-
 				preparedResults = dao.getEntitiesByAdvancedSearch(srch);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -89,7 +89,7 @@ public class EntityDataSource implements GridDataSource {
 			}
 		}
 		if (preparedResults == null) {
-			preparedResults = new ArrayList<Entity>();
+			preparedResults = new ArrayList<G_Entity>();
 		}
 		// (partialName, startIndex, endIndex - startIndex + 1);
 		this.startIndex = startIndex;

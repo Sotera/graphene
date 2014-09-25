@@ -5,7 +5,7 @@ import graphene.model.idl.G_Workspace;
 
 import org.neo4j.graphdb.Node;
 
-public class WorkspaceFunnel implements Funnel<G_Workspace, Node> {
+public class WorkspaceFunnel implements Funnel<Node, G_Workspace> {
 
 	@Override
 	public G_Workspace from(Node f) {

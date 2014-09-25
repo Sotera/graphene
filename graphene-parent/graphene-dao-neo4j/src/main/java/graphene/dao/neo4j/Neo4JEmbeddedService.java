@@ -1,6 +1,6 @@
 package graphene.dao.neo4j;
 
-import graphene.model.idl.G_RelationshipType;
+import graphene.model.idl.G_EdgeType;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.validator.ValidationUtils;
 
@@ -24,7 +24,6 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -431,17 +430,17 @@ public class Neo4JEmbeddedService {
 	}
 
 	public Relationship getOrCreateUniqueRelationship(final Node startNode,
-			final Node endNode, final G_RelationshipType type, Direction d,
+			final Node endNode, final G_EdgeType type, Direction d,
 			final Map<String, Object> properties) {
 		if (startNode != null && endNode != null && type != null) {
 			for (Relationship relationship : startNode
-					.getRelationships(DynamicRelationshipType.withName(type.name()), d)) {
+					.getRelationships(DynamicRelationshipType.withName(type.getName()), d)) {
 				if (relationship.getEndNode().equals(endNode)) {
 					// don't make a new relationship
 					return relationship;
 				}
 			}
-			Relationship r = startNode.createRelationshipTo(endNode, DynamicRelationshipType.withName(type.name()));
+			Relationship r = startNode.createRelationshipTo(endNode, DynamicRelationshipType.withName(type.getName()));
 			setProperties(r, properties);
 			return r;
 		} else {

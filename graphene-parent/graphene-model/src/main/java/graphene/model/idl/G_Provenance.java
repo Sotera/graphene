@@ -5,11 +5,10 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * This is a placeholder for future modeling of provenance. It is not a
-	 * required field in any service calls. */
+/** This is a placeholder for future modeling of provenance. It is not a required field in any service calls. */
 @org.apache.avro.specific.AvroGenerated
 public class G_Provenance extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Provenance\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* This is a placeholder for future modeling of provenance. It is not a\\r\\n\\t * required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Provenance\",\"namespace\":\"graphene.model.idl\",\"doc\":\"This is a placeholder for future modeling of provenance. It is not a required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** Placeholder for now. Express provenance as a single URI. */
    private java.lang.String uri;

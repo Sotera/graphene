@@ -1,8 +1,10 @@
 package graphene.dao;
 
+import graphene.model.idl.G_Entity;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EventQuery;
 import graphene.model.view.entities.Entity;
+import graphene.model.view.entities.EntityLight;
 
 import java.util.List;
 
@@ -19,21 +21,21 @@ public interface EntityDAO {
 	 * @param srch
 	 * @return
 	 */
-	public List<Entity> getEntitiesByAdvancedSearch(AdvancedSearch srch);
+	public List<G_Entity> getEntitiesByAdvancedSearch(AdvancedSearch srch);
 
 	/**
 	 * 
 	 * @param id
 	 * @return
 	 */
-	public Entity getById(String id);
+	public EntityLight getById(String id);
 
 	/**
 	 * XXX: This needs to be changed to work without side effects.
 	 * 
 	 * @param e
 	 */
-	public void updateAllFields(Entity e);
+	//public void updateAllFields(G_Entity e);
 
 	/**
 	 * 

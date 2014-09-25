@@ -3,9 +3,10 @@ package graphene.dao.neo4j;
 import graphene.dao.GroupDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.dao.neo4j.funnel.GroupFunnel;
+import graphene.model.idl.G_CanonicalRelationshipType;
+import graphene.model.idl.G_EdgeType;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_GroupFields;
-import graphene.model.idl.G_RelationshipType;
 import graphene.model.idl.G_UserFields;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicRelationshipType;
@@ -40,11 +42,17 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		try (Transaction tx = beginTx()) {
 			Node u = getUserNodeByUsername(username);
 			Node g = getGroupNodeByGroupname(groupname);
-			u.createRelationshipTo(g, DynamicRelationshipType
-					.withName(G_RelationshipType.MEMBER_OF.name()));
+			G_EdgeType edgeType = edgeTypeAccess
+					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
+			u.createRelationshipTo(g,
+					DynamicRelationshipType.withName(edgeType.getName()));
 			tx.success();
 			return true;
+		} catch (AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	private G_Group createDetached(Node u) {
@@ -139,27 +147,38 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.iterator()) {
 
 			if (users.hasNext()) {
-				Node j = users.next();
-				TraversalDescription traversalDescription = n4jService
-						.getGraphDb()
-						.traversalDescription()
-						.depthFirst()
-						.evaluator(Evaluators.excludeStartPosition())
-						.relationships(
-								DynamicRelationshipType.withName(G_RelationshipType.MEMBER_OF
-										.name()), Direction.OUTGOING)
-						.relationships(
-								DynamicRelationshipType.withName(G_RelationshipType.PART_OF
-										.name()), Direction.OUTGOING);
-				Traverser traverser = traversalDescription.traverse(j);
-				for (Path path : traverser) {
-					Node n = path.endNode();
-					if (n.hasLabel(GrapheneNeo4JConstants.groupLabel)) {
-						G_Group d = createDetached(n);
-						if (d != null) {
-							list.add(d);
+
+				try {
+					G_EdgeType memberOf = edgeTypeAccess
+							.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
+
+					G_EdgeType partOf = edgeTypeAccess
+							.getCommonEdgeType(G_CanonicalRelationshipType.PART_OF);
+					Node j = users.next();
+					TraversalDescription traversalDescription = n4jService
+							.getGraphDb()
+							.traversalDescription()
+							.depthFirst()
+							.evaluator(Evaluators.excludeStartPosition())
+							.relationships(
+									DynamicRelationshipType.withName(memberOf
+											.getName()), Direction.OUTGOING)
+							.relationships(
+									DynamicRelationshipType.withName(partOf
+											.getName()), Direction.OUTGOING);
+					Traverser traverser = traversalDescription.traverse(j);
+					for (Path path : traverser) {
+						Node n = path.endNode();
+						if (n.hasLabel(GrapheneNeo4JConstants.groupLabel)) {
+							G_Group d = createDetached(n);
+							if (d != null) {
+								list.add(d);
+							}
 						}
 					}
+				} catch (AvroRemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			tx.success();
@@ -186,9 +205,10 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			return false;
 		}
 		try (Transaction tx = beginTx()) {
+			G_EdgeType memberOf = edgeTypeAccess
+					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
 			for (Relationship r : u.getRelationships(Direction.OUTGOING,
-					DynamicRelationshipType
-							.withName(G_RelationshipType.MEMBER_OF.name()))) {
+					DynamicRelationshipType.withName(memberOf.getName()))) {
 				if (r.getEndNode().hasLabel(GrapheneNeo4JConstants.groupLabel)
 						&& r.getEndNode().equals(g)) {
 					r.delete();
@@ -196,7 +216,11 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			}
 			tx.success();
 			return true;
+		} catch (AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	@Override

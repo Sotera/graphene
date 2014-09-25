@@ -1,0 +1,424 @@
+/**
+ * With credits to Oculus Info Inc for the influence of this document. Released
+ * under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+protocol G_CommonDataTypes {
+	import idl "DataTypes_v1.7.avdl";
+
+	enum G_CanonicalPropertyType {
+	
+	ACCOUNT,				//(10, "Account", "account"),
+	ACCOUNT_CLASS,			//(11, "Account Class", "accountClass"),
+	ACCOUNT_TYPE,			//(12, "Account Type", "accountType"),
+	REPORT_ID,				//(15, "Report Id", "reportId"),
+	ADDRESS,				//(2, "Address", "address"),
+	ADDRESS_CITY,			//(21, "Address City", "addressCity"),
+	ADDRESS_STREET,			//(22, "Address Street", "addressStreet"),
+	ADDRESS_BLDG,			//(23, "Address Bldg", "addressBldg"),
+	ADDRESS_POSTAL_CODE,	//(24, "Address Postal Code", "addressPostalCode"),
+	ADDRESS_COUNTY,			//(25, "Address County", "addressCounty"),
+	ADDRESS_STATE_PROVINCE,	//(26, "Address State or Province","addressStateProvince"),
+	ADDRESS_COUNTRY,		//(27, "Address Country", "addressCountry"),
+	ADDRESS_OTHER,			//(29, "Address Other", "addressOther"),
+	GEO,					//(21, "Geolocation", "geo"),
+	EXPORTADDRESS,			//(23, "Export Address", "export"),
+	IMPORTADDRESS,			//(24, "Import Address", "import"),
+	ANY,					//(0, "Any", "any"),
+	COMBO,					//(3, "Combination", "combo"),
+	CONFIRMED,				//(300, "Confirmed", "confirmed"),
+	CONTEXT,				//(400, "Context", "context"),
+	CORPORATE_CUSTOMER,		//(401, "Corporate Customer", "corporateCustomer"),
+	CURRENCY,				//(402, "Currency", "currency"),
+	CUSTOMER_CLASS,			//(403, "Customer Class", "customerClass"),
+	CUSTOMER_NUMBER,		//(403, "Customer Number", "customerNumber"),
+	CUSTOMER_TYPE,			//(404, "Customer Type", "customerType"),
+	DECEASED,				//(407, "Deceased", "deceased"),
+	DESCRIPTION,			//(408, "Description", "description"),
+	EMAIL_ADDRESS,			//(4, "Email Address", "emailAddress"),
+	IP,						//(41, "IP", "ip"),
+	DEVICE_ID,				//
+	SERIAL_NUMBER,			//
+	FAMILYROLE,				//(409, "Family Role", "familyRole"),
+	OTHER_ID,				//(5, "Id", "ID"),
+	IMPORTANCE,				//(411, "Importance", "importance"),
+	JSONVALUE,				//(414, "JSON", "json"),
+	LINK,					//(415, "Link", "link"),
+	METRIC_CERTAINTY,		//(100, "Certainty", "certainty"),
+	METRIC_IMPUTED,			//(412, "Imputed", "imputed"),
+	METRIC_IMPUTEDFROM,		//(413, "Imputed From", "imputedFrom"),
+	METRIC_PROVENANCE,		//(420, "Provenance", "provenance"),
+	METRIC_SCORE,			//(423, "Score", "score"),
+	NAME,					//(6, "Name", "name"),
+	NODETYPE,				//(417, "Node Type", "nodeType"),
+	OCCUPATION,				//(418, "Occupation", "occupation"),
+	OTHER,					//(7, "Other", "other"),
+	PAYLOAD,				//(71, "Payload", "payload"),
+	NGRAM,					//(72, "N-Gram", "ngram"),
+	PASSPORT,				//(8, "Passport", "passport"),
+	TAXID,					//(81, "Tax Id", "taxId"),
+	EIN,					//(82, "EIN", "ein"),
+	SSN,					//(83, "SSN", "ssn"),
+	GOVERNMENTID,			//(84, "Government Id", "governmentId"),
+	VISA,					//(85, "Visa", "visa"),
+	LICENSEPLATE,			//(86, "License Plate", "licensePlate"),
+	VIN,					//(87, "VIN", "vin"),
+	FLIGHT,					//(87, "Airline or Ship", "flight"),
+	PHONE,					//(9, "Phone", "phone"),
+	PROVIDER_COMPANY_NAME,	//(421, "Provider Name", "providerName"),
+	PROVIDER_INDUSTRY,		//(422, "Provider Industry", "providerIndustry"),
+	SEX,					//(424, "Sex", "sex"),
+	SYSTEMNAME,				//(425, "System Name", "systemName"),
+	TIME_CLOSING_DATE,		//(200, "Closing Date", "closingDate"),
+	TIME_DATE,				//(405, "Date", "date"),
+	TIME_DAY,				//(406, "Day", "day"),
+	TIME_HOUR,				//(410, "Hour", "hour"),
+	TIME_MONTH,				//(416, "Month", "month"),
+	TIME_OPENING_DATE,		//(419, "Opening Date", "openingDate"),
+	TIME_YEAR,				//(428, "Year", "year"),
+	VALUE,					//(426, "Value", "value"),
+	VIP,					//(427, "VIP", "vip"),
+	WALLET_ADDRESS,			//(428, "Wallet Address", "walletAddress"),
+	USERNAME,				//(429, "Username", "username"),
+	ENTITY,					//(500, "Entity", "entity"),
+	TYPE,					//(501, "Type", "type"),
+	URL,					//(502, "URL", "url"),
+	REDACTED				//(-1, "[REDACTED]", "REDACTED");
+	
+	}
+
+
+
+	/**
+	 * Industry types are for classifying datasets, data sources, or individual
+	 * datum.
+	 * 
+	 * 
+	 */
+	enum G_CanonicalIndustryType {
+		REDACTED,				// The 21st century meaning, "conceal from
+								// unauthorized view; censor but do not destroy"
+		UNKNOWN_OR_UNSURE,		// For when the data has no description of what
+								// industry it came from
+		BANKING,  				// banks, mortgage, commercial, savings and
+								// loans.
+		FINANCIAL_SERVICES, 	// exchanges, other lending organizations,
+								// crowdfunding, insurance, etc
+		FOOD_RESTAURANT,
+		COMMODITY_PROVIDER,		// Oil, gas, textile
+		ISP,					// Internet service provider
+		TELCO,					// Telephone companies
+		TELEVISION,				// Television content providers like cable,
+								// satellite, etc.
+		EMAIL_PROVIDER,			// A company that provides email hosting
+								// services
+		MULTI,					// Legacy. Used for anything too hard to
+								// categorize with a few types.
+		TRANSPORT,				// Transportation, such as public or commercial
+								// transit
+		LOGISTICS,				// Logistics companies
+		ADVERTISEMENT_AGENCY,	// a service business dedicated to creating,
+								// planning and handling advertising for its
+								// clients
+		EMPLOYMENT_AGENCY,		// a business that serves as a representative,
+								// acting on behalf of another
+		GOVERNMENT_AGENCY,		// a department of a local or national
+								// government responsible for the oversight and
+								// administration of a specific function
+		INTERNATIONAL_AGENCY,	// an inter-governmental body
+		NEWS_AGENCY,			// an organization that gathers news reports and
+								// sells them to subscribing news organizations,
+								// such as newspapers, magazines, and radio and
+								// television broadcasters. A news agency may
+								// also be referred to as a wire service,
+								// newswire, or news service.
+		POSTAL,
+		REAL_ESTATE,
+		EDUCATION,
+		HEALTHCARE,
+		CHARITY
+	
+	}
+	
+	/**
+	 * This is the current list of tags for Links (aka edges). 
+	 * Probing the Internet for an expansive list of definitions quickly gets us into philosophical territory.  
+	 * Instead we propose to add to the list as necessary, and gain wisdom as developers as the list expands and contracts.
+	 * As you can see we try to stay human centered since many applications revolve around humans.
+	 *  
+ 	 * What can be said to exist?
+ 	 * 
+ 	 * Into what categories, if any, can we sort existing things?
+ 	 * 
+ 	 * What are the meanings of being?
+	 * 
+ 	 * What are the various modes of being of entities?
+	 * 
+ 	 * What is existence, i.e. what does it mean for a being to be?
+	 * 
+ 	 * Is existence a property?
+	 * 
+ 	 * Is existence a genus or general class that is simply divided up by specific differences?
+	 * 
+ 	 * Which entities, if any, are fundamental?
+	 * 
+ 	 * Are all entities objects?
+	 * 
+ 	 * How do the properties of an object relate to the object itself?
+	 * 
+ 	 * What features are the essential, as opposed to merely accidental attributes of a given object?
+	 * 
+ 	 * How many levels of existence or ontological levels are there? And what constitutes a 'level'?
+	 * 
+ 	 * What is a physical object?
+	 * 
+ 	 * Can one give an account of what it means to say that a physical object exists?
+	 * 
+ 	 * Can one give an account of what it means to say that a non-physical entity exists?
+	 * 
+ 	 * What constitutes the identity of an object?
+	 * 
+ 	 * When does an object go out of existence, as opposed to merely changing?
+	 * 
+ 	 * Do beings exist other than in the modes of objectivity and subjectivity, i.e. is the subject/object split of modern philosophy inevitable?
+	 * 
+	 *
+	 * See schema.org and cyc ontologies
+ 	 */
+	enum G_CanonicalRelationshipType {
+		ISA, 				// ENTITY to def
+		SUPERSEDES, 		// n to n_old
+		HAS_ID,				// n to n		
+		MAY_BE_THE_SAME, 	// n to n
+		RELATED_TO_ID, 		// id to id
+		HAS_GLOBAL_ID,		// n to n
+		OTHER_RELATION,		// n to n
+		STARTED_ON,			// date to n
+		ENDED_ON,			// date to n
+		BORN_ON,			// date to ENTITY
+		DIED_ON,			// date to ENTITY
+		IN_REPORT,			// ENTITY to report
+		IN_DOCUMENT, 		// ENTITY to document
+		IN_EVENT,			// ENTITY to event
+		
+
+		CREATOR_OF,			// ENTITY to n
+		FRIEND_OF,			// ENTITY to ENTITY
+		ENEMY_OF,			// ENTITY to ENTITY
+		LOVES, 				// ENTITY to ENTITY
+		HATES, 				// ENTITY to ENTITY
+		KNOWS, 				// ENTITY to ENTITY
+		FAMILIAL_TIE, 		// ENTITY to ENTITY
+		KIN_OF,				// ENTITY to ENTITY
+		GUARDIAN_OF,		// ENTITY to ENTITY
+		FATHER_OF,			// ENTITY to ENTITY
+		SON_OF,				// ENTITY to ENTITY
+		MOTHER_OF,			// ENTITY to ENTITY
+		DAUGHTER_OF,		// ENTITY to ENTITY
+		BROTHER_OF,			// ENTITY to ENTITY
+		SISTER_OF,			// ENTITY to ENTITY
+		COUSIN_OF,			// ENTITY to ENTITY
+		WIFE_OF,			// ENTITY to ENTITY
+		HUSBAND_OF,			// ENTITY to ENTITY
+		MARRIED_TO, 		// ENTITY to ENTITY
+		SKILL_OF, 			// skill to ENTITY
+		PERSONAL_FACTOR_OF, // personal factor to ENTITY
+		ATTRIBUTE_OF, 		// attribute to ENTITY
+		COMMUNICATION_ID_OF,// id to ENTITY
+		DEVICE_OF,			// id to ENTITY
+		PROPER_NAME_OF,		// name to ENTITY
+		USERNAME_OF,		// name to ENTITY
+		ALIAS_OF,			// name to ENTITY
+		ADDRESS_OF, 		// address to ENTITY
+		GEOLOCATION_OF, 	// geolocation to ENTITY
+		CONTAINED_IN,       // place to place
+		
+		GOVERNMENT_ID_OF, 	// id to ENTITY
+		MEMBER_OF, 			// ENTITY to group||company||government
+		PART_OF, 			// ENTITY to group||company||government
+		COMMERCIAL_ID_OF, 	// id to ENTITY
+		HAS_PATRONAGE, 		// ENTITY to company
+		SELLER_OF,			// ENTITY to n
+		BUYER_OF,			// ENTITY to n
+		TRANSACTION,		// ENTITY to ENTITY (shortcut for non bipartite graphs)
+				
+		PHYSICAL_PROPERTY_OF, 	// physical property to n
+		BIOLOGICAL_PROPERTY_OF, // biological property to n
+		GENETIC_TRAIT_OF, 	// genetic fragment to n
+		PRECURSOR_OF, 		// genetic fragment to n
+		DECAY_PRODUCT_OF, 	// atom to atom
+		ISOTOPE_OF, 		// atom to atom
+		USED_IN,	 		// n to subject
+		EFFECT_OF,	 		// n to subject
+		SENT, 				// ENTITY to n (communication, financial, goods, etc)
+		RECEIVED, 			// ENTITY to n (communication, financial, goods, etc)
+		
+		PLACED_CALL, 		// ENTITY to n
+		RECEIVED_CALL, 		// ENTITY to n
+		SENT_MAIL, 			// ENTITY to ENTITY
+		EMAIL_FORWARD_OF, 	// EMAIL_CONTENTS to EMAIL_CONTENTS
+		EMAIL_REPLY_TO, 	// EMAIL_CONTENTS to EMAIL_CONTENTS
+		SENT_EMAIL, 		// EMAIL_ADDRESS to EMAIL_CONTENTS
+		EMAIL_TO, 			// EMAIL_CONTENTS to EMAIL_ADDRESS
+		EMAIL_BCC, 			// EMAIL_CONTENTS to EMAIL_ADDRESS
+		EMAIL_CC, 			// EMAIL_CONTENTS to EMAIL_ADDRESS
+		WORKED_ON,			// ENTITY to Subject
+		WORKS_FOR,			// ENTITY to ENTITY
+		EMPLOYEE_OF,		// ENTITY to ENTITY
+		OWNER_OF,			// ENTITY to ENTITY
+		INTERESTED_IN,		// ENTITY to Subject
+		PARTICIPATED_IN,	// ENTITY to n
+		WORKED_WITH,		// ENTITY to ENTITY
+		MANAGES,			// ENTITY to ENTITY
+		CONTROLS,			// ENTITY to ENTITY
+		PEER_OF,			// ENTITY to ENTITY
+		POSITIVELY_BENEFITS,// n to n (mutualism)
+		NEUTRALLY_BENEFITS,	// n to n (commensalism)
+		NEGATIVELY_BENEFITS,// n to n (parasitsm)
+		
+	
+		REDACTED			/**
+							 * The 21st century meaning, "conceal from unauthorized
+							 * view; censor but do not destroy"
+							 */
+
+
+	}
+	
+	enum G_CanonicalTruthValues {
+		TRUE,
+		FALSE,
+		UNKNOWN,
+		UNCERTAIN,
+		REDACTED
+	}
+	
+	
+	/**
+	 * A set of canonical tags for visual components. This is mostly for helping
+	 * with menu selection, menu organization and styling with css or icons.
+	 * 
+	 * Later on, a user might be able to search for a particular type of visual
+	 * display, and we would show a list of pages that support that display.
+	 * 
+	 * Can suggest multiple per page/component.
+	 * 
+	 * HIDDEN will cause a page to not be displayed in automatically generated
+	 * menus.
+	 * 
+	 * @author djue
+	 */
+	enum G_VisualTag {
+		CHOROPLETH,
+		CARTOGRAM,
+		DOT_DISTRIBUTION,
+		PROPORTIONAL_SYMBOL,
+		CONTOUR_MAP,
+		DASYMETRIC,
+		FLOW_MAP,
+		SOM,
+		TIME_LINE,
+		TIME_SERIES,
+		GANTT,
+		STREAM_GRAPH,
+		ARC_DIAGRAM,
+		POLAR_AREA,
+		SANKEY,
+		ALLUVIAL,
+		PIE_CHART,
+		HISTOGRAM,
+		TAG_CLOUD,
+		BUBBLE_CHART,
+		BAR_CHART,
+		TREE_MAP,
+		SCATTER_PLOT,
+		LINE_CHART,
+		STEP_CHART,
+		AREA_CHART,
+		HEAT_MAP,
+		SPIDER_CHART,
+		CANDLESTICK,
+		TREE_REGULAR,
+		TREE_RADIAL,
+		TREE_HYPERBOLIC,
+		RADIAL_HIERARCHY,
+		MATRIX,
+		NODE_LINK_DIAGRAM,
+		NODE_LINK_DIAGRAM3D,
+		CIRCULAR_HIERARCHY,
+		HIVE_PLOT,
+		SUBWAY_MAP,
+		DEFAULT,
+		HIDDEN,
+		IMAGE,
+		VIDEO,
+		INFINITE_SCROLL,
+		LIST, 			/** 1D or linear data items */
+		PLUGIN,			/** Something requiring a browser plugin */
+		REDACTED	 	/**
+						 * The 21st century meaning, "conceal from unauthorized
+						 * view; censor but do not destroy"
+						 */
+	}
+	
+
+	record G_IdType {
+		string name;
+		string friendlyName;
+		long index;
+		string shortName;
+		string tableSource;
+	}
+	record G_PropertyKey {
+		string type;
+		string name;
+		string friendlyName;
+		long index;
+		
+	}
+	record G_EdgeType {
+		string type;
+		string name;
+		string friendlyName;
+		long index;
+	}
+	
+	
+	
+		/**
+		 * Selectable services, returned by getAppInfo() in various meta APIs
+		 */
+	record G_AppInfo {
+		/** unique id of this application */
+		string appName;
+		
+		/** version of this application */
+		string appVersion;
+		
+		/** version of this application */
+		long serverTime;
+
+	}
+	
+	
+	
+}

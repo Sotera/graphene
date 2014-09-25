@@ -5,9 +5,10 @@ import graphene.dao.FederatedPropertyGraphServer;
 import java.util.Collection;
 
 public class FederatedPropertyGraphImpl implements FederatedPropertyGraphServer {
-	private Collection<PropertyGraphBuilder> singletons;
-	
-	public FederatedPropertyGraphImpl(Collection<PropertyGraphBuilder> singletons) {
+	private Collection<AbstractGraphBuilder> singletons;
+
+	public FederatedPropertyGraphImpl(
+			Collection<AbstractGraphBuilder> singletons) {
 		this.singletons = singletons;
 	}
 
@@ -32,7 +33,7 @@ public class FederatedPropertyGraphImpl implements FederatedPropertyGraphServer 
 		System.out.println("--------------------------------------");
 		System.out.println("FEDERATED GRAPH DATASETS -------------");
 		System.out.println("--------------------------------------");
-		for (PropertyGraphBuilder s : singletons) {
+		for (AbstractGraphBuilder s : singletons) {
 			System.out.println("Supports " + s.getSupportedDatasets());
 		}
 		System.out.println("--------------------------------------");

@@ -1,15 +1,21 @@
 package graphene.services;
 
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
+import graphene.model.query.EntityQuery;
 import graphene.util.G_CallBack;
-import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
+import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
@@ -18,7 +24,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
 public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
+	@Inject
+	protected G_EdgeTypeAccess edgeTypeAccess;
 
+	@Inject
+	protected G_NodeTypeAccess nodeTypeAccess;
+
+	@Inject
+	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 	protected V_EdgeList edgeList;
 	/**
 	 * This field is to inform other services about which data sources can be
@@ -27,9 +40,12 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	 */
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
 	protected Map<String, V_GenericEdge> edgeMap;
-	//TODO: Change this to a V_NodeList or a map so that we don't add the same node to scan within the same iteration
+
+	// TODO: Change this to a FIFO Queue and address any duplicate node issues
 	protected ArrayList<V_GenericNode> unscannedNodeList = new ArrayList<V_GenericNode>(
 			3);
+
+	protected Queue<EntityQuery> queriesToRun = new ConcurrentLinkedQueue<EntityQuery>();
 	protected V_NodeList nodeList;
 	@Inject
 	private Logger logger;
@@ -91,5 +107,8 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	public List<String> getSupportedDatasets() {
 		return supportedDatasets;
 	}
+
+	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
+			throws Exception;
 
 }

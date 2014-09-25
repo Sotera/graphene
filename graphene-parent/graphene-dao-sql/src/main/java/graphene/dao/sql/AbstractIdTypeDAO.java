@@ -1,7 +1,7 @@
 package graphene.dao.sql;
 
 import graphene.dao.IdTypeDAO;
-import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_IdType;
 import graphene.model.query.StringQuery;
 import graphene.model.view.entities.IdType;
 
@@ -116,12 +116,21 @@ public abstract class AbstractIdTypeDAO<T> extends
 		return 0;
 	}
 
+	public IdType getIdTypeByShortName(String shortName) {
+		for (IdType id : getLoadedTypes().values()) {
+			if (id.getShortName().equals(shortName)) {
+				return id;
+			}
+		}
+		return null;
+	}
+
 	// FIXME: There should be an O(1) way of doing this.
 	@Override
-	public Integer[] getTypesForFamily(G_CanonicalPropertyType family) {
+	public Integer[] getTypesForFamily(G_IdType family) {
 		List<Integer> results = new ArrayList<Integer>();
 		for (IdType s : getLoadedTypes().values()) {
-			if (s.getFamily().equalsIgnoreCase(family.getValueString()))
+			if (s.getNodeType().equalsIgnoreCase(family.getName()))
 				results.add(Integer.valueOf(s.getIdType_id()));
 		}
 		return results.toArray(new Integer[results.size()]);
@@ -154,15 +163,15 @@ public abstract class AbstractIdTypeDAO<T> extends
 	}
 
 	@Override
-	public String getFamily(int type) {
+	public String getNodeType(int type) {
 		String family = "Unknown";
 		if (isLoaded()) {
 			IdType id = getLoadedTypes().get(type);
 			if (id == null) {
-				logger.error("IdTypeCache: getFamily: could not get id definition for type "
+				logger.error("IdTypeCache: getNodeType: could not get id definition for type "
 						+ type);
 			} else {
-				family = id.getFamily();
+				family = id.getNodeType();
 			}
 		}
 		return family;

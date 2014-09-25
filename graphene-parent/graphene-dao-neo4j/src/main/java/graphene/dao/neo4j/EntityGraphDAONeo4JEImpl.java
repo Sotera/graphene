@@ -2,7 +2,8 @@ package graphene.dao.neo4j;
 
 import graphene.dao.EntityGraphDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.idl.G_RelationshipType;
+import graphene.model.idl.G_EdgeType;
+import graphene.model.idl.G_IdType;
 import graphene.model.query.EntityGraphQuery;
 
 import java.util.ArrayList;
@@ -12,13 +13,12 @@ import java.util.Map.Entry;
 
 import mil.darpa.vande.converters.infovis.InfoVisEdge;
 import mil.darpa.vande.converters.infovis.InfoVisGraphAdjacency;
+import mil.darpa.vande.generic.V_GenericEdge;
+import mil.darpa.vande.generic.V_GenericNode;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.kernel.impl.core.NodeProxy;
 import org.slf4j.Logger;
 
@@ -27,14 +27,14 @@ public class EntityGraphDAONeo4JEImpl implements
 	private static final boolean DEBUGMODE = true;
 
 	public EntityGraphDAONeo4JEImpl(Neo4JEmbeddedService service) {
-		this.service=service;
+		this.service = service;
 		if (this.service == null) {
 			System.out.println("Waiting to initialize service...");
 		}
 	}
 
 	// inject a pre-configured service.
-	//@InjectService("UnifiedEntity")
+	// @InjectService("UnifiedEntity")
 	private Neo4JEmbeddedService service;
 	@Inject
 	private Logger logger;
@@ -93,7 +93,7 @@ public class EntityGraphDAONeo4JEImpl implements
 			sb.append(" match x-[:HAS_GLOBAL_ID]-i ");
 			sb.append(" RETURN x.VALUE,x,i.VALUE, i ");
 			sb.append(" LIMIT 2 ");
-	
+
 			System.out.println("About to run : \n" + sb.toString());
 
 			ExecutionResult result = engine.execute(sb.toString());
@@ -121,38 +121,20 @@ public class EntityGraphDAONeo4JEImpl implements
 		return list;
 	}
 
-	@Override
-	public Node findOrCreateUnique(G_CanonicalPropertyType type,
-			Map<String, Object> payload) {
-				return null;
-
-	}
-
-	@Override
-	public Relationship findOrCreateUnique(G_RelationshipType type,
-			Map<String, Object> payload) {
-				return null;
-
-	}
-	
-	@Override
-	public void addRelationship(Node a, Node b, Relationship r, Map<String, Object> payload){
-		
-	}
-
 	/**
 	 * @param q
 	 * @return
 	 */
-	private List<InfoVisGraphAdjacency> getDataFromNeo4J(PossibleMatchByDataset q) {
+	private List<InfoVisGraphAdjacency> getDataFromNeo4J(
+			PossibleMatchByDataset q) {
 
 		List<InfoVisGraphAdjacency> list = new ArrayList<InfoVisGraphAdjacency>();
 		// At this point the DB should have been shut down from the ingest.
 		if (service.connectToGraph() && q.getCustomerNumber() != null) {
-//			String resultString;
-//			String columnsString;
-//			String nodeResult = null;
-//			String rows = "";
+			// String resultString;
+			// String columnsString;
+			// String nodeResult = null;
+			// String rows = "";
 
 			// START SNIPPET: execute
 			ExecutionEngine engine = new ExecutionEngine(service.getGraphDb());
@@ -177,8 +159,21 @@ public class EntityGraphDAONeo4JEImpl implements
 						"" + row.get("AttributeValue"), "$color", "#83548B",
 						"$type", "circle", "$dim", "2");
 				// add some adjacencies
-				for (Entry<String, Object> column : row.entrySet()) {//FIXME: this must be wrong.  We are looping over something we're not using.
-					//rows += column.getKey() + ": " + column.getValue() + "; ";
+				for (Entry<String, Object> column : row.entrySet()) {// FIXME:
+																		// this
+																		// must
+																		// be
+																		// wrong.
+																		// We
+																		// are
+																		// looping
+																		// over
+																		// something
+																		// we're
+																		// not
+																		// using.
+					// rows += column.getKey() + ": " + column.getValue() +
+					// "; ";
 					NodeProxy node = (NodeProxy) row.get("InternalNode");
 
 					String relationshipsPath = row.get("RelationshipsPath")
@@ -188,16 +183,37 @@ public class EntityGraphDAONeo4JEImpl implements
 							"path", relationshipsPath));
 
 				}
-				//rows += "\n";
+				// rows += "\n";
 				list.add(a);
 			}
 			// System.out.println("rows: " + rows);
 			// END SNIPPET: rows
 			// resultString = engine.execute(sb.toString()).dumpToString();
-			//columnsString = columns.toString();
+			// columnsString = columns.toString();
 			// System.out.println("columnsString: " + columnsString);
 
 		}
 		return list;
+	}
+
+	@Override
+	public void addRelationship(V_GenericNode a, V_GenericNode b,
+			V_GenericEdge r, Map<String, Object> payload) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public V_GenericEdge findOrCreateUnique(G_EdgeType type,
+			Map<String, Object> payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public V_GenericNode findOrCreateUnique(G_IdType type,
+			Map<String, Object> payload) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

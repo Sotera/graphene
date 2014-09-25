@@ -1,5 +1,8 @@
 package graphene.dao.neo4j;
 
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_UserFields;
 import graphene.util.ExceptionUtil;
 
@@ -11,7 +14,14 @@ import org.neo4j.graphdb.schema.IndexDefinition;
 import org.slf4j.Logger;
 
 public class GenericUserSpaceDAONeo4jE {
+	@Inject
+	protected G_EdgeTypeAccess edgeTypeAccess;
 
+	@Inject
+	protected G_NodeTypeAccess nodeTypeAccess;
+
+	@Inject
+	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 	@Inject
 	Logger logger;
 

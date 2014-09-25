@@ -1,0 +1,86 @@
+/**
+ * Copyright (c) 2013 Oculus Info Inc. 
+ * http://www.oculusinfo.com/
+ * 
+ * Released under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+/**
+ */
+protocol G_Search {
+	import idl "DataTypes_v1.7.avdl";
+	
+	/**
+	 Property value matching constraints
+
+	 CHANGED IN 1.5
+	 
+	 */
+	enum G_Constraint {
+		REQUIRED_EQUALS, 		// used for cases of REQUIRED or EQUALS
+		FUZZY_PARTIAL_OPTIONAL, // used for cases of FUZZY or PARTIAL or OPTIONAL match
+		NOT 		,			// used for MUST NOT match, or logical NOT
+		OPTIONAL_EQUALS,		// equals OR
+		FUZZY_REQUIRED			// fuzzy AND 
+	}
+
+	/**
+	 A PropertyDescriptor is used to describe a possible property that can be present in an entity or link. It describes 
+	 a single property that can be used in a property search. It can optionally include example or suggested values 
+	 for searching on.
+	 
+	 CHANGED IN 1.5
+	 
+	 */
+	record G_PropertyMatchDescriptor {
+		/** field name or G_PropertyTag (or G_PathMatchTag) that could be searched on */
+		string key;
+		
+		/** value of the Property to search on */
+		union {G_SingletonRange, G_ListRange, G_BoundedRange} range = null;  // CHANGED IN 1.5
+		
+		/** If not null/empty, the value is relative to a logical variable specified here (e.g. "X")
+		 *  Other parameters using the same logical variable name are relative to this value.
+		 *  For instance, for a {key="amount", value="0.98", variable="A"} means that the value
+		 *  of amount is 0.98A.  Another amount might be 0.55A, and the property match engine
+		 *  (e.g. search engine, database query or pattern match algorithm) should understand
+		 *  the relative values.
+		 *  
+		 *  If no variable is specified, then the value is an absolute number. For example,
+		 *  {key="amount", value="0.98"} refers to an amount of exactly 0.98.
+		 */
+		union {string, null} variable = "";  // CHANGED IN 1.5 (was "relative")
+
+		/** Relative importance of this match criteria, where the default is 1.0.  */		
+		union {float, null} weight = 1.0;  // ADDED IN 1.7
+
+		/** Require similarity for fuzzy searches, the default is null.  */		
+		union {float, null} similarity = 1.0;  // ADDED IN 1.7
+		
+		/** If true, INCLUDE all values matching this descriptor. If false, EXCLUDE all values matching this descriptor. */
+		boolean include = true;  // ADDED IN 1.5
+		
+		/** MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT */
+		union {G_Constraint, null} constraint;   // CHANGED IN 1.5 (was "weight")
+	}
+}
+

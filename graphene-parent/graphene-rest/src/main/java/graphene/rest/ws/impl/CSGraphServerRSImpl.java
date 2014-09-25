@@ -2,8 +2,8 @@ package graphene.rest.ws.impl;
 
 import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.CSGraphServerRS;
+import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
-import graphene.services.PropertyGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
@@ -26,7 +26,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	private Logger logger;
 
 	@InjectService("Property")
-	private PropertyGraphBuilder propertyGraphBuilder;
+	private AbstractGraphBuilder propertyGraphBuilder;
 
 	public CSGraphServerRSImpl() {
 

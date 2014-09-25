@@ -1,0 +1,40 @@
+<html t:type="layout" title="Chat" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+	<t:if test="!chatUser">
+        <t:form t:id="loginForm">
+            Username: <t:textfield t:id="username" /><input type="submit" value="join" />
+        </t:form>
+	</t:if>
+	<t:if test="chatUser">
+		<div class="span2">
+			<div class="well well-small">
+				Users:
+				<t:cometd.pushtarget topic="prop:chatUsersTopic" event="chatUsersUpdated" update="replace" />
+			</div>
+		</div>
+		<t:block id="chatUsersBlock">
+			<ul>
+				<t:loop source="chatUsers" value="currentUser">
+					<li>${currentUser}</li>
+				</t:loop>
+			</ul>
+		</t:block>
+		<div class="span10">
+			Logged in as ${chatUser.username} <t:eventlink event="logout">Logout</t:eventlink>
+			
+			<t:zone t:id="chatZone">
+				<t:form t:id="chatForm" t:zone="^">
+					Message: <t:textfield t:id="outMessage" /><input type="submit" value="send" />
+				</t:form>
+			</t:zone>
+			
+			<t:cometd.pushtarget topic="prop:chatTopic" event="chat" update="append" />
+			<t:block t:id="chatBlock">
+				<t:if test="inMessage.fromUser">
+					<strong>${inMessage.fromUser}: </strong>
+				</t:if>
+				${inMessage.message}<br />
+			</t:block>
+		</div>
+	</t:if>
+</html>

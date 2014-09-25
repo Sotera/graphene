@@ -28,12 +28,12 @@ var operatorStore = Ext.create("Ext.data.ArrayStore",
 {
 	fields:['name','friendlyName'],
 	data: [
-		['include', 'Contains'],
-		['equals', 'Equals'],
-		['exclude', 'Does not contain'],
+		['COMPARE_INCLUDE', 'Contains'],
+		['COMPARE_EQUALS', 'Equals'],
+		['COMPARE_NOTINCLUDE', 'Does not contain'],
 // TODO: less than or greater than when we include dates and amounts		
-		['soundslike', 'Sounds Like'],
-		['regex', 'Regular Expression']
+		['COMPARE_SOUNDSLIKE', 'Sounds Like'],
+		['COMPARE_REGEX', 'Regular Expression']
 	]
 });
 

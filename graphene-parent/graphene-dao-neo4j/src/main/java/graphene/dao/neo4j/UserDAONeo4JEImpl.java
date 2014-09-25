@@ -4,8 +4,9 @@ import graphene.business.commons.exception.DataAccessException;
 import graphene.dao.UserDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.model.idl.AuthenticationException;
+import graphene.model.idl.G_CanonicalRelationshipType;
+import graphene.model.idl.G_EdgeType;
 import graphene.model.idl.G_GroupFields;
-import graphene.model.idl.G_RelationshipType;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserFields;
 import graphene.util.ExceptionUtil;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.joda.time.DateTime;
@@ -229,7 +231,8 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 								GrapheneNeo4JConstants.groupLabel,
 								G_GroupFields.name.name(), groupName)
 						.iterator()) {
-
+			G_EdgeType memberOf = edgeTypeAccess
+					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
 			if (g.hasNext()) {
 				Node j = g.next();
 				TraversalDescription traversalDescription = n4jService
@@ -239,8 +242,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.evaluator(
 								Evaluators
 										.includeWhereLastRelationshipTypeIs(DynamicRelationshipType
-												.withName(G_RelationshipType.MEMBER_OF
-														.name())));
+												.withName(memberOf.getName())));
 
 				Traverser traverser = traversalDescription.traverse(j);
 				for (Path path : traverser) {
@@ -252,6 +254,9 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				}
 				tx.success();
 			}
+		} catch (AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return list;
 	}

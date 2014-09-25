@@ -10,18 +10,20 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-all</artifactId>
+			<artifactId>titan-core</artifactId>
 			<version>0.5.0</version>
 		</dependency>
-		<dependency>
-			<groupId>com.tinkerpop.rexster</groupId>
-			<artifactId>rexster-core</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		<dependency>
+
+		<dependency><!-- includes core -->
 			<groupId>com.tinkerpop.rexster</groupId>
 			<artifactId>rexster-protocol</artifactId>
 			<version>2.5.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

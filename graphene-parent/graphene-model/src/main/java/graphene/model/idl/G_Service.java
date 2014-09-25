@@ -5,10 +5,10 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * Selectable services, returned by getServices() in various APIs */
+/** Selectable services, returned by getServices() in various APIs */
 @org.apache.avro.specific.AvroGenerated
 public class G_Service extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Service\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* Selectable services, returned by getServices() in various APIs\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this service\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"short human-readable description of service for display\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Service\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Selectable services, returned by getServices() in various APIs\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"unique id of this service\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"short human-readable description of service for display\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** unique id of this service */
    private java.lang.String uid;

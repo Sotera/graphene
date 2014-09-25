@@ -17,9 +17,10 @@
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 		<!-- FAVICONS -->
-		<link rel="shortcut icon" href="${themePath}img/favicon/favicon.ico"
+		<link rel="shortcut icon" href="${context:core/img/favicon/favicon.ico}"
 			type="image/x-icon" />
-		<link rel="icon" href="${themePath}img/favicon/favicon.ico" type="image/x-icon" />
+		<link rel="icon" href="${context:core/img/favicon/favicon.ico}"
+			type="image/x-icon" />
 
 	</head>
 
@@ -36,7 +37,7 @@
 			true }' src="js/plugin/pace/pace.min.js"></script> -->
 		<script data-pace-options="{ 'restartOnRequestAfter': 
 			true }"
-			src="core/js/plugin/pace/pace.min.js"></script>
+			src="${context:core/js/plugin/pace/pace.min.js}"></script>
 
 	</body>
 

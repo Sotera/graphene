@@ -2,6 +2,10 @@ package graphene.services;
 
 import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_IdType;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EventQuery;
@@ -39,6 +43,7 @@ import org.slf4j.Logger;
 public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	@Inject
 	private Logger logger;
+
 	/**
 	 * This object will be supplied by the concrete implementation
 	 */
@@ -66,6 +71,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	 * @return
 	 * @throws Exception
 	 */
+	
 	public V_GenericGraph makeGraphResponse(final TemporalGraphQuery graphQuery)
 			throws Exception {
 		if (graphQuery.getMaxHops() <= 0) {
@@ -119,8 +125,6 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 			// Iterate over each node found by the previous query and scan them.
 			for (V_GenericNode node : unscannedNodeList) {
 
-				G_CanonicalPropertyType nodeType = G_CanonicalPropertyType
-						.fromValue(node.getFamily());
 				String valueToSearchOn = node.getIdVal();
 				// if we haven't scanned
 				if (ValidationUtils.isValid(valueToSearchOn)) {
@@ -142,7 +146,8 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 						} else {
 							// we will search on it.
 							eq.addAttribute(new G_SearchTuple<String>(
-									G_SearchType.COMPARE_EQUALS, nodeType,
+									G_SearchType.COMPARE_EQUALS, nodeTypeAccess
+											.getNodeType(node.getNodeType()),
 									valueToSearchOn));
 						}
 					} catch (Exception e) {
@@ -181,7 +186,8 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 		}
 		nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
+		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
+				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 		return g;

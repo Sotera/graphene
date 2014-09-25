@@ -87,11 +87,16 @@ public class PropertiesFileSymbolProvider implements SymbolProvider {
 
 				// ClassLoader.getSystemResourceAsStream() returns null if
 				// the resource cannot be found on the classpath
-				if (in == null)
-					throw new FileNotFoundException();
-			} else
-				in = new FileInputStream(resourceName);
 
+			} else {
+				in = new FileInputStream(resourceName);
+			}
+			if (in == null) {
+				logger.error("Could not find file at " + resourceName);
+				throw new FileNotFoundException();
+			} else {
+				logger.debug("File found at " + resourceName);
+			}
 			initialize(logger, in);
 
 		} catch (FileNotFoundException e) {

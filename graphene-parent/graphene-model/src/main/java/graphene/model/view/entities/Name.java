@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author PWG for DARPA
  * 
  */
+@Deprecated
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Name implements Comparable<Name>{
 

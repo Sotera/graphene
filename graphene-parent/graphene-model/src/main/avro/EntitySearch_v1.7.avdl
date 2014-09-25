@@ -1,0 +1,118 @@
+/**
+ * Copyright (c) 2013 Oculus Info Inc. 
+ * http://www.oculusinfo.com/
+ * 
+ * Released under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+/**
+ */
+protocol G_EntitySearch {
+	import idl "Search_v1.7.avdl";
+	
+	/**
+	 Used to add constraints for entity searches. The key indicates the property to make the constraint on, while the
+	 value field is set to the desired value. The type field indicates how the constraint should be treated (ex,
+	 constrain results to those where the "count" property has a value of "LESS_THAN" "100").
+	 
+	 CHANGED IN 1.7
+	 
+	 */
+	record G_PropertyDescriptor {
+		/** key of the Property to search on */
+		string key;
+		
+		/** a human readable label to display if the key isn't friendly (optional) */
+		union {string, null} friendlyText = null;
+		
+		/** type of the Property to search on */
+		G_PropertyType type;
+		
+		/** range of the Property to search on */
+		union{G_RangeType, null} range; // ADDED IN 1.5
+		
+		/** REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED */
+		union {G_Constraint, null} constraint; // CHANGED IN 1.5
+		
+		/** indicates whether the property is indexed for free text queries **/
+		boolean freeTextIndexed = false; // CHANGED IN 1.7
+		
+		/** indicates whether it should be included in the set of default criteria to specify **/
+		boolean defaultTerm = false; // CHANGED IN 1.7
+	}
+	
+	/*
+	 */
+	record G_SearchResult {
+		/** search score */
+		double score = 0;
+		
+		/** search result */
+		union {G_Entity, G_Link} result;
+	}
+	
+	/**
+	The set of results from a single search call. Each item also has a score.
+	 */
+	record G_SearchResults {
+		/** total number of results FOUND, which may be more than the number returned. */
+		long total = 0;
+		
+		/** array of Items (Entities or Links) with scores */
+		array<G_SearchResult> results;
+	}
+
+	/**
+	 Returns a set of Entity search results based on the query (if provides)
+	 AND all matching terms (if any). Partial matches are allowed, but should
+	 be ranked lower.
+	 
+	 Service URL: /entity/search
+	 HTTP Method: POST and GET
+	 
+	 CHANGED IN 1.5
+	 
+	 @param query		text query (Solr-like syntax)
+	 @param terms		Property Search Terms
+	 @param start		0-based index of first result to return
+	 @param max			maximum number of results to return
+	 @param type		the type of the PropertyDescriptors selected (see getDescriptors)
+	 @return			SearchResults
+	 */
+	G_SearchResults search(
+			string query = null, 
+			array<G_PropertyMatchDescriptor> terms = null,
+			long start = 0, 
+			long max = -1,
+			union{string, null} type = null); // ADDED IN 1.5
+
+	/**
+	 Returns the property descriptors that can be used for a Search. This is normally used to populate the Advanced 
+	 Search UI, providing a list of various sub-sets of the data (by type) and the valid search options for each.
+	  
+	 Service URL: /entity/descriptors
+	 HTTP Method: GET
+	 
+	 @return Map of "Type" to "Array of PropertyDescriptor", where Type is the dataset specific type (see the Tag TYPE for examples)
+	 */
+	map<array<G_PropertyDescriptor>> getDescriptors();
+}

@@ -21,7 +21,8 @@ public class EntityAttribute {
 
 	}
 
-	public EntityAttribute(final String family, final String name, final String idValue) {
+	public EntityAttribute(final String family, final String name,
+			final String idValue) {
 		this.family = family;
 		this.name = name;
 		this.value = idValue;
@@ -32,7 +33,7 @@ public class EntityAttribute {
 		this.value = idValue;
 	}
 
-	public String getFamily() {
+	public String getNodeType() {
 		return family;
 	}
 
@@ -56,18 +57,59 @@ public class EntityAttribute {
 		this.value = idValue;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(final Object o) {
-		if (o == null)
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
 			return false;
-		EntityAttribute a = (EntityAttribute) o;
-		return a.getFamily().equals(family) && a.getName().equals(name)
-				&& a.getValue().equals(value);
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		EntityAttribute other = (EntityAttribute) obj;
+		if (family == null) {
+			if (other.family != null) {
+				return false;
+			}
+		} else if (!family.equals(other.family)) {
+			return false;
+		}
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+		if (value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!value.equals(other.value)) {
+			return false;
+		}
+		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return (family + name + value).hashCode();
-
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((family == null) ? 0 : family.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
 	}
 }

@@ -11,18 +11,16 @@ import graphene.web.services.javascript.CytoscapeStack;
 import graphene.web.services.javascript.NeoCytoscapeStack;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -45,6 +43,9 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.lazan.t5.atmosphere.services.AtmosphereModule;
+import org.lazan.t5.atmosphere.services.TopicAuthorizer;
+import org.lazan.t5.atmosphere.services.TopicListener;
 import org.slf4j.Logger;
 
 /**
@@ -55,8 +56,21 @@ import org.slf4j.Logger;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ DAOModule.class })
+@SubModule({ DAOModule.class, AtmosphereModule.class })
 public class GrapheneModule {
+	public static void bind(ServiceBinder binder) {
+		binder.bind(ChatManager.class, ChatManagerImpl.class);
+	}
+
+	public static void contributeTopicAuthorizer(
+			OrderedConfiguration<TopicAuthorizer> config) {
+		config.addInstance("chat", ChatTopicAuthorizer.class);
+	}
+
+	public static void contributeTopicListener(
+			OrderedConfiguration<TopicListener> config) {
+		config.addInstance("chat", ChatTopicListener.class);
+	}
 
 	/**
 	 * This is not working yet. We want to get the version number from a value
@@ -92,7 +106,8 @@ public class GrapheneModule {
 		 * want.
 		 */
 		configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene");
-		configuration.add(SymbolConstants.APPLICATION_VERSION, "${graphene.application-version}");
+		configuration.add(SymbolConstants.APPLICATION_VERSION,
+				"${graphene.application-version}");
 		configuration.add(G_SymbolConstants.APPLICATION_CONTACT,
 				"Sotera Defense Solutions, DFA");
 		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
@@ -157,8 +172,7 @@ public class GrapheneModule {
 	}
 
 	public PropertiesFileSymbolProvider buildVersionSymbolProvider(Logger logger) {
-		return new PropertiesFileSymbolProvider(logger,
-				"version.prop", true);
+		return new PropertiesFileSymbolProvider(logger, "version.prop", true);
 	}
 
 	public static void contributeSymbolSource(
@@ -206,9 +220,8 @@ public class GrapheneModule {
 		configuration.add(new CoercionTuple<>(LocalDate.class,
 				java.util.Date.class, fromLocalDate));
 		// End LocalDate ///////////////////////////
-		
-		
-		///////////////////////////////////////
+
+		// /////////////////////////////////////
 		// DateTime ///////////////////////////
 		// From java.util.Date to DateTime
 
@@ -232,10 +245,8 @@ public class GrapheneModule {
 		configuration.add(new CoercionTuple<>(DateTime.class,
 				java.util.Date.class, fromDateTime));
 		// End DateTime ///////////////////////////
-		
-		
-		
-		///////////////////////////////////////
+
+		// /////////////////////////////////////
 		// DateTime ///////////////////////////
 		// From java.lang.Long to DateTime
 

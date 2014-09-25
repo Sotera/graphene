@@ -2,6 +2,7 @@ package graphene.services;
 
 import graphene.dao.EntityRefDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntityQuery;
@@ -61,6 +62,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 	 * @return
 	 * @throws Exception
 	 */
+	@Override
 	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery)
 			throws Exception {
 		if (graphQuery.getMaxHops() <= 0) {
@@ -83,10 +85,12 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
+		G_IdType nodeType = nodeTypeAccess
+				.getCommonNodeType(G_CanonicalPropertyType.ANY);
 		for (String id : graphQuery.getSearchIds()) {
+
 			eq.addAttribute(new G_SearchTuple<String>(
-					G_SearchType.COMPARE_EQUALS, G_CanonicalPropertyType.ANY,
-					id));
+					G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
 		V_NodeList savNodeList = new V_NodeList();
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
@@ -94,7 +98,8 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 		for (currentDegree = 0; currentDegree < graphQuery.getMaxHops()
 				&& nodeList.getNodes().size() < graphQuery.getMaxNodes()
 				&& eq.getAttributeList().size() > 0; currentDegree++) {
-			savNodeList = nodeList.clone();
+
+			savNodeList = nodeList.clone(); // concurrent modification error!!
 			logger.debug("Processing degree " + currentDegree);
 
 			if (eq.getAttributeList().size() > 0) {
@@ -128,11 +133,10 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 						// we will not search on it.
 						node.setCluster(true);
 					} else {
-						G_CanonicalPropertyType nodeType = G_CanonicalPropertyType
-								.fromValue(node.getFamily());
 						// we will search on it.
 						eq.addAttribute(new G_SearchTuple<String>(
-								G_SearchType.COMPARE_EQUALS, nodeType,
+								G_SearchType.COMPARE_EQUALS, nodeTypeAccess
+										.getNodeType(node.getNodeType()),
 								valueToSearchOn));
 					}
 				} catch (Exception e) {

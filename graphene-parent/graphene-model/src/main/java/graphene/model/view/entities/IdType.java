@@ -1,7 +1,5 @@
 package graphene.model.view.entities;
 
-import graphene.model.idl.G_CanonicalPropertyType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,13 +10,14 @@ public class IdType {
 	private String columnSource;
 
 	private String family;
+	
 	private int idtype_id;
 
 	private String shortName;
 
 	private String tableSource;
 
-	private G_CanonicalPropertyType type;
+//	private G_CanonicalPropertyType type;
 
 	public IdType() {
 	}
@@ -54,8 +53,8 @@ public class IdType {
 				return false;
 		} else if (!tableSource.equals(other.tableSource))
 			return false;
-		if (type != other.type)
-			return false;
+//		if (type != other.type)
+//			return false;
 		return true;
 	}
 
@@ -64,7 +63,7 @@ public class IdType {
 	}
 
 
-	public String getFamily() {
+	public String getNodeType() {
 		return family;
 	}
 
@@ -80,9 +79,9 @@ public class IdType {
 		return tableSource;
 	}
 
-	public G_CanonicalPropertyType getType() {
-		return type;
-	}
+//	public G_CanonicalPropertyType getType() {
+//		return type;
+//	}
 
 	@Override
 	public int hashCode() {
@@ -96,7 +95,7 @@ public class IdType {
 				+ ((shortName == null) ? 0 : shortName.hashCode());
 		result = prime * result
 				+ ((tableSource == null) ? 0 : tableSource.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		//result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -120,16 +119,16 @@ public class IdType {
 		this.tableSource = tableSource;
 	}
 
-	public void setType(final G_CanonicalPropertyType type) {
-		this.type = type;
-	}
+//	public void setType(final G_CanonicalPropertyType type) {
+//		this.type = type;
+//	}
 
-	@Override
-	public String toString() {
-		return "IdType [columnSource=" + columnSource + ", family=" + family
-				+ ", type=" + type + ", idtype_id=" + idtype_id
-				+ ", shortName=" + shortName + ", tableSource=" + tableSource
-				+ "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "IdType [columnSource=" + columnSource + ", family=" + family
+//				+ ", type=" + type + ", idtype_id=" + idtype_id
+//				+ ", shortName=" + shortName + ", tableSource=" + tableSource
+//				+ "]";
+//	}
 
 }

@@ -57,8 +57,6 @@ Ext.define("DARPA.TransactionGraph", {
                 		utils.setBlink(tab, busy);
                 		tab.setStatus(busy ? "CALCULATING LAYOUT" : "CALCULATED LAYOUT");
                		}
-			
-			
 			});
                 this.graphStore = makeTXNGraphStore(); // made this part of the object and only created once per instance
                 this.nodesExpanded = 0;

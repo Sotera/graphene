@@ -1,12 +1,12 @@
 package graphene.model.view.entities;
 
+import graphene.model.idl.G_Property;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-
-import mil.darpa.vande.generic.V_IdProperty;
 
 /**
  * 
@@ -21,18 +21,18 @@ import mil.darpa.vande.generic.V_IdProperty;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Entity {
-	private Set<Account> accountList = null;
-	private Set<Identifier> addressList = null;
+	private Set<G_Property> accountList = null;
+	private Set<G_Property> addressList = null;
+	private Set<G_Property> communicationIds = null;
 	private String datasourceId = null;
-	private Set<EmailAddress> emailList = null;
+	private Set<G_Property> emailList = null;
 	// as can have multiple values for a
 	// key
 	private boolean fullyLoaded = false;
 	private String id = null;
-	private Set<V_IdProperty> identList = null;
-	private Set<Name> nameList = null;
-	private Set<CommunicationId> communicationIds = null;
+	private Set<G_Property> identList = null;
 
+	private Set<G_Property> nameList = null;
 	public Entity() {
 
 	}
@@ -50,54 +50,68 @@ public class Entity {
 		this.id = id;
 	}
 
-	public void addAddress(final Identifier e) {
-		if (addressList == null) {
-			addressList = new HashSet<Identifier>(2);
-		}
-		addressList.add(e);
-	}
-
-	public void addEmailAddress(final EmailAddress e) {
-		if (emailList == null) {
-			emailList = new HashSet<EmailAddress>(2);
-		}
-		emailList.add(e);
-	}
-
-	public void addName(final Name e) {
-		if (nameList == null) {
-			nameList = new HashSet<Name>(2);
-		}
-		nameList.add(e);
-	}
-
-	public void addCommunicationId(final CommunicationId communicationId) {
-		if (communicationIds == null) {
-			communicationIds = new HashSet<CommunicationId>(2);
-		}
-		communicationIds.add(communicationId);
-	}
-
-	public void addAccount(final Account e) {
+	public void addAccount(final G_Property e) {
 		if (accountList == null) {
-			accountList = new HashSet<Account>(2);
+			accountList = new HashSet<G_Property>(2);
 		}
 		accountList.add(e);
 	}
 
-	public Set<Account> getAccountList() {
+	public void addAddress(final G_Property e) {
+		if (addressList == null) {
+			addressList = new HashSet<G_Property>(2);
+		}
+		addressList.add(e);
+	}
+
+	public void addCommunicationId(final G_Property p) {
+		if (communicationIds == null) {
+			communicationIds = new HashSet<G_Property>(2);
+		}
+		communicationIds.add(p);
+	}
+
+	public void addEmailAddress(final G_Property e) {
+		if (emailList == null) {
+			emailList = new HashSet<G_Property>(2);
+		}
+		emailList.add(e);
+	}
+
+	public void addIdentifier(final G_Property e) {
+		if (identList == null) {
+			identList = new HashSet<G_Property>(2);
+		}
+		identList.add(e);
+	}
+
+	public void addName(final G_Property e) {
+		if (nameList == null) {
+			nameList = new HashSet<G_Property>(2);
+		}
+		nameList.add(e);
+	}
+
+	public Set<G_Property> getAccountList() {
 		return accountList;
 	}
 
-	public Set<Identifier> getAddressList() {
+	public Set<G_Property> getAddressList() {
 		return addressList;
+	}
+
+	/**
+	 * @return the communicationIds
+	 */
+	public final Set<G_Property> getCommunicationIds() {
+		return communicationIds;
 	}
 
 	public String getDatasourceId() {
 		return datasourceId;
 	}
 
-	public Set<EmailAddress> getEmailList() {
+	public Set<G_Property> getEmailList() {
 		return emailList;
 	}
 
@@ -105,35 +119,39 @@ public class Entity {
 		return id;
 	}
 
-	public Set<V_IdProperty> getIdentList() {
+	public Set<G_Property> getIdentList() {
 		return identList;
 	}
 
-	public Set<Name> getNameList() {
+	public Set<G_Property> getNameList() {
 		return nameList;
-	}
-
-	public Set<CommunicationId> getCommunicationIdList() {
-		return communicationIds;
 	}
 
 	public boolean isFullyLoaded() {
 		return fullyLoaded;
 	}
 
-	public void setAccountList(final Set<Account> set) {
+	public void setAccountList(final Set<G_Property> set) {
 		this.accountList = set;
 	}
 
-	public void setAddressList(final Set<Identifier> addressList) {
+	public void setAddressList(final Set<G_Property> addressList) {
 		this.addressList = addressList;
+	}
+
+	/**
+	 * @param communicationIds
+	 *            the communicationIds to set
+	 */
+	public final void setCommunicationIds(Set<G_Property> communicationIds) {
+		this.communicationIds = communicationIds;
 	}
 
 	public void setDatasourceId(final String id) {
 		this.datasourceId = id;
 	}
 
-	public void setEmailList(final Set<EmailAddress> emailList) {
+	public void setEmailList(final Set<G_Property> emailList) {
 		this.emailList = emailList;
 	}
 
@@ -141,21 +159,23 @@ public class Entity {
 		this.fullyLoaded = fullyLoaded;
 	}
 
+	public void setG_PropertyList(final Set<G_Property> G_PropertyList) {
+		this.nameList = G_PropertyList;
+	}
+
 	public void setId(final String id) {
 		this.id = id;
 	}
 
-	public void setIdentList(final Set<V_IdProperty> identList) {
+	public void setIdentList(final Set<G_Property> identList) {
 		this.identList = identList;
 	}
 
-	public void setNameList(final Set<Name> nameList) {
+	/**
+	 * @param nameList the nameList to set
+	 */
+	public final void setNameList(Set<G_Property> nameList) {
 		this.nameList = nameList;
-	}
-
-	public void setCommunicationIdList(
-			final Set<CommunicationId> communicationIds) {
-		this.communicationIds = communicationIds;
 	}
 
 }

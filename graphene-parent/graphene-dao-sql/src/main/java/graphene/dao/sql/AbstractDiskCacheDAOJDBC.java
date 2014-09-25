@@ -2,6 +2,9 @@ package graphene.dao.sql;
 
 import graphene.dao.DiskCacheDAO;
 import graphene.dao.GenericDAO;
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.query.BasicQuery;
 import graphene.util.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
@@ -39,14 +42,152 @@ import com.mysema.query.types.EntityPath;
 public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 		DiskCacheDAO<T, Q> implements GenericDAO<T, Q> {
 
+	/**
+	 * If you need to change the database that is used, set it in the
+	 * constructor of your implementation. Otherwise it gets the default
+	 * connection pool that was marked with a MainDB annotation.
+	 */
+	@Inject
+	@MainDB
+	private DBConnectionPoolService cps;
+
+	@Inject
+	protected G_NodeTypeAccess nodeTypeAccess;
+	@Inject
+	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
+	@Inject
+	protected G_EdgeTypeAccess edgeTypeAccess;
+
+	@Inject
+	protected Logger logger;
+
 	private boolean ready;
 
-	@Override
-	public void setReady(boolean b) {
-		this.ready = b;
+	/**
+	 * A non throttling version of a callback performer. Need to test this with
+	 * large datasets
+	 * 
+	 * <BR>
+	 * PWG: does not currently work if you have a query: it keeps running the
+	 * same query forever
+	 * 
+	 * @param initialOffset
+	 * @param maxResults
+	 * @param cb
+	 * @param q
+	 * @return
+	 */
+	public boolean basicCallback(long initialOffset, long maxResults,
+			G_CallBack<T> cb, Q q) {
+		if (initialOffset == 0) {
+			// For SQL offsets, it is one based.
+			initialOffset = 1;
+		}
+		long offset = initialOffset, numProcessed = 0;
+		logger.debug("Performing basic callback performer");
+		TimeReporter t = new TimeReporter("Reading from database...", logger);
+		MemoryReporter m = new MemoryReporter("Reading from database...",
+				logger);
+		boolean doneProcessing = false;
+		while (!doneProcessing
+				&& (maxResults < 0 || numProcessed <= maxResults)) {
+
+			List<T> results = null;
+			try {
+				if (q == null) {
+					// There was no query object, which mean just get
+					// everything.
+					results = getAll(offset, maxResults);
+				} else {
+					// We have some sort of query object.
+					// XXX: We may need to replace Q with ? extends Generic
+					// Query Object, so we have access to setting limits and
+					// offset.
+					// results = findByQuery(offset, maxResults, q);
+					q.setFirstResult(offset);
+					q.setMaxResult(maxResults);
+					results = findByQuery(q);
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+			if (results == null || results.size() == 0) {
+
+				/*
+				 * This should be ok, as long as the dao query is not requesting
+				 * chunks based on a data value. i.e. there may be no results
+				 * between x and x', leading to premature termination of the
+				 * method.
+				 */
+				doneProcessing = true;
+			} else {
+				/*
+				 * Deal with any references to results.size(), so GC can clean
+				 * up ASAP
+				 */
+
+				numProcessed += results.size();
+				// Execute callbacks
+				for (T p : results) {
+					if (!cb.callBack(p)) {
+						logger.error("Fatal error in callback from loading index");
+						break;
+					}
+					p = null;
+				}
+				results = null;
+
+				/*
+				 * First, address memory concerns. Then Throttle down if
+				 * performance was hindered. Otherwise throttle up.
+				 */
+				m.reportMegabytesUsed();
+				if (m.getFreeMegabytes() < 200) {
+					// Adjust for memory concerns
+					JVMHelper.suggestGC();
+
+				}
+			}
+		}
+		logger.debug("Processed " + numProcessed + " rows in " + t.report());
+		return true;
 	}
 
-	public abstract long getMaxIndexValue() throws Exception;
+	/**
+	 * 
+	 * @param conn
+	 * @param o
+	 * @return
+	 * @throws SQLException
+	 */
+	protected SQLQuery from(Connection conn, EntityPath<?>... o) {
+		SQLTemplates dialect = new SQLServer2005Templates(); // SQL-dialect
+		return new SQLQuery(conn, dialect).from(o);
+	}
+
+	/**
+	 * 
+	 * @param conn
+	 *            a connection, probably for a connection pool.
+	 * @param oldSchema
+	 *            The string of the old schema you want to replace
+	 * @param newSchema
+	 *            The string of the new schema you want to use
+	 * @param o
+	 *            One or more instances of query classes (that start with Q)
+	 * @return an SQLQuery object that you can start adding constraints to.
+	 */
+	protected SQLQuery from(Connection conn, String oldSchema,
+			String newSchema, EntityPath<?>... o) {
+		// Tell QueryDSL to print the schema
+		SQLTemplates template = SQLServer2012Templates.builder().printSchema()
+				.build();
+		Configuration c = new Configuration(template);
+		// override the default schema for the entity path, usually dbo
+		c.registerSchemaOverride(oldSchema, newSchema);
+		return new SQLQuery(conn, c).from(o);
+	}
 
 	public boolean getCacheToDisk(boolean deleteExisting,
 			boolean trySerialized, boolean saveLocally, long maxResults) {
@@ -110,18 +251,6 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 	}
 
 	/**
-	 * If you need to change the database that is used, set it in the
-	 * constructor of your implementation. Otherwise it gets the default
-	 * connection pool that was marked with a MainDB annotation.
-	 */
-	@Inject
-	@MainDB
-	private DBConnectionPoolService cps;
-
-	@Inject
-	protected Logger logger;
-
-	/**
 	 * Use this method to grab a connection from the pool. It's best to hold
 	 * onto the connection in a local variable so you can close it manually
 	 * after your call. Otherwise you may encounter slow downs due to
@@ -141,13 +270,7 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 		return cps.getConnection();
 	}
 
-	@Override
-	public boolean isReady() {
-		if (cps != null && cps.isInitialized()) {
-			ready = true;
-		}
-		return ready;
-	}
+	public abstract long getMaxIndexValue() throws Exception;
 
 	/**
 	 * The default implementation of this relies solely on the isReady() being
@@ -158,39 +281,55 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 		return isReady() ? 1.0d : 0;
 	}
 
+	@Override
+	public boolean isReady() {
+		if (cps != null && cps.isInitialized()) {
+			ready = true;
+		}
+		return ready;
+	}
+
 	/**
+	 * A safe way of adding offset and limit, directly using long values.
 	 * 
-	 * @param conn
-	 * @param o
+	 * @param offset
+	 * @param limit
+	 * @param sq
 	 * @return
-	 * @throws SQLException
 	 */
-	protected SQLQuery from(Connection conn, EntityPath<?>... o) {
-		SQLTemplates dialect = new SQLServer2005Templates(); // SQL-dialect
-		return new SQLQuery(conn, dialect).from(o);
+	@Deprecated
+	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
+			@Nonnegative long limit, SQLQuery sq) {
+		if (ValidationUtils.isValid(offset)) {
+			sq = sq.offset(offset);
+		}
+		if (ValidationUtils.isValid(limit)) {
+			sq = sq.limit(limit);
+		}
+		return sq;
 	}
 
 	/**
 	 * 
-	 * @param conn
-	 *            a connection, probably for a connection pool.
-	 * @param oldSchema
-	 *            The string of the old schema you want to replace
-	 * @param newSchema
-	 *            The string of the new schema you want to use
-	 * @param o
-	 *            One or more instances of query classes (that start with Q)
-	 * @return an SQLQuery object that you can start adding constraints to.
+	 * @param q
+	 * @param sq
+	 * @return
 	 */
-	protected SQLQuery from(Connection conn, String oldSchema,
-			String newSchema, EntityPath<?>... o) {
-		// Tell QueryDSL to print the schema
-		SQLTemplates template = SQLServer2012Templates.builder().printSchema()
-				.build();
-		Configuration c = new Configuration(template);
-		// override the default schema for the entity path, usually dbo
-		c.registerSchemaOverride(oldSchema, newSchema);
-		return new SQLQuery(conn, c).from(o);
+	protected SQLQuery setOffsetAndLimit(Q q, SQLQuery sq) {
+		if (ValidationUtils.isValid(q)) {
+			if (ValidationUtils.isValid(q.getFirstResult())) {
+				sq = sq.offset(q.getFirstResult());
+			}
+			if (ValidationUtils.isValid(q.getMaxResult())) {
+				sq = sq.limit(q.getMaxResult());
+			}
+		}
+		return sq;
+	}
+
+	@Override
+	public void setReady(boolean b) {
+		this.ready = b;
 	}
 
 	/**
@@ -209,6 +348,23 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10,
 				250000);
 	}
+
+	/**
+	 * This is a safe way of adding the offset and limit. We can encapsulate
+	 * validation and error correction here to prevent duplicate code and reduce
+	 * maintenance.
+	 * 
+	 * XXX: This is not quite what we want, maybe. For throttling callbacks we
+	 * would have to modify Q each time for the offset, but we don't want any
+	 * side effects from modifying the original query.
+	 * 
+	 * @param q
+	 * @param sq
+	 * @return
+	 */
+	// protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
+	// return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
+	// }
 
 	/**
 	 * The purpose of the throttling code is to provide dynamic balance between
@@ -607,151 +763,5 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 		}
 		logger.debug("Processed " + numProcessed + " rows in " + t.report());
 		return true;
-	}
-
-	/**
-	 * A non throttling version of a callback performer. Need to test this with
-	 * large datasets
-	 * 
-	 * <BR>
-	 * PWG: does not currently work if you have a query: it keeps running the
-	 * same query forever
-	 * 
-	 * @param initialOffset
-	 * @param maxResults
-	 * @param cb
-	 * @param q
-	 * @return
-	 */
-	public boolean basicCallback(long initialOffset, long maxResults,
-			G_CallBack<T> cb, Q q) {
-		if (initialOffset == 0) {
-			// For SQL offsets, it is one based.
-			initialOffset = 1;
-		}
-		long offset = initialOffset, numProcessed = 0;
-		logger.debug("Performing basic callback performer");
-		TimeReporter t = new TimeReporter("Reading from database...", logger);
-		MemoryReporter m = new MemoryReporter("Reading from database...",
-				logger);
-		boolean doneProcessing = false;
-		while (!doneProcessing
-				&& (maxResults < 0 || numProcessed <= maxResults)) {
-
-			List<T> results = null;
-			try {
-				if (q == null) {
-					// There was no query object, which mean just get
-					// everything.
-					results = getAll(offset, maxResults);
-				} else {
-					// We have some sort of query object.
-					// XXX: We may need to replace Q with ? extends Generic
-					// Query Object, so we have access to setting limits and
-					// offset.
-					// results = findByQuery(offset, maxResults, q);
-					q.setFirstResult(offset);
-					q.setMaxResult(maxResults);
-					results = findByQuery(q);
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
-			if (results == null || results.size() == 0) {
-
-				/*
-				 * This should be ok, as long as the dao query is not requesting
-				 * chunks based on a data value. i.e. there may be no results
-				 * between x and x', leading to premature termination of the
-				 * method.
-				 */
-				doneProcessing = true;
-			} else {
-				/*
-				 * Deal with any references to results.size(), so GC can clean
-				 * up ASAP
-				 */
-
-				numProcessed += results.size();
-				// Execute callbacks
-				for (T p : results) {
-					if (!cb.callBack(p)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
-					}
-					p = null;
-				}
-				results = null;
-
-				/*
-				 * First, address memory concerns. Then Throttle down if
-				 * performance was hindered. Otherwise throttle up.
-				 */
-				m.reportMegabytesUsed();
-				if (m.getFreeMegabytes() < 200) {
-					// Adjust for memory concerns
-					JVMHelper.suggestGC();
-
-				}
-			}
-		}
-		logger.debug("Processed " + numProcessed + " rows in " + t.report());
-		return true;
-	}
-
-	/**
-	 * This is a safe way of adding the offset and limit. We can encapsulate
-	 * validation and error correction here to prevent duplicate code and reduce
-	 * maintenance.
-	 * 
-	 * XXX: This is not quite what we want, maybe. For throttling callbacks we
-	 * would have to modify Q each time for the offset, but we don't want any
-	 * side effects from modifying the original query.
-	 * 
-	 * @param q
-	 * @param sq
-	 * @return
-	 */
-	// protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
-	// return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
-	// }
-
-	/**
-	 * A safe way of adding offset and limit, directly using long values.
-	 * 
-	 * @param offset
-	 * @param limit
-	 * @param sq
-	 * @return
-	 */
-	@Deprecated
-	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
-			@Nonnegative long limit, SQLQuery sq) {
-		if (ValidationUtils.isValid(offset)) {
-			sq = sq.offset(offset);
-		}
-		if (ValidationUtils.isValid(limit)) {
-			sq = sq.limit(limit);
-		}
-		return sq;
-	}
-
-	/**
-	 * 
-	 * @param q
-	 * @param sq
-	 * @return
-	 */
-	protected SQLQuery setOffsetAndLimit(Q q, SQLQuery sq) {
-		if (ValidationUtils.isValid(q)) {
-			if (ValidationUtils.isValid(q.getFirstResult())) {
-				sq = sq.offset(q.getFirstResult());
-			}
-			if (ValidationUtils.isValid(q.getMaxResult())) {
-				sq = sq.limit(q.getMaxResult());
-			}
-		}
-		return sq;
 	}
 }

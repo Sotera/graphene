@@ -2,7 +2,8 @@
 /**
 */
 protocol G_UserSpaceDataTypes {
-	import idl "DataTypes_v4.1.avdl";
+	import idl "DataTypes_v1.7.avdl";
+	import idl "CommonDataTypes_v4.1.avdl";
 	import idl "SecurityDataTypes_v4.1.avdl";
 	
 	enum G_UserFields {

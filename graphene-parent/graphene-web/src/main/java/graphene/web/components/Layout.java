@@ -6,13 +6,10 @@ import graphene.web.security.AuthenticatorHelper;
 
 import java.util.Locale;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.func.Tuple;
 import org.apache.tapestry5.ioc.Messages;
@@ -54,71 +51,6 @@ public class Layout {
 
 	@Inject
 	private ComponentClassResolver componentClassResolver;
-	@Inject
-	@Path("context:/core/js/app.js")
-	@Property
-	private Asset jsApp;
-	@Inject
-	@Path("context:/core/js/demo.js")
-	@Property
-	private Asset jsDemo;
-//	@Inject
-//	@Path("context:/core/js/libs/jquery-2.0.2.min.js")
-//	@Property
-//	private Asset jsLib1;
-	@Inject
-	@Path("context:/core/js/plugin/select2/select2.min.js")
-	@Property
-	private Asset jsLib10;
-	@Inject
-	@Path("context:/core/js/plugin/bootstrap-slider/bootstrap-slider.min.js")
-	@Property
-	private Asset jsLib11;
-	@Inject
-	@Path("context:/core/js/plugin/msie-fix/jquery.mb.browser.min.js")
-	@Property
-	private Asset jsLib12;
-//	@Inject
-//	@Path("context:/core/js/libs/jquery-ui-1.10.3.min.js")
-//	@Property
-//	private Asset jsLib2;
-	@Inject
-	@Path("context:/core/js/bootstrap/bootstrap.min.js")
-	@Property
-	private Asset jsLib3;
-	//
-	@Inject
-	@Path("context:/core/js/notification/GNotification.min.js")
-	@Property
-	private Asset jsLib4;
-	@Inject
-	@Path("context:/core/js/gwidgets/g.widget.min.js")
-	@Property
-	private Asset jsLib5;
-	//
-	@Inject
-	@Path("context:/core/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js")
-	@Property
-	private Asset jsLib6;
-	@Inject
-	@Path("context:/core/js/plugin/sparkline/jquery.sparkline.min.js")
-	@Property
-	private Asset jsLib7;
-
-	@Inject
-	@Path("context:/core/js/plugin/jquery-validate/jquery.validate.min.js")
-	@Property
-	private Asset jsLib8;
-
-	@Inject
-	@Path("context:/core/js/plugin/masked-input/jquery.maskedinput.min.js")
-	@Property
-	private Asset jsLib9;
-
-	@Inject
-	@Path("context:/core/js/plugin/pace/pace.min.js")
-	@Property
-	private Asset jsLibPace;
 	
 	@Inject
 	private Locale locale;
@@ -133,11 +65,6 @@ public class Layout {
 
 	@Inject
 	private ComponentResources resources;
-
-	@Property
-	@Inject
-	@Symbol(G_SymbolConstants.THEME_PATH)
-	private String themePath;
 
 	/**
 	 * 

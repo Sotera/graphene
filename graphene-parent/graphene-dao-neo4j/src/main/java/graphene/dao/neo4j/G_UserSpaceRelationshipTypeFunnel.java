@@ -7,7 +7,7 @@ import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.RelationshipType;
 
 public class G_UserSpaceRelationshipTypeFunnel implements
-		Funnel<G_UserSpaceRelationshipType, RelationshipType> {
+		Funnel<RelationshipType, G_UserSpaceRelationshipType> {
 
 	@Override
 	public G_UserSpaceRelationshipType from(RelationshipType f) {

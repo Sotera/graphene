@@ -1262,9 +1262,9 @@ Ext.define("DARPA.GraphVis",
         // DRAG NODE - This function is called for every node dragged
         // The border checks are to prevent the node from being dragged outside of the visible graph disp area
         scope.gv.on('drag','node', function(e) {
-		
+        	return;
 			// prevent mouseover popup from appearing while dragging
-			clearTimeout(timeoutFn);
+			//clearTimeout(timeoutFn);
 		
             var node = e.cyTarget;
             var data = node.data();   // the current selected edge

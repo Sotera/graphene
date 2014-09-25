@@ -64,8 +64,9 @@ public class EntitySearch2 {
 
 	@OnEvent(EventConstants.ACTIVATE)
 	void init() {
-		if (query == null)
+		if (query == null) {
 			query = new AdvancedSearch2();
+		}
 	}
 
 	@Property
