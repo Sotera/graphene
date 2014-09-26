@@ -2,17 +2,15 @@ package graphene.rest.ws.impl;
 
 import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.GraphmlServerRS;
+import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
-import graphene.services.PropertyGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.validator.ValidationUtils;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 import mil.darpa.vande.converters.graphml.GraphmlContainer;
 import mil.darpa.vande.converters.graphml.GraphmlGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
@@ -33,7 +31,7 @@ import org.slf4j.Logger;
 public class GraphmlServerRSImpl implements GraphmlServerRS {
 
 	@InjectService("Property")
-	private PropertyGraphBuilder propertyGraphBuilder;
+	private AbstractGraphBuilder propertyGraphBuilder;
 
 	@Inject
 	private FederatedEventGraphServer feg;

@@ -2,16 +2,13 @@ package graphene.rest.ws.impl;
 
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.EntityDAO;
-import graphene.model.idl.G_Entity;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.view.entities.EntityLight;
-import graphene.model.view.entities.EntityLightFunnel;
 import graphene.model.view.entities.EntitySearchResults;
 import graphene.rest.ws.EntityServerRS;
 import graphene.util.stats.TimeReporter;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,11 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class EntityServerRSImpl implements EntityServerRS {
 
 	@Inject
-	private Logger logger;// = LoggerFactory.getLogger(SearchServerRS.class);
+	private Logger logger;
 
 	@Inject
 	private DataSourceListDAO dataSourceListDAO;
-	private EntityLightFunnel funnel = new EntityLightFunnel();
+	
 	@Inject
 	private EntityDAO entitydao;
 
@@ -68,11 +65,8 @@ public class EntityServerRSImpl implements EntityServerRS {
 		} else {
 			logger.trace(search.getDataSet());
 			search.setFieldsIntoFilters(dataSourceListDAO.getList());
-			List<G_Entity> entities = entitydao
-					.getEntitiesByAdvancedSearch(search);
-			for (G_Entity e : entities) {
-				results.addEntityLight(funnel.to(e));
-			}
+			results.addEntities(entitydao
+					.getLightEntitiesByAdvancedSearch(search));
 		}
 		t.logAsCompleted();
 		return results;

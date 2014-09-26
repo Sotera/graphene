@@ -1,5 +1,7 @@
 package graphene.dao;
 
+import graphene.dao.annotations.EntityLightFunnelMarker;
+import graphene.model.Funnel;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_EdgeType;
@@ -9,6 +11,7 @@ import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKey;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.view.entities.DefaultEntityLightFunnel;
 import graphene.services.EventServerImpl;
 import graphene.services.FederatedEventGraphImpl;
 import graphene.services.FederatedPropertyGraphImpl;
@@ -43,6 +46,7 @@ public class DAOModule {
 		binder.bind(G_EdgeTypeAccess.class, G_EdgeTypeAccessImpl.class);
 		binder.bind(G_PropertyKeyTypeAccess.class,
 				G_PropertyKeyTypeAccessImpl.class);
+	
 	}
 
 	@Contribute(G_NodeTypeAccess.class)
@@ -52,7 +56,8 @@ public class DAOModule {
 		for (G_CanonicalPropertyType e : G_CanonicalPropertyType.values()) {
 			// XXX:Fix me
 			G_IdType n = G_IdType.newBuilder().setName(e.name()).setIndex(i)
-					.setShortName(e.name()).setFriendlyName(e.name()).setTableSource("MyTable").build();
+					.setShortName(e.name()).setFriendlyName(e.name())
+					.setTableSource("MyTable").build();
 			i++;
 			configuration.add(e.name(), n);
 		}

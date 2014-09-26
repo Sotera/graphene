@@ -8,8 +8,10 @@ import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idlhelper.EntityHelper;
 import graphene.model.idlhelper.PropertyHelper;
+import graphene.model.view.entities.EntityAttribute;
+import graphene.model.view.entities.EntityLight;
 
-public class EntityLightFunnel implements Funnel<EntityLight, G_Entity> {
+public class DefaultEntityLightFunnel implements Funnel<EntityLight, G_Entity> {
 
 	@Override
 	public G_Entity from(EntityLight e) {
@@ -25,22 +27,24 @@ public class EntityLightFunnel implements Funnel<EntityLight, G_Entity> {
 		StringBuffer sb = new StringBuffer("");
 		List<G_Property> propertiesByTag = EntityHelper.getPropertiesByTag(e,
 				G_PropertyTag.NAME);
-
+		el.setEffectiveName(e.getProvenance() + e.getUid());
 		for (G_Property p : propertiesByTag) {
 			if (sb.length() > 0) {
 				sb.append(", ");
 			}
+
 			// get the value of the property
 			String n = (String) PropertyHelper.from(p).getValue();
 
 			el.getAttributes().add(new EntityAttribute("Name", "", n));
 
 			// set the effectiveName to be the shortest one.
-			if (el.getEffectiveName() == null) {
-				el.setEffectiveName(n);
-			} else if (n.length() < el.getEffectiveName().length()) {
-				el.setEffectiveName(n);
-			}
+
+			// if (el.getEffectiveName() == null) {
+			// el.setEffectiveName(n);
+			// } else if (n.length() < el.getEffectiveName().length()) {
+			// el.setEffectiveName(n);
+			// }
 			sb.append(n);
 		}
 		if (propertiesByTag.size() > 1) {
@@ -48,8 +52,7 @@ public class EntityLightFunnel implements Funnel<EntityLight, G_Entity> {
 					+ propertiesByTag.size() + " associated values)");
 		}
 		el.setAllNames(sb.toString());
-		for (G_Property p : EntityHelper
-				.getPropertiesByTag(e, G_PropertyTag.ID)) {
+		for (G_Property p :  EntityHelper.getPropertiesByKey(e, "communicationId")) {
 			el.getAttributes().add(
 					new EntityAttribute("CommunicationId", p.getKey(),
 							(String) PropertyHelper.from(p).getValue()));
@@ -57,14 +60,13 @@ public class EntityLightFunnel implements Funnel<EntityLight, G_Entity> {
 		for (G_Property p : EntityHelper.getPropertiesByTag(e,
 				G_PropertyTag.GEO)) {
 			el.getAttributes().add(
-					new EntityAttribute("Address",  p.getKey(), (String) PropertyHelper
-							.from(p).getValue()));
+					new EntityAttribute("Address", p.getKey(),
+							(String) PropertyHelper.from(p).getValue()));
 		}
-		for (G_Property p : EntityHelper
-				.getPropertiesByTag(e, G_PropertyTag.ID)) {
+		for (G_Property p : EntityHelper.getPropertiesByKey(e, "email")) {
 			el.getAttributes().add(
-					new EntityAttribute("Email",  p.getKey(), (String) PropertyHelper
-							.from(p).getValue()));
+					new EntityAttribute("Email", p.getKey(),
+							(String) PropertyHelper.from(p).getValue()));
 		}
 		for (G_Property p : EntityHelper
 				.getPropertiesByTag(e, G_PropertyTag.ID)) {

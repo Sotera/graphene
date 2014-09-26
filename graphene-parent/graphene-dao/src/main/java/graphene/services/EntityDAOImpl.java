@@ -3,32 +3,28 @@ package graphene.services;
 import graphene.dao.EntityDAO;
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
+import graphene.dao.annotations.EntityLightFunnelMarker;
+import graphene.model.Funnel;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_Provenance;
-import graphene.model.idl.G_TransactionResults;
 import graphene.model.idl.G_Uncertainty;
 import graphene.model.idlhelper.EntityHelper;
 import graphene.model.idlhelper.PropertyHelper;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EventQuery;
 import graphene.model.view.entities.BasicEntityRef;
-import graphene.model.view.entities.Entity;
 import graphene.model.view.entities.EntityLight;
-import graphene.model.view.entities.EntityLightFunnel;
-import graphene.model.view.entities.Name;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mil.darpa.vande.generic.V_IdProperty;
-
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +36,12 @@ public class EntityDAOImpl implements EntityDAO {
 	@Inject
 	private IdTypeDAO idTypeDAO;
 
-	private EntityLightFunnel funnel;
+	private Funnel<EntityLight, G_Entity> funnel;
 
 	@Inject
-	public EntityDAOImpl(EntityRefDAO dao) {
+	public EntityDAOImpl(EntityRefDAO dao, @EntityLightFunnelMarker Funnel f) {
 		this.dao = dao;
-		this.funnel = new EntityLightFunnel();
+		this.funnel = f;// new EntityLightFunnel();
 	}
 
 	@Override
@@ -76,9 +72,9 @@ public class EntityDAOImpl implements EntityDAO {
 						Collections.singletonList(property));// srch.getSource(),
 																// s);
 				e.setUid(s);
-				//if (e.getProperties() == null) {
-					updateAllFields(e);
-				//}
+				// if (e.getProperties() == null) {
+				updateAllFields(e);
+				// }
 				results.add(e);
 			}
 		}
@@ -105,10 +101,11 @@ public class EntityDAOImpl implements EntityDAO {
 				String val = r.getIdentifier();
 				G_Provenance prov = new G_Provenance(
 						r.getIdentifierTableSource());
-				//if (r.getAccountNumber() != null) {
-				if(list.size()==0){
-					//we only want to add this kind of property ONCE
-					list.add( new PropertyHelper("account", val, G_PropertyTag.ID));
+				// if (r.getAccountNumber() != null) {
+				if (list.size() == 0) {
+					// we only want to add this kind of property ONCE
+					list.add(new PropertyHelper("account", val,
+							G_PropertyTag.ID));
 				}
 				String family = idTypeDAO.getNodeType(r.getIdtypeId());
 				G_Property ad = null;
@@ -124,7 +121,7 @@ public class EntityDAOImpl implements EntityDAO {
 				} else {
 					ad = new PropertyHelper(family, val, G_PropertyTag.ID);
 				}
-				
+
 				if (ad != null) {
 					ad.setProvenance(prov);
 					list.add(ad);
@@ -151,4 +148,13 @@ public class EntityDAOImpl implements EntityDAO {
 		return 0;
 	}
 
+	@Override
+	public List<EntityLight> getLightEntitiesByAdvancedSearch(
+			AdvancedSearch search) {
+		List<EntityLight> list = new ArrayList<EntityLight>();
+		for (G_Entity g : getEntitiesByAdvancedSearch(search)) {
+			list.add(funnel.to(g));
+		}
+		return list;
+	}
 }

@@ -3,7 +3,6 @@ package graphene.dao;
 import graphene.model.idl.G_Entity;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EventQuery;
-import graphene.model.view.entities.Entity;
 import graphene.model.view.entities.EntityLight;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public interface EntityDAO {
 	 * 
 	 * @param e
 	 */
-	//public void updateAllFields(G_Entity e);
+	// public void updateAllFields(G_Entity e);
 
 	/**
 	 * 
@@ -43,5 +42,8 @@ public interface EntityDAO {
 	 * @return
 	 */
 	public long count(EventQuery q);
+
+	public List<EntityLight> getLightEntitiesByAdvancedSearch(
+			AdvancedSearch search);
 
 }
