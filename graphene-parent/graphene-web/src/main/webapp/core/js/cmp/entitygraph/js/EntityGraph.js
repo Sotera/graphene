@@ -801,8 +801,9 @@ Ext
 						graphStore.proxy.extraParams.Type = intype;
 
 						// Type must be set in the URL
-						graphStore.proxy.url = Config.entityGraphUrl + intype + '/' + node.name;
-
+						//Changed from node.name to node.data().name --djue
+						graphStore.proxy.url = Config.entityGraphUrl + intype + '/' + node.data().name;
+						
 						// DEBUG
 						// console.log("loadOneHop: Service URL = " +
 						// graphStore.proxy.url);
@@ -830,14 +831,15 @@ Ext
 											// don't alter or clear the existing
 											// graph
 										} else {
-											var graph = xmlToGraph(records[0].raw); // read
+											//var graph = xmlToGraph(records[0].raw); // read
 											// the
 											// xml
 											// into
 											// graph
 											// structure
-											self.json1Hop = self.GraphVis
-													.graphToJSON(graph); // create
+											self.json1Hop =records[0].raw;
+												//self.GraphVis
+//													.graphToJSON(graph); // create
 											// the
 											// graph
 											// json

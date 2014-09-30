@@ -2,7 +2,6 @@ package graphene.model.memorydb;
 
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
-import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_NodeTypeAccess;

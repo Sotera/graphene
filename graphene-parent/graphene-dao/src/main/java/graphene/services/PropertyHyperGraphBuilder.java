@@ -36,14 +36,14 @@ import org.slf4j.Logger;
 @UsesConfiguration(DocumentGraphParser.class)
 public abstract class PropertyHyperGraphBuilder<T> extends
 		AbstractGraphBuilder<T> {
-	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue);
-
-	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
+	// public abstract V_GenericNode createOrUpdateNode(String id, String
+	// idType,
+	// String nodeType, V_GenericNode attachTo, String relationType,
+	// String relationValue);
 
 	private static final boolean SMART_SEARCH = true;
 	protected Set<String> scannedQueries = new HashSet<String>();
+	protected Set<String> scannedResults = new HashSet<String>();
 	@Inject
 	private Logger logger;
 
@@ -81,9 +81,6 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			logger.debug("Attempting a graph for query "
 					+ graphQuery.toString());
 		}
-		//VERY Important, or else running the same query again will fail!
-		scannedQueries.clear();
-		queriesToRun.clear();
 		this.nodeList = new V_NodeList();
 
 		this.edgeMap = new HashMap<String, V_GenericEdge>();
@@ -101,7 +98,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			eq.addAttribute(new G_SearchTuple<String>(
 					G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
-		queriesToRun.offer(eq);
+		queriesToRun.add(eq);
 		V_NodeList savNodeList = new V_NodeList();
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
 		int currentDegree = 0;
@@ -183,13 +180,48 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			edgeList.addEdge(e);
 		}
 
-		nodeList.removeOrphans(edgeList);
+		//nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
 		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
+
+		nodeList.clear();
+		scannedQueries.clear();
+		scannedResults.clear();
+		queriesToRun.clear();
 		return g;
+	}
+
+	/**
+	 * @return the scannedQueries
+	 */
+	public final Set<String> getScannedQueries() {
+		return scannedQueries;
+	}
+
+	/**
+	 * @param scannedQueries
+	 *            the scannedQueries to set
+	 */
+	public final void setScannedQueries(Set<String> scannedQueries) {
+		this.scannedQueries = scannedQueries;
+	}
+
+	/**
+	 * @return the scannedResults
+	 */
+	public final Set<String> getScannedResults() {
+		return scannedResults;
+	}
+
+	/**
+	 * @param scannedResults
+	 *            the scannedResults to set
+	 */
+	public final void setScannedResults(Set<String> scannedResults) {
+		this.scannedResults = scannedResults;
 	}
 
 	/**
@@ -200,6 +232,28 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	 * @param graphQuery
 	 */
 	public void performPostProcess(V_GraphQuery graphQuery) {
+
+	}
+
+	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
+
+	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
+			String nodeType, V_GenericNode attachTo, String relationType,
+			String relationValue);
+
+	/**
+	 * Returns true if this result id has previously been scanned.
+	 * 
+	 * @param reportId
+	 * @return
+	 */
+	public boolean isPreviouslyScannedResult(String reportId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void addScannedResult(String reportId) {
+		// TODO Auto-generated method stub
 
 	}
 

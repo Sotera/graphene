@@ -184,7 +184,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 		for (V_GenericEdge e : edgeMap.values()) {
 			edgeList.addEdge(e);
 		}
-		nodeList.removeOrphans(edgeList);
+		//nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
 		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());

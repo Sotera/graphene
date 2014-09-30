@@ -20,4 +20,5 @@ public interface DocumentGraphParser {
 	public void setPhgb(PropertyHyperGraphBuilder<Object> phgb);
 
 	public List<String> getSupportedObjects();
+
 }

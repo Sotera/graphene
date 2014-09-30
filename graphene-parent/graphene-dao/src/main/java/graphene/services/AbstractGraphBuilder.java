@@ -8,6 +8,8 @@ import graphene.util.G_CallBack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -42,7 +44,7 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	protected Map<String, V_GenericEdge> edgeMap;
 
 	// TODO: Change this to a FIFO Queue and address any duplicate node issues
-	protected ArrayList<V_GenericNode> unscannedNodeList = new ArrayList<V_GenericNode>(
+	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(
 			3);
 
 	protected Queue<EntityQuery> queriesToRun = new ConcurrentLinkedQueue<EntityQuery>();

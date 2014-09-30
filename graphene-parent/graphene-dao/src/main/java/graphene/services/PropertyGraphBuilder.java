@@ -172,7 +172,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 			edgeList.addEdge(e);
 		}
 
-		nodeList.removeOrphans(edgeList);
+		//nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
 		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());
