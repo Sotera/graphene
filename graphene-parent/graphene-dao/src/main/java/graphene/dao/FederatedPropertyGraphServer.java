@@ -1,10 +1,10 @@
 package graphene.dao;
 
-import graphene.services.AbstractGraphBuilder;
+import graphene.services.HyperGraphBuilder;
 
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
-@UsesConfiguration(AbstractGraphBuilder.class)
+@UsesConfiguration(HyperGraphBuilder.class)
 public interface FederatedPropertyGraphServer {
 
 	/*

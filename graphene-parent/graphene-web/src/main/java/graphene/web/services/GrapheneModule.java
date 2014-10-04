@@ -60,6 +60,7 @@ import org.slf4j.Logger;
 public class GrapheneModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(ChatManager.class, ChatManagerImpl.class);
+
 	}
 
 	public static void contributeTopicAuthorizer(

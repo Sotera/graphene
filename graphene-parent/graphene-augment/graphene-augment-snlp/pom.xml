@@ -8,22 +8,24 @@
 		<artifactId>graphene-augment</artifactId>
 		<version>4.0.9-SNAPSHOT</version>
 	</parent>
-	<groupId>graphene-augment</groupId>
-	<artifactId>graphene-augment-mitie</artifactId>
-	<name>graphene-augment-mitie</name>
+	<groupId>graphene-augment-snlp</groupId>
+	<artifactId>graphene-augment-snlp</artifactId>
+	<name>graphene-augment-snlp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>graphene</groupId>
-			<artifactId>graphene-model</artifactId>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>3.4.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.3.4</version>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>3.4.1</version>
+			<classifier>models</classifier>
 		</dependency>
 	</dependencies>
 </project>

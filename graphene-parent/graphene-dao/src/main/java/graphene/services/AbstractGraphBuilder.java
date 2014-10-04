@@ -9,11 +9,12 @@ import graphene.util.G_CallBack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Set;
+import java.util.Stack;
 
 import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
@@ -23,6 +24,7 @@ import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.URLEncoder;
 import org.slf4j.Logger;
 
 public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
@@ -33,6 +35,59 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	protected G_NodeTypeAccess nodeTypeAccess;
 
 	@Inject
+	protected URLEncoder encoder;
+
+	protected String getCombinedSearchLink(String identifier) {
+		String context = encoder.encode(identifier);
+		return "<a href=\"CombinedEntitySearchPage/" + context
+				+ "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+	}
+
+	/**
+	 * Returns true if this result id has previously been scanned.
+	 * 
+	 * @param reportId
+	 * @return
+	 */
+	public boolean isPreviouslyScannedResult(String reportId) {
+		return scannedResults.contains(reportId);
+	}
+
+	public void addScannedResult(String reportId) {
+		scannedResults.add(reportId);
+	}
+
+	/**
+	 * @return the scannedResults
+	 */
+	public final Set<String> getScannedResults() {
+		return scannedResults;
+	}
+
+	/**
+	 * @return the scannedQueries
+	 */
+	public final Set<String> getScannedQueries() {
+		return scannedQueries;
+	}
+
+	/**
+	 * @param scannedQueries
+	 *            the scannedQueries to set
+	 */
+	public final void setScannedQueries(Set<String> scannedQueries) {
+		this.scannedQueries = scannedQueries;
+	}
+
+	/**
+	 * @param scannedResults
+	 *            the scannedResults to set
+	 */
+	public final void setScannedResults(Set<String> scannedResults) {
+		this.scannedResults = scannedResults;
+	}
+
+	@Inject
 	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 	protected V_EdgeList edgeList;
 	/**
@@ -41,14 +96,16 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	 * one datasource string that is supported by itself.
 	 */
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
-	protected Map<String, V_GenericEdge> edgeMap;
+	protected Map<String, V_GenericEdge> edgeMap = new HashMap<String, V_GenericEdge>();
 
 	// TODO: Change this to a FIFO Queue and address any duplicate node issues
 	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(
 			3);
-
-	protected Queue<EntityQuery> queriesToRun = new ConcurrentLinkedQueue<EntityQuery>();
-	protected V_NodeList nodeList;
+	protected Set<String> scannedQueries = new HashSet<String>();
+	protected Set<String> scannedResults = new HashSet<String>();
+	protected Stack<EntityQuery> queriesToRun = new Stack<EntityQuery>();
+	protected Stack<EntityQuery> queriesToRunNextDegree = new Stack<EntityQuery>();
+	protected V_NodeList nodeList = new V_NodeList();
 	@Inject
 	private Logger logger;
 

@@ -1,24 +1,24 @@
 package graphene.dao.es;
 
-import javax.annotation.Nullable;
-
 import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.G_SearchTuple;
+import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntityQuery;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+
+import javax.annotation.Nullable;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.elasticsearch.index.query.CommonTermsQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 
@@ -28,16 +28,6 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 	@Inject
 	private JestClient client;
-
-	// private JestClient buildClient(@Nullable String basicAuth, String
-	// baseurl) {
-	// JestClientFactory factory = new JestClientFactory();
-	// HttpClientConfig config = new HttpClientConfig.Builder(createCleanUrl(
-	// basicAuth, baseurl)).multiThreaded(true).build();
-	// factory.setHttpClientConfig(config);
-	// JestClient client = factory.getObject();
-	// return client;
-	// }
 
 	private String createCleanUrl(@Nullable String basicAuth, String baseUrl) {
 		if (basicAuth != null) {
@@ -101,8 +91,11 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			String type, EntityQuery q) throws DataAccessException {
 		String retval = null;
 		try {
-
-			retval = performMatchQuery(index, q);
+			if (q.getAttributeList().get(0).getValue().isEmpty()) {
+				retval = performIndexQuery(index, q);
+			} else {
+				retval = performMatchQuery(index, q);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DataAccessException(
@@ -110,6 +103,22 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 							+ e.getMessage());
 		}
 		return retval;
+	}
+
+	private String performIndexQuery(String index, EntityQuery q)
+			throws Exception {
+
+		if (q.getMaxResult() == 0) {
+			logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to one.");
+			q.setMaxResult(1l);
+		}
+		Search action = new Search.Builder("").addIndex(index)
+				.setParameter("from", q.getFirstResult())
+				.setParameter("size", q.getMaxResult()).build();
+		logger.debug("Action:\n" + action.toString());
+		SearchResult result = client.execute(action);
+		String resultString = result.getJsonString();
+		return resultString;
 	}
 
 	/**

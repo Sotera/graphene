@@ -4,6 +4,7 @@ import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
+import graphene.services.HyperGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
@@ -25,8 +26,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	@Inject
 	private Logger logger;
 
-	@InjectService("Property")
-	private AbstractGraphBuilder propertyGraphBuilder;
+	@InjectService("HyperProperty")
+	private HyperGraphBuilder propertyGraphBuilder;
 
 	public CSGraphServerRSImpl() {
 

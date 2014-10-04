@@ -613,9 +613,21 @@ Ext.define("DARPA.GraphVis",
 								'font-size': 10,
 								'text-outline-width': 1,
 								'text-outline-color': 'white',
-								'shape': 'data(type)',  // added
+								//'shape': 'data(type)',  // added
 								'width': 16,  
 								'height': 16   
+							}).selector('$node > node').css({
+								'padding-top': '10px',
+								'padding-left': '10px',
+								'padding-bottom': '10px',
+								'padding-right': '10px',
+								'text-valign': 'top',
+								'text-halign': 'center',
+								'color': 'black',
+								'background-color': 'data(color)',
+								'font-size': 12,
+								'text-outline-width': 1,
+								'text-outline-color': 'white'   
 							}).selector('edge').css({
 								'content':'data(label)',   
 								'text-valign': 'center',
@@ -634,8 +646,10 @@ Ext.define("DARPA.GraphVis",
 								'target-arrow-color': 'black',
 								'source-arrow-color': 'black',
 								'border-color': 'black',
-								'shape': 'data(type)',  // added
-								'font-size': 12
+								//'shape': 'data(type)',  // added
+								'font-size': 12,
+								'width': 20,  
+								'height': 20
 							}).selector('edge:selected').css({
 								'background-color': graphVisCommon.Colors.selectedEdge,
 								'line-color': 'black',
@@ -643,9 +657,9 @@ Ext.define("DARPA.GraphVis",
 								'target-arrow-color': 'black',
 								'source-arrow-color': 'black',
 								'border-color': 'black',
-								'font-size': 12
-								// 'width': 20,  
-								//'height': 20 
+								'font-size': 12,
+								'width': 20,  
+								'height': 20 
 							}).selector('.toggled-show').css({  // Workaround for showing and hiding edge labels
 								'content':'data(label)'
 							}).selector('.toggled-hide').css({

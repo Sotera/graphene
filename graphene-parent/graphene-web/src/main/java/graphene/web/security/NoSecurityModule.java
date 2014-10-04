@@ -27,8 +27,9 @@ import org.tynamo.security.services.impl.SecurityFilterChain;
 public class NoSecurityModule {
 	public static void bind(ServiceBinder binder) {
 
-		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class);
-		binder.bind(Realm.class, NoSecurityRealm.class);
+		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class)
+				.eagerLoad();
+		binder.bind(Realm.class, NoSecurityRealm.class).eagerLoad();
 	}
 
 	@Contribute(ValidatorMacro.class)

@@ -4,6 +4,7 @@ import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.GraphmlServerRS;
 import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
+import graphene.services.HyperGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.validator.ValidationUtils;
@@ -30,9 +31,12 @@ import org.slf4j.Logger;
  */
 public class GraphmlServerRSImpl implements GraphmlServerRS {
 
-	@InjectService("Property")
-	private AbstractGraphBuilder propertyGraphBuilder;
+//	@InjectService("Property")
+//	private AbstractGraphBuilder propertyGraphBuilder;
 
+	@InjectService("HyperProperty")
+	private HyperGraphBuilder propertyGraphBuilder;
+	
 	@Inject
 	private FederatedEventGraphServer feg;
 

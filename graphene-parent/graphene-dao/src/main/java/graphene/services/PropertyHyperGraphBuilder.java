@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
@@ -35,21 +37,19 @@ import org.slf4j.Logger;
  */
 @UsesConfiguration(DocumentGraphParser.class)
 public abstract class PropertyHyperGraphBuilder<T> extends
-		AbstractGraphBuilder<T> {
-	// public abstract V_GenericNode createOrUpdateNode(String id, String
-	// idType,
-	// String nodeType, V_GenericNode attachTo, String relationType,
-	// String relationValue);
+		AbstractGraphBuilder<T> implements HyperGraphBuilder<T> {
 
 	private static final boolean SMART_SEARCH = true;
-	protected Set<String> scannedQueries = new HashSet<String>();
-	protected Set<String> scannedResults = new HashSet<String>();
+
 	@Inject
 	private Logger logger;
 
-	/**
-	 * This object will be supplied by the concrete implementation
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graphene.services.HyperGraphBuilder#getDAO()
 	 */
+	@Override
 	public abstract GenericDAO<T, EntityQuery> getDAO();
 
 	/**
@@ -61,33 +61,34 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		super();
 	}
 
-	/**
-	 * Unrolled version.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * Start with a list of ids baked into a graph query. perform callbacks on
-	 * those initial ids. (call those idList1) we now have an expanded nodeList.
-	 * look through the nodelist to see which ones were in idList1. For those
-	 * not in idList1, perform callbacks on those.
-	 * 
-	 * @param graphQuery
-	 * @return
-	 * @throws Exception
+	 * @see
+	 * graphene.services.HyperGraphBuilder#makeGraphResponse(mil.darpa.vande
+	 * .generic.V_GraphQuery)
 	 */
+	@Override
 	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery)
 			throws Exception {
+		this.nodeList = new V_NodeList();
+		this.edgeMap = new HashMap<String, V_GenericEdge>();
+		this.edgeList = new V_EdgeList(graphQuery);
+		this.scannedQueries = new HashSet<String>();
+		// this.scannedResults = new HashSet<String>();
+		this.queriesToRun = new Stack<EntityQuery>();
+		V_NodeList savNodeList = new V_NodeList();
+
 		if (graphQuery.getMaxHops() <= 0) {
 			return new V_GenericGraph();
 		} else {
 			logger.debug("Attempting a graph for query "
 					+ graphQuery.toString());
 		}
-		this.nodeList = new V_NodeList();
-
-		this.edgeMap = new HashMap<String, V_GenericEdge>();
 
 		int intStatus = 0;
 		String strStatus = "Graph Loaded";
-		Set<String> scannedStrings = new HashSet<String>();
+		// Set<String> scannedStrings = new HashSet<String>();
 
 		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
@@ -98,40 +99,35 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			eq.addAttribute(new G_SearchTuple<String>(
 					G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
+		eq.setCustomerQueryFlag(true);
 		queriesToRun.add(eq);
-		V_NodeList savNodeList = new V_NodeList();
+
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
 		int currentDegree = 0;
 		for (currentDegree = 0; currentDegree < graphQuery.getMaxHops()
 				&& nodeList.getNodes().size() < graphQuery.getMaxNodes(); currentDegree++) {
 			eq = null;
-			while ((eq = queriesToRun.poll()) != null
+			logger.debug("$$$$There are " + queriesToRun.size()
+					+ " queries to run in the current degree.");
+			while (queriesToRun.size() > 0 && (eq = queriesToRun.pop()) != null
 					&& nodeList.getNodes().size() < graphQuery.getMaxNodes()) {
-				if (eq != null && eq.getAttributeList() != null
-						&& eq.getAttributeList().size() > 0
-						&& !scannedQueries.contains(eq.toString())) {
+
+				if (eq.getAttributeList() != null
+						&& eq.getAttributeList().size() > 0) {
 
 					savNodeList = nodeList.clone();
 					logger.debug("Processing degree " + currentDegree);
-					if (SMART_SEARCH) {
+					// if (SMART_SEARCH) {
 
-						// record that we've already looked at these strings.
-						scannedQueries.add(eq.toString());
-						getDAO().performCallback(0, 0, this, eq);
-
-						for (G_SearchTuple<String> a : eq.getAttributeList()) {
-							scannedStrings.add(a.getValue());
-						}
-					} else {
-						for (G_SearchTuple<String> a : eq.getAttributeList()) {
-							EntityQuery subQuery = new EntityQuery();
-							subQuery.setMaxResult(10l);
-							subQuery.addAttribute(a);
-							getDAO().performCallback(0, 0, this, subQuery);
-							scannedStrings.add(a.getValue());
-						}
-					}
-
+					/**
+					 * This will end up building nodes and edges, and creating
+					 * new queries for the queue
+					 */
+					logger.debug("1111=====Running query " + eq.toString());
+					getDAO().performCallback(0, 0, this, eq);
+					logger.debug("3333====After running " + eq.toString()
+							+ ", there are " + queriesToRunNextDegree.size()
+							+ " queries to run in the next degree.");
 					try {
 
 						// long count = dao.count(eq);
@@ -153,15 +149,21 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					}
 					// we're done scanning this id.
 				}
-			}
+			}// end while loop
+
 			// very important!!
-			unscannedNodeList.clear();
+			// unscannedNodeList.clear();
 			// ////////////////////////////////////////////////
-			logger.debug("At the end of degree " + currentDegree
+			logger.debug("4444==== At the end of degree " + currentDegree
 					+ ", there are " + nodeList.size() + " nodes and "
 					+ edgeMap.size() + " edges");
 
 			saveEdgeMap = new HashMap<String, V_GenericEdge>(edgeMap);
+			logger.debug("5555====There are " + queriesToRunNextDegree.size()
+					+ " queries to run in the next degree. ref "
+					+ queriesToRunNextDegree);
+			queriesToRun.addAll(queriesToRunNextDegree);
+			queriesToRunNextDegree.clear();
 		}
 
 		// All hops have been done
@@ -175,86 +177,30 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		}
 
 		// NOW finally add in all those unique edges.
-		this.edgeList = new V_EdgeList(graphQuery);
+
 		for (V_GenericEdge e : edgeMap.values()) {
 			edgeList.addEdge(e);
 		}
 
-		//nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
 		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 
-		nodeList.clear();
-		scannedQueries.clear();
-		scannedResults.clear();
-		queriesToRun.clear();
 		return g;
 	}
 
-	/**
-	 * @return the scannedQueries
-	 */
-	public final Set<String> getScannedQueries() {
-		return scannedQueries;
-	}
-
-	/**
-	 * @param scannedQueries
-	 *            the scannedQueries to set
-	 */
-	public final void setScannedQueries(Set<String> scannedQueries) {
-		this.scannedQueries = scannedQueries;
-	}
-
-	/**
-	 * @return the scannedResults
-	 */
-	public final Set<String> getScannedResults() {
-		return scannedResults;
-	}
-
-	/**
-	 * @param scannedResults
-	 *            the scannedResults to set
-	 */
-	public final void setScannedResults(Set<String> scannedResults) {
-		this.scannedResults = scannedResults;
-	}
-
-	/**
-	 * Individual implementations can override this method to perform
-	 * modifications on the graph (or graph analysis) after the complete graph
-	 * has been built.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param graphQuery
+	 * @see
+	 * graphene.services.HyperGraphBuilder#performPostProcess(mil.darpa.vande
+	 * .generic.V_GraphQuery)
 	 */
+	@Override
 	public void performPostProcess(V_GraphQuery graphQuery) {
-
-	}
-
-	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
-
-	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue);
-
-	/**
-	 * Returns true if this result id has previously been scanned.
-	 * 
-	 * @param reportId
-	 * @return
-	 */
-	public boolean isPreviouslyScannedResult(String reportId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void addScannedResult(String reportId) {
-		// TODO Auto-generated method stub
-
+		// default blank
 	}
 
 }

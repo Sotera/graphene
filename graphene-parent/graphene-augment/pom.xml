@@ -21,5 +21,6 @@
   </properties>
   <modules>
     <module>graphene-augment-mitie</module>
+    <module>graphene-augment-snlp</module>
   </modules>
 </project>

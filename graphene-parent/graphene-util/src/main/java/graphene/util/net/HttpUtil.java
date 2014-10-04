@@ -1,6 +1,6 @@
-package graphene.dao.es;
+package graphene.util.net;
 
-public class ESUtil {
+public class HttpUtil {
 
 	public static String getAuthorizationEncoding(String username,
 			char[] password) {

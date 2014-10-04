@@ -38,7 +38,7 @@ public class CytoscapeStack implements JavaScriptStack {
 						"context:core/js/libs/cytoscape-2.2.12/arbor.js",
 						"context:core/js/libs/cytoscape-2.2.12/cytoscape.js-cxtmenu.js")
 				// .append("context:core/js/libs/cytoscape/cytoscapeMOD.js")
-				.append("context:core/js/cmp/shared/cytoOverrides.js")
+				//.append("context:core/js/cmp/shared/cytoOverrides.js")
 				.map(pathToAsset).toList();
 
 		final Mapper<String, StylesheetLink> pathToStylesheetLink = F.combine(

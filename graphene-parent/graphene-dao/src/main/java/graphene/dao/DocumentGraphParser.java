@@ -1,5 +1,6 @@
 package graphene.dao;
 
+import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface DocumentGraphParser {
 	/**
 	 * @return the phgb
 	 */
-	public PropertyHyperGraphBuilder<Object> getPhgb();
+	public HyperGraphBuilder<Object> getPhgb();
 
 	/**
 	 * @param phgb
