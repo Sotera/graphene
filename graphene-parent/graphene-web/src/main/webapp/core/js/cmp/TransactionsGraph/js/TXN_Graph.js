@@ -48,9 +48,22 @@ Ext.define("DARPA.TransactionGraph", {
 		var self = this;
 		// MFM Add a View menu to the top toolbar to allow changing the Graph Layout
 		this.institution = config.institution;
-		this.tbar = Ext.create("DARPA.TXNGToolbar", {
-			institution: this.institution 
-		}),
+		
+		var toolbar;
+		try {
+			toolbar = Ext.create("DARPA.GraphToolbar", {
+				institution : this.institution
+			});
+			
+			if (typeof toolbar == "undefined") throw "New toolbar .js not included in .html";
+		} catch (e) {
+			// use old toolbar instead
+			toolbar = Ext.create("DARPA.TXNGToolbar", {
+				institution: this.institution 
+			});
+		}
+		
+		this.tbar = toolbar;
 
 		this.GraphVis = Ext.create("DARPA.GraphVis", { 
 			id: config.id + "-TXNcygraph",
