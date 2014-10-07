@@ -36,7 +36,10 @@ public class SearchFilter {
 	private String value; // blank space delimited
 
 	public boolean doCompare(String v, String family) {
-		if (!family.equals(fieldName))
+		// If the field name is other, then ignore ths family of this row and
+		// look at it anyway.
+		if (!fieldName.equalsIgnoreCase("other")
+				&& !family.equalsIgnoreCase(fieldName))
 			return false;
 
 		String myval = caseSensitive ? value : value.toLowerCase();
@@ -71,7 +74,7 @@ public class SearchFilter {
 				} else {
 					flags = Pattern.CASE_INSENSITIVE;
 				}
-				logger.trace("Compiling regex pattern " + value);
+				logger.debug("Compiling regex pattern " + value);
 				pattern = Pattern.compile(value, flags);
 			}
 			Matcher ms = pattern.matcher(v);
@@ -153,6 +156,7 @@ public class SearchFilter {
 	}
 
 	public void setValue(String value) {
+		logger.debug("Setting value of search filter to " + value);
 		this.value = value;
 	}
 

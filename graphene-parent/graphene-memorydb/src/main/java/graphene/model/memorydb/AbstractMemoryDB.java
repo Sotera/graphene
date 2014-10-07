@@ -39,7 +39,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 	protected static MemIndex identifiers;
 	private static Logger logger = LoggerFactory
 			.getLogger(AbstractMemoryDB.class);
-	//private static long nRows;
+	// private static long nRows;
 	private static final int STATE_LOAD_GRID = 2;
 	protected static final int STATE_LOAD_STRINGS = 1;
 	protected Set<String> accountSet;
@@ -127,13 +127,16 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 		Set<String> results = new HashSet<String>();
 		Set<String> pastResults = new HashSet<String>();
-
+		for (SearchFilter f : srch.getFilters()) {
+			f.setValue(f.getValue().replaceFirst("^0+", ""));
+			
+		}
 		List<SearchFilter> filters = srch.getFilters();
-
 		if (filters.size() == 1) {
 			SearchFilter f = srch.getFilters().get(0);
-			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS)
+			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS) {
 				return exactMatch(f);
+			}
 		}
 		// TODO: can improve by doing the exact match first if it is
 		// one of multiple filters
@@ -141,31 +144,48 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		int pass = 0;
 
 		for (SearchFilter f : filters) {
-
 			++pass;
-
 			logger.trace("About to scan grid with filter " + f);
 			results.clear();
-
+			String previousType = null;
+			// this is new for the graphene fix (rerepackathon)
+			if (f.getFieldName().equalsIgnoreCase("other")) {
+				Set<MemRow> rowsForCustomer = getRowsForCustomer(f.getValue());
+				if (rowsForCustomer != null && rowsForCustomer.size() > 0) {
+					results.add(f.getValue());
+				}
+				Set<MemRow> rowsForAccount = getRowsForAccount(f.getValue());
+				for (MemRow m : rowsForAccount) {
+					results.add(getCustomerNumberForID(m.entries[CUSTOMER]));
+				}
+			}
 			for (MemRow r : grid) {
 				if (r == null)
 					break; // TODO: find out why we are getting a null and
 							// whether it means we are at the end
 				if ((pass > 1)
 						&& (!pastResults
-								.contains(getCustomerNumberForID(r.entries[CUSTOMER]))))
+								.contains(getCustomerNumberForID(r.entries[CUSTOMER])))) {
 					continue; // This is not the first pass and not found in
 								// earlier pass
+				}
 				val = getIdValueForID(r.entries[IDENTIFIER]);
-				if (val == null)
+				if (val == null) {
 					continue;
+				}
+				String familyOfTheRow = idTypeDAO.getFamily(r.getIdType());
+				if (previousType == null) {
+					previousType = familyOfTheRow;
+				}
 
-				String family = idTypeDAO.getFamily(r.getIdType());
-				if (family == null)
+				if (familyOfTheRow == null) {
 					continue;
-				found = f.doCompare(val, family);
-				if (found)
+				}
+
+				found = f.doCompare(val, familyOfTheRow);
+				if (found) {
 					results.add(getCustomerNumberForID(r.entries[CUSTOMER]));
+				}
 			} // each row
 			logger.trace("Done scan grid with " + results.size() + "results");
 			pastResults.clear();
@@ -285,7 +305,6 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		return id;
 
 	}
-
 
 	@Override
 	public int getAccountIDForNumber(String number) {
@@ -419,7 +438,8 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 				// Only make an array for the total number of rows we will
 				// actually load
-				logger.debug("Creating an array of memrows with size "+numProcessed);
+				logger.debug("Creating an array of memrows with size "
+						+ numProcessed);
 				grid = new MemRow[(int) numProcessed];
 				boolean successOnLoadGrid = loadGrid(maxRecords);
 
@@ -537,7 +557,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			String[] accountArray = (String[]) accountSet
 					.toArray(new String[accountSet.size()]);
 
-			identifierSet = null; 
+			identifierSet = null;
 			customerSet = null;
 			accountSet = null;
 

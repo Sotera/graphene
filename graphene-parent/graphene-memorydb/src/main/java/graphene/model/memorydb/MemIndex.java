@@ -41,10 +41,15 @@ public class MemIndex {
 	}
 
 	public String getValueForID(int id) {
-		if (id == -1)
+		if (id == -1) {
 			return null; // TODO: or "" ?
+		}
 		if (id > values.length) {
 			logger.warn("Index id " + id + " out of range:" + values.length);
+			return null;
+		}
+		if (id < 0) {
+			logger.warn("Index id " + id + " out of range: less than zero");
 			return null;
 		}
 		return values[id];
