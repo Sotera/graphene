@@ -52,14 +52,16 @@ Ext.define("DARPA.TransactionGraph", {
 		var toolbar;
 		try {
 			toolbar = Ext.create("DARPA.GraphToolbar", {
-				institution : this.institution
+				id: config.id + "-GraphToolbar",
+				institution : config.institution
 			});
 			
 			if (typeof toolbar == "undefined") throw "New toolbar .js not included in .html";
 		} catch (e) {
 			// use old toolbar instead
 			toolbar = Ext.create("DARPA.TXNGToolbar", {
-				institution: this.institution 
+				id: config.id + "-GraphToolbar",
+				institution : config.institution
 			});
 		}
 		
