@@ -39,11 +39,44 @@ public interface HyperGraphBuilder<T> {
 
 	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
 
+	/**
+	 * Create a node or update an existing one. Also, use the color based on the
+	 * node type or data (depends on your implementation).
+	 * 
+	 * @param id
+	 * @param idType
+	 * @param nodeType
+	 * @param attachTo
+	 * @param relationType
+	 * @param relationValue
+	 * @return
+	 */
 	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
 			String nodeType, V_GenericNode attachTo, String relationType,
 			String relationValue);
 
+	/**
+	 * Create a node or update an existing one. Also, force the color to the one
+	 * provided.
+	 * 
+	 * @param id
+	 * @param idType
+	 * @param nodeType
+	 * @param attachTo
+	 * @param relationType
+	 * @param relationValue
+	 * @param forceColor
+	 * @return
+	 */
 	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
 			String nodeType, V_GenericNode attachTo, String relationType,
 			String relationValue, String forceColor);
+
+	/**
+	 * Determine whether or not you want to traverse deeper on this node.
+	 * 
+	 * @param n
+	 * @return
+	 */
+	boolean determineTraversability(V_GenericNode n);
 }

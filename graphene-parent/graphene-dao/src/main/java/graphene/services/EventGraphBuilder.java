@@ -113,7 +113,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
 				logger.debug("Found " + eq.getIdList().size()
 						+ " unscanned nodes to query on");
 
-				dao.performCallback(0, 0, this, eq);
+				boolean performCallback = dao.performCallback(0, 0, this, eq);
 
 				for (String scannedId : eq.getIdList()) {
 					scannedActors.add(scannedId);

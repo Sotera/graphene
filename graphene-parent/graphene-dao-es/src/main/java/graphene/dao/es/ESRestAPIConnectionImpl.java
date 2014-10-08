@@ -2,7 +2,6 @@ package graphene.dao.es;
 
 import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.G_SearchTuple;
-import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntityQuery;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestClient;
@@ -18,7 +17,6 @@ import org.elasticsearch.index.query.CommonTermsQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 

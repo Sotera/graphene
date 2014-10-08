@@ -3,8 +3,6 @@ package graphene.dao.neo4j.funnel;
 import graphene.model.Funnel;
 import graphene.model.idl.G_User;
 
-import java.sql.Timestamp;
-
 import org.neo4j.graphdb.Node;
 
 public class UserFunnel implements Funnel<Node, G_User> {

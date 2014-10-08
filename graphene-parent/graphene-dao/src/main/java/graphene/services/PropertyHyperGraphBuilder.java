@@ -2,11 +2,13 @@ package graphene.services;
 
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.GenericDAO;
+import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntityQuery;
+import graphene.util.validator.ValidationUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +43,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 
 	private static final boolean SMART_SEARCH = true;
 
+	@Inject
+	private StyleService style;
 	@Inject
 	private Logger logger;
 
@@ -203,4 +207,72 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		// default blank
 	}
 
+	public V_GenericNode createOrUpdateNode(String id, String idType,
+			String nodeType, V_GenericNode attachTo, String relationType,
+			String relationValue) {
+		V_GenericNode a = null;
+		if (ValidationUtils.isValid(id)) {
+			a = nodeList.getNode(id);
+			if (a == null) {
+				a = new V_GenericNode(id);
+				a.setIdType(idType);
+				// This is important because we use it to search on the next
+				// traversal.
+				a.setIdVal(id);
+				a.setNodeType(nodeType);
+				a.setColor(style.getHexColorForNode(a.getNodeType()));
+				a.setLabel(id);
+				// determineTraversability(a, nodeType);
+				nodeList.addNode(a);
+			}
+			// now we have a valid node. Attach it to the other node provided.
+			if (ValidationUtils.isValid(attachTo)) {
+				String key = generateEdgeId(attachTo.getId(), relationType,
+						a.getId());
+				if (key != null && !edgeMap.containsKey(key)) {
+					V_GenericEdge v = new V_GenericEdge(a, attachTo);
+					v.setIdType(relationType);
+					v.setLabel(null);
+					v.setIdVal(relationType);
+					v.addData("Value", relationValue);
+					edgeMap.put(key, v);
+				}
+			}
+		}
+		return a;
+	}
+
+	public V_GenericNode createOrUpdateNode(String id, String idType,
+			String nodeType, V_GenericNode attachTo, String relationType,
+			String relationValue, String forceColor) {
+		V_GenericNode a = null;
+		if (ValidationUtils.isValid(id)) {
+			a = nodeList.getNode(id);
+			if (a == null) {
+				a = new V_GenericNode(id);
+				a.setIdType(idType);
+				// This is important because we use it to search on the next
+				// traversal.
+				a.setIdVal(id);
+				a.setNodeType(nodeType);
+				a.setColor(forceColor);
+				a.setLabel(id);
+				nodeList.addNode(a);
+			}
+			// now we have a valid node. Attach it to the other node provided.
+			if (ValidationUtils.isValid(attachTo)) {
+				String key = generateEdgeId(attachTo.getId(), relationType,
+						a.getId());
+				if (key != null && !edgeMap.containsKey(key)) {
+					V_GenericEdge v = new V_GenericEdge(a, attachTo);
+					v.setIdType(relationType);
+					v.setLabel(null);
+					v.setIdVal(relationType);
+					v.addData("Value", relationValue);
+					edgeMap.put(key, v);
+				}
+			}
+		}
+		return a;
+	}
 }
