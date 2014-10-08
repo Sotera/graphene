@@ -566,6 +566,7 @@ Ext.define("DARPA.GraphVis",
                 	
                     $("#" + scope.id).cytoscape({
 						showOverlay: false,
+						hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
 						style: cytoscape.stylesheet()
 							.selector('node').css({
 								'content': 'data(name)',
