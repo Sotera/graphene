@@ -292,7 +292,7 @@ Ext.define("DARPA.GraphToolbar", {
 						"<br>" + 
 						
 						// Arbor (default) layout help
-						"<img src='" + Config.coreImagesUrl + "arbor_icon.png'></img><img src='" + Config.coreImagesUrl + "arbor_animated_icon2.png'></img>" + 
+						"<img src='" + Config.coreImagesUrl + "arbor_icon.png'></img><img src='" + Config.coreImagesUrl + "arbor_animated_icon.png'></img>" + 
 						"<b>Arbor (default)</b> - " + 
 						"Uses a force-directed physics simulation to evenly space out nodes into clusters." + 
 						"<br>" + 

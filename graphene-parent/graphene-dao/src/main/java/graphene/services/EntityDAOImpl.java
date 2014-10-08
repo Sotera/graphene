@@ -39,7 +39,7 @@ public class EntityDAOImpl implements EntityDAO {
 	private Funnel<EntityLight, G_Entity> funnel;
 
 	@Inject
-	public EntityDAOImpl(EntityRefDAO dao, @EntityLightFunnelMarker Funnel f) {
+	public EntityDAOImpl(EntityRefDAO dao, @Inject @EntityLightFunnelMarker Funnel f) {
 		this.dao = dao;
 		this.funnel = f;// new EntityLightFunnel();
 	}
