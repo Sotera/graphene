@@ -636,66 +636,45 @@ Ext.define("DARPA.GraphVis",
 					
 					// if the plug-in is not included for any reason, do not try to initialize it
 					if (scope.gv.cxtmenu) {
-						
-						// radial context menu plug in
-						scope.gv.cxtmenu({
-							menuRadius: 75, // the radius of the circular menu in pixels
-							selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
-							fillColor: 'rgba(0, 0, 200, 0.75)', // the background colour of the menu
-							activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
-							activePadding: 0, // additional size in pixels for the active command
-							// indicatorSize: 24, // the size in pixels of the pointer to the active command
-							// separatorWidth: 3, // the empty spacing in pixels between successive commands
-							// spotlightPadding: 4, // extra spacing in pixels between the element and the spotlight
-							// minSpotlightRadius: 24, // the minimum radius in pixels of the spotlight
-							// maxSpotlightRadius: 38, // the maximum radius in pixels of the spotlight
-							// itemColor: 'white', // the colour of text in the command's content
-							// itemTextShadowColor: 'black', // the text shadow colour of the command's content
-							// zIndex: 9999 // the z-index of the ui div
-							commands: [{
-								content: "Expand",
-								select: function() {
-									var node = this;
-									if (scope.owner.expand) {
-										scope.owner.expand(node);
-									} else {
-										console.log("expand() is undefined");
+						if (typeof GRadialMenu !== "undefined") {
+							scope.gv.cxtmenu( GRadialMenu.setScope(scope.owner) );
+						} else {
+							// default radial context menu plug in
+							scope.gv.cxtmenu({
+								menuRadius: 75, selector: 'node', activePadding: 0,
+								fillColor: 'rgba(0, 0, 200, 0.75)', activeFillColor: 'rgba(92, 194, 237, 0.75)', 
+								commands: [{
+									content: "Expand",
+									select: function() {
+										var node = this;
+										if (scope.owner.expand) { scope.owner.expand(node); } 
+										else { console.log("expand() is undefined"); }
 									}
-								}
-							}, {
-								content: "Pivot",
-								select: function() {
-									var node = this;
-									if (scope.owner.pivot) {
-										scope.owner.pivot(node);
-									} else {
-										console.log("pivot() is undefined");
+								}, {
+									content: "Pivot",
+									select: function() {
+										var node = this;
+										if (scope.owner.pivot) { scope.owner.pivot(node); }
+										else { console.log("pivot() is undefined"); }
 									}
-								}
-							}, {
-								content: "Hide",
-								select: function() {
-									var node = this;
-									if (scope.owner.hideNode) {
-										scope.owner.hideNode(node);
-									} else {
-										console.log("hideNode() is undefined");
+								}, {
+									content: "Hide",
+									select: function() {
+										var node = this;
+										if (scope.owner.hideNode) { scope.owner.hideNode(node); } 
+										else { console.log("hideNode() is undefined"); }
 									}
-								}
-							}, {
-								content: "Show Details",
-								select: function() {
-									var node = this;
-									var disp = scope.owner.getNodeDisplay();
-									
-									if (disp && disp.setAttrs) {
-										disp.setAttrs(node.data());
-									} else {
-										console.log("showDetails() is undefined");
+								}, {
+									content: "Show Details",
+									select: function() {
+										var node = this;
+										var disp = scope.owner.getNodeDisplay();
+										if (disp && disp.setAttrs) { disp.setAttrs(node.data()); } 
+										else { console.log("showDetails() is undefined"); }
 									}
-								}
-							}],
-						});
+								}],
+							});
+						}
 					}
 					
 					if (onLoadCallback) {
