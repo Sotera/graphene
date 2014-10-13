@@ -206,11 +206,11 @@ Ext.define("DARPA.EntitySearch",
          {
 		var myStore = Ext.create('DARPA.EntitySearchStore', {});
 		myStore.loadData([
-			['name','include',' ', false],
-			['name','include',' ', false],
-			['name','include',' ', false],
-			['name','include',' ', false],			
-			['name','include',' ', false]
+			['name','COMPARE_INCLUDE',' ', false],
+			['name','COMPARE_INCLUDE',' ', false],
+			['name','COMPARE_INCLUDE',' ', false],
+			['name','COMPARE_INCLUDE',' ', false],			
+			['name','COMPARE_INCLUDE',' ', false]
 		]);
 		
 //		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {clicksToEdit:1});

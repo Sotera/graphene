@@ -118,7 +118,6 @@ Ext.define("DARPA.GraphVis",
             var edge;
             for (var e = 0; e < edges.length; e++) {
                 edge = edges[e].data;
-                var data;
                 
                 var edgeEntry = {
                     "data":{ 
@@ -361,7 +360,7 @@ Ext.define("DARPA.GraphVis",
                 node.position = innodePos;     // keep the nodes current position
             }
             else {
-                node.data.id = innumber + 'X' + node.data.id;    // make ids unique
+                node.data.id = node.data.id;
                 node.data.color = graphVisCommon.Colors.expandedDefNode;   // Change the color of the expanded nodes
                 node.data.expanded = true;
                 // For the initial display, locate the nodes in a circle around the expanded node.
@@ -375,43 +374,6 @@ Ext.define("DARPA.GraphVis",
         // Next change the references in the edges and directions
         // We can't do both the above and below in one loop. 
         // The node ids must all be changed first then the edges and directions.
-
-        // If the node has adjacencies (edges), change the ids in the adajencies list to be unique
-        // Note: This json node is not fully fleshed, it has no methods like: node.each(function(adj)
-        for (var a = 0; a < injson.edges.length; a++) {
-            var adj = injson.edges[a];  // aka: 'edges'
-            if (adj.data.source && adj.data.target) {
-                if (adj.data.source != oldSelectedNodeId) {
-                    adj.data.source = innumber + 'X' + adj.data.source;
-                }
-                else {
-                   adj.data.source = innode.data().id;
-                }
-
-                if (adj.data.target != oldSelectedNodeId) {
-                    adj.data.target = innumber + 'X' + adj.data.target;
-                }
-                else {
-                   adj.data.target = innode.data().id;
-                }
-
-                var dir = adj.data.direction;  // direction array conatins the node ids of the 2 connected nodes
-                if (dir && dir.length == 2) {
-                    if (dir[0] != oldSelectedNodeId) {
-                        dir[0] = innumber + 'X' + dir[0];
-                    }
-                    else {
-                       dir[0] = innode.data().id; 
-                    }
-                    if (dir[1] != oldSelectedNodeId) {
-                        dir[1] = innumber + 'X' + dir[1];
-                    }
-                    else {
-                        dir[1] = innode.data().id;
-                    }
-                }
-            }  
-        }
 
         var scope = this;
         // Add JSON data to the graph. This displays the added nodes in a circle around the selected node
@@ -604,6 +566,7 @@ Ext.define("DARPA.GraphVis",
                 	
                     $("#" + scope.id).cytoscape({
 						showOverlay: false,
+						hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
 						style: cytoscape.stylesheet()
 							.selector('node').css({
 								'content': 'data(name)',
@@ -658,8 +621,7 @@ Ext.define("DARPA.GraphVis",
 								'source-arrow-color': 'black',
 								'border-color': 'black',
 								'font-size': 12,
-								'width': 20,  
-								'height': 20 
+								//'width': 'data(lineWidth)'
 							}).selector('.toggled-show').css({  // Workaround for showing and hiding edge labels
 								'content':'data(label)'
 							}).selector('.toggled-hide').css({

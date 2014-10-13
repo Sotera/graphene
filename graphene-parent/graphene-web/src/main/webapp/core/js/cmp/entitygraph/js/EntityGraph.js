@@ -64,11 +64,24 @@ Ext
 						var self = this;
 
 						this.institution = config.institution;
-						config.tbar = Ext.create("DARPA.PBCSToolbar", {
-							institution : this.institution
-						});
-						// OLD config.tbar = Ext.create("DARPA.PBCSToolbar",
-						// {});
+						
+						var toolbar;
+						try {
+							toolbar = Ext.create("DARPA.GraphToolbar", {
+								id: config.id + "-GraphToolbar",
+								institution : config.institution
+							});
+							
+							if (typeof toolbar == "undefined") throw "New toolbar .js not included in .html";
+						} catch (e) {
+							// use old toolbar instead
+							toolbar = Ext.create("DARPA.PBCSToolbar", {
+								id: config.id + "-GraphToolbar",
+								institution : config.institution
+							});
+						}
+						config.tbar = toolbar;
+						
 						config.bbar = Ext.create('Ext.ProgressBar', {
 							text : 'Ready',
 							id : config.id + '-ProgressBar',
@@ -108,9 +121,10 @@ Ext
 								timeout : 120000,
 								url : '',
 								reader : {
-									type : 'xml',
-									record : 'graph',
-									root : 'graphml'
+									type: 'json'
+									//type : 'xml',
+									//record : 'graph',
+									//root : 'graphml'
 								}
 							}
 						});
