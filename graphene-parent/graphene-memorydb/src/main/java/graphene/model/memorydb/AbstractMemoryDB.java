@@ -37,7 +37,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 	protected static MemRow[] grid;
 	protected static MemIndex identifiers;
-	private static Logger logger = LoggerFactory
+	protected static Logger logger = LoggerFactory
 			.getLogger(AbstractMemoryDB.class);
 	// private static long nRows;
 	private static final int STATE_LOAD_GRID = 2;
@@ -129,7 +129,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		Set<String> pastResults = new HashSet<String>();
 		for (SearchFilter f : srch.getFilters()) {
 			f.setValue(f.getValue().replaceFirst("^0+", ""));
-			
+
 		}
 		List<SearchFilter> filters = srch.getFilters();
 		if (filters.size() == 1) {
@@ -719,11 +719,14 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 		if (id >= 0) {
 			row = index.getHeads()[id];
+			int previousRow = row;
 			while (row >= 0) {
 				MemRow r = grid[row];
 				if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(family)) {
 					results.add(grid[row]);
 					row = grid[row].nextrows[col];
+				} else {
+					break;
 				}
 			}
 		}

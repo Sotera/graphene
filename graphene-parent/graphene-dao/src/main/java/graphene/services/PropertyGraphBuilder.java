@@ -115,9 +115,8 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 
 				String valueToSearchOn = node.getIdVal();
 				// start scanning this id.
-				// logger.debug("::::Scanning valueToSearchOn " +
-				// valueToSearchOn
-				// + "\t\t " + node);
+				logger.debug("::::Scanning valueToSearchOn " + valueToSearchOn
+						+ "\t\t " + node);
 
 				long count = 0;
 				try {
@@ -145,7 +144,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 			unscannedNodeList.clear();
 
 			logger.debug("At the end of degree " + currentDegree
-					+ ", there are" + nodeList.size() + " nodes and "
+					+ ", there are " + nodeList.size() + " nodes and "
 					+ edgeMap.size() + " edges");
 
 			// savNodeList = nodeList;//.clone();
@@ -155,6 +154,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T> {
 		// All hops have been done
 		// Check to see if we have too many nodes.
 		if (nodeList.getNodes().size() > graphQuery.getMaxNodes()) {
+			logger.debug("There were too many nodes, reverting to previous degree.");
 			nodeList = savNodeList;
 			edgeMap = saveEdgeMap;
 			intStatus = 1; // will trigger the message.

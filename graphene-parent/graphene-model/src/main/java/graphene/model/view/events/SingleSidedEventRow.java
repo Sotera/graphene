@@ -39,12 +39,12 @@ public class SingleSidedEventRow implements Comparable<Object> {
 	private double amountAsDouble = 0;
 	private String balance;
 	@XmlTransient
-	private double balanceDouble;
+	private double balanceDouble = 0;
 	private String comments;
 	private String credit;
 	private String date;
 	@XmlTransient
-	private long dateMilliSeconds;
+	private long dateMilliSeconds = 0;
 
 	@XmlTransient
 	private int day_one_based;
@@ -54,7 +54,7 @@ public class SingleSidedEventRow implements Comparable<Object> {
 	private String localBalance;
 
 	@XmlTransient
-	private double localBalanceDouble;
+	private double localBalanceDouble = 0;
 
 	private String localCredit;
 	private String localDebit;
@@ -68,6 +68,7 @@ public class SingleSidedEventRow implements Comparable<Object> {
 
 	@XmlTransient
 	private int year;
+
 	public SingleSidedEventRow() {
 		// TODO Auto-generated constructor stub
 	}
@@ -327,9 +328,6 @@ public class SingleSidedEventRow implements Comparable<Object> {
 				+ locAmountAsDouble + ", month_zero_based=" + month_zero_based
 				+ ", comments=" + comments + ", year=" + year + "]";
 	}
-
-
-
 
 	public Double updateBalance(Double sofar) {
 		sofar += amountAsDouble;
