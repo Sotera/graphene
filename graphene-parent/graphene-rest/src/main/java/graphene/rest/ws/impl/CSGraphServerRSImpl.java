@@ -50,7 +50,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("maxSecs " + maxSecs);
 		logger.debug("minimumWeight " + minimumWeight);
 
-		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 6);
+		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 2);
 		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 1000);
 		int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);

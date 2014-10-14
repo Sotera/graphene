@@ -312,7 +312,7 @@ Ext
 						self.json = null;
 						var graphStore = self.graphStore; // MFM2
 						var hops = self.getSettings().getMaxHops();
-						var degree = parseInt(hops) + 1;
+						var degree = parseInt(hops);// + 1; //djue
 						graphStore.proxy.extraParams.degree = degree;
 						graphStore.proxy.url = Config.entityGraphCSUrl
 								+ 'customer/' + custno;

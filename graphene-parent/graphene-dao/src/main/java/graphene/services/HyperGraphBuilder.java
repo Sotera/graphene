@@ -41,7 +41,8 @@ public interface HyperGraphBuilder<T> {
 
 	/**
 	 * Create a node or update an existing one. Also, use the color based on the
-	 * node type or data (depends on your implementation).
+	 * node type or data (depends on your implementation). It is preferred that
+	 * the attachTo node act as the parent of the node you wish to add.
 	 * 
 	 * @param id
 	 * @param idType

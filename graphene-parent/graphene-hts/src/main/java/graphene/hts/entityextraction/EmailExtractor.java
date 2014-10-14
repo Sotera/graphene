@@ -1,21 +1,34 @@
 package graphene.hts.entityextraction;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
+import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_CanonicalRelationshipType;
+
 import java.util.regex.Pattern;
 
-public class EmailExtractor {
-	private final String RE_MAIL = "([\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Za-z]{2,4})";
+public class EmailExtractor  extends AbstractExtractor{
+	private final static String RE_MAIL = "([\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Za-z]{2,4})";
 
-	public Collection<String> extractEmails(String source) {
-		Pattern p = Pattern.compile(RE_MAIL);
-		Matcher m = p.matcher(source);
-		Set<String> emailList = new HashSet<String>();
-		while (m.find()) {
-			emailList.add(m.group(1));
-		}
-		return emailList;
+	public EmailExtractor() {
+		p = Pattern.compile(RE_MAIL);
+	}
+
+	@Override
+	public String getIdType() {
+		return "Potential Email Address";
+	}
+
+	@Override
+	public String getNodetype() {
+		return "Extracted"+ G_CanonicalPropertyType.EMAIL_ADDRESS.name();
+	}
+
+	@Override
+	public String getRelationType() {
+		return G_CanonicalRelationshipType.COMMUNICATION_ID_OF.name();
+	}
+
+	@Override
+	public String getRelationValue() {
+		return "Potential Email Address";
 	}
 }

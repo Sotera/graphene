@@ -8,6 +8,7 @@ import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntityQuery;
+import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.HashMap;
@@ -42,6 +43,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		AbstractGraphBuilder<T> implements HyperGraphBuilder<T> {
 
 	private static final boolean SMART_SEARCH = true;
+
+	private static final boolean INHERIT_ATTRIBUTES = true;
 
 	@Inject
 	private StyleService style;
@@ -222,7 +225,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 				a.setNodeType(nodeType);
 				a.setColor(style.getHexColorForNode(a.getNodeType()));
 				a.setLabel(id);
-				// determineTraversability(a, nodeType);
+				a.addData(nodeType, getCombinedSearchLink(id));
 				nodeList.addNode(a);
 			}
 			// now we have a valid node. Attach it to the other node provided.
@@ -234,10 +237,20 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					v.setIdType(relationType);
 					v.setLabel(null);
 					v.setIdVal(relationType);
-					v.addData("Value", relationValue);
+					v.addData("Value", StringUtils.coalesc(" ", a.getLabel(),
+							relationValue, attachTo.getLabel()));
 					edgeMap.put(key, v);
 				}
+
+				// if this flag is set, we'll add the attributes to the attached
+				// node.
+				if (INHERIT_ATTRIBUTES) {
+					// attachTo.addData(a.getNodeType(), a.getIdVal());
+					attachTo.inheritPropertiesOf(a);
+				}
 			}
+		} else {
+			logger.error("Invalid id for " + nodeType + " of node " + attachTo);
 		}
 		return a;
 	}
@@ -245,34 +258,18 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	public V_GenericNode createOrUpdateNode(String id, String idType,
 			String nodeType, V_GenericNode attachTo, String relationType,
 			String relationValue, String forceColor) {
-		V_GenericNode a = null;
-		if (ValidationUtils.isValid(id)) {
-			a = nodeList.getNode(id);
-			if (a == null) {
-				a = new V_GenericNode(id);
-				a.setIdType(idType);
-				// This is important because we use it to search on the next
-				// traversal.
-				a.setIdVal(id);
-				a.setNodeType(nodeType);
-				a.setColor(forceColor);
-				a.setLabel(id);
-				nodeList.addNode(a);
-			}
-			// now we have a valid node. Attach it to the other node provided.
-			if (ValidationUtils.isValid(attachTo)) {
-				String key = generateEdgeId(attachTo.getId(), relationType,
-						a.getId());
-				if (key != null && !edgeMap.containsKey(key)) {
-					V_GenericEdge v = new V_GenericEdge(a, attachTo);
-					v.setIdType(relationType);
-					v.setLabel(null);
-					v.setIdVal(relationType);
-					v.addData("Value", relationValue);
-					edgeMap.put(key, v);
-				}
+		V_GenericNode a = createOrUpdateNode(id, idType, nodeType, attachTo,
+				relationType, relationValue);
+		a.setColor(forceColor);
+		return a;
+	}
+
+	public void inheritLabelIfNeeded(V_GenericNode a, V_GenericNode... nodes) {
+		for (V_GenericNode n : nodes) {
+			if (n != null && ValidationUtils.isValid(n.getLabel())) {
+				a.setLabel(n.getLabel());
+				return;
 			}
 		}
-		return a;
 	}
 }

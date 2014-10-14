@@ -6,14 +6,13 @@
 	<parent>
 		<groupId>graphene</groupId>
 		<artifactId>graphene-parent</artifactId>
-		<version>4.0.9-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>graphene-dao-solr</artifactId>
-	<version>4.0.9-SNAPSHOT</version>
-	<groupId>graphene</groupId>
 	<name>${project.artifactId}</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<solr.version>4.2.0</solr.version>
 	</properties>
 
 	<dependencies>
@@ -32,9 +31,25 @@
 		<!-- Solr Search. Note we only need the solr-solrj in order to query a 
 			remote server; we don't need the whole core, which can cause lucene version 
 			problems. -->
+		<!-- Used for querying a remote solr server. -->
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
+			<version>${solr.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-jdk14</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.restlet</artifactId>
+					<groupId>org.restlet.jee</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.restlet.ext.servlet</artifactId>
+					<groupId>org.restlet.jee</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
