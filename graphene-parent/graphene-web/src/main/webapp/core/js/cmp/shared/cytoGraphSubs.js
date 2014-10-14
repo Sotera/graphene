@@ -566,7 +566,7 @@ Ext.define("DARPA.GraphVis",
                 	
                     $("#" + scope.id).cytoscape({
 						showOverlay: false,
-						hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
+						//hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
 						style: cytoscape.stylesheet()
 							.selector('node').css({
 								'content': 'data(name)',
@@ -785,7 +785,7 @@ Ext.define("DARPA.GraphVis",
                     break;
                 case 'cose':
 					scope.doCOSELayout(config);
-					break
+					break;
                 case 'arbor':
                 case 'arbor-snow':     // force directed arbor - out of the box
 					scope.doForceDirectedLayout('arbor-snow', config);
@@ -822,7 +822,7 @@ Ext.define("DARPA.GraphVis",
 		//	scope.setBusy(true);
         // }
 		
-		scope.doHierarchicalLayout(config)
+		scope.doHierarchicalLayout(config);
     },
     
 	doCircleLayout: function(config) {
