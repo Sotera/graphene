@@ -322,22 +322,26 @@ Ext.define("DARPA.GraphVis",
         //console.log("node orig position = " + innodePos.x + ", " + innodePos.y);
         
         // Move the selected node 'out' further away from its connected node to make some room for the expanded neighborhood
-        var connectedEdge = innode._private.edges[0];
-        var connectedNodes = connectedEdge.connectedNodes();
-        var connectedNode = null;
-        connectedNodes.each(function(indx, cnode) {
-            if (cnode.data().id != innode.data().id) {
-                connectedNode = cnode;  
-                return;
-            }
-        });
-        var conNodePos = connectedNode.position();
-        var dx = innodePos.x - conNodePos.x;
-        var dy = innodePos.y - conNodePos.y;
-        var newx = innodePos.x + dx * 1.5;
-        var newy = innodePos.y + dy * 1.5;
-        innode.position({x: newx, y: newy});
-        innodePos = innode.position();
+        try {
+	        var connectedEdge = innode._private.edges[0];
+	        var connectedNodes = connectedEdge.connectedNodes();
+	        var connectedNode = null;
+	        connectedNodes.each(function(indx, cnode) {
+	            if (cnode.data().id != innode.data().id) {
+	                connectedNode = cnode;  
+	                return;
+	            }
+	        });
+	        var conNodePos = connectedNode.position();
+	        var dx = innodePos.x - conNodePos.x;
+	        var dy = innodePos.y - conNodePos.y;
+	        var newx = innodePos.x + dx * 1.5;
+	        var newy = innodePos.y + dy * 1.5;
+	        innode.position({x: newx, y: newy});
+	        innodePos = innode.position();
+        } catch (e) {
+        	console.log("Warning: " + e.message);
+        }
         
         // DEBUG
         //console.log("node new position = " + innodePos.x + ", " + innodePos.y);

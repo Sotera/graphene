@@ -412,7 +412,7 @@ Ext
 							});
 						} else {
 							self.showjson(self.prevLoadParams.value);
-							self.showjson1Hop(false, null);
+							//self.showjson1Hop(false, null);
 						}
 
 						this.callParent(arguments);
@@ -465,7 +465,13 @@ Ext
 						var nodeDisp = self.getNodeDisplay();
 						nodeDisp.setAttrs(node.data());
 						var type = node.data().idType;
-						var isEntity = (type == 'customer' || type == 'LENDER' || type == 'BORROWER');
+						var isEntity = false;
+						if (typeof isPivotableType !== "undefined") {
+							// isPivotableType is a global function found in .html
+							isEntity = isPivotableType(type);
+						} else {
+							isEntity = (type == 'customer' || type == 'LENDER' || type == 'BORROWER');
+						}
 						nodeDisp.enablePivot(isEntity);
 						nodeDisp.enableShow(type == 'account' || isEntity);
 						nodeDisp.enableHide(true);
@@ -729,7 +735,7 @@ Ext
 						if (self.json1Hop != null && node != null) {
 							// Don't NEED:
 							// self.fd.canvas.resize(this.items.items[0].getWidth(),this.items.items[0].getHeight());
-							self.GraphVis.showGraph1Hop(self.json1Hop, node); // display
+							self.json = self.GraphVis.showGraph1Hop(self.json1Hop, node); // display
 							// the
 							// graph
 							if (userInitiated && userInitiated == true) {
@@ -741,8 +747,7 @@ Ext
 					// load data for specified node expanded 1 hop out
 					loadOneHop : function(intype, node, pb, fromDate, toDate) {
 						var self = this;
-						// OLD var graphStore = self.graphOneHopStoreInit();
-						var graphStore = self.graph1HopStore; // MFM2
+						var graphStore = self.graphStore; // MFM2
 
 						var s = self.getSettings();
 						var maxNewCallsAlertThresh = 30; // Adjust as needed
@@ -750,30 +755,7 @@ Ext
 						// DEBUG
 						// console.log("loadOneHop");
 
-						// Count the node's adjacencies and don't allow expand
-						// if the count is > 1
-						/*
-						var countAdjacent = 0;
-						var edges = node.connectedEdges();
-						if (edges) {
-							edges.each(function(indx, edge) {
-								countAdjacent++;
-							});
-						}
-
-						if (countAdjacent > 1) {
-							alert("This item can't be expanded because it already has more than 1 connection.");
-
-							if (pb) {
-								pb.updateText(".");
-								pb.reset();
-							}
-							return;
-						}*/
-
-						// for feedback while the query and graph display is in
-						// progress
-
+						// for feedback while the query and graph display is in progress
 						var mbox = Ext.Msg.show({
 							title : 'Expand',
 							msg : 'The expanded data is being obtained and prepared for display. Please wait...',
@@ -782,20 +764,11 @@ Ext
 
 						// PWG OR TRY: utils.setBlink(self, true);
 
-						graphStore.proxy.extraParams.degree = 1; // labelled
-						// hops.
-						// only 1
-						// hop out
-						// from this
-						// node
+						graphStore.proxy.extraParams.degree = 1; // labelled hops. only 1 hop out from this node
 						graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
 						graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
 						if (graphStore.proxy.extraParams.maxNodes > 200) {
-							graphStore.proxy.extraParams.maxNodes = 200; // hard
-							// limit
-							// for
-							// this
-							// case
+							graphStore.proxy.extraParams.maxNodes = 200; // hard limit for this case
 						}
 						if (maxNewCallsAlertThresh > graphStore.proxy.extraParams.maxEdgesPerNode) {
 							maxNewCallsAlertThresh = graphStore.proxy.extraParams.maxEdgesPerNode;
@@ -807,8 +780,8 @@ Ext
 						// @QueryParam("todt") @DefaultValue(value = "0") String
 						// maxSecs,
 
-						graphStore.proxy.extraParams.fromdt = fromDate;
-						graphStore.proxy.extraParams.todt = toDate;
+						//graphStore.proxy.extraParams.fromdt = fromDate;
+						//graphStore.proxy.extraParams.todt = toDate;
 						if (intype == null || intype.length == 0) {
 							intype = "customer";
 						}
@@ -819,111 +792,68 @@ Ext
 						graphStore.proxy.url = Config.entityGraphUrl + intype + '/' + node.data().name;
 						
 						// DEBUG
-						// console.log("loadOneHop: Service URL = " +
-						// graphStore.proxy.url);
+						// console.log("loadOneHop: Service URL = " + graphStore.proxy.url);
 
-						self.json1Hop = null; // prevents us from trying to
-						// display the previous graph if
-						// we switch to this tab
-						// before we have fully loaded the new graph
+						self.json1Hop = null; // prevents us from trying to display the previous graph if we switch to this tab before we have fully loaded the new graph
 						self.json1HopNode = node;
 
-						graphStore
-								.load({
-									scope : this, // ?
-									callback : function(records, operation,
-											success) {
+						graphStore.load({
+							scope : this, // ?
+							callback : function(records, operation, success) {
 
-										if (success == false) {
-											alert("Failed to retrieve graph results due to a server error. Please contact your System Administrator."); // MFM
-											self.json1HopNode = null;
-											if (pb) {
-												pb
-														.updateText("Search failed due to server error.");
-												pb.reset();
-											}
-											// don't alter or clear the existing
-											// graph
-										} else {
-											//var graph = xmlToGraph(records[0].raw); // read
-											// the
-											// xml
-											// into
-											// graph
-											// structure
-											self.json1Hop =records[0].raw;
-												//self.GraphVis
-//													.graphToJSON(graph); // create
-											// the
-											// graph
-											// json
-											// object.
-
-											// results could be empty, check for
-											// this here
-											if (self.json1Hop
-													&& self.json1Hop.nodes.length <= 2) { // don't
-												// include
-												// this
-												// node
-												// already
-												// connected
-												// to
-												// another
-												// node
-												// in
-												// the
-												// graph
-												alert("No additional items were found for this id.");
-												self.json1HopNode = null;
-												// don't alter the existing
-												// graph
-											} else {
-												if (self.json1Hop.length > maxNewCallsAlertThresh) {
-													if (mbox) {
-														mbox.close();
-													}
-													Ext.Msg
-															.confirm(
-																	'Confirm',
-																	'This value has more than '
-																			+ maxNewCallsAlertThresh
-																			+ ' items and may clutter the display. Do you want to continue displaying it?',
-																	function(
-																			ans) {
-																		if (ans == 'yes') {
-																			self
-																					.showjson1Hop(true);
-																		}
-																	});
-												} else {
-													self.showjson1Hop(true);
-												}
-											}
-
-											var nodeCount = self.json1Hop.nodes.length;
-											self.appendTabTitle("("
-													+ nodeCount.toString()
-													+ ")");
-
-											if (pb) {
-												pb
-														.updateText(graph.nodes.length
-																+ " nodes");
-												pb.reset();
-											}
-											// Update title to display the
-											// communicationId value and value
-											// of nodes found
-											// self.updateTitle(graph.nodes.length,
-											// self.prevLoadParams.value );
-										}
-										if (mbox) {
-											mbox.close();
-										}
-
+								if (success == false) {
+									alert("Failed to retrieve graph results due to a server error. Please contact your System Administrator."); // MFM
+									self.json1HopNode = null;
+									if (pb) {
+										pb.updateText("Search failed due to server error.");
+										pb.reset();
 									}
-								});
+									// don't alter or clear the existing graph
+								} else {
+									var graph = records[0].raw;
+									self.json1Hop = graph;
+
+									// results could be empty, check for this here
+									if (self.json1Hop && self.json1Hop.nodes.length <= 2) { 
+										// don't include this node already connected to another node in the graph
+										alert("No additional items were found for this id.");
+										self.json1HopNode = null;
+										// don't alter the existing graph
+									} else {
+										if (self.json1Hop.length > maxNewCallsAlertThresh) {
+											if (mbox) {
+												mbox.close();
+											}
+											Ext.Msg.confirm(
+												'Confirm',
+												'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
+												function(ans) {
+													if (ans == 'yes') {
+														self.showjson1Hop(true);
+													}
+												}
+											);
+										} else {
+											self.showjson1Hop(true);
+										}
+									}
+
+									var nodeCount = self.json.nodes.length;
+									self.appendTabTitle("(" + nodeCount.toString() + ")");
+
+									if (pb) {
+										pb.updateText(graph.nodes.length + " nodes");
+										pb.reset();
+									}
+									// Update title to display the communicationId value and value of nodes found
+									// self.updateTitle(graph.nodes.length, self.prevLoadParams.value );
+								}
+								if (mbox) {
+									mbox.close();
+								}
+
+							}
+						});
 					},
 
 					// Expand out 1 hop for selected node only
