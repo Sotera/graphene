@@ -513,6 +513,45 @@ Ext.define("DARPA.GraphVis",
             }
         }
     },
+    
+    deleteNodes: function(nodes) {
+    	var scope = this;
+    	for (var i = 0; i < nodes.length; i++) {
+    		var id = nodes[i].data().id;
+    		
+    		// remove all edges whose source == id
+    		scope.gv.remove( scope.gv.elements("edge[source='" + id + "']") );
+    		
+    		// remove all edges whose target == id
+    		scope.gv.remove( scope.gv.elements("edge[target='" + id + "']") );
+    		
+    		// remove all nodes whose id == id
+    		scope.gv.remove("#" + id);
+
+			// most graph implementations store a json representation of their cyto graphs;
+			// remove traces of nodes and edges involved with selected node IDs
+    		if (typeof scope.owner.json !== "undefined") {
+    			var j;
+    			var json = scope.owner.json;
+    			
+    			for (j = 0; j < json.nodes.length; j++) {
+    				var jsonNode = scope.owner.json.nodes[j];
+    				if (jsonNode.data.id == id) {
+    					json.nodes.splice(j, 1);
+    					break;  // there should only be one node with this id; stop iterating
+    				}
+    			}
+    			
+    			for (j = 0; j < json.edges.length; j++) {
+    				var jsonEdge = scope.owner.json.edges[j];
+    				if (jsonEdge.data.source == id || jsonEdge.data.target == id) {
+    					json.edges.splice(j, 1);
+    					j--;
+    				}
+    			}
+    		}
+    	}
+    },
 
     // Initialize
     // config   - Object with the following attributes

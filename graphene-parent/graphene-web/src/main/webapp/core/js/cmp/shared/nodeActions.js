@@ -22,7 +22,7 @@ Ext.define("DARPA.Node_Actions", {
 			disabled:true,
 			margin:4,   
 			height:24,
-			width:58,
+			width: "25%",
 			handler:function(but)
 			{
 				var path = but.id.split('-');
@@ -59,7 +59,7 @@ Ext.define("DARPA.Node_Actions", {
 			disabled:true,
 			margin:4,   
 			height:24,
-			width:58,
+			width: "25%",
 			handler:function(but) {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
@@ -96,7 +96,7 @@ Ext.define("DARPA.Node_Actions", {
 			disabled:true,
 			margin:4,   
 			height:24,
-			width:58,
+			width: "25%",
 			handler:function(but)
 			{
 				var path = but.id.split('-');
@@ -127,7 +127,7 @@ Ext.define("DARPA.Node_Actions", {
 			id: config.id + '-UNHIDE',
 			margin:4,   
 			height:24,
-			width:60,
+			width: "25%",
 			handler:function(but)
 			{
 				var path = but.id.split('-');
@@ -152,7 +152,7 @@ Ext.define("DARPA.Node_Actions", {
 		    disabled:false,
 		    margin:4,   
 		    height:24,
-		    width:58,
+			width: "25%",
 		    handler: function(but) {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
@@ -189,7 +189,7 @@ Ext.define("DARPA.Node_Actions", {
 		    disabled:false,
 		    margin:4,   
 		    height:24,
-		    width:58,
+			width: "25%",
 		    handler: function(but) {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
@@ -228,7 +228,7 @@ Ext.define("DARPA.Node_Actions", {
 			disabled:true,
 			margin:4,   
 			height:24,
-			width:58,
+			width: "25%",
 			handler: function(but) {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
@@ -240,18 +240,18 @@ Ext.define("DARPA.Node_Actions", {
 						graph.showDetail(nodes[i].data());
 					}
 				} else {
-					Ext.Msg.alert("Warning", "You must first select one or more nodes before you can create its tab")
+					Ext.Msg.alert("Warning", "You must first select one or more nodes before you can create its tab");
 				}
 		    }
 		});
 
 		var stop = Ext.create("Ext.Button", {
-			text: "HALT LAYOUT",
+			text: "HALT",
 			id: config.id + '-STOP',
 			disabled: true,
 			margin: 4,
 			height: 24,
-			width: 58,
+			width: "25%",
 			last_layout: undefined,
 			setCurrentLayout: function(layoutStr) {
 				this.last_layout = layoutStr;
@@ -268,6 +268,32 @@ Ext.define("DARPA.Node_Actions", {
 						break;
 					default:
 						break;
+				}
+			}
+		});
+		
+		var deleteBtn = Ext.create("Ext.Button", {
+			text: "DELETE",
+			id: config.id + "-DELETE",
+			//disabled: true,
+			margin: 4,
+			height: 24,
+			width: "25%",
+			handler: function(btn) {
+				var path = btn.id.split('-');
+				var graphId = path[0] + '-' + path[1];
+				var graph = Ext.getCmp(graphId);
+				if (graph) {
+					var nodes = graph.GraphVis.gv.$("node:selected");
+					if (nodes.length > 0) {
+						Ext.Msg.confirm("Warning", "Deleting selected nodes will remove them from the graph entirely.  Are you sure?", function(btn) {
+							if (btn == "yes") {
+								graph.GraphVis.deleteNodes(nodes);
+							}
+						});
+					} else {
+						Ext.Msg.alert("Warning", "You must first select one or more nodes before you can delete them.");
+					}
 				}
 			}
 		});
@@ -300,42 +326,54 @@ Ext.define("DARPA.Node_Actions", {
 			       //     {'Tab':'PB Graph', 'action': 'ACTIONS Help', 'selectedNode': 'NA' });
 			}
 		});
-
 		
 		var actionButtonsLine1 = Ext.create("Ext.form.FieldSet", { 
 			border: 0,
 			maxHeight: 40,
 			padding: 0,
 			margin: 0,
-			items:[
-			       {
-			    	   xtype:'fieldcontainer',
-			    	   height:'auto',
-			    	   items:[pivot, unpivot, hide, unhide]
-			       }
-	       		]
+			items:[{
+				xtype:'fieldcontainer',
+				height:'auto',
+				width: '100%',
+				items:[pivot, unpivot, hide, unhide]
+			}]
 		});
+		
 		var actionButtonsLine2 = Ext.create("Ext.form.FieldSet", { 
 			border: 0,
 			maxHeight: 40,
 			padding: 0,
 			margin: 0,
-			items:[
-			       {
-			    	   xtype:'fieldcontainer',
-			    	   height:'auto',
-			    	   items:[expand, unexpand, show, stop, help]
-			       }
-	       		]
+			items:[{
+				xtype:'fieldcontainer',
+				height:'auto',
+				width: '100%',
+				items:[expand, unexpand, show, stop]
+			}]
 			
+		});
+		
+		var actionButtonsLine3 = Ext.create("Ext.form.FieldSet", {
+			border: 0,
+			maxHeight: 40,
+			padding: 0,
+			margin: 0,
+			items: [{
+				xtype: 'fieldcontainer',
+				height: 'auto',
+				width: '100%',
+				items: [deleteBtn, help]
+			}]
 		});
 
 		this.items = [
-		              actionButtonsLine1,
-		              actionButtonsLine2
-		              ];
+			actionButtonsLine1,
+			actionButtonsLine2,
+			actionButtonsLine3
+		];
 
-	this.callParent(arguments);
+		this.callParent(arguments);
 	} // constructor
 
 });  
