@@ -1,10 +1,12 @@
 package graphene.services;
 
+import graphene.model.DocumentError;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.query.EntityQuery;
 import graphene.util.G_CallBack;
+import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,21 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 		String context = encoder.encode(identifier);
 		return "<a href=\"CombinedEntitySearchPage/" + context
 				+ "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+	}
+
+	/**
+	 * @return the errors
+	 */
+	public final List<DocumentError> getErrors() {
+		return errors;
+	}
+
+	/**
+	 * @param errors
+	 *            the errors to set
+	 */
+	public final void setErrors(List<DocumentError> errors) {
+		this.errors = errors;
 	}
 
 	/**
@@ -97,7 +114,7 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	 */
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
 	protected Map<String, V_GenericEdge> edgeMap = new HashMap<String, V_GenericEdge>();
-
+	protected List<DocumentError> errors = new ArrayList<DocumentError>();
 	// TODO: Change this to a FIFO Queue and address any duplicate node issues
 	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(
 			3);
@@ -111,6 +128,12 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 
 	public AbstractGraphBuilder() {
 		super();
+	}
+
+	public void addError(DocumentError e) {
+		if (ValidationUtils.isValid(e)) {
+			errors.add(e);
+		}
 	}
 
 	public abstract void performPostProcess(V_GraphQuery graphQuery);

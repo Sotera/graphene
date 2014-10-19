@@ -8,6 +8,7 @@ Ext.define("DARPA.EntityTab", {
 	},
 	items:[],
 	entity:{},
+	activeTab: 3,
 	constructor:function(config) {
 	                
 		var details = Ext.create("DARPA.EntityDetailsFrame", {

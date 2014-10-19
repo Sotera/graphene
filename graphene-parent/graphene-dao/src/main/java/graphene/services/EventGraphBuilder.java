@@ -1,11 +1,6 @@
 package graphene.services;
 
 import graphene.dao.TransactionDAO;
-import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.idl.G_EdgeTypeAccess;
-import graphene.model.idl.G_IdType;
-import graphene.model.idl.G_NodeTypeAccess;
-import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EventQuery;

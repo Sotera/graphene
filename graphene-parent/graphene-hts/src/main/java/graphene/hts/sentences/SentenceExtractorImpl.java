@@ -1,23 +1,47 @@
 package graphene.hts.sentences;
 
-import java.util.Collection;
-import java.util.List;
-
+import graphene.hts.entityextraction.AbstractExtractor;
+import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.util.StringUtils;
 
-public class SentenceExtractorImpl implements SentenceExtractor {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
+
+public class SentenceExtractorImpl extends AbstractExtractor {
+
+	private final static String RE_1 = "([\\w\\d]{3,})";
+
 	public SentenceExtractorImpl() {
-		// TODO Auto-generated constructor stub
+		p = Pattern.compile(RE_1);
 	}
 
-	/* (non-Javadoc)
-	 * @see graphene.hts.sentences.SentenceExtractor#getSimpleSentences(java.lang.String)
-	 */
 	@Override
-	public Collection<String> getSimpleSentences(String narrative) {
-		String text = narrative;
-		text = StringUtils.cleanUpAllCaps(text, 0.2d);
-		List<String> sentences = StringUtils.convertToSentences(text);
-		return sentences;
+	public Collection<String> extract(String source) {
+		List<String> matchList = new ArrayList<String>();
+		source = StringUtils.cleanUpAllCaps(source, 0.2d);
+		matchList.addAll(StringUtils.convertToSentences(source));
+		return matchList;
+	}
+
+	@Override
+	public String getIdType() {
+		return "Sentence";
+	}
+
+	@Override
+	public String getNodetype() {
+		return "Extracted Sentence";
+	}
+
+	@Override
+	public String getRelationType() {
+		return G_CanonicalRelationshipType.IN_DOCUMENT.name();
+	}
+
+	@Override
+	public String getRelationValue() {
+		return "Contains Sentence";
 	}
 }

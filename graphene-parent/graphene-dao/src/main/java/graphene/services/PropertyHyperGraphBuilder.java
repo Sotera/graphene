@@ -11,12 +11,11 @@ import graphene.model.query.EntityQuery;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
@@ -42,14 +41,14 @@ import org.slf4j.Logger;
 public abstract class PropertyHyperGraphBuilder<T> extends
 		AbstractGraphBuilder<T> implements HyperGraphBuilder<T> {
 
-	private static final boolean SMART_SEARCH = true;
-
 	private static final boolean INHERIT_ATTRIBUTES = true;
 
 	@Inject
 	private StyleService style;
 	@Inject
 	private Logger logger;
+
+	protected ArrayList<String> skipInheritanceTypes;
 
 	/*
 	 * (non-Javadoc)
@@ -167,8 +166,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 
 			saveEdgeMap = new HashMap<String, V_GenericEdge>(edgeMap);
 			logger.debug("5555====There are " + queriesToRunNextDegree.size()
-					+ " queries to run in the next degree. ref "
-					+ queriesToRunNextDegree);
+					+ " queries to run in the next degree.");
 			queriesToRun.addAll(queriesToRunNextDegree);
 			queriesToRunNextDegree.clear();
 		}
@@ -246,7 +244,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 				// node.
 				if (INHERIT_ATTRIBUTES) {
 					// attachTo.addData(a.getNodeType(), a.getIdVal());
-					attachTo.inheritPropertiesOf(a);
+					attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
 				}
 			}
 		} else {

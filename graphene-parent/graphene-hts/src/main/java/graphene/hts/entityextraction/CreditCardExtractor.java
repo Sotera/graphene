@@ -14,13 +14,14 @@ import java.util.regex.Pattern;
  * @author djue
  * 
  */
-public class CreditCardExtractor extends AbstractExtractor  {
+public class CreditCardExtractor extends AbstractExtractor {
 	/**
 	 * http://www.regxlib.com/DisplayPatterns.aspx?cattabindex=3&categoryId=4
 	 */
-	private final static String RE = "(((4\\d{3})|(5[1-5]\\d{2})|(6011))-?\\d{4}-?\\d{4}-?\\d{4}|3[4,7]\\d{13})";
+	private final static String RE = "((4\\d{3})|(5[1-5]\\d{2})|(6011))-?\\d{4}-?\\d{4}-?\\d{4}|3[4,7]\\d{13}";
+
 	public CreditCardExtractor() {
-		p = Pattern.compile(RE); 
+		p = Pattern.compile(RE);
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class CreditCardExtractor extends AbstractExtractor  {
 
 	@Override
 	public String getNodetype() {
-		return "Extracted"+ G_CanonicalPropertyType.ACCOUNT.name();
+		return "Extracted" + G_CanonicalPropertyType.ACCOUNT.name();
 	}
 
 	@Override

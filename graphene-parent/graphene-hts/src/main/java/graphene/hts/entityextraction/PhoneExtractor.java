@@ -42,9 +42,9 @@ public class PhoneExtractor  extends AbstractExtractor {
 	 */
 	private final static String RE_PHONE5 = "(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[\\-\\.\\ \\\\\\/]?)?((?:\\(?\\d{1,}\\)?[\\-\\.\\ \\\\\\/]?){0,})(?:[\\-\\.\\ \\\\\\/]?(?:#|ext\\.?|extension|x)[\\-\\.\\ \\\\\\/]?(\\d+))?";
 
-
+private final static String RE_PHONE6 = "((\\d{1,5}[\\s-.]*){2,5}})";
 	public PhoneExtractor() {
-		p = Pattern.compile(RE_PHONE5);
+		p = Pattern.compile(RE_PHONE6);
 	}
 
 	

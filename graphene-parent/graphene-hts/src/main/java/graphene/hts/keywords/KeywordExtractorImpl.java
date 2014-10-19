@@ -1,25 +1,55 @@
 package graphene.hts.keywords;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.regex.Pattern;
 
-public class KeywordExtractorImpl implements KeywordExtractor {
-	/* (non-Javadoc)
-	 * @see graphene.hts.keywords.KeywordExtractor#getSimpleKeywords(java.lang.String)
+import graphene.hts.entityextraction.AbstractExtractor;
+import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_CanonicalRelationshipType;
+
+public class KeywordExtractorImpl extends AbstractExtractor {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * graphene.hts.keywords.KeywordExtractor#getSimpleKeywords(java.lang.String
+	 * )
 	 */
+	private final static String RE_1 = "([\\w\\d]{3,})";
+
+//	@Override
+//	public SortedSet<String> getSimpleKeywords(String narrative) {
+//		TreeSet<String> keyWords = new TreeSet<String>(
+//				Arrays.asList(((String) narrative).split("([\\w\\d]{3,})")));
+//		for (Iterator<String> iter = keyWords.iterator(); iter.hasNext();) {
+//			String k = iter.next();
+//			if (k.length() < 2) {
+//				iter.remove();
+//			}
+//		}
+//		return keyWords;
+//	}
+
+	public KeywordExtractorImpl() {
+		p = Pattern.compile(RE_1);
+	}
 	@Override
-	public SortedSet<String> getSimpleKeywords(String narrative) {
-		TreeSet<String> keyWords = new TreeSet<String>(
-				Arrays.asList(((String) narrative).split(" ")));
-		for (Iterator<String> iter = keyWords.iterator(); iter.hasNext();) {
-			String k = iter.next();
-			if (k.length() < 2) {
-				iter.remove();
-			}
-		}
-		return keyWords;
+	public String getIdType() {
+		return "Keyword";
+	}
+
+	@Override
+	public String getNodetype() {
+		return "Extracted" + G_CanonicalPropertyType.ANY.name();
+	}
+
+	@Override
+	public String getRelationType() {
+		return G_CanonicalRelationshipType.IN_DOCUMENT.name();
+	}
+
+	@Override
+	public String getRelationValue() {
+		return "Keyword in document";
 	}
 
 }
