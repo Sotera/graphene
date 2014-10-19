@@ -322,22 +322,26 @@ Ext.define("DARPA.GraphVis",
         //console.log("node orig position = " + innodePos.x + ", " + innodePos.y);
         
         // Move the selected node 'out' further away from its connected node to make some room for the expanded neighborhood
-        var connectedEdge = innode._private.edges[0];
-        var connectedNodes = connectedEdge.connectedNodes();
-        var connectedNode = null;
-        connectedNodes.each(function(indx, cnode) {
-            if (cnode.data().id != innode.data().id) {
-                connectedNode = cnode;  
-                return;
-            }
-        });
-        var conNodePos = connectedNode.position();
-        var dx = innodePos.x - conNodePos.x;
-        var dy = innodePos.y - conNodePos.y;
-        var newx = innodePos.x + dx * 1.5;
-        var newy = innodePos.y + dy * 1.5;
-        innode.position({x: newx, y: newy});
-        innodePos = innode.position();
+        try {
+	        var connectedEdge = innode._private.edges[0];
+	        var connectedNodes = connectedEdge.connectedNodes();
+	        var connectedNode = null;
+	        connectedNodes.each(function(indx, cnode) {
+	            if (cnode.data().id != innode.data().id) {
+	                connectedNode = cnode;  
+	                return;
+	            }
+	        });
+	        var conNodePos = connectedNode.position();
+	        var dx = innodePos.x - conNodePos.x;
+	        var dy = innodePos.y - conNodePos.y;
+	        var newx = innodePos.x + dx * 1.5;
+	        var newy = innodePos.y + dy * 1.5;
+	        innode.position({x: newx, y: newy});
+	        innodePos = innode.position();
+        } catch (e) {
+        	console.log("Warning: " + e.message);
+        }
         
         // DEBUG
         //console.log("node new position = " + innodePos.x + ", " + innodePos.y);
@@ -513,6 +517,45 @@ Ext.define("DARPA.GraphVis",
             }
         }
     },
+    
+    deleteNodes: function(nodes) {
+    	var scope = this;
+    	for (var i = 0; i < nodes.length; i++) {
+    		var id = nodes[i].data().id;
+    		
+    		// remove all edges whose source == id
+    		scope.gv.remove( scope.gv.elements("edge[source='" + id + "']") );
+    		
+    		// remove all edges whose target == id
+    		scope.gv.remove( scope.gv.elements("edge[target='" + id + "']") );
+    		
+    		// remove all nodes whose id == id
+    		scope.gv.remove("#" + id);
+
+			// most graph implementations store a json representation of their cyto graphs;
+			// remove traces of nodes and edges involved with selected node IDs
+    		if (typeof scope.owner.json !== "undefined") {
+    			var j;
+    			var json = scope.owner.json;
+    			
+    			for (j = 0; j < json.nodes.length; j++) {
+    				var jsonNode = scope.owner.json.nodes[j];
+    				if (jsonNode.data.id == id) {
+    					json.nodes.splice(j, 1);
+    					break;  // there should only be one node with this id; stop iterating
+    				}
+    			}
+    			
+    			for (j = 0; j < json.edges.length; j++) {
+    				var jsonEdge = scope.owner.json.edges[j];
+    				if (jsonEdge.data.source == id || jsonEdge.data.target == id) {
+    					json.edges.splice(j, 1);
+    					j--;
+    				}
+    			}
+    		}
+    	}
+    },
 
     // Initialize
     // config   - Object with the following attributes
@@ -566,7 +609,7 @@ Ext.define("DARPA.GraphVis",
                 	
                     $("#" + scope.id).cytoscape({
 						showOverlay: false,
-						hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
+						//hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
 						style: cytoscape.stylesheet()
 							.selector('node').css({
 								'content': 'data(name)',
@@ -636,66 +679,45 @@ Ext.define("DARPA.GraphVis",
 					
 					// if the plug-in is not included for any reason, do not try to initialize it
 					if (scope.gv.cxtmenu) {
-						
-						// radial context menu plug in
-						scope.gv.cxtmenu({
-							menuRadius: 75, // the radius of the circular menu in pixels
-							selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
-							fillColor: 'rgba(0, 0, 200, 0.75)', // the background colour of the menu
-							activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
-							activePadding: 0, // additional size in pixels for the active command
-							// indicatorSize: 24, // the size in pixels of the pointer to the active command
-							// separatorWidth: 3, // the empty spacing in pixels between successive commands
-							// spotlightPadding: 4, // extra spacing in pixels between the element and the spotlight
-							// minSpotlightRadius: 24, // the minimum radius in pixels of the spotlight
-							// maxSpotlightRadius: 38, // the maximum radius in pixels of the spotlight
-							// itemColor: 'white', // the colour of text in the command's content
-							// itemTextShadowColor: 'black', // the text shadow colour of the command's content
-							// zIndex: 9999 // the z-index of the ui div
-							commands: [{
-								content: "Expand",
-								select: function() {
-									var node = this;
-									if (scope.owner.expand) {
-										scope.owner.expand(node);
-									} else {
-										console.log("expand() is undefined");
+						if (typeof GRadialMenu !== "undefined") {
+							scope.gv.cxtmenu( GRadialMenu.setScope(scope.owner) );
+						} else {
+							// default radial context menu plug in
+							scope.gv.cxtmenu({
+								menuRadius: 75, selector: 'node', activePadding: 0,
+								fillColor: 'rgba(0, 0, 200, 0.75)', activeFillColor: 'rgba(92, 194, 237, 0.75)', 
+								commands: [{
+									content: "Expand",
+									select: function() {
+										var node = this;
+										if (scope.owner.expand) { scope.owner.expand(node); } 
+										else { console.log("expand() is undefined"); }
 									}
-								}
-							}, {
-								content: "Pivot",
-								select: function() {
-									var node = this;
-									if (scope.owner.pivot) {
-										scope.owner.pivot(node);
-									} else {
-										console.log("pivot() is undefined");
+								}, {
+									content: "Pivot",
+									select: function() {
+										var node = this;
+										if (scope.owner.pivot) { scope.owner.pivot(node); }
+										else { console.log("pivot() is undefined"); }
 									}
-								}
-							}, {
-								content: "Hide",
-								select: function() {
-									var node = this;
-									if (scope.owner.hideNode) {
-										scope.owner.hideNode(node);
-									} else {
-										console.log("hideNode() is undefined");
+								}, {
+									content: "Hide",
+									select: function() {
+										var node = this;
+										if (scope.owner.hideNode) { scope.owner.hideNode(node); } 
+										else { console.log("hideNode() is undefined"); }
 									}
-								}
-							}, {
-								content: "Show Details",
-								select: function() {
-									var node = this;
-									var disp = scope.owner.getNodeDisplay();
-									
-									if (disp && disp.setAttrs) {
-										disp.setAttrs(node.data());
-									} else {
-										console.log("showDetails() is undefined");
+								}, {
+									content: "Show Details",
+									select: function() {
+										var node = this;
+										var disp = scope.owner.getNodeDisplay();
+										if (disp && disp.setAttrs) { disp.setAttrs(node.data()); } 
+										else { console.log("showDetails() is undefined"); }
 									}
-								}
-							}],
-						});
+								}],
+							});
+						}
 					}
 					
 					if (onLoadCallback) {
@@ -806,7 +828,7 @@ Ext.define("DARPA.GraphVis",
                     break;
                 case 'cose':
 					scope.doCOSELayout(config);
-					break
+					break;
                 case 'arbor':
                 case 'arbor-snow':     // force directed arbor - out of the box
 					scope.doForceDirectedLayout('arbor-snow', config);
@@ -843,7 +865,7 @@ Ext.define("DARPA.GraphVis",
 		//	scope.setBusy(true);
         // }
 		
-		scope.doHierarchicalLayout(config)
+		scope.doHierarchicalLayout(config);
     },
     
 	doCircleLayout: function(config) {
