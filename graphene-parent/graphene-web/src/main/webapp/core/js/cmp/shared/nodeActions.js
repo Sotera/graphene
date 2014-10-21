@@ -307,17 +307,21 @@ Ext.define("DARPA.Node_Actions", {
 		    handler: function() {
 			    Ext.Msg.alert(
 			       'Help',
-			       'First select a node then click one of the Action buttons.<br>' +
-			       'To select or deselect a node, click on its id or drag it.<br><br>' +
-			       '<b>PIVOT</b>:&nbsp;&nbsp;&nbsp;&nbsp; This will perform a search using the selected item and will re-center the graph around this item.<br><br>' +
-			       '<b>UNPIVOT</b>:&nbsp;This will perform a search using the previously selected item and will re-center the graph around this item.<br><br>' +
-			       '<b>HIDE</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This will hide the selected item from the graph.<br><br>' +
-			       '<b>EXPAND</b>:&nbsp;&nbsp;This will expand out one hop from a selected item. You can only expand an item that has 1 connection.<br><br>' +
-			       '<b>UNEXPAND</b>: This will unexpand a previously expanded item.<br><br>' +
-			       '<b>Show</b>:&nbsp;&nbsp;&nbsp;&nbsp; This will display a Show for the selected item.<br><br>' +
-			       //'<b>TIMELINE+</b>:&nbsp;&nbsp;&nbsp;This will show(+) or hide(-) an interaction timeline for the selected item.<br><br>' +
-				'<b>EXPORT GRAPH</b>:&nbsp;&nbsp;&nbsp;&nbsp;This exports the currently displayed graph to a file of your choice.<br><br>' +
-				'<b>IMPORT GRAPH</b>:&nbsp;&nbsp;&nbsp;&nbsp;This import a previously exported graph.<br><br>'
+				   "<h2 style = 'text-align:center; vertical-align:middle;'>Graph Help</h2>" +
+				   "<p><b>Pan</b>: Click and hold left mouse button in graph's whitespace, then wait briefly for a gray circle to appear around the cursor. " + 
+				   "While still holding the left mouse button, drag the cursor to pan the graph.</p>" +
+				   "<p><b>Box-Select</b>: Click and hold the mouse button in graph's whitespace, then immediately drag the cursor to draw a box selector. " + 
+				   "Upon letting go of the left mouse button, any nodes within the box will be selected.</p>" +
+				   "<p><i>Note</i>: Selected nodes can be dragged and repositioned.</p>" +
+				   "<p><b>Zoom In/Out</b>: Roll the mousewheel up or down to zoom in or out.</p>" + 
+				   "<br>" +
+				   "<h2 style = 'text-align:center; vertical-align:middle;'>Graph Actions</h2>" +
+				   "<p><b>Pivot</b>: Designate the selected node as the new root and display its graph with PIVOT. UNPIVOT will reset this action.</p>" +
+				   "<p><b>Hide</b>: Remove the selected nodes and their connected edges from view with HIDE. UNHIDE resets this action, making everything visible.</p>" +
+				   "<p><b>Expanding</b>: Add the neighbors, if any, of the selected node(s) to the graph with EXPAND.  UNEXPAND deletes the newly discovered neighbors.</p>" +
+				   "<p><b>Show</b>: Creates a new tab for any of the selected entities.</p>" +
+				   "<p><b>Halt</b>: Stop a procedurally-generated layout in process.</p>" +
+				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>"
 			    );
 		
 			    // DRAPER API
