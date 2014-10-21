@@ -33,6 +33,12 @@
 			<artifactId>batch-import</artifactId><!-- Note that for now, this is being 
 				manually synced to the neo4j version used elsewhere. -->
 			<version>2.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>
@@ -41,10 +47,6 @@
 		<dependency>
 			<groupId>graphene</groupId>
 			<artifactId>graphene-dao</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
