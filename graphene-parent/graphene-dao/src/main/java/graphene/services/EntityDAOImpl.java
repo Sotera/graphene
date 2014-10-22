@@ -65,7 +65,7 @@ public class EntityDAOImpl implements EntityDAO {
 				List<G_EntityTag> tagList = new ArrayList<G_EntityTag>(1);
 				tagList.add(G_EntityTag.FILE);
 				G_Provenance prov = new G_Provenance(srch.getSource());
-				G_Uncertainty uncertainty = new G_Uncertainty(1.0d, 1.0d);
+				G_Uncertainty uncertainty = new G_Uncertainty(1.0d);
 				G_Property property = new PropertyHelper(G_PropertyTag.LABEL, s);
 				G_Entity e = new EntityHelper(s, tagList, prov, uncertainty,
 						Collections.singletonList(property));// srch.getSource(),

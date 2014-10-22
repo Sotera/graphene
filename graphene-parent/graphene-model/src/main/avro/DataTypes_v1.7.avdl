@@ -147,9 +147,6 @@ protocol G_DataTypes {
 	record G_Uncertainty {
 		/** Placeholder for now. Express original source confidence as a single number from 0 to 1. */
 		double confidence = 1;
-		
-		/** Placeholder for now. Express confidence in currency of data as a single number from 0 to 1. */
-		double currency = 1; // ADDED IN 1.6
 	}
 	
 	/**

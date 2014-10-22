@@ -2,10 +2,16 @@ package graphene.services;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This is a case INsensitive stop word service, used to determine eligibilty
+ * for searches/graph traversal, etc.
+ * 
+ * @author djue
+ * 
+ */
 public class StopWordServiceImpl implements StopWordService {
 	private Set<String> stopwords = new HashSet<String>(1);
 
@@ -32,8 +38,9 @@ public class StopWordServiceImpl implements StopWordService {
 	 * @param s
 	 */
 	public StopWordServiceImpl(Collection<String> s) {
-
-		this.stopwords.addAll(s);
+		for (String s1 : s) {
+			this.stopwords.add(s1.toLowerCase());
+		}
 	}
 
 	public StopWordServiceImpl() {
@@ -48,16 +55,12 @@ public class StopWordServiceImpl implements StopWordService {
 
 	@Override
 	public boolean isValid(String... words) {
-		boolean valid = false;
-		if (words == null) {
-			// there were no stopwords
-			valid = true;
-		} else if (Collections.disjoint(stopwords, Arrays.asList(words))) {
-			// returns true if the two collections have no elements in
-			// common
-			valid = true;
+		for (String w : words) {
+			if (stopwords.contains(w.toLowerCase())) {
+				return false;
+			}
 		}
-		return valid;
+		return true;
 	}
 
 	@Override

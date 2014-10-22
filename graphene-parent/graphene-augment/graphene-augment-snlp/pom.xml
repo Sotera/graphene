@@ -8,7 +8,6 @@
 		<artifactId>graphene-augment</artifactId>
 		<version>4.1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>graphene-augment-snlp</groupId>
 	<artifactId>graphene-augment-snlp</artifactId>
 	<name>graphene-augment-snlp</name>
 	<url>http://maven.apache.org</url>
@@ -26,6 +25,11 @@
 			<artifactId>stanford-corenlp</artifactId>
 			<version>3.4.1</version>
 			<classifier>models</classifier>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-util</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

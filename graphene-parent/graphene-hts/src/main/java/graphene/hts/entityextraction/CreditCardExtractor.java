@@ -2,7 +2,10 @@ package graphene.hts.entityextraction;
 
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
+import graphene.model.idl.G_EntityTag;
+import graphene.model.idl.G_Property;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -42,5 +45,17 @@ public class CreditCardExtractor extends AbstractExtractor {
 	@Override
 	public String getRelationValue() {
 		return "Potential Credit Card";
+	}
+
+	@Override
+	public List<G_EntityTag> getEntityTags() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_Property> getProperties() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

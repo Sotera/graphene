@@ -3,6 +3,7 @@ package graphene.services;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.GenericDAO;
 import graphene.dao.StyleService;
+import graphene.model.DocumentError;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
@@ -24,6 +25,7 @@ import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
 
+import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.slf4j.Logger;
@@ -42,7 +44,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		AbstractGraphBuilder<T> implements HyperGraphBuilder<T> {
 
 	private static final boolean INHERIT_ATTRIBUTES = true;
-
+	@Inject
+	protected StopWordService stopwordService;
 	@Inject
 	private StyleService style;
 	@Inject
@@ -213,38 +216,47 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			String relationValue) {
 		V_GenericNode a = null;
 		if (ValidationUtils.isValid(id)) {
-			a = nodeList.getNode(id);
-			if (a == null) {
-				a = new V_GenericNode(id);
-				a.setIdType(idType);
-				// This is important because we use it to search on the next
-				// traversal.
-				a.setIdVal(id);
-				a.setNodeType(nodeType);
-				a.setColor(style.getHexColorForNode(a.getNodeType()));
-				a.setLabel(id);
-				a.addData(nodeType, getCombinedSearchLink(id));
-				nodeList.addNode(a);
-			}
-			// now we have a valid node. Attach it to the other node provided.
-			if (ValidationUtils.isValid(attachTo)) {
-				String key = generateEdgeId(attachTo.getId(), relationType,
-						a.getId());
-				if (key != null && !edgeMap.containsKey(key)) {
-					V_GenericEdge v = new V_GenericEdge(a, attachTo);
-					v.setIdType(relationType);
-					v.setLabel(null);
-					v.setIdVal(relationType);
-					v.addData("Value", StringUtils.coalesc(" ", a.getLabel(),
-							relationValue, attachTo.getLabel()));
-					edgeMap.put(key, v);
+			if (!stopwordService.isValid(id)) {
+				addError(new DocumentError("Bad Identifier", "The " + nodeType
+						+ " (" + id + ") contains a stopword", Severity.WARN));
+			} else {
+				a = nodeList.getNode(id);
+				if (a == null) {
+					a = new V_GenericNode(id);
+					a.setIdType(idType);
+					// This is important because we use it to search on the next
+					// traversal.
+					a.setIdVal(id);
+					a.setNodeType(nodeType);
+					a.setColor(style.getHexColorForNode(a.getNodeType()));
+					a.setLabel(id);
+					a.addData(nodeType, getCombinedSearchLink(id));
+					nodeList.addNode(a);
 				}
+				// now we have a valid node. Attach it to the other node
+				// provided.
+				if (ValidationUtils.isValid(attachTo)) {
+					String key = generateEdgeId(attachTo.getId(), relationType,
+							a.getId());
+					if (key != null && !edgeMap.containsKey(key)) {
+						V_GenericEdge v = new V_GenericEdge(a, attachTo);
+						v.setIdType(relationType);
+						v.setLabel(null);
+						v.setIdVal(relationType);
+						v.addData("Value", StringUtils.coalesc(" ",
+								a.getLabel(), relationValue,
+								attachTo.getLabel()));
+						edgeMap.put(key, v);
+					}
 
-				// if this flag is set, we'll add the attributes to the attached
-				// node.
-				if (INHERIT_ATTRIBUTES) {
-					// attachTo.addData(a.getNodeType(), a.getIdVal());
-					attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
+					// if this flag is set, we'll add the attributes to the
+					// attached
+					// node.
+					if (INHERIT_ATTRIBUTES) {
+						// attachTo.addData(a.getNodeType(), a.getIdVal());
+						attachTo.inheritPropertiesOfExcept(a,
+								skipInheritanceTypes);
+					}
 				}
 			}
 		} else {
