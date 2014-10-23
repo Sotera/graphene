@@ -67,14 +67,7 @@ Ext.define("DARPA.TransactionGraph", {
 		
 		this.tbar = toolbar;
 
-		this.GraphVis = Ext.create("DARPA.GraphVis", { 
-			id: config.id + "-TXNcygraph",
-			setBusy:function(busy) {
-				var tab = Ext.getCmp(config.entityId).getTransactionGraph();
-				utils.setBlink(tab, busy);
-				tab.setStatus(busy ? "CALCULATING LAYOUT" : "CALCULATED LAYOUT");
-			}
-		});
+		this.GraphVis = new CytoGraphVis(config.id + "-TXNcygraph");
 		
 		this.graphStore = makeTXNGraphStore(); // made this part of the object and only created once per instance
 		this.nodesExpanded = 0;
@@ -751,7 +744,7 @@ Ext.define("DARPA.TransactionGraph", {
 					// don't alter or clear the existing graph
 					} else {
 						var graph = records[0].raw;    // read the xml into graph structure
-						self.json1Hop = self.GraphVis.graphToJSON(graph);   // create the graph json object. 
+						self.json1Hop = graph;   // create the graph json object. 
 
 						// results could be empty, check for this here
 						if (self.json1Hop && self.json1Hop.nodes.length <= 2) { //  don't include this node already connected to another node in the graph

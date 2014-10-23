@@ -93,19 +93,7 @@ Ext
 
 						// OLD this.InfoVis = Ext.create("DARPA.InfoVis", {});
 
-						this.GraphVis = Ext.create("DARPA.GraphVis", { // in
-							// js/shared/cytoGraphSubs.js
-							id : config.id + "-PBcygraph", // id here is the id
-							// of the containing
-							// DOM element for
-							// cytoscape to put
-							// it into
-							setBusy : function(busy) {
-								var tab = Ext.getCmp(config.entityId)
-										.getEntityGraph();
-								utils.setBlink(tab, busy);
-							}
-						});
+						this.GraphVis = new CytoGraphVis(config.id + "-PBcygraph");
 
 						this.graphStore = makeEntityGraphStore();
 

@@ -1,1367 +1,822 @@
-// cytoGraphSubs.js
-// API for interfacing with the cytoscape.js node graph display library
-//
-// 11/04/13 M. Martinet, 
-// Last updated 12/06/13 
+/**
+ * The new Cytoscape graph wrapper class.
+ * API for interfacing with cytoscape.js, graph layouts, and state management
+ * 
+ * Author: Andrew Weller
+ * Date: 23/10/2014
+ **/
+function CytoGraphVis(inId) {
 
-var graphVisCommon = {
-    // Node and edge colors - change these here as needed
-    Colors: {
-        defaultNode:  '#00ffff', // cyan
-        selectedNode: 'DarkBlue',   // #0babfc',
-        searchedNode: '#ff0000', // red
-        defaultEdge:  '#23a4ff',
-        selectedEdge: '#0b0b0b', // black (canvas background is light tan)
-        expandedDefNode: '#f66cfb', // expanded node default
-        expandedSelNode: '#b941bd', // expanded node selected
-        expandedDefEdge: '#be26c4', // expanded edge default
-        expandedSelEdge: '#4c144e' // expanded edge selected
-    },
-     
-    widthsRendered: false,
-    
-    // Used to set the edge line width based on the input weight
-    // defaultSize      - the default line width in pixels
-    // weight           - input weight (aka amount)
-    setEdgeLineWidth: function(defaultSize, weight) {
-                            
-        var lw = (defaultSize) ? defaultSize : 2;   // default line width
-        if (weight && weight != 0) {
-           // the line width cannot be directly (1:1) proportional to the weight, 
-           // as this would result in huge (very fat) lines for some weights
-           lw = ((Math.sqrt(weight) / 2.0) + (weight / 10.0)) * 1.5;
-        }
-        if (lw < 1.0)
-            lw = 1.0;
-        
-        // DEBUG
-        //console.log("lw = " + lw);
-        
-        return lw;
-    }
+	this.id = inId;
+	this.gv = null;
+	this.initialized = false;
+	this.currentLayout = null;
+	this.owner = null;
+	this.searchName = "";
+	this.dispWidth = 1000;
+	this.dispHeight = 800;
+	
+	this.CONSTANTS = function(key) {
+		// protected and immutable constants
+		var _legend = {
+			textColor: "black",
+			textOutlineColor: "white",
+			fontSize: 10,
+			selectedFontSize: 12,
+			nodeSize: 16,
+			selectedNodeSize: 24,
+			selectedTextColor: "yellow",
+			lineColor: "black",
+			defaultNode:  '#00FFFF',
+			selectedNode: 'DarkBlue',
+			//searchedNode: '#FF0000',
+			defaultEdge:  '#23A4FF',
+			selectedEdge: '#0B0B0B',
+			expandedDefNode: '#F66CFB',
+			//expandedDefEdge: '#BE26C4',
+			
+			fillColor: "rgba(0, 0, 200, 0.75)",
+			activeFillColor: "rgba(92, 194, 237, 0.75)",
+			
+			defaultLayout: "breadthfirst",
+			minLeafDistance: 60
+		};
+		return _legend[key];
+	};
+	
+	var _layoutManager = new LayoutManager(this);
+	var _stateManager = new StateManager(this);
+	
+	this.getGv = function() { return this.gv; };
+	this.getOwner = function() { return this.owner; };
+	this.getCurrentLayout = function() { return this.currentLayout; };
+	this.getSearchName = function() { return this.searchName; };
+	
+	this.getLayoutManager = function() { return _layoutManager; };
+	this.getStateManager = function() { return _stateManager; };
+	
+	// extend this' API with the layout manager's methods
+	this.changeLayout = _layoutManager.changeLayout;
+	this.registerLayout = _layoutManager.registerLayout;
+	
+	// extend this' API with the state manager's methods
+	this.deleteNodes = _stateManager.deleteNodes;
+	this.exportGraph = _stateManager.exportGraph;
+	this.importGraph = _stateManager.importGraph;
+	this.hideNode = _stateManager.hideNode;
+	this.showNode = _stateManager.showNode;
+	this.showEdge = _stateManager.showEdge;
+	this.hideEdge = _stateManager.hideEdge;
 };
 
-Ext.define("DARPA.GraphVis", 
-{
-    // Cytoscape.js specific
-    //======================
-
-    gv: null,               // aka cy
-    id: null,               // the id MUST be set by the caller when creating an instance of this 
-    initialized: false,
-    searchName: null,       // contains name, id, or number that was searched for. Passed down from the caller
-    currentLayout: null,
-    dispHeight: 800,        // graph display area height, updated by initGraph() and resize()
-    dispWidth:  1000,       // graph display area width, updated by initGraph() and resize()
-    dispRightBorder: 10,    // set later
-    dispLeftBorder: 10,     // set later
-    dispTopBorder: 10,
-    dispBotBorder: 10,
-
-    
-    // expandedNodes holds a list of expanded node ids
-    // Each element in the array consists of: { expandFrom: innumber, nodeIds: expNodeIdList}
-    expandedNodes: [],
-    
-    minLeafDistance:    60,    // used for optimizing the layout of leaf nodes. min distance (radius) in pixel units 
-    
-    currentNumNodes:    0,      // holds the current number of nodes retrieved by the last call to graphToJSON
-    
-    constructor: function(config) {
-        this.id = config.id;    // id must be set by the caller
-        if (!(config.setBusy == undefined))
-        	this.setBusy=config.setBusy;
-    },
-    
-    // Returns the id of this object
-    // if addHash is true then we return '#' + the id, else just the id
-    getId: function(addHash) {
-        var scope = this;
-        if (addHash) {
-            return "#" + scope.id;
-        }
-        else {
-            return scope.id;
-        }
-    },
-    
-    // Turn nodes and edges lists into the "json" structure needed by cytoscape.js to show a graph.
-    // We have already parsed the graph from the input json or xml and populated the node id,label and color   
-    graphToJSON:function(graph) {
-            var scope = this;
-	    var nodes=graph.nodes;
-	    var edges=graph.edges;
-	    var json = [];
-            var nodesout = [];
-            var edgesout = [];
-            
-            // Convert json to format that cytoscape.js expects
-            var node;
-	    for (var n = 0; n < nodes.length; n++) {
-		node = nodes[n].data;
-		var nodeEntry = { 
-                    "data": {
-                        "id": node.id,
-                        "name": node.label,
-                        "color": node.color, 
-                        "type": (node.type != null) ? node.type : "circle",
-                        "label": node.label,
-                        "attrs": node.attrs,
-                        "idType": node.idType,
-                        "idVal": node.idVal,
-                        "visible": true
-                    }
-                };
-		nodesout.push(nodeEntry);
-	    } // n loop
-            
-            var edge;
-            for (var e = 0; e < edges.length; e++) {
-                edge = edges[e].data;
-                
-                var edgeEntry = {
-                    "data":{ 
-                        "type": "line",
-                        "source": edge.source,
-                        "target": edge.target,
-                        //"amount": (edge.amount)? edge.amount : ((edge.weight)? edge.weight : 0), // placeholder for $ amount
-						"label": edge.label,
-                        "weight": (edge.weight)? edge.weight : 0,
-                        "lineWidth": graphVisCommon.setEdgeLineWidth(2, (edge.weight)? edge.weight : 0),
-                        "visible": true,
-                        "attrs" : edge.attrs
-                    }
-                };
-                if (edge.directed) {
-                    var dir=[edge.source,edge.target];
-                    edgeEntry.data.direction = dir;
-                    edgeEntry.data.type = "arrow";
-                }
-                 
-                if (edge.weight != null)
-                    edgeEntry.data.weight = edge.weight;    // MFM added weight to represent the number of interactions
-
-                edgesout.push(edgeEntry);
-            }
-
-            scope.currentNumNodes = nodes.length;
-            json = { nodes: nodesout, edges: edgesout };            
-            return json;
-    },
-    
-    
-    // Style the nodes based on certain node attributes if any
-    // injson       - Input json containing nodes and edges
-    // styleConfig: - Config object defining the matching attributes and styling rules
-    //  Example: { keyMatch: "propertyName", 
-    //             keyValueMatch: "node.data.name", 
-    //             styles: [ { name: "type", value: "triangle" }, { name: "color", value: "red" } ]
-    //           } 
-    //            
-    // TODO FUTURE : do this on the server before returning the graph
-    styleNodes: function(injson, styleConfig) {
-        if (styleConfig) {
-            var node, i, a, s;
-            var attrs, attr;
-            var styles, style;
-            var name;
-            
-            for (i = 0; i < injson.nodes.length; i++) {
-                node = injson.nodes[i];
-                attrs = node.data.attrs;
-                name = node.data.name;
-                
-                for (a = 0; a < attrs.length; a++) {
-                    attr = attrs[a];
-                    if (attr.key.indexOf(styleConfig.keyMatch) >= 0) {  // attribute key name matches the specified keyMatch value
-                        if (styleConfig.keyValueMatch == "node.data.name") {
-                            if (name == attr.val) {                     // node name matches this attribute value
-                                styles = styleConfig.styles;
-                                if (styles && styles.length > 0) {
-                                    for (s = 0; s < styles.length; s++) {
-                                        style = styles[s];
-                                        if (node.data.hasOwnProperty(style.name)) {
-                                            node.data[style.name] = style.value;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }  
-            }
-        }
-        return injson;
-    },
-
-    // return the node with matching id - may not need
-    getNodeById: function(id) {
-        // TODO
-        return null;
-    },
-
-    clear:function()
-    {
-        // remove old elements
-        var oldEles = this.gv.elements();
-        if ( oldEles.length > 0 ){
-                oldEles.remove();
-        }  
-    },
-        
-    loadJSON: function(json) {
-        var scope = this;
-        scope.gv.load(json);
-    },
-        
-    showGraph: function(json, searchName)
-    {
-        var self = this;  
-        self.searchName = searchName;
-        self.loadJSON(json);    // load JSON data.
-    },
-        
-    //------------------
-    // For displaying an exported graph
-    // The only difference between showGraph and this function is that this function does not
-    // compute the positions of the nodes but uses their previously saved positions for the layout.
-    // Also this function should preserve the node colors and node alpha values
-    showExportedGraph:function(json)
-    {
-        var scope = this;
-        
-        scope.clear();
-        scope.searchName = json.searchName;
-        scope.gv.add(json.graph);  
-        //currentLayout - don't need to change it
-        
-        // need to hide any elements that were hidden at the time of export        
-        scope.gv.nodes().each(function(indx, cnode) {
-            if (cnode.data().visible == false) {                
-              scope.hideNode(cnode);  
-            }
-        });
-        
-        scope.gv.edges().each(function(indx, edge) {
-            if (edge.data().visible == false) {                
-              scope.hideEdge(edge);  
-            }
-        });
-
-    }, // function showExportedGraph
-        
-    // Import
-    // graph    - Is a json rep of the exported graph.  
-    // This should contain an array of nodes with adjacencies plus some additional 
-    // information about the view state of each node.
-    importGraph: function(json) {
-
-        var self = this;            
-        if (json && json.graph.nodes.length > 0) {
-            // Load Previously Exported JSON data.
-            // Note this data has positions and colors of each node
-            self.showExportedGraph(json);
-        }
-        else {
-            alert("The exported graph is empty or invalid.");
-        }
-    },
-
-    // Export
-    // Returns the json rep of the current graph.  
-    // This will be an object containing an array of nodes and an array of edges 
-    // includes information about the position and view state of each node.
-    exportGraph: function() { 
-        var scope = this;
-        var outj = {};
-
-        outj.userid = getSessionUserid();   // TODO
-        outj.timestamp = new Date().getTime();
-        outj.searchName = scope.searchName; // number or id that was searched for - TODO - this should hold the current query params
-        outj.currentLayout = scope.currentLayout;
-        
-        var outnodes = [];
-        var outedges = [];
-        
-        scope.gv.nodes().each(function(indx, cnode) {
-            outnodes.push(cnode.json());
-        });
-        
-        scope.gv.edges().each(function(indx, edge) {
-            outedges.push(edge.json());
-        });
-        
-        outj.graph = {};
-        outj.graph.nodes = outnodes;  // array of nodes
-        outj.graph.edges = outedges;  // array of edges
-        
-        return outj;
-    },
-
-    // Expand out one hop from a selected node. This adds nodes to the graph around the specified node.
-    // injson       - is an object that contains the following: { nodes: [array of nodes], edges: [array of edges] }
-    // innode       - is the user selected node
-    showGraph1Hop: function(injson, innode)
-    {
-        // Need to make all of the ids unique (except for the expanded node) so that they 
-        // do not conflict with existing nodes that are already in the graph.
-        // Child nodes of an expanded node will have a unique node id that are prefixed by the name/number
-        // Example: 35152523411X3   Where 'X' is the delimiter
-        var scope = this;
-        if (injson.nodes.length == 0 || innode == null) {
-            // TODO may want to alert this - unexpected error
-            return;
-        }
-
-        var node;
-        var innumber = innode.data().name;
-        var oldSelectedNodeId = "-1";
-        var innodePos = innode.position();
-        
-        // DEBUG
-        //console.log("node orig position = " + innodePos.x + ", " + innodePos.y);
-        
-        // Move the selected node 'out' further away from its connected node to make some room for the expanded neighborhood
-        try {
-	        var connectedEdge = innode._private.edges[0];
-	        var connectedNodes = connectedEdge.connectedNodes();
-	        var connectedNode = null;
-	        connectedNodes.each(function(indx, cnode) {
-	            if (cnode.data().id != innode.data().id) {
-	                connectedNode = cnode;  
-	                return;
-	            }
-	        });
-	        var conNodePos = connectedNode.position();
-	        var dx = innodePos.x - conNodePos.x;
-	        var dy = innodePos.y - conNodePos.y;
-	        var newx = innodePos.x + dx * 1.5;
-	        var newy = innodePos.y + dy * 1.5;
-	        innode.position({x: newx, y: newy});
-	        innodePos = innode.position();
-        } catch (e) {
-        	console.log("Warning: " + e.message);
-        }
-        
-        // DEBUG
-        //console.log("node new position = " + innodePos.x + ", " + innodePos.y);
-                
-        // First change the node ids
-        var n = injson.nodes.length;
-        var twoPIion = 0;
-        var radius;
-        
-        for (var i = 0; i < n; i++) {
-            node = injson.nodes[i];
-            twoPIion = 2 * Math.PI * i / n;
-            radius = scope.minLeafDistance + (n*2);
-            
-            if (node.data.name == innumber) {   
-                // this node is the selected node we are expanding
-                // it already exists in the graph so we must use its existing id
-                oldSelectedNodeId = node.data.id;    // remember for the next section
-                node.data.id = innode.data().id;     // keep the id of the node we are expanding 
-                node.position = innodePos;     // keep the nodes current position
-            }
-            else {
-                node.data.id = node.data.id;
-                node.data.color = graphVisCommon.Colors.expandedDefNode;   // Change the color of the expanded nodes
-                node.data.expanded = true;
-                // For the initial display, locate the nodes in a circle around the expanded node.
-                // If the user changes the layout, this positioning will be lost - that is ok 
-                newx = innodePos.x + (radius  * Math.cos(twoPIion));
-                newy = innodePos.y + (radius * Math.sin(twoPIion));
-                node.position = { x: newx, y: newy };
-            }   
-        }
-
-        // Next change the references in the edges and directions
-        // We can't do both the above and below in one loop. 
-        // The node ids must all be changed first then the edges and directions.
-
-        var scope = this;
-        // Add JSON data to the graph. This displays the added nodes in a circle around the selected node
-        scope.gv.add(injson);   
-        
-        // Add the expanded node ids to a list for later removal (unexpand)
-        var expNodeIdList = [];
-        for (i = 0; i < injson.nodes.length; i++) {
-            node = injson.nodes[i];
-            if (node.data.id.indexOf("X") > 0) {
-                    expNodeIdList.push(node.data.id);
-            }
-        }
-        var eNList = { expandFrom: innumber, nodeIds: expNodeIdList};
-        scope.expandedNodes.push(eNList);
-        
-		var retJson = {};
-		retJson.nodes = scope.gv.nodes().jsons();
-		retJson.edges = scope.gv.edges().jsons();
-		return retJson;
-    }, // function showGraph1Hop
+/*
+ *	Initialize this graph wrapper div with a cytoscape graph.
+ *		config:Object - configuration parameters
+ *		owner:Object - Reference to the parent display that houses this graph visualization (useful for scope)
+ *		callbackFn:Function - (Optional) a callback function executed after cytoscape initializes the graph
+ *		
+ *		note: anything else passed to this function will be given to callbackFn as parameters
+ */
+CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...args]*/ ) {
+	var _this = this;
 	
-    // remove nodes and connected edges for the specified node ids
-    // nodeIdList       - Array of node ids
-    removeNodesEdges: function(nodeIdList) {
-        var scope = this;
-        var nodeId;
-        for (var i = 0; i < nodeIdList.length; i++) {
-            nodeId = nodeIdList[i];
-            var node = scope.gv.filter("node[id = '" + nodeId + "']");
-            if (node) {
-                var edges = node.connectedEdges();
-                if (edges) {
-                    scope.gv.remove(edges);
-                }
-                scope.gv.remove(node);
-            }
-        }
-    },
-    
-    // If the specified node has been expanded, this deletes the expanded nodes and edges (and their labels)
-    unexpand1Hop: function (node) {  
-        var scope = this;
-        if (node) {
-            var number = node.data().name; // number of the node that MAY have been expanded
-            var ids2Remove = [];
-
-            if (scope.expandedNodes && scope.expandedNodes.length > 0) {                 
-                var eNodes, e;
-                for (e = 0; e < scope.expandedNodes.length; e++) {
-                   eNodes = scope.expandedNodes[e];
-                   if (eNodes.expandFrom == number) {
-                       ids2Remove = eNodes.nodeIds;
-                       break;
-                   }
-                }
-
-                if (ids2Remove.length > 0) {
-                    // this removes the nodes and edged but not the labels
-                    scope.removeNodesEdges(ids2Remove);
-                }
-                else {
-                    alert("This number was not manually expanded.");
-                }
-            }
-            else {
-                alert("This number was not manually expanded.");
-            }
-        }
-    },
+	var args = [].slice.apply(arguments);
+	var config = args.shift();
+	var owner = args.shift();
+	var onLoadCallback = args.shift();
+	// at this point, args is an array of whatever other arguments were passed to this function
 	
-    showAll: function() {
-        var scope = this; 
-        scope.gv.nodes().show();
-        scope.gv.edges().show();
-        scope.gv.edges().removeClass('toggled-hide');
-        scope.gv.edges().addClass('toggled-show'); // this shows the edge labels
-    },
-    
-    // This also hides the edges connected to the node
-    hideNode:function(node)
-    {
-        if (node) {
-            // DEBUG
-            //console.log("hide Node " + node.data().name);
-            
-            var edges = node.connectedEdges();
-            if (edges) {
-                edges.removeClass('toggled-show');
-                edges.addClass('toggled-hide'); // this hides the edge labels
-                edges.hide();
-            }
-            node.hide();
-            node.data().visible = false;    // must set this state for graph export
-        }
-    },
-    
-    // This hides just the edge
-    hideEdge:function(edge)
-    {
-        if (edge) {
-            // DEBUG
-            //console.log("hide edge " + edge.data().amount);
-            
-            //edge.removeClass('toggled-show');
-            //edge.addClass('toggled-hide'); // this hides the edge labels
-            edge.hide();
-            edge.data().visible = false;    // must set this state for graph export
-        }
-    },
-    
-    // This shows just the edge
-    showEdge: function(edge) {
-        if (edge) {
-            // DEBUG
-            //console.log("show Edge " + edge.data().amount);
-            
-            edge.show();
-            edge.data().visible = true;    // must set this state for graph export
-        }
-    },
-    
-    // This also shows the edges connected to the node
-    showNode: function(node)
-    {
-        if (node) {
-            // DEBUG
-            //console.log("show Node " + node.data().name);
-            
-            node.show();
-            node.data().visible = true;    // must set this state for graph export
-            var edges = node.connectedEdges();
-            if (edges) {
-                edges.show();
-                edges.removeClass('toggled-hide');
-                edges.addClass('toggled-show'); // this shows the edge labels
-            }
-        }
-    },
-    
-    deleteNodes: function(nodes) {
-    	var scope = this;
-    	for (var i = 0; i < nodes.length; i++) {
-    		var id = nodes[i].data().id;
-    		
-    		// remove all edges whose source == id
-    		scope.gv.remove( scope.gv.elements("edge[source='" + id + "']") );
-    		
-    		// remove all edges whose target == id
-    		scope.gv.remove( scope.gv.elements("edge[target='" + id + "']") );
-    		
-    		// remove all nodes whose id == id
-    		scope.gv.remove("#" + id);
+	if (typeof config.width !== "undefined") _this.dispWidth = config.width;
+	if (typeof config.height !== "undefined") _this.dispHeight = config.height;
+	if (typeof config.rightBorder !== "undefined") _this.dispRightBorder = config.rightBorder;
+	if (typeof config.leftBorder !== "undefined") _this.dispLeftBorder = config.leftBorder;
+	if (typeof config.topBorder !== "undefined") _this.dispTopBorder = config.topBorder;
+	if (typeof config.botBorder !== "undefined") _this.dispBotBorder = config.botBorder;
+	
+	_this.owner = owner;
+	_this.expandedNodes = [];
+	_this.onLoadCallback = onLoadCallback;
+	_this.args = args;
+	
+	if (_this.gv !== null) return;
+	
+	cytoscape({
+		container: document.getElementById(_this.id),
+		ready: function() {
+			overrideRegisterInstance();
+			overrideCOSE();
+			overrideARBOR();
+			
+			$("#" + _this.id).cytoscape({
+				showOverlay: false,
+				style: cytoscape.stylesheet()
+					.selector("node").css({
+						'content': 'data(name)',
+						'text-valign': 'bottom',
+						'color': _this.CONSTANTS("textColor"),
+						'background-color': 'data(color)',
+						'font-size': _this.CONSTANTS("fontSize"),
+						'text-outline-width': 1,
+						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
+						'width': _this.CONSTANTS("nodeSize"),
+						'height': _this.CONSTANTS("nodeSize")
+					})
+					.selector("$node > node").css({
+						'padding-top': '10px',
+						'padding-left': '10px',
+						'padding-bottom': '10px',
+						'padding-right': '10px',
+						'text-valign': 'top',
+						'text-halign': 'center',
+						'color': _this.CONSTANTS("textColor"),
+						'background-color': 'data(color)',
+						'font-size': _this.CONSTANTS("fontSize"),
+						'text-outline-width': 1,
+						'text-outline-color': _this.CONSTANTS("textOutlineColor")   
+					})
+					.selector("node:selected").css({
+						'background-color': _this.CONSTANTS("selectedNode"),
+						'line-color': 'black',
+						'text-outline-color': _this.CONSTANTS("selectedTextColor"),
+						'target-arrow-color': _this.CONSTANTS("selectedEdge"),
+						'source-arrow-color': _this.CONSTANTS("selectedEdge"),
+						'border-color': _this.CONSTANTS("lineColor"),
+						//'shape': 'data(type)',  // added
+						'font-size': _this.CONSTANTS("selectedFontSize"),
+						'width': _this.CONSTANTS("selectedNodeSize"),  
+						'height': _this.CONSTANTS("selectedNodeSize")
+					})
+					.selector("edge").css({
+						'content':'data(label)',   
+						'text-valign': 'center',
+						'color': _this.CONSTANTS("textColor"),
+						'text-outline-width': 1,
+						'font-size': _this.CONSTANTS("fontSize"),
+						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
+						'line-color': _this.CONSTANTS("defaultEdge"), 
+						'target-arrow-color': _this.CONSTANTS("defaultEdge"),
+						'target-arrow-shape': 'triangle',
+						'width': 'data(lineWidth)'
+					})
+					.selector("edge:selected").css({
+						'background-color': _this.CONSTANTS("selectedEdge"),
+						'line-color': _this.CONSTANTS("lineColor"),
+						'text-outline-color': _this.CONSTANTS("selectedTextColor"),
+						'target-arrow-color': _this.CONSTANTS("lineColor"),
+						'source-arrow-color': _this.CONSTANTS("lineColor"),
+						'border-color': _this.CONSTANTS("lineColor"),
+						'font-size': _this.CONSTANTS("fontSize"),
+						//'width': 'data(lineWidth)'
+					})
+					.selector(".toggled-show").css({
+						'content': "data(label)"
+					})
+					.selector(".toggled-hide").css({
+						'content': " "
+					})
+			});
+			
+			// declare a reference to the completed cytoscape graph object as this.gv
+			_this.gv = $("#" + _this.id).cytoscape("get");
+			
+			// if the plug-in is not included for any reason, do not try to initialize it
+			try {
+				if (typeof _this.gv.cxtmenu !== "function")
+					throw "You must include 'cytoscape.js-cxtmenu.js' in the .html file";
+				if (typeof RadialContextMenu !== "function") 
+					throw "You must include 'RadialContextMenu.js' in the .html file";
+				if (typeof GRadialMenu == "undefined") {
+					console.log("GRadialMenu is undefined in .html");
+					console.log("Using default RadialContextMenu");
+					GRadialMenu = new RadialContextMenu({});
+				}
+				_this.gv.cxtmenu( GRadialMenu.setScope(_this) );
+			} catch(e) {
+				console.log(e);
+				console.log("Context Menu on cytoscape graph " + _this.id + " will be unavailable.");
+			}
+			
+			// if a callback function was provided, pass it any remaining parameters and call it
+			if (_this.onLoadCallback && typeof _this.onLoadCallback == "function") {
+				_this.onLoadCallback.apply(_this.owner, _this.args);
+			}
+			
+			_this.initialized = true;
+			_this.setHandlers();
+			_this.changeLayout(_this.CONSTANTS("defaultLayout"), {});
+		}
+	});
+};
+
+/*
+ *	Define the event handlers for user-interaction with this graph.
+ */
+CytoGraphVis.prototype.setHandlers = function() {
+	var _this = this;
+	
+	this.gv.on("click", "node", function(e) {
+		e.cyTarget.select();
+	});
+	
+	this.gv.on("select", "node", function(e) {
+		var node = e.cyTarget;
+		if (typeof _this.owner.nodeClick !== "undefined") {
+			_this.owner.nodeClick(node);
+		}
+	});
+	
+	this.gv.on("select", "edge", function(e) {
+		var edge = e.cyTarget;
+		if (typeof _this.owner.edgeClick !== "undefined") {
+			_this.owner.edgeClick(edge);
+		}
+	});
+	
+	this.gv.on("cxttapend", "edge", function(e) {
+		var edge = e.cyTarget;
+		if (typeof _this.owner.edgeRightClick !== "undefined") {
+			_this.owner.edgeRightClick(edge);
+		} 
+	});
+};
+
+CytoGraphVis.prototype.reset = function() {
+	this.setHandlers();
+	this.changeLayout(this.CONSTANTS("defaultLayout"), {});
+};
+
+/*
+ *	Show all elements on this graph and toggle their class appropriately
+ */
+CytoGraphVis.prototype.showAll = function() {
+	this.gv.elements().show();
+	this.gv.elements().removeClass("toggled-hide");
+	this.gv.elements().addClass("toggled-show");
+};
+
+/*
+ *	Load the following json into cytoscape for processing.
+ *		json:Object - json representation of the graph
+ *		name:String - identifier of the root node/entity 
+ */
+CytoGraphVis.prototype.showGraph = function(json, name) {
+	this.searchName = name;
+	this.gv.load(json);
+};
+
+CytoGraphVis.prototype.resize = function(w, h) {
+	if (this.initialized && typeof this.gv != "undefined") {
+		this.gv.fit();
+	}
+	this.dispWidth = w;
+	this.dispHeight = h;
+};
+
+CytoGraphVis.prototype.clear = function() {
+	this.gv.elements().remove();
+};
+
+/*
+ * 	Given a sub-graph and a central node, place the expanded nodes in an orbit
+ *	around the "Origin Node".  Note: this method does not determine what the expanded,
+ *	or 1-hop, graph will be.
+ *		json:JsonObject - JSON graph representation of the nodes/edges found in 1-hop
+ *		innode:Cytoscape Node - "Origin Node" to extend from the graph and show its 1-hop neighbors 
+ */
+CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
+	var pos = innode.position();
+	try {
+		var connectedNodes = innode.connectedEdges().connectedNodes();
+		var neighbor = null;
+		connectedNodes.each(function(i, n) {
+			if (n.data().id != innode.data().id) {
+				neighbor = n;
+				return;
+			}
+		});
+		var n_pos = neighbor.position();
+		var dx = pos.x - n_pos.x;
+		var dy = pos.y - n_pos.y;
+		var newX = pos.x + dx * 1.5;
+		var newY = pos.y + dy * 1.5;
+		innode.position({x: newX, y: newY});
+		pos = innode.position();
+	} catch(e) {
+		console.log(e.message);
+	}
+	
+	var nodes = json.nodes;
+	var l = nodes.length;
+	for (var i = 0; i < l; i++) {
+		var node = nodes[i];
+		var rad = 2 * Math.PI * i / l;
+		var radius = this.CONSTANTS("minLeafDistance") + l + l;
+		
+		if (node.data.id != innode.data().id) {
+			node.data.color = this.CONSTANTS("expandedDefNode");
+			node.data.expanded = true;
+			node.position = {
+				x: pos.x + (radius * Math.cos(rad)),
+				y: pos.y + (radius * Math.sin(rad))
+			};
+		}
+	}
+	
+	this.gv.add(json);
+	
+	var retJson = {};
+	retJson.nodes = this.gv.nodes().jsons();
+	retJson.edges = this.gv.edges().jsons();
+	return retJson;
+};
+
+/*
+ * 	Delete all leaf nodes from the given node, essentially undoing a 1-hop expansion.
+ *  Note: any edges that were created to existing nodes will remain
+ *  	innode:Cytoscape Node - "Origin Node" from which to retract all leaf nodes
+ */
+CytoGraphVis.prototype.unexpand1Hop = function(innode) {
+	var nodesToDelete = [];
+	
+	// TODO: make a public function somewhere
+	var _isLeaf = function(node) {
+		var possibleNeighbors = node.connectedEdges().connectedNodes();
+		var confirmedNeighbors = [];
+		possibleNeighbors.each(function(index, n) {
+			if (n.data().id != node.data().id) {
+				confirmedNeighbors.push(n.data().id);
+			}
+		});
+		return confirmedNeighbors.length == 1;
+	};
+	
+	var neighbors = innode.connectedEdges().connectedNodes();
+	neighbors.each(function(i, n) {
+		if (_isLeaf(n) && n.data().id !== innode.data().id) {
+			nodesToDelete.push(n);
+		}
+	});
+	if (nodesToDelete.length > 0) {
+		this.deleteNodes(nodesToDelete);
+	} else {
+		alert("This node has no leaves.");
+	}
+};
+
+// LayoutManager constructor
+function LayoutManager(graphRef) {
+	var _this = this;
+	
+	var _registeredLayouts = {};
+	
+	/*
+	 * private function to merge the properties of the two parameters, with optsToMerge having overwrite priority.
+	 *		baseOpts:Object - default configuration object
+	 *		optsToMerge:Object - overrides for the default configuration
+	 * 		returns mergedOptions:Object - combination of baseOpts + optsToMerge
+	 */
+	var _mergeOptions = function(baseOpts, optsToMerge) {
+		var mergedOptions = {};
+		
+		for (var key in baseOpts) {
+			if (baseOpts.hasOwnProperty(key)) {
+				var value = baseOpts[key];
+				mergedOptions[key] = value;
+			}
+		}
+		
+		for (var key in optsToMerge) {
+			if (optsToMerge.hasOwnProperty(key)) {
+				var value = optsToMerge[key];
+				mergedOptions[key] = value;
+			}
+		}
+		return mergedOptions;
+	};
+	
+	/*
+	 *	Changes the current graph layout if layoutName matches a registered layout.
+	 *		layoutName:String - key to access the registered layouts
+	 *		config:Object - (optional) overrides for the layout's configuration
+ 	 */
+	this.changeLayout = function(layoutName, config) {
+		if (graphRef.initialized == false) return;
+		
+		if (_registeredLayouts.hasOwnProperty(layoutName)) {
+			var options = _registeredLayouts[layoutName];
+			options = _mergeOptions(options, config);
+			graphRef.currentLayout = options.name;
+			
+			if (typeof options.beforeLayout == "function") {
+				options.beforeLayout();
+			}
+			
+			graphRef.gv.layout(options);
+		}
+	};
+	
+	/*
+	 *	Add a new layout option to the LayoutManager.
+	 *		layoutName:String - key to access the registered layouts
+	 *		config:Object - configuration parameters for this new layout
+	 *		stopFn:Function - (optional) callback on layoutstop event
+	 *		progressFn:Function - (optional) callback for layout's procedural status, if applicable
+	 *		startFn:Function - (optional) callback on layoutready event
+	 */
+	this.registerLayout = function(layoutName, scope, config, stopFn, progressFn, startFn) {
+	
+		if (typeof layoutName == "undefined" || typeof config == "undefined") return;
+		
+		_registeredLayouts[layoutName] = config;
+		
+		if (typeof stopFn == "function") {
+			// if stopFn was provided, assign it to this layout options using the function's name as a key
+			_registeredLayouts[layoutName][stopFn.name] = function() { stopFn.apply(scope, arguments); };
+		}
+		if (typeof progressFn == "function") {
+			// if progressFn was provided, assign it to this layout options using the function's name as a key
+			_registeredLayouts[layoutName][progressFn.name] = function() { progressFn.apply(scope, arguments); };
+		}
+		if (typeof startFn == "function") {
+			// if startFn was provided, assign it to this layout options using "beforeLayout" as a key (so it can be referenced with a default)
+			_registeredLayouts[layoutName]["beforeLayout"] = function() { startFn.apply(scope, arguments); };
+		}
+	};
+	
+	/*
+	 *	For each Origin Node passed to this method, its leaf nodes will be repositioned to orbit around
+	 *	the Origin Node.  Neighbors to the Origin Node who have neighbors of their own will be untouched.
+	 *		nodelist:Object - Contains one or more "origin nodes" and an array of each one's leaves
+	 *			nodelist resembles {
+	 *				"origin_id_1" : {
+	 *					node: Cytoscape Node Object of the origin node,
+	 *					leaves: [ Cytoscape Node Objects of the leaves ]
+	 *				},
+	 *				...
+	 *			}
+	 */
+	this.repositionClusters = function(nodelist) {
+        var minDist = graphRef.CONSTANTS("minLeafDistance");
+		for (var key in nodelist) {
+			var coreNode = nodelist[key].node;
+			var leaves = nodelist[key].leaves;
+			
+			var corePos = coreNode.position();
+			var l = leaves.length;
+			var rad = 0;
+			var r = minDist + l + l;
+			
+			for (var i = 0; i < l; i++) {
+				var leaf = leaves[i];
+				rad = 2 * Math.PI * i / l;
+				var newX = corePos.x + (r * Math.cos(rad));
+				var newY = corePos.y + (r * Math.sin(rad));
+				
+				leaf.position({x: newX, y: newY});
+			}
+		}
+    };
+	
+	// ========================================= REGISTER DEFAULT LAYOUTS ========================================= /
+	
+	this.registerLayout("grid", graphRef, { 
+			name: "grid", fit: true, rows: undefined, column: undefined 
+		},
+		function stop() {
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		}
+	); // END GRID
+	
+	this.registerLayout("circle", graphRef, {
+			name: "circle", fit: true, rStepSize: 10, padding: 30, counterClockwise: false
+		},
+		function stop() {
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		}
+	); // END CIRCLE
+	
+	this.registerLayout("breadthfirst", graphRef, {
+			name: "breadthfirst", fit: true, directed: true, padding: 15, circle: false, roots: undefined
+		},
+		function stop() {
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		}
+	); // END BREADTHFIRST
+	
+	this.registerLayout("cose", graphRef, {
+			name: "cose", refresh: 10, fit: true, randomize: true, debug: false, nodeRepulsion: 99999999,
+			nodeOverlap: 5000, idealEdgeLength: 10, edgeElasticity: 1, nestingFactor: 5, gravity: 250,
+			numIter: 5000, initialTemp: 500, coolingFactor: 0.95, minTemp: 8,
+			feedbackRate: 5, intervalRate: 1
+		},
+		function stop() {
+			if (graphRef.owner.getStopButton) {
+				var stopBtn = graphRef.owner.getStopButton();
+				stopBtn.setDisabled(true);
+				stopBtn.setCurrentLayout(undefined);
+			}
+
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		},
+		function onFeedback(opt) {
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) {
+					var progress = _this.minTemp / opt.temp;
+					pb.updateProgress(progress, Math.floor(progress * 100) + "%");
+				}
+			}
+		},
+		function ready() {
+			_this.minTemp = _registeredLayouts["cose"].minTemp;
+			
+			if (graphRef.owner.getStopButton) {
+				var stopBtn = graphRef.owner.getStopButton();
+				stopBtn.setDisabled(false);
+				stopBtn.setCurrentLayout("COSE");
+			}
+		}
+	); // END COSE
+	
+	this.registerLayout("arbor-snow", graphRef, {
+			name: "arbor", liveUpdate: true, maxSimulationTime: 90000, fit: true, padding: [50, 10, 50, 10],
+			ungrabifyWhileSimulating: false, repulsion: 8000, stiffness: 300, friction: undefined,
+			gravity: true, fps: 240, precision: 0.2, nodeMass: undefined, edgeLength: 3, stepSize: 1
+		},
+		function stop() {
+			_this.progress = 0;
+		
+			if (graphRef.owner.getStopButton) {
+				var stopBtn = graphRef.owner.getStopButton();
+				stopBtn.setDisabled(true);
+				stopBtn.setCurrentLayout(undefined);
+			}
+			
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		},
+		function stableEnergy(en) {
+			var max_progress = 0.3 / en.max;
+			var mean_progress = 0.2 / en.mean;
+			var avg_progress = (max_progress + mean_progress) / 2;
+			
+			if (avg_progress < 1 && avg_progress > _this.progress) {
+				_this.progress = avg_progress;
+			}
+			
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(_this.progress, Math.floor(_this.progress * 100) + "%");
+			}
+			return (en.max <= 0.3) || (en.mean <= 0.2);
+		},
+		function ready() {
+			_this.progress = 0;
+			
+			if (graphRef.owner.getStopButton) {
+				var stopBtn = graphRef.owner.getStopButton();
+				stopBtn.setDisabled(false);
+				stopBtn.setCurrentLayout("ARBOR");
+			}
+		}
+	); // END ARBOR-SNOW
+	
+	this.registerLayout("arbor-wheel", graphRef, {
+			name: "arbor", liveUpdate: true, maxSimulationTime: 90000, fit: true, padding: [50, 10, 50, 10],
+			ungrabifyWhileSimulating: false, repulsion: 8000, stiffness: 300, friction: undefined,
+			gravity: true, fps: 240, precision: 0.2, nodeMass: undefined, edgeLength: 3, stepSize: 1
+		},
+		function stop() {
+			_this.progress = 0;
+		
+			if (graphRef.owner.getStopButton) {
+				var stopBtn = graphRef.owner.getStopButton();
+				stopBtn.setDisabled(true);
+				stopBtn.setCurrentLayout(undefined);
+			}
+			
+			var anodes = graphRef.gv.nodes();
+			var originNodes = {};
+
+			// TODO: make a public function somewhere
+			var _isLeaf = function(node) {
+				var possibleNeighbors = node.connectedEdges().connectedNodes();
+				var confirmedNeighbors = [];
+				possibleNeighbors.each(function(index, n) {
+					if (n.data().id != node.data().id) {
+						confirmedNeighbors.push(n.data().id);
+					}
+				});
+				return confirmedNeighbors.length == 1;
+			};
+			
+			// iterate over all nodes.  if a leaf is found, designate its single neighbor to be
+			// an "origin node".  Origin Nodes have an array of all their leaves. 
+			anodes.each(function(indx, node) {
+				if (_isLeaf(node)) {
+					var neighbors = node.connectedEdges().connectedNodes();
+					neighbors.each(function(index, n) {
+						var neighborId = n.data().id;
+						if (neighborId != node.data().id) {
+							if (originNodes.hasOwnProperty(neighborId)) {
+								originNodes[neighborId].leaves.push(node);
+							} else {
+								originNodes[neighborId] = {
+									node: n,
+									leaves: [node]
+								};
+							}
+						}
+					});
+				}
+			});
+
+			// For each origin node, reposition its leaves in its orbit
+			_this.repositionClusters(originNodes);
+			
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		},
+		function stableEnergy(en) {
+			var max_progress = 0.3 / en.max;
+			var mean_progress = 0.2 / en.mean;
+			var avg_progress = (max_progress + mean_progress) / 2;
+			
+			if (avg_progress < 1 && avg_progress > _this.progress) {
+				_this.progress = avg_progress;
+			}
+			
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(_this.progress, Math.floor(_this.progress * 100) + "%");
+			}
+			return (en.max <= 0.3) || (en.mean <= 0.2);
+		},
+		function ready() {
+			_this.progress = 0;
+			
+			if (graphRef.owner.getStopButton) {
+				var stopBtn = graphRef.owner.getStopButton();
+				stopBtn.setDisabled(false);
+				stopBtn.setCurrentLayout("ARBOR");
+			}
+		}
+	); // END ARBOR-WHEEL
+}
+
+// StateManager constructor
+function StateManager(graphRef) {
+	var _this = this;
+	
+	/*
+	 *	Gather the metadata and graph JSON for this cytoscape graph and
+	 *	return it.
+	 *		returns json:Object
+	 */
+	this.exportGraph = function() {
+		var json = {};
+		json.timestamp = new Date().getTime();
+		json.searchName = graphRef.getSearchName();
+		json.currentLayout = graphRef.getCurrentLayout();
+		
+		var outNodes = graphRef.gv.nodes().jsons();
+		var outEdges = graphRef.gv.edges().jsons();
+		
+		json.graph = {};
+		json.graph.nodes = outNodes;
+		json.graph.edges = outEdges;
+		
+		return json;
+	};
+	
+	/*
+	 *	Loads a pre-defined cytoscape graph's JSON object, preserving the elements'
+	 *	visibility and positions on the X/Y plane.
+	 *		json:Object - graph JSON to load into cytoscape.
+	 */
+	this.importGraph = function(json) {
+		if (json && json.graph && json.graph.nodes && json.graph.nodes.length > 0) {
+			graphRef.clear();
+			graphRef.searchName = json.searchName;
+			graphRef.gv.add(json.graph);
+			
+			graphRef.gv.nodes().each(function(i, n) {
+				if (n.data().visible == false) {
+					n.hide();
+				}
+			});
+			
+			graphRef.gv.edges().each(function(i, e) {
+				if (e.data().visible == false) {
+					e.hide();
+				}
+			});
+		} else {
+			console.error("The graph json for import is empty or invalid");
+		}
+	};
+	
+	/*
+	 *	Remove (not hide) nodes from the cytosape graph AND the json representation
+	 *	stored by most parent containers of a graph.
+	 *		nodes:Array - cytosape nodes to be deleted
+	 */
+	this.deleteNodes = function(nodes) {
+		for (var i = 0; i < nodes.length; i++) {
+			var id = nodes[i].data().id;
+			
+			// remove all edges whose source == id
+			graphRef.gv.remove( graphRef.gv.elements("edge[source='" + id + "']") );
+			
+			// remove all edges whose target == id
+			graphRef.gv.remove( graphRef.gv.elements("edge[target='" + id + "']") );
+			
+			// remove all nodes whose id == id
+			graphRef.gv.remove("#" + id);
 
 			// most graph implementations store a json representation of their cyto graphs;
 			// remove traces of nodes and edges involved with selected node IDs
-    		if (typeof scope.owner.json !== "undefined") {
-    			var j;
-    			var json = scope.owner.json;
-    			
-    			for (j = 0; j < json.nodes.length; j++) {
-    				var jsonNode = scope.owner.json.nodes[j];
-    				if (jsonNode.data.id == id) {
-    					json.nodes.splice(j, 1);
-    					break;  // there should only be one node with this id; stop iterating
-    				}
-    			}
-    			
-    			for (j = 0; j < json.edges.length; j++) {
-    				var jsonEdge = scope.owner.json.edges[j];
-    				if (jsonEdge.data.source == id || jsonEdge.data.target == id) {
-    					json.edges.splice(j, 1);
-    					j--;
-    				}
-    			}
-    		}
-    	}
-    },
-
-    // Initialize
-    // config   - Object with the following attributes
-    //          width   - width of the graph display area pixels
-    //          height  - height of the graph display area pixels
-    //          rightBorder - offset of right border in pixels
-    //          leftBorder  - offset of left border in pixels
-    //          topBorder   - offset of top border in pixels
-    //          botBorder   - offset of bottom border in pixels
-    //          other params - TBD
-    //          
-    // owner    - Pointer to the caller's context
-    initGraph: function(config, owner, onLoadCallback, onLoadParams) {
-        var scope = this;        
-        if (config) {
-            if (config.width) {
-                scope.dispWidth = config.width;
-            }
-            if (config.height) {
-                scope.dispHeight = config.height;
-            }
-            if (config.rightBorder) {
-                scope.dispRightBorder = config.rightBorder;
-            }
-            if (config.leftBorder) {
-                scope.dispLeftBorder = config.leftBorder;
-            }
-            if (config.topBorder) {
-                scope.dispTopBorder = config.topBorder;
-            }
-            if (config.botBorder) {
-                scope.dispBotBorder = config.botBorder;
-            }
-        }
-        scope.owner = owner;    // caller context
-        scope.expandedNodes = [];
-        
-        // DEBUG
-        //console.log("initGraph id = " + scope.id + ", width = " + scope.dispWidth + ", height = " + scope.dispHeight);
-        
-        // TODO - use the optional config param to set/override the styling
-         
-        if (scope.gv == null) {
-            cytoscape({
-                container: document.getElementById(scope.id),   // id must be set by the caller
-                ready: function() {
-        
-                	overrideRegisterInstance(); // see shared/cytoOverrides.js
-                	overrideCOSE();
-                	overrideARBOR();
-                	
-                    $("#" + scope.id).cytoscape({
-						showOverlay: false,
-						//hideEdgesOnViewport: true, // prevent edges from being drawn when moving/manipulating the graph
-						style: cytoscape.stylesheet()
-							.selector('node').css({
-								'content': 'data(name)',
-								'text-valign': 'bottom',
-								'color': 'black',
-								'background-color': 'data(color)',
-								'font-size': 10,
-								'text-outline-width': 1,
-								'text-outline-color': 'white',
-								//'shape': 'data(type)',  // added
-								'width': 16,  
-								'height': 16   
-							}).selector('$node > node').css({
-								'padding-top': '10px',
-								'padding-left': '10px',
-								'padding-bottom': '10px',
-								'padding-right': '10px',
-								'text-valign': 'top',
-								'text-halign': 'center',
-								'color': 'black',
-								'background-color': 'data(color)',
-								'font-size': 12,
-								'text-outline-width': 1,
-								'text-outline-color': 'white'   
-							}).selector('edge').css({
-								'content':'data(label)',   
-								'text-valign': 'center',
-								'color': 'black',   // color of the edge label
-								'text-outline-width': 1,
-								'font-size': 10,
-								'text-outline-color': 'white',
-								'line-color': graphVisCommon.Colors.defaultEdge, 
-								'target-arrow-color': 'DarkBlue',
-								'target-arrow-shape': 'triangle',
-								'width': 'data(lineWidth)'   
-							}).selector('node:selected').css({
-								'background-color': graphVisCommon.Colors.selectedNode,
-								'line-color': 'black',
-								'text-outline-color': 'yellow',
-								'target-arrow-color': 'black',
-								'source-arrow-color': 'black',
-								'border-color': 'black',
-								//'shape': 'data(type)',  // added
-								'font-size': 12,
-								'width': 20,  
-								'height': 20
-							}).selector('edge:selected').css({
-								'background-color': graphVisCommon.Colors.selectedEdge,
-								'line-color': 'black',
-								'text-outline-color': 'yellow',
-								'target-arrow-color': 'black',
-								'source-arrow-color': 'black',
-								'border-color': 'black',
-								'font-size': 12,
-								//'width': 'data(lineWidth)'
-							}).selector('.toggled-show').css({  // Workaround for showing and hiding edge labels
-								'content':'data(label)'
-							}).selector('.toggled-hide').css({
-								'content':' '
-							}).selector('.faded').css({
-								'opacity': 0.25,
-								'text-opacity': 0
-							})
-                    });
-
-                    scope.gv = $("#" + scope.id).cytoscape("get");
-					
-					// if the plug-in is not included for any reason, do not try to initialize it
-					if (scope.gv.cxtmenu) {
-						if (typeof GRadialMenu !== "undefined") {
-							scope.gv.cxtmenu( GRadialMenu.setScope(scope.owner) );
-						} else {
-							// default radial context menu plug in
-							scope.gv.cxtmenu({
-								menuRadius: 75, selector: 'node', activePadding: 0,
-								fillColor: 'rgba(0, 0, 200, 0.75)', activeFillColor: 'rgba(92, 194, 237, 0.75)', 
-								commands: [{
-									content: "Expand",
-									select: function() {
-										var node = this;
-										if (scope.owner.expand) { scope.owner.expand(node); } 
-										else { console.log("expand() is undefined"); }
-									}
-								}, {
-									content: "Pivot",
-									select: function() {
-										var node = this;
-										if (scope.owner.pivot) { scope.owner.pivot(node); }
-										else { console.log("pivot() is undefined"); }
-									}
-								}, {
-									content: "Hide",
-									select: function() {
-										var node = this;
-										if (scope.owner.hideNode) { scope.owner.hideNode(node); } 
-										else { console.log("hideNode() is undefined"); }
-									}
-								}, {
-									content: "Show Details",
-									select: function() {
-										var node = this;
-										var disp = scope.owner.getNodeDisplay();
-										if (disp && disp.setAttrs) { disp.setAttrs(node.data()); } 
-										else { console.log("showDetails() is undefined"); }
-									}
-								}],
-							});
-						}
-					}
-					
-					if (onLoadCallback) {
-						onLoadCallback();
-					}
-					
-                    scope.initialized = true;
-                    scope.reset();
-                   
-                }
-            });
-        } // END TEST
-    },
-
-    getGv: function() {
-            return this.gv;
-    },
-
-    zoom: function(fzoomLevel) {
-        if (this.initialized && this.gv) {
-            this.gv.zoom(fzoomLevel);
-        }
-    },
-
-    resize: function(width,height) {
-        var scope = this;
-        if (scope.initialized && scope.gv) {
-            scope.gv.fit();
-        }
-        scope.dispWidth = width;
-        scope.dispHeight = height;
-        // DEBUG
-        //console.log("resize: width = " + scope.dispWidth + ", height = " + scope.dispHeight);
-    },
-   
-    // Reposition leaf nodes 'around' the origin position
-    repositionNodes: function(originPos, leafList) {
-        var scope = this;
-        var n = leafList.length;
-        var node;
-        var twoPIion = 0;
-        var radius = scope.minLeafDistance + (n*2);
-       
-       // DEBUG
-       //console.log("repositionNodes num leaves = " + n);
-       
-       for (var i = 0; i < n; i++) {
-            node = leafList[i];
-            twoPIion = 2 * Math.PI * i / n;
-            // Locate the nodes in a circle around the cluster origin.
-            // If the user changes the layout, this positioning will be lost - that is ok 
-            var newx = originPos.x + (radius  * Math.cos(twoPIion));
-            var newy = originPos.y + (radius * Math.sin(twoPIion));
-            node.position({ x: newx, y: newy });
-        }
-    },
-   
-    // For each node cluster with leafs, reposition the leafs 'around' the cluster origin
-    // nodelist    - List of cluster origin nodes.
-    repositionClusters: function(nodelist) {
-        var scope = this;
-        var originNode = {};
-        var originItem = {};
-        for (originItem in nodelist) {
-            originNode = nodelist[originItem];
-
-            // DEBUG
-            //console.log("repositionClusters: cnode = " + originNode.data().name);
-
-            var originPos = originNode.position();
-            // DOES NOT WORK var edges = originNode.edgesWith();
-            var edges = originNode._private.edges;
-            var leafList = [];
-            for (var e = 0; e < edges.length; e++) {
-                var edge = edges[e];
-                var connectedNodes = edge.connectedNodes();
-                connectedNodes.each(function(indx, n) {
-                    if (n.degree() == 1) { // This is a leaf node
-                        leafList.push(n);
-                    }
-                });
-            }
-
-            // At this point we should have a cluster origin node and all its leaf nodes
-            // Reposition the leafs
-            scope.repositionNodes(originPos, leafList);
-        }
-    },
-   
-    // layoutName   - User selected layout name
-    changeLayout: function(layoutName, config) {
-        var scope = this;
-        if (scope.initialized) {
-		
-        	// set in each layout function now
-            /*scope.currentLayout = layoutName;*/
-			
-            switch (layoutName) {
-                case 'circle':
-					scope.doCircleLayout(config);
-                    break;
-                case 'grid':
-					scope.doGridLayout(config);
-					break;
-                case 'breadthfirst':
-                case 'tree':
-                    scope.doHierarchicalLayout(config);
-                    break;
-                case 'cose':
-					scope.doCOSELayout(config);
-					break;
-                case 'arbor':
-                case 'arbor-snow':     // force directed arbor - out of the box
-					scope.doForceDirectedLayout('arbor-snow', config);
-					break;
-                case 'arbor-wheel':    // custom arbor
-					scope.doForceDirectedLayout('arbor-wheel', config);
-					break;
-                default:
-                    // do nothing, invalid layout
-                    break;
-            }
-        }   // if initialized
-    },
-
-    // refresh the current layout
-    refreshLayout: function() {
-        var scope = this;
-        if (scope.currentLayout) {
-            scope.changeLayout(scope.currentLayout);
-            //scope.gv.nodes.unlock();
-        }
-    },
-    
-    // Default layout is a tree to get the initial display to show up quickly.
-    // The user can then change to use a different layout
-    doDefaultLayout: function(config) {
-        var scope = this;
-        
-		if (config == undefined) {
-			config = {};
-		}
-		
-        // if (!(scope.setBusy == undefined)) {
-		//	scope.setBusy(true);
-        // }
-		
-		scope.doHierarchicalLayout(config);
-    },
-    
-	doCircleLayout: function(config) {
-		var scope = this;
-    	
-		if (config == undefined) {
-			config = {};
-		}
-		
-		scope.currentLayout = 'circle';
-		
-    	var options = {
-            name: 'circle',
-            
-            fit: 		(typeof config.fit !== "undefined") 		? config.fit : true,          // fit the viewport to the graph
-            rStepSize: 	(typeof config.rStepSize !== "undefined") 	? config.rStepSize : 10,      // the step size for increasing the radius if the nodes don't fit on screen
-            padding: 	(typeof config.padding !== "undefined") 	? config.padding : 30,        // padding on fit
-            		
-            // startAngle:  (typeof config.startAngle !== "undefined") ? config.startAngle : 3/2 * Math.PI,  		// position of the first node
-            counterclockwise: (typeof config.counterclockwise !== "undefined") ? config.counterclockwise : false,	// whether the layout should go counterclockwise (true) or clockwise
-            		
-            ready: undefined,   // callback on layoutready
-            
-            stop: function() {
-				// if (!(scope.setBusy == undefined)) {
-				// 	scope.setBusy(false);
-				// }
+			if (typeof graphRef.owner.json !== "undefined") {
+				var j;
+				var json = graphRef.owner.json;
 				
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) pb.updateProgress(1, "100%");
-				}
-            }
-        };
-    	
-    	if (config.letServerDoLayout == true) {
-			// TODO server does layout
-		} else {
-			// browser does layout
-			scope.gv.layout(options);
-		}
-	},
-	
-	doGridLayout: function(config) {
-    	var scope = this;
-    	
-		if (config == undefined) {
-			config = {};
-		}
-
-		scope.currentLayout = 'grid';
-		
-    	var options = {
-            name: 'grid',
-            
-            fit: 	 (typeof config.fit !== "undefined") 	 ? config.fit : true,          	// fit the viewport to the graph
-            rows: 	 (typeof config.rows !== "undefined") 	 ? config.rows : undefined,    	// force number of rows in the grid
-            columns: (typeof config.columns !== "undefined") ? config.column : undefined, 	// force number of cols in the grid
-            		
-            ready: 	 undefined,   // callback on layoutready
-            
-            stop: function() {
-				// if (!(scope.setBusy == undefined)) {
-				//	scope.setBusy(false);
-				// }
-				
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) pb.updateProgress(1, "100%");
-				}
-            }
-        };
-    	
-    	if (config.letServerDoLayout == true) {
-			// TODO server does layout
-		} else {
-			// browser does layout
-			scope.gv.layout(options);
-		}
-	},
-	
-	doHierarchicalLayout: function(config) {
-    	var scope = this;
-    	
-		if (config == undefined) {
-			config = {};
-		}
-
-		scope.currentLayout = 'breadthfirst';
-		
-    	var options = {
-            name: 'breadthfirst',
-            
-            fit: 		(typeof config.fit !== "undefined") 		? config.fit : true,		// fit the viewport to the graph
-            directed: 	(typeof config.directed !== "undefined") 	? config.directed : true,	// whether the tree is directed downwards
-            padding: 	(typeof config.padding !== "undefined") 	? config.padding : 15,		// padding on fit
-            circle: 	(typeof config.circle !== "undefined") 		? config.circle : false,	// put depths in concentric circles if true, put depths top down if false
-            		
-            roots: 		(typeof config.roots !== "undefined") ? config.roots : undefined,   	// the root(s) of the tree(s), can be an array of node ids
-            		
-            ready: 		undefined,   // callback on layoutready
-            		
-            stop: function() {
-				// if (!(scope.setBusy == undefined)) {
-				// 	scope.setBusy(false);
-				// }
-				
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) pb.updateProgress(1, "100%");
-				}
-            }
-        };
-    	
-    	if (config.letServerDoLayout == true) {
-			// TODO server does layout
-		} else {
-			// browser does layout
-			scope.gv.layout(options);
-		}
-	},
-	
-    doCOSELayout: function(config) {
-    	var scope = this;
-    	
-		if (config == undefined) {
-			config = {};
-		}
-
-		scope.currentLayout = 'cose';
-		
-    	// enable the Halt Layout button if it exists
-		if (scope.owner.getStopButton) {
-			var stopBtn = scope.owner.getStopButton();
-			stopBtn.setDisabled(false);
-			stopBtn.setCurrentLayout("COSE");
-		}
-		
-		var options = {
-            name: 'cose',
-            
-            refresh: 	(typeof config.refresh !== "undefined") 	? config.refresh : 10,		// Number of iterations between consecutive screen positions update (0 -> only updated on the end)
-            fit: 		(typeof config.fit !== "undefined") 		? config.fit : true, 
-            randomize: 	(typeof config.randomize !== "undefined") 	? config.randomize : true,
-            debug: 		(typeof config.debug !== "undefined") 		? config.debug : false,
-
-            nodeRepulsion: 	 (typeof config.nodeRepulsion !== "undefined") 		? config.nodeRepulsion : 99999999,	// Node repulsion (non overlapping) multiplier
-            nodeOverlap: 	 (typeof config.nodeOverlap !== "undefined") 		? config.nodeOverlap : 5000,		// Node repulsion (overlapping) multiplier
-            idealEdgeLength: (typeof config.idealEdgeLength !== "undefined") 	? config.idealEdgeLength : 10,		// Ideal edge (non nested) length
-            edgeElasticity:  (typeof config.edgeElasticity !== "undefined") 	? config.edgeElasticity : 1,		// Divisor to compute edge forces
-            nestingFactor: 	 (typeof config.nestingFactor !== "undefined") 		? config.nestingFactor : 5,			// Nesting factor (multiplier) to compute ideal edge length for nested edges
-            gravity: 		 (typeof config.gravity !== "undefined") 			? config.gravity : 250, 			// Gravity force (constant)
-
-            numIter: 		(typeof config.numIter !== "undefined") 		? config.numIter : 5000,		// Maximum number of iterations to perform
-            initialTemp: 	(typeof config.initialTemp !== "undefined") 	? config.initialTemp : 500,		// Initial temperature (maximum node displacement)
-            coolingFactor: 	(typeof config.coolingFactor !== "undefined") 	? config.coolingFactor : 0.95,	// Cooling factor (how the temperature is reduced between consecutive iterations)
-            minTemp: 		(typeof config.minTemp !== "undefined") 		? config.minTemp : 8,			// Lower temperature threshold (below this point the layout will end)
-
-            feedbackRate: (typeof config.feedbackRate !== "undefined") ? config.feedbackRate : 5,	// get a status response from layout execution for every <feedbackRate> iterations
-            intervalRate: (typeof config.intervalRate !== "undefined") ? config.intervalRate : 1,	
-            		
-            onFeedback: function(opt) {
-            	// feedback callback.  frequency of calls determined by options.feedbackRate
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) {
-						var progress = this.minTemp / opt.temp;
-						pb.updateProgress(progress, Math.floor(progress * 100) + "%");
+				for (j = 0; j < json.nodes.length; j++) {
+					var jsonNode = graphRef.owner.json.nodes[j];
+					if (jsonNode.data.id == id) {
+						json.nodes.splice(j, 1);
+						break;  // there should only be one node with this id; stop iterating
 					}
 				}
-            },
-
-            stop: function() {
-				// if (!(scope.setBusy == undefined)) {
-				// 	scope.setBusy(false);
-				// }
 				
-				if (scope.owner.getStopButton) {
-					var stopBtn = scope.owner.getStopButton();
-					stopBtn.setDisabled(true);
-					stopBtn.setCurrentLayout(undefined);
-				}
-
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) pb.updateProgress(1, "100%");
-				}
-            }
-        };
-		
-		if (config.letServerDoLayout == true) {
-			// TODO server does layout
-		} else {
-			// browser does layout
-			scope.gv.layout(options);
-		}
-	},
-	
-    // fdType   - 'arbor-wheel' or 'arbor-snow'
-    doForceDirectedLayout: function(layoutName, config) {
-    	var scope = this;
-    	
-		if (config == undefined) {
-			config = {};
-		}
-        
-		scope.currentLayout = layoutName;
-		
-		/* the spinner in the tab makes Arbor graph plot twice 
-		 * comment out until better solution can be implemented *//*
-    	// for feedback while the graph is in progress
-	    if (!(scope.setBusy == undefined)) {
-	    	scope.setBusy(true);
-	    }
-	    */
-		
-	    // enable the Halt Layout button if it exists
-	    if (scope.owner.getStopButton) {
-			var stopBtn = scope.owner.getStopButton();
-			stopBtn.setDisabled(false);
-			stopBtn.setCurrentLayout("ARBOR");
-		}
-    
-    	var progress = 0;
-    	
-    	var options = {
-            name: 'arbor',
-
-            liveUpdate: 		(typeof config.liveUpdate !== "undefined") 			? config.liveUpdate : true,       // whether to show the layout as it's running
-            maxSimulationTime: 	(typeof config.maxSimulationTime !== "undefined")	? config.maxSimulationTime : 90000, // max time in ms to run the layout
-            fit: 				(typeof config.fit !== "undefined") 				? config.fit : true,              // fit to viewport
-            		
-            padding: [ 50,10,50,10 ], // [top, right, bottom, left]
-            ungrabifyWhileSimulating: (typeof config.ungrabifyWhileSimulating !== "undefined") ? config.ungrabifyWhileSimulating : false, // so you CAN drag nodes during layout
-
-            // forces used by arbor (use arbor default on undefined)
-            repulsion: 	(typeof config.repulsion !== "undefined")	? config.repulsion : 8000,    //15000,       // force repelling the nodes from each other
-            stiffness: 	(typeof config.stiffness !== "undefined")	? config.stiffness : 300,     //500, //undefined,    // rigity of the edges
-            friction: 	(typeof config.friction !== "undefined")	? config.friction : undefined,    // amount of damping in the system
-            gravity: 	(typeof config.gravity !== "undefined")		? config.gravity : true,          // additional force attracting nodes to the origin
-            fps: 		(typeof config.fps !== "undefined")			? config.fps : 240,               // frames per second
-            precision: 	(typeof config.precision !== "undefined")	? config.precision :  0.2, // 0.5, // 0 is fast but jittery, 1 is smooth but cpu intensive
-
-            // static numbers or functions that dynamically return what these
-            // values should be for each element
-            nodeMass: 	(typeof config.nodeMass !== "undefined") 	? config.nodeMass : undefined, 
-            edgeLength: (typeof config.edgeLength !== "undefined") 	? config.edgeLength : 3,  //undefined,
-            stepSize: 	(typeof config.stepSize !== "undefined") 	? config.stepSize : 1,            // size of timestep in simulation
-            		
-            ready: undefined,
-
-            // function that returns true if the system is stable to indicate
-            // that the layout can be stopped
-            stableEnergy: function( energy ) {
-            	var max_progress = 0.3 / energy.max;
-				var mean_progress = 0.2 / energy.mean;
-				var avg_progress = (max_progress + mean_progress) / 2;
-				
-				if (avg_progress > progress) {
-					progress = avg_progress;
-				}
-				
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) pb.updateProgress(progress, Math.floor(progress * 100) + "%");
-				}
-				return (energy.max <= 0.3) || (energy.mean <= 0.2);
-            },
-            
-            stop: function() {
-
-            	if (scope.owner.getStopButton) {
-					var stopBtn = scope.owner.getStopButton();
-					stopBtn.setDisabled(true);
-					stopBtn.setCurrentLayout(undefined);
-				}
-            	
-                if (layoutName == "arbor-wheel") {
-                    // Optimize the leaf node positions and layout
-                    // Find all (leaf) nodes having just one edge
-                	
-                    var anodes = scope.gv.nodes();
-                    var originNodes = {};
-
-                    // Find all of the cluster origin nodes having 1 or more leafs
-                    anodes.each(function(indx, n) {
-						var degree = n.degree();
-						if (degree == 1) {   // This is a leaf
-							var nodeName = n.data().name;
-
-							// Should only be one edge
-							//DOES NOT WORK: var connectedNodes = n._private.edges.connectedNodes();
-							var connectedEdge = n._private.edges[0];
-							var connectedNodes = connectedEdge.connectedNodes();
-							connectedNodes.each(function(indx, cnode) {
-								var cnodeName = cnode.data().name;
-								var cnodeId = cnode.data().id;
-								if (cnodeName != nodeName) { // This is the node the leaf is connected to
-									if (originNodes[cnodeId] === undefined || originNodes[cnodeId] == null) {
-										originNodes[cnodeId] = cnode; // just push unique cnodes
-									}
-								}
-							});
-						}
-                    }); 
-
-					//originNodes = scope.gv.nodes(":parent");
-
-                    // For each cluster with leafs, reposition the leafs 'around' the cluster origin
-                    scope.repositionClusters(originNodes);
-                }
-				
-				/* the spinner in the tab makes Arbor graph plot twice 
-				 * comment out until better solution can be implemented *//*
-				if (!(scope.setBusy == undefined)) {
-					scope.setBusy(false);
-				}
-				*/
-                    
-				if (scope.owner.getProgressBar) {
-					var pb = scope.owner.getProgressBar();
-				
-					if (pb) pb.updateProgress(1, "100%");
-				}
-            }
-        };
-    	
-    	if (config.letServerDoLayout == true) {
-			// TODO server does layout
-		} else {
-			// browser does layout
-			scope.gv.layout(options);
-		}
-    },
-	
-    reset: function() {
-            var scope = this;
-            scope.setHandlers();	
-            scope.doDefaultLayout();
-            scope.gv.panningEnabled(true);
-    },
-	
-    setHandlers: function() {
-        var scope = this;
-
-        // SELECT NODE - This function is called for every node selected
-        scope.gv.on('select','node', function(e) {
-            var node = e.cyTarget;   // the current selected node
-
-            // node's data elements
-            // attrs[], color, id, idVal, label, name, type
-
-            // This will return all of the selected nodes
-            //var selectedNodes = scope.gv.$('node:selected');
-
-            // DEBUG
-            //console.log("node selected = " + node.data().name);
-
-            node._private.locked = false; // no documented API that unlocks a single node, so we must do it under the hood
-            scope.owner.nodeClick(node);
-        });
-
-		/*
-        scope.gv.on('cxttapend','node', function(e) {
-            var node = e.cyTarget;   // the current selected node
-            if (!(scope.owner.nodeRightClick==undefined))
-	            scope.owner.nodeRightClick(node);
-        
-        });*/
-        
-        scope.gv.on('cxttapend', 'edge', function(e) {
-        	var edge = e.cyTarget;
-        	if (scope.owner.edgeRightClick != undefined) {
-        		scope.owner.edgeRightClick(edge);
-        	}
-        });
-        
-        // SELECT EDGE - This function is called for every edge selected
-        scope.gv.on('select','edge', function(e) {
-            var data = e.cyTarget.data();   // the current selected edge
-
-            // edge's data elements
-            // amount, direction[], id, lineWidth, source, target, type, weight
-
-            // This will return all of the selected edges
-            //var selectedEdges = scope.gv.$('edge:selected');
-
-	    var edge = e.cyTarget;
-            scope.owner.edgeClick(edge);
-            // DEBUG
-            //console.log("edge selected id = " + data.id + ", weight = " + data.weight);
-        });
-
-        // DRAG NODE - This function is called for every node dragged
-        // The border checks are to prevent the node from being dragged outside of the visible graph disp area
-        scope.gv.on('drag','node', function(e) {
-        	return;
-			// prevent mouseover popup from appearing while dragging
-			//clearTimeout(timeoutFn);
-		
-            var node = e.cyTarget;
-            var data = node.data();   // the current selected edge
-            var pos = node.renderedPosition();
-            var xmax = scope.dispWidth - scope.dispRightBorder - scope.dispLeftBorder - 10;   // TODO calculate and store these once, not each time
-            var ymax = scope.dispHeight - scope.dispBotBorder - scope.dispTopBorder - 10;
-
-            // DEBUG
-            //console.log("node dragged START = " + data.name + "dispWidth = " + scope.dispWidth + ", dispHeight = " + scope.dispHeight + 
-            //    ", x = " + pos.x + ", y = " + pos.y + " isLocked = " + node._private.locked);
-
-            // Constrain the position to the visible viewing area. cytoscape.js does not do this by default
-            if (pos.x > scope.dispLeftBorder + 5 && pos.x < xmax &&
-                pos.y > scope.dispTopBorder + 5 && pos.y < ymax) {
-                node._private.locked = false;   // no documented API that locks a single node, so we must do it under the hood
-            }
-            else {
-                node._private.locked = true;
-            }
-
-            // unlock and reposition the locked node after 1 sec
-            var ult = null;
-            if (node.locked()) {
-                ult = window.setTimeout(function() {
-                    window.clearTimeout(ult);
-                    node._private.locked = false;   // no documented API that unlocks a single node, so we must do it under the hood
-                    
-                    if (pos.x <= scope.dispLeftBorder + 5) {
-                       node.renderedPosition('x', scope.dispLeftBorder + 5);   // was + 5 
-                    }
-                    if (pos.x >= xmax) {
-                       node.renderedPosition('x', xmax - 5);   // was - 5 
-                    }
-                    if (pos.y <= scope.dispTopBorder + 5) {
-                       node.renderedPosition('y', scope.dispTopBorder + 5);    // was + 5
-                    }
-                    if (pos.y >= ymax) {
-                       node.renderedPosition('y', ymax - 5);   // was - 5 
-                    }
-                    
-                    scope.gv.fit(); // this works much better than zooming
-                    
-                }, 1000);
-            }
-
-        });
-/*
-        // MOUSEUP This function is called when a node is selected and also for every node dragged when dragging is completed
-        scope.gv.on('mouseup','node', function(e) {
-            var data = e.cyTarget.data();   // the current selected edge
-            e.cyTarget._private.locked = false;
-            scope.gv.$("node[id = " + data.id + "]").trigger('select'); 
-
-            //scope.owner.nodeClick(e.cyTarget);
-        });*/
-
-        var timeoutFn = null;
-		
-		/*
-		scope.gv.on('mouseover', 'node', function(e) {
-			var x = e.originalEvent.layerX;
-			var y = e.originalEvent.layerY;
-			var distFromTop = e.originalEvent.clientY - e.originalEvent.layerY;
-			var node = e.cyTarget;   // the current selected node
-			
-			timeoutFn = setTimeout(function() {
-				if (!(scope.owner.nodeMouseOver == undefined)) {
-					scope.owner.nodeMouseOver(node);
-					
-					// if a popup window cannot be (re)created, scope.owner.mouseOverPopUp will be undefined
-					if (!(scope.owner.mouseOverPopUp == undefined)) {
-						
-						// prevent y coordinate from being out-of-bounds
-						y = y - scope.owner.mouseOverPopUp.height;
-						if (y < 0) 
-							y = 0;
-						y += distFromTop;
-						
-						scope.owner.mouseOverPopUp.showAt(x, y);
+				for (j = 0; j < json.edges.length; j++) {
+					var jsonEdge = graphRef.owner.json.edges[j];
+					if (jsonEdge.data.source == id || jsonEdge.data.target == id) {
+						json.edges.splice(j, 1);
+						j--;
 					}
 				}
-			}, 1000); // hover for one second
-			
-		});
-
-		scope.gv.on('mouseout', 'node', function(e) {
-			clearTimeout(timeoutFn);
-			if (scope.owner.mouseOverPopUp)
-				scope.owner.mouseOverPopUp.hide();
-		});  */       
-    }
-        
-}); // define
-
+			}
+		}
+	};
+	
+	this.showNode = function(node) {
+		if (node.hidden()) {
+			node.show();
+			node.data().visible = true;
+			var edges = node.connectedEdges();
+			if (edges) {
+				edges.each(function(i, e) {
+					_this.showEdge(e);
+				});
+			}
+		}
+	};
+	
+	this.hideNode = function(node) { 
+		if (node.visible()) {
+			var edges = node.connectedEdges();
+			if (edges) {
+				edges.each(function(i, e) {
+					_this.hideEdge(e);
+				});
+			}
+			node.hide();
+			node.data().visible = false;
+		}
+	};
+	
+	this.showEdge = function(edge) {
+		if (edge.hidden()) {
+			edge.show();
+			edge.data().visible = true;
+			edge.removeClass("toggled-hide");
+			edge.addClass("toggled-show");
+		}
+	};
+	
+	this.hideEdge = function(edge) {
+		if (edge.visible()) {
+			edge.hide();
+			edge.data().visible = false;
+			edge.removeClass("toggled-show");
+			edge.addClass("toggled-hide");
+		}
+	};
+}
+ 
