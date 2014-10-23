@@ -77,7 +77,7 @@ Ext.define("DARPA.GraphToolbar", {
 					
 					gr.exportGraph();
 				}
-		}
+		};
 	
 		var grid_default = {
 			xytpe: 'button',
@@ -256,6 +256,19 @@ Ext.define("DARPA.GraphToolbar", {
 			}
 		};
 		
+		var snap_btn = {
+			xtype: 'button',
+			height: myHeight,
+			text: "Snap To Graph",
+			tooltip: "Snap the graph back into view.  Layout is preserved.",
+			handler: (typeof config.reset == "function") ?
+				config.reset :
+				function(item) {
+					var gr = item.up().up();
+					gr.GraphVis.gv.fit();
+				}
+		};
+		
 		var help_btn = {
 			xtype: 'button',
 			height: myHeight,
@@ -321,6 +334,7 @@ Ext.define("DARPA.GraphToolbar", {
 			"-",
 			arbor_anim, arbor_unanim, arbor_wheel_anim, arbor_wheel_unanim,
 			"-",
+			snap_btn,
 			inst_label,
 			"->",
 			help_btn
