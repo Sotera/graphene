@@ -8,7 +8,7 @@ Ext.define("DARPA.EntityTab", {
 	},
 	items:[],
 	entity:{},
-	activeTab: 3,
+	// activeTab: 3,
 	constructor:function(config) {
 /*			
 		var transactions = Ext.create("DARPA.Ledger", {

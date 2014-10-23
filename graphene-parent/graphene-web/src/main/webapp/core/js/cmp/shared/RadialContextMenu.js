@@ -109,7 +109,7 @@ function RadialContextMenu(config) {
 			"select" : function() {
 				var element = this;
 				var argClone = args.slice();
-				argClone.splice(0, element);
+				argClone.unshift(element);
 				func.apply(_rm.getScope(), argClone);
 			}
 		});

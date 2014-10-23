@@ -149,7 +149,7 @@ Ext.define("DARPA.Node_Actions", {
 		var expand = Ext.create("Ext.Button", {
 		    text:'EXPAND',
 		    id: config.id+'-EXPAND',
-		    disabled:false,
+		    //disabled:false,
 		    margin:4,   
 		    height:24,
 			width: "25%",
@@ -186,7 +186,7 @@ Ext.define("DARPA.Node_Actions", {
 		var unexpand = Ext.create("Ext.Button", {
 		    text:'UNEXPAND',
 		    id: config.id+'-UNEXPAND',
-		    disabled:false,
+		    //disabled:false,
 		    margin:4,   
 		    height:24,
 			width: "25%",
