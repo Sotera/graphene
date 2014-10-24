@@ -156,10 +156,10 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 		String key = null;
 		// Allow for null values as part of the id.
 		if (addendIds != null && addendIds.length > 0) {
-			key = Arrays.toString(addendIds);
+			key = Arrays.toString(addendIds).toLowerCase();
 		} else {
 			logger.error("Unable to contruct an generateEdgeId for "
-					+ Arrays.toString(addendIds));
+					+ Arrays.toString(addendIds).toLowerCase());
 		}
 		return key;
 	}
@@ -177,11 +177,11 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 				}
 			}
 			if (foundValue) {
-				key = Arrays.toString(addendIds);
+				key = Arrays.toString(addendIds).toLowerCase();
 			}
 		} else {
 			logger.error("Unable to contruct an generateNodeId for "
-					+ Arrays.toString(addendIds));
+					+ Arrays.toString(addendIds).toLowerCase());
 		}
 		return key;
 	}

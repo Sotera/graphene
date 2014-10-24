@@ -1,15 +1,16 @@
-<!DOCTYPE html>
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
 <html lang="en" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 	<head>
 		<title>Tapestry Atmosphere Demo</title>
 		<style type="text/css">
 			body {
-				padding-top: 60px;
-				padding-bottom: 40px;
+			padding-top: 60px;
+			padding-bottom: 40px;
 			}
 			.sidebar-nav {
-				padding: 9px 0;
+			padding: 9px 0;
 			}
 		</style>
 	</head>
@@ -17,14 +18,14 @@
 	<body>
 		<a href="https://github.com/uklance/tapestry-atmosphere">
 			<img
-				style="position: absolute; top: 0; right: 0; border: 0; z-index: 10000;" 
-				src="${context:images/forkme_right_red_aa0000.png}" 
-				alt="Fork me on GitHub" />
+				style="position: absolute; top: 0; right: 0; border: 0; z-index: 10000;"
+				src="${context:images/forkme_right_red_aa0000.png}" alt="Fork me on GitHub" />
 		</a>
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container-fluid">
-					<t:pagelink page="Index" class="brand">Tapestry Atmosphere Demo</t:pagelink>
+					<t:pagelink page="Index" class="brand">Tapestry Atmosphere Demo
+					</t:pagelink>
 					<div class="nav-collapse collapse">
 						<ul class="nav">
 							<li>
