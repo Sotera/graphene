@@ -238,6 +238,39 @@ CytoGraphVis.prototype.setHandlers = function() {
 			_this.owner.edgeRightClick(edge);
 		} 
 	});
+	/*
+	this.gv.on('mouseover', 'node', function(e) {
+		var x = e.originalEvent.layerX;
+		var y = e.originalEvent.layerY;
+		var distFromTop = e.originalEvent.clientY - e.originalEvent.layerY;
+		var node = e.cyTarget;   // the current selected node
+		
+		timeoutFn = setTimeout(function() {
+			if (!(_this.owner.nodeMouseOver == undefined)) {
+				_this.owner.nodeMouseOver(node);
+				
+				// if a popup window cannot be (re)created, _this.owner.mouseOverPopUp will be undefined
+				if (!(_this.owner.mouseOverPopUp == undefined)) {
+					
+					// prevent y coordinate from being out-of-bounds
+					y = y - _this.owner.mouseOverPopUp.height;
+					if (y < 0) 
+						y = 0;
+					y += distFromTop;
+					
+					_this.owner.mouseOverPopUp.showAt(x, y);
+				}
+			}
+		}, 1000); // hover for one second
+		
+	});
+
+	this.gv.on('mouseout', 'node', function(e) {
+		clearTimeout(timeoutFn);
+		if (_this.owner.mouseOverPopUp)
+			_this.owner.mouseOverPopUp.hide();
+	});
+	*/
 };
 
 CytoGraphVis.prototype.reset = function() {
@@ -368,6 +401,32 @@ function LayoutManager(graphRef) {
 	var _this = this;
 	
 	var _registeredLayouts = {};
+	
+	this.getRegisteredLayouts = function() {
+		var arr = [];
+		
+		for (var key in _registeredLayouts) {
+			if (!_registeredLayouts.hasOwnProperty(key)) continue;
+			
+			var layout = _registeredLayouts[key];
+			var options = {};
+			
+			for (var prop in layout) {
+				if (!layout.hasOwnProperty(prop)) continue;
+				var val = layout[prop];
+				if (typeof val !== "function") {
+					options[prop] = val;
+				}
+			}
+			
+			arr.push({
+				layoutName: key,
+				config: options
+			});
+		}
+		
+		return arr;
+	};
 	
 	/*
 	 * private function to merge the properties of the two parameters, with optsToMerge having overwrite priority.
