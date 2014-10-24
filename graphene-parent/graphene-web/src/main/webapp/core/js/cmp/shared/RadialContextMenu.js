@@ -28,8 +28,8 @@ function RadialContextMenu(config) {
 		"content": "Expand",
 		"select": function() {
 			var element = this;
-			if (_rm.getScope().expand) {
-				_rm.getScope().expand(element);
+			if (_rm.getScope().owner.expand) {
+				_rm.getScope().owner.expand(element);
 			} else {
 				console.error("expand() is undefined for current scope.");
 			}
@@ -38,8 +38,8 @@ function RadialContextMenu(config) {
 		"content": "Pivot",
 		"select": function() {
 			var element = this;
-			if (_rm.getScope().pivot) {
-				_rm.getScope().pivot(element);
+			if (_rm.getScope().owner.pivot) {
+				_rm.getScope().owner.pivot(element);
 			} else {
 				console.error("pivot() is undefined for current scope.");
 			}
@@ -48,8 +48,8 @@ function RadialContextMenu(config) {
 		"content": "Hide",
 		"select": function() {
 			var element = this;
-			if (_rm.getScope().hideNode) {
-				_rm.getScope().hideNode(element);
+			if (_rm.getScope().owner.hideNode) {
+				_rm.getScope().owner.hideNode(element);
 			} else {
 				console.error("hideNode() is undefined for current scope.");
 			}
@@ -58,7 +58,7 @@ function RadialContextMenu(config) {
 		"content": "Show Details",
 		"select": function() {
 			var element = this;
-			var disp = _rm.getScope().getNodeDisplay();
+			var disp = _rm.getScope().owner.getNodeDisplay();
 			if (disp && disp.setAttrs && element.data) {
 				disp.setAttrs(element.data());
 			} else {
