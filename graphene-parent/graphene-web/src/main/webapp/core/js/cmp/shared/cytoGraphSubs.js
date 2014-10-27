@@ -33,6 +33,8 @@ function CytoGraphVis(inId) {
 			defaultEdge:  '#23A4FF',
 			selectedEdge: '#0B0B0B',
 			expandedDefNode: '#F66CFB',
+			dijkstraPath: "red",
+			dijkstraSize: 5,
 			//expandedDefEdge: '#BE26C4',
 			
 			fillColor: "rgba(0, 0, 200, 0.75)",
@@ -46,6 +48,7 @@ function CytoGraphVis(inId) {
 	
 	var _layoutManager = new LayoutManager(this);
 	var _stateManager = new StateManager(this);
+	var _dijkstraManager = new DijkstraManager(this);
 	
 	this.getGv = function() { return this.gv; };
 	this.getOwner = function() { return this.owner; };
@@ -54,6 +57,7 @@ function CytoGraphVis(inId) {
 	
 	this.getLayoutManager = function() { return _layoutManager; };
 	this.getStateManager = function() { return _stateManager; };
+	this.getDijkstraManager = function() { return _dijkstraManager; };
 	
 	// extend this' API with the layout manager's methods
 	this.changeLayout = _layoutManager.changeLayout;
@@ -174,6 +178,11 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 					.selector(".toggled-hide").css({
 						'content': " "
 					})
+					.selector(".on-path").css({
+						'line-color': _this.CONSTANTS("dijkstraPath"),
+						'target-arrow-color': _this.CONSTANTS("dijkstraPath"),
+						'width': _this.CONSTANTS("dijkstraSize")
+					})
 			});
 			
 			// declare a reference to the completed cytoscape graph object as this.gv
@@ -183,14 +192,46 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 			try {
 				if (typeof _this.gv.cxtmenu !== "function")
 					throw "You must include 'cytoscape.js-cxtmenu.js' in the .html file";
-				if (typeof RadialContextMenu !== "function") 
-					throw "You must include 'RadialContextMenu.js' in the .html file";
-				if (typeof GRadialMenu == "undefined") {
-					console.log("GRadialMenu is undefined in .html");
-					console.log("Using default RadialContextMenu");
-					GRadialMenu = new RadialContextMenu({});
-				}
-				_this.gv.cxtmenu( GRadialMenu.setScope(_this) );
+				
+				_this.gv.cxtmenu({
+					menuRadius: 75, selector: 'node', activePadding: 0,
+					fillColor: _this.CONSTANTS("fillColor"), 
+					activeFillColor: _this.CONSTANTS("activeFillColor"), 
+					commands: [{
+						content: "Expand",
+						select: function() {
+							var node = this;
+							if (_this.owner.expand) { _this.owner.expand(node); } 
+							else { console.log("expand() is undefined"); }
+						}
+					}, {
+						content: "Pivot",
+						select: function() {
+							var node = this;
+							if (_this.owner.pivot) { _this.owner.pivot(node); }
+							else { console.log("pivot() is undefined"); }
+						}
+					}, {
+						content: "Hide",
+						select: function() {
+							var node = this;
+							if (_this.owner.hideNode) { _this.owner.hideNode(node); } 
+							else { console.log("hideNode() is undefined"); }
+						}
+					}, {
+						content: "Shortest Path",
+						select: function() {
+							var node = this;
+							var dm = _this.getDijkstraManager();
+							if (typeof dm !== "undefined") {
+								dm.clear();
+								dm.setRoot(node);
+								dm.setWait(true);
+								console.log("Set node id='" + node.data("id") + "' as root.");
+							} else { console.log("dijkstra pathfinding is unavailable."); }
+						}
+					}],
+				});
 			} catch(e) {
 				console.log(e);
 				console.log("Context Menu on cytoscape graph " + _this.id + " will be unavailable.");
@@ -213,9 +254,19 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
  */
 CytoGraphVis.prototype.setHandlers = function() {
 	var _this = this;
+	//var timoutFn = null;
 	
 	this.gv.on("click", "node", function(e) {
-		e.cyTarget.select();
+		var dm = _this.getDijkstraManager();
+		if (dm.isWaiting === true) {
+			dm.setWait(false);
+			dm.setDest(e.cyTarget);
+			var paths = dm.run();
+			
+			paths.edges().addClass("on-path");
+		} else {
+			e.cyTarget.select();
+		}
 	});
 	
 	this.gv.on("select", "node", function(e) {
@@ -691,6 +742,7 @@ function LayoutManager(graphRef) {
 					neighbors.each(function(index, n) {
 						var neighborId = n.data().id;
 						if (neighborId != node.data().id) {
+							//node.data().color = "purple";
 							if (originNodes.hasOwnProperty(neighborId)) {
 								originNodes[neighborId].leaves.push(node);
 							} else {
@@ -879,3 +931,56 @@ function StateManager(graphRef) {
 	};
 }
  
+function DijkstraManager(graphRef) {
+	var _this = this;
+	
+	this.root = null;		// root node from which the paths will originate
+	this.dest = null;		// the terminal or destination node
+	this.isWaiting = false;	// whether this manager is waiting for destination node or not
+	
+	this.setRoot = function(node) { 
+		if (typeof node.isNode == "function" && node.isNode() == true) {
+			_this.root = node;
+			_this.setWait(true);
+			
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(0, "Root node " + /*(id='" + node.data("id") + "') */ "selected.  Left-click another node to show the shortest path between them.");
+			}
+		}
+	};
+	
+	this.setDest = function(node) {
+		if (typeof node.isNode == "function" && node.isNode() == true) {
+			_this.dest = node;
+			
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "100%");
+			}
+		}
+	};
+	
+	this.setWait = function(bool) {
+		_this.isWaiting = (bool === true) ? true : false;
+	};
+	
+	this.run = function(isDirected) {
+		var eles = graphRef.gv.elements();
+		
+		var result = eles.dijkstra(
+			_this.root, // root node
+			undefined,	// optional function that returns edge weight
+			false		// only follow directed edges, yes/no
+		);
+		
+		return result.pathTo(_this.dest);
+	};
+	
+	this.clear = function() {
+		_this.root = null;
+		_this.dest = null;
+		_this.isWaiting = false;
+		graphRef.gv.elements().removeClass("on-path");
+	};
+}

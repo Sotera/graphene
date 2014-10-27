@@ -3,6 +3,10 @@
  * Assumes Cytoscape.js is not initialized upon this creation, so it will be passed
  * as the parameter to create the plugin elsewhere.
  */
+
+// FIXME: This is currently being implemented as a singleton, which wreaks havoc when trying to maintain
+// scope between different Cytoscape graphs using the same radial menu.
+// FIXME: As of Oct 27, 2014, it is no longer being initialized in CytoGraphSubs.js
 function RadialContextMenu(config) {
 	var _rm = this;
 
