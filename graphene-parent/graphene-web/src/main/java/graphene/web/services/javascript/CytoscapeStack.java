@@ -36,9 +36,11 @@ public class CytoscapeStack implements JavaScriptStack {
 		javaScriptStack = F
 				.flow("context:core/js/libs/cytoscape-2.2.12/cytoscape.js",
 						"context:core/js/libs/cytoscape-2.2.12/arbor.js",
-						"context:core/js/libs/cytoscape-2.2.12/cytoscape.js-cxtmenu.js")
-				// .append("context:core/js/libs/cytoscape/cytoscapeMOD.js")
-				//.append("context:core/js/cmp/shared/cytoOverrides.js")
+						"context:core/js/libs/cytoscape-2.2.12/cytoscape.js-cxtmenu.js",
+						"context:core/js/libs/cytoscape/jquery.cytoscape-navigator.js",
+						"context:core/js/libs/cytoscape/jquery.cytoscape-edgehandles.js",
+						"context:core/js/libs/cytoscape/jquery.cytoscape-panzoom.js")
+				.append("context:core/js/t5/T5CytoscapeGraph.js")
 				.map(pathToAsset).toList();
 
 		final Mapper<String, StylesheetLink> pathToStylesheetLink = F.combine(

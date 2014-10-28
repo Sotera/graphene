@@ -15,7 +15,7 @@ public class AugmentSNLPModule {
 	}
 
 	public static CRFClassifier<CoreLabel> buildCRFClassifier() {
-		String serializedClassifier = "C:/Users/djue/Documents/GitHub/graphene/graphene-parent/graphene-augment/graphene-augment-snlp/src/main/resources/graphene/augment/snlp/services/english.all.3class.nodistsim.crf.ser.gz";
+		String serializedClassifier = "C:/Users/djue/Documents/GitHub/graphene/graphene-parent/graphene-augment/graphene-augment-snlp/src/main/resources/edu/stanford/nlp/models/ner/english.all.3class.caseless.distsim.crf.ser.gz";
 		CRFClassifier<CoreLabel> classifier = CRFClassifier
 				.getClassifierNoExceptions(serializedClassifier);
 		return classifier;
