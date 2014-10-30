@@ -1,6 +1,6 @@
 package graphene.dao;
 
-import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_IdType;
 import graphene.model.query.BasicQuery;
 import graphene.model.view.entities.IdType;
 
@@ -8,6 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 
+ * Each <IdType> corresponds to a single type of Data, for instance Home Address
+ * 1. Each IdType also includes a coarse categorization (only one), in this
+ * example "Address" Each IdType also include some pedigree information about
+ * where the data came from, for instance which datasource and table and column.
+ * 
+ * Based on this, we can initiate searches based on the specific field, or on
+ * the coarse field.
+ * 
+ * At startup, we load all the unique types into memory, and we also load in the
+ * unique coarse types and create a mapping.
+ * 
+ * 
+ * 
  * 
  * @author djue
  * 
@@ -22,7 +36,7 @@ public interface IdTypeDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 
 	public abstract String getColumnSource(int type);
 
-	public abstract String getFamily(int type);
+	public abstract String getNodeType(int type);
 
 	public abstract Map<Integer, IdType> getLoadedTypes();
 
@@ -34,7 +48,9 @@ public interface IdTypeDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 
 	public abstract int getTypeByShortName(String shortName);
 
-	public abstract Integer[] getTypesForFamily(G_CanonicalPropertyType family);
+	public abstract IdType getIdTypeByShortName(String shortName);
+
+	public abstract Integer[] getTypesForFamily(G_IdType g_NodeType);
 
 	public abstract boolean isLoaded();
 

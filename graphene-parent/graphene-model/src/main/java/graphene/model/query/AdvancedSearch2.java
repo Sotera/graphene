@@ -22,42 +22,11 @@ import java.util.List;
  */
 
 public class AdvancedSearch2 {
-	@Override
-	public String toString() {
-		return "EntitySearchQuery [options=" + options + ", id=" + id
-				+ ", queryName=" + queryName + "]";
-	}
-
 	private String dataSet = null;
-	private String source = null;
-	private List<SearchFilter> options;
-
-	public List<SearchFilter> getOptions() {
-		return options;
-	}
-
-	public void setOptions(List<SearchFilter> options) {
-		this.options = options;
-	}
-
 	private String id;
+	private List<SearchFilter> options;
 	private String queryName;
-
-	public String getQueryName() {
-		return queryName;
-	}
-
-	public void setQueryName(String queryName) {
-		this.queryName = queryName;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
+	private String source = null;
 
 	public void add(SearchFilter option) {
 		if (options == null) {
@@ -66,9 +35,38 @@ public class AdvancedSearch2 {
 		options.add(option);
 	}
 
+	public String getId() {
+		return id;
+	}
+	public List<SearchFilter> getOptions() {
+		return options;
+	}
+
+	public String getQueryName() {
+		return queryName;
+	}
+
 	public void remove(SearchFilter option) {
 		if (options != null && options.size() > 0) {
 			options.remove(option);
 		}
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setOptions(List<SearchFilter> options) {
+		this.options = options;
+	}
+
+	public void setQueryName(String queryName) {
+		this.queryName = queryName;
+	}
+
+	@Override
+	public String toString() {
+		return "EntitySearchQuery [options=" + options + ", id=" + id
+				+ ", queryName=" + queryName + "]";
 	}
 }

@@ -5,10 +5,17 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.0.9-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>graphene-web</artifactId>
 	<name>${project.artifactId}</name>
+	<repositories>
+		<repository>
+			<id>lazan-releases</id>
+			<url>https://raw.githubusercontent.com/uklance/releases/master</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<artifactId>graphene-model</artifactId>
@@ -31,16 +38,22 @@
 			<artifactId>graphene-dao-sql</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>graphene-dao-neo4j</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.tynamo</groupId>
 			<artifactId>tapestry-security</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-upload</artifactId>
+			<version>${tapestry-release-version}</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-test</artifactId> 
 			<scope>test</scope> </dependency> -->
@@ -65,8 +78,15 @@
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.apache.avro</groupId> <artifactId>avro-ipc</artifactId> 
-			</dependency> -->
+		<dependency>
+			<groupId>org.lazan</groupId>
+			<artifactId>tapestry-atmosphere</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-runtime-native</artifactId>
+			<version>2.1.0-RC2</version>
+		</dependency>
 		<!-- We'll eventually stop using the version with this group id, or go 
 			to T5.4, which will eliminate the need for this. -->
 		<dependency>

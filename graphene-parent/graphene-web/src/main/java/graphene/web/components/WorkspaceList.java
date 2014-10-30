@@ -67,7 +67,7 @@ public class WorkspaceList {
 
 	@Parameter(required = true)
 	@Property
-	private String selectedWorkspaceId;
+	private int selectedWorkspaceId;
 
 	@Inject
 	private G_UserDataAccess service;
@@ -79,8 +79,7 @@ public class WorkspaceList {
 	private G_Workspace workspace;
 
 	public String getLinkCSSClass() {
-		if (workspace != null
-				&& workspace.getWorkspaceid().equals(selectedWorkspaceId)) {
+		if (workspace != null && workspace.getId() == selectedWorkspaceId) {
 			return "active";
 		} else {
 			return "";
@@ -135,7 +134,7 @@ public class WorkspaceList {
 	 */
 	public GridDataSource getWorkspaces() {
 		if (userExists) {
-			return new WorkspaceFilteredDataSource(service, user.getUsername(),
+			return new WorkspaceFilteredDataSource(service, user.getId(),
 					partialName);
 		} else {
 			logger.error("No user name to get workspaces for.");

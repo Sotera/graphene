@@ -56,7 +56,7 @@ public class CustomerDetails implements Cloneable {
 		}
 
 		String shortName = id.getShortName();
-		String family = id.getFamily();
+		String family = id.getNodeType();
 
 		if (id.getColumnSource().equals("Name,ResAddress1")) // kludge but
 																// needed as

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>graphene</groupId>
 	<artifactId>graphene-parent</artifactId>
-	<version>4.0.9-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<prerequisites>
 		<maven>3.0.4</maven>
@@ -26,6 +26,8 @@
 		<module>graphene-archetype</module>
 		<module>graphene-memorydb</module>
 		<module>graphene-dao-titan</module>
+		<module>graphene-dao-es</module>
+		<module>graphene-augment</module>
 	</modules>
 
 	<properties>
@@ -34,18 +36,17 @@
 
 
 		<!-- properties for dependencies for web frameworks -->
-		<resteasy.version>3.0.1.Final</resteasy.version>
+
 		<tapestry-release-version>5.3.7</tapestry-release-version>
 		<tynamo-version>0.5.0</tynamo-version>
 
 		<!-- properties for dependencies involving databases -->
-		<solr.version>4.2.0</solr.version>
+
 		<bonecp.version>0.8.0.RELEASE</bonecp.version>
-		<neo4j.version>2.0.1</neo4j.version>
 		<querydsl.version>3.3.1</querydsl.version>
 
 		<!-- properties for dependencies that are utilities -->
-		<vande.version>1.0.0-SNAPSHOT</vande.version>
+		<vande.version>1.1.0-SNAPSHOT</vande.version>
 		<jackson2.version>2.2.1	</jackson2.version>
 		<!-- <jackson2.version>2.3.0</jackson2.version> 2.3.0 does not work with 
 			resteasy 3.0.5.Final or 3.0.6.Final. -->
@@ -53,6 +54,7 @@
 		<opencsv.version>2.3</opencsv.version>
 		<disruptor.version>2.10.3</disruptor.version>
 		<guava.version>17.0</guava.version>
+		<guice.version>3.0</guice.version>
 		<sspace.version>2.0.4</sspace.version>
 		<mapdb.version>0.9.7</mapdb.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
@@ -286,33 +288,7 @@
 				<version>${tapestry-release-version}</version>
 			</dependency>
 
-			<!-- Here we are enforcing a specific version of resteasy and it's modules. -->
-			<dependency>
-				<groupId>org.jboss.resteasy</groupId>
-				<artifactId>resteasy-jackson2-provider</artifactId>
-				<version>${resteasy.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.resteasy</groupId>
-				<artifactId>resteasy-jaxrs-all</artifactId>
-				<version>${resteasy.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.resteasy</groupId>
-				<artifactId>resteasy-jaxrs</artifactId>
-				<version>${resteasy.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-simple</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.resteasy</groupId>
-				<artifactId>resteasy-jaxb-provider</artifactId>
-				<version>${resteasy.version}</version>
-			</dependency>
+
 
 			<!-- Jackson2 related dependencies -->
 			<!-- <dependency> <groupId>com.fasterxml.jackson.jaxrs</groupId> <artifactId>jackson-jaxrs-providers</artifactId> 
@@ -360,23 +336,6 @@
 			</dependency>
 
 
-
-			<dependency><!-- Tapestry integration with RESTEasy. -->
-				<groupId>org.tynamo</groupId>
-				<artifactId>tapestry-resteasy</artifactId>
-				<version>0.3.2</version>
-				<exclusions><!-- Here we exclude the built in resteasy versions, so we 
-						can specify our own versions. -->
-					<exclusion>
-						<groupId>org.jboss.resteasy</groupId>
-						<artifactId>resteasy-jaxrs</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.jboss.resteasy</groupId>
-						<artifactId>resteasy-jaxb-provider</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 			<!-- Provides a thin integration layer around Apache Shiro and allows 
 				annotations for page, component and method security, and the ability to easily 
 				alter the UI based on a users permissions. Also required for the Federated 
@@ -385,6 +344,12 @@
 				<groupId>org.tynamo</groupId>
 				<artifactId>tapestry-security</artifactId>
 				<version>0.5.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.lazan</groupId>
+				<artifactId>tapestry-atmosphere</artifactId>
+				<!-- lookup latest version at https://github.com/uklance/releases/tree/master/org/lazan/tapestry-atmosphere -->
+				<version>0.0.4</version>
 			</dependency>
 			<dependency><!-- Tapestry integration with JQuery. This may be removed 
 					if we switch to Tapestry 5.4, which includes JQuery support by default -->
@@ -442,26 +407,7 @@
 				<version>1.3.1</version>
 				<scope>runtime</scope>
 			</dependency>
-			<!-- Used for querying a remote solr server. -->
-			<dependency>
-				<groupId>org.apache.solr</groupId>
-				<artifactId>solr-solrj</artifactId>
-				<version>${solr.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>slf4j-jdk14</artifactId>
-						<groupId>org.slf4j</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>org.restlet</artifactId>
-						<groupId>org.restlet.jee</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>org.restlet.ext.servlet</artifactId>
-						<groupId>org.restlet.jee</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+
 			<dependency>
 				<groupId>com.googlecode.disruptor</groupId>
 				<artifactId>disruptor</artifactId>
@@ -474,6 +420,13 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
+			</dependency>
+			<dependency><!-- Guice is a google Dependency injection framework that 
+					is much like Tapestry IOC. It can be used as the need arises or for personal 
+					preference. -->
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>${guice.version}</version>
 			</dependency>
 			<dependency>
 				<!-- The S-Space Package is a Natural Language Processing library for 
@@ -534,36 +487,7 @@
 				<scope>provided</scope>
 			</dependency>
 
-			<!-- Neo4j -->
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j</artifactId>
-				<version>${neo4j.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>ch.qos.logback</groupId>
-						<artifactId>logback-classic</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<!-- Neo4j, sometimes you just need the kernel, part of enterprise -->
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j-kernel</artifactId>
-				<version>${neo4j.version}</version>
-			</dependency>
-			<!-- Needed for querying non embedded databases via rest -->
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j-rest-graphdb</artifactId>
-				<version>${neo4j.version}</version>
-			</dependency>
-			<!-- Needed for batch inserts, part of enterprise -->
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j-lucene-index</artifactId>
-				<version>${neo4j.version}</version>
-			</dependency>
+
 
 
 			<!-- Testing dependencies, Should not be in final Jars or Wars -->
@@ -609,6 +533,7 @@
 	</dependencyManagement>
 
 	<repositories>
+
 		<repository>
 			<releases>
 				<enabled>false</enabled>
@@ -619,7 +544,7 @@
 		</repository>
 		<repository>
 			<id>vande-mvn-repo</id>
-			<url>https://raw.github.com/Sotera/vande/mvn-repo/</url>
+			<url>https://raw.githubusercontent.com/Sotera/vande/mvn-repo/</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>

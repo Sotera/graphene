@@ -1,5 +1,8 @@
 package graphene.dao.neo4j;
 
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_UserFields;
 import graphene.util.ExceptionUtil;
 
@@ -11,7 +14,14 @@ import org.neo4j.graphdb.schema.IndexDefinition;
 import org.slf4j.Logger;
 
 public class GenericUserSpaceDAONeo4jE {
+	@Inject
+	protected G_EdgeTypeAccess edgeTypeAccess;
 
+	@Inject
+	protected G_NodeTypeAccess nodeTypeAccess;
+
+	@Inject
+	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 	@Inject
 	Logger logger;
 
@@ -20,6 +30,25 @@ public class GenericUserSpaceDAONeo4jE {
 	}
 
 	protected Neo4JEmbeddedService n4jService;
+
+	protected Node getUserNodeById(int id) {
+		Node n = null;
+		try (Transaction tx = beginTx()) {
+			for (Node node : n4jService.getGraphDb()
+					.findNodesByLabelAndProperty(
+							GrapheneNeo4JConstants.userLabel,
+							G_UserFields.id.name(), id)) {
+				n = node;
+			}
+			tx.success();
+		} catch (Exception e) {
+			logger.error(ExceptionUtil.getRootCauseMessage(e));
+		}
+		if (n == null) {
+			logger.warn("Could not find a user with id '" + id + "'");
+		}
+		return n;
+	}
 
 	protected Node getUserNodeByUsername(String username) {
 		Node n = null;
@@ -35,7 +64,7 @@ public class GenericUserSpaceDAONeo4jE {
 			logger.error(ExceptionUtil.getRootCauseMessage(e));
 		}
 		if (n == null) {
-			logger.warn("Could not find a user with username '" + username+"'");
+			logger.warn("Could not find a user with id '" + username + "'");
 		}
 		return n;
 	}

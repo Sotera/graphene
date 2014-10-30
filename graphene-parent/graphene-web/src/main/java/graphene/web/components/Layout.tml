@@ -18,9 +18,9 @@
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 		<!-- FAVICONS -->
-		<link rel="shortcut icon" href="${themePath}img/favicon/favicon.ico"
+		<link rel="shortcut icon" href="${context:core/img/favicon/favicon.ico}"
 			type="image/x-icon" />
-		<link rel="icon" href="${themePath}img/favicon/favicon.ico" type="image/x-icon" />
+		<link rel="icon" href="${context:core/img/favicon/favicon.ico}" type="image/x-icon" />
 
 
 
@@ -68,45 +68,45 @@
 			uses lots of memory on iDevices) <script data-pace-options='{ "restartOnRequestAfter": 
 			true }' src="js/plugin/pace/pace.min.js"></script> -->
 		<script data-pace-options='{ "restartOnRequestAfter": true }'
-			src="${jsLibPace}" />
+			src="${context:/core/js/plugin/pace/pace.min.js}" />
 
 
 		<!-- JS TOUCH : include this plugin for mobile drag / drop touch events 
 			<script src="js/plugin/jquery-touch/jquery.ui.touch-punch.min.js"></script> -->
 
 		<!-- BOOTSTRAP JS -->
-		<script src="${jsLib3}" />
+		<script src="${context:/core/js/bootstrap/bootstrap.min.js}" />
 
 		<!-- CUSTOM NOTIFICATION -->
-		<script src="${jsLib4}" />
+		<script src="${context:/core/js/notification/GNotification.min.js}" />
 
 		<!-- JARVIS WIDGETS -->
-		<script src="${jsLib5}" />
+		<script src="${context:/core/js/gwidgets/g.widget.js}" />
 
 		<!-- EASY PIE CHARTS -->
-		<script src="${jsLib6}" />
+		<script src="${context:/core/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js}" />
 
 		<!-- SPARKLINES -->
-		<script src="${jsLib7}" />
+		<script src="${context:/core/js/plugin/sparkline/jquery.sparkline.min.js}" />
 
 		<!-- JQUERY VALIDATE -->
-		<script src="${jsLib8}" />
+		<script src="${context:/core/js/plugin/jquery-validate/jquery.validate.min.js}" />
 
 		<!-- JQUERY MASKED INPUT -->
-		<script src="${jsLib9}" />
+		<script src="${context:/core/js/plugin/masked-input/jquery.maskedinput.min.js}" />
 
 		<!-- JQUERY SELECT2 INPUT -->
-		<script src="${jsLib10}" />
+		<script src="${context:/core/js/plugin/select2/select2.min.js}" />
 
 		<!-- JQUERY UI + Bootstrap Slider -->
-		<script src="${jsLib11}" />
+		<script src="${context:/core/js/plugin/bootstrap-slider/bootstrap-slider.min.js}" />
 
 		<!-- browser msie issue fix -->
-		<script src="${jsLib12}" />
+		<script src="${context:/core/js/plugin/msie-fix/jquery.mb.browser.min.js}" />
 
-		<script src="${jsDemo}" />
-		<script src="${jsApp}" />
-
+		<script src="${context:/core/js/demo.js}" />
+		<script src="${context:/core/js/app.js}" />
+		
 		<script type="text/javascript">
 			function logout() {
 			window.location =

@@ -5,17 +5,17 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * Describes a date range at a specific resolution.
-	 * */
+/** Describes a date range at a specific resolution.
+	 
+	 CHANGED IN 1.5 */
 @org.apache.avro.specific.AvroGenerated
 public class G_DateRange extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_DateRange\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* Describes a date range at a specific resolution.\\r\\n\\t *\",\"fields\":[{\"name\":\"startDate\",\"type\":\"long\"},{\"name\":\"numBins\",\"type\":\"long\",\"doc\":\"number of bins to return, e.g. 12 monthly bins for 1 year of data\"},{\"name\":\"durationPerBin\",\"type\":{\"type\":\"record\",\"name\":\"G_Duration\",\"doc\":\"* A temporal duration\\r\\n\\t *\",\"fields\":[{\"name\":\"interval\",\"type\":{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"doc\":\"* Temporal resolution of a duration\\r\\n\\t *\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]},\"doc\":\"time aggregation level, e.g. use monthly data\"},{\"name\":\"numIntervals\",\"type\":\"long\",\"doc\":\"number of intervals, e.g. 12 monthly intervals is a 1 year duration\"}]},\"doc\":\"* number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2\\r\\n\\t\\t * years of data\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_DateRange\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Describes a date range at a specific resolution.\\r\\n\\t \\r\\n\\t CHANGED IN 1.5\",\"fields\":[{\"name\":\"startDate\",\"type\":\"long\"},{\"name\":\"numBins\",\"type\":\"long\",\"doc\":\"number of bins to return, e.g. 12 monthly bins for 1 year of data\"},{\"name\":\"durationPerBin\",\"type\":{\"type\":\"record\",\"name\":\"G_Duration\",\"doc\":\"A temporal duration\\r\\n\\t \\r\\n\\t ADDED IN 1.5\",\"fields\":[{\"name\":\"interval\",\"type\":{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"doc\":\"Temporal resolution of a duration\\r\\n\\t \\r\\n\\t CHANGED IN 1.5\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]},\"doc\":\"time aggregation level, e.g. use monthly data\"},{\"name\":\"numIntervals\",\"type\":\"long\",\"doc\":\"number of intervals, e.g. 12 monthly intervals is a 1 year duration\"}]},\"doc\":\"number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2 years of data\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private long startDate;
   /** number of bins to return, e.g. 12 monthly bins for 1 year of data */
    private long numBins;
-  /** * number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2
-		 * years of data */
+  /** number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2 years of data */
    private graphene.model.idl.G_Duration durationPerBin;
 
   /**
@@ -87,16 +87,14 @@ public class G_DateRange extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Gets the value of the 'durationPerBin' field.
-   * * number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2
-		 * years of data   */
+   * number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2 years of data   */
   public graphene.model.idl.G_Duration getDurationPerBin() {
     return durationPerBin;
   }
 
   /**
    * Sets the value of the 'durationPerBin' field.
-   * * number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2
-		 * years of data   * @param value the value to set.
+   * number of intervals in a bin, e.g. 2 months/bin in 12 bins for 2 years of data   * @param value the value to set.
    */
   public void setDurationPerBin(graphene.model.idl.G_Duration value) {
     this.durationPerBin = value;

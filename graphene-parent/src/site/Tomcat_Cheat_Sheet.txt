@@ -1,0 +1,4 @@
+-XX:PermSize=256m
+-XX:MaxPermSize=512m
+-Xms1g
+-Xmx4g

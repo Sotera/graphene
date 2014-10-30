@@ -5,14 +5,15 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * Cluster of nodes in the social, financial, communications or other
-	 * graphs. */
+/** Cluster of nodes in the social, financial, communications or other graphs. 
+	 
+	 CHANGED in 1.7:
+	    - added version */
 @org.apache.avro.specific.AvroGenerated
 public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Cluster\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* Cluster of nodes in the social, financial, communications or other\\r\\n\\t * graphs.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* A unique identifier use to retrieve data about this cluster. Should\\r\\n\\t\\t * not be used for non-global identifiers.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_EntityTag\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"GROUP\",\"CLUSTER\",\"CLUSTER_SUMMARY\",\"FILE\",\"ANONYMOUS\",\"OTHER\",\"REDACTED\"]}},\"doc\":\"Entity Tags (see DataTypes, e.g. \\\"CLUSTER\\\")\"},{\"name\":\"provenance\",\"type\":[{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"* This is a placeholder for future modeling of provenance. It is not a\\r\\n\\t * required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"* This is a placeholder for future modeling of uncertainty. It is not a\\r\\n\\t * required field in any service calls.\\r\\n\\t *\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"* Placeholder for now. Express original source confidence as a single\\r\\n\\t\\t * number from 0 to 1.\",\"default\":1},{\"name\":\"type\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the uncertainty (source data, algorithm,\\r\\n\\t\\t * unit, etc)\",\"default\":null}]},\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Property\",\"doc\":\"* Each property on an Entity or Link is a name-value pair, with data type\\r\\n\\t * information, as well as optional provenance. Tags provide a way for the\\r\\n\\t * data provider to associate semantic annotations to each property in terms\\r\\n\\t * of the semantics of the application.\\r\\n\\t *\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"* Single value\\r\\n\\t *\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"* Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"IMAGE\",\"URI\",\"OTHER\",\"REDACTED\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"* List of values\\r\\n\\t *\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"* Bounded or unbounded range values\\r\\n\\t *\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"* If true, range includes specified endpoint. If false, range is\\r\\n\\t\\t * exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"* Describes a distribution of values.\\r\\n\\t *\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"* A frequency or probability element of a distribution.\\r\\n\\t *\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]}}},{\"name\":\"rangeType\",\"type\":{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"* Allowed types for Ranges of values.\\r\\n\\t *\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"doc\":\"Describes how the values in the distribution are summarized\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"* The type of value that the distribution describes. One of DOUBLE,\\r\\n\\t\\t * LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]}],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"* Tags are defined by the application layer as a taxonomy of user and\\r\\n\\t * application concepts, independent of the data sources. This allows\\r\\n\\t * application semantics to be re-used with new data, with a minimum of new\\r\\n\\t * software design and development. Data layer entity types, link types and\\r\\n\\t * properties should be mapped into the list of tags. The application layer\\r\\n\\t * must be able to search by native field name or by tag interchangeably,\\r\\n\\t * and properties returned must contain both native field names as well as\\r\\n\\t * tags.\\r\\n\\t * \\r\\n\\t * The list of tags may change as application features evolve, though that\\r\\n\\t * will require collaboration with the data layer providers. Evolving the\\r\\n\\t * tag list should not change the Data Access or Search APIs.\\r\\n\\t * \\r\\n\\t * This is the current list of tags for Properties:\\r\\n\\t * \\r\\n\\t *\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"VIDEO\",\"AUDIO\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\",\"REDACTED\"]}},\"doc\":\"* one or more tags from the Tag list, used to map this source-specific\\r\\n\\t\\t * field into the semantics of applications\"}]}}},{\"name\":\"members\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"List of id's of the members of this cluster\"},{\"name\":\"subclusters\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"* List of id's of the subclusters of this cluster - empty if this is a\\r\\n\\t\\t * leaf cluster in cluster hierarchy\"},{\"name\":\"parent\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* The id of the parent cluster if this is a cluster in a hierarchy -\\r\\n\\t\\t * Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"root\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* The id of the root cluster (top level cluster) if this is a cluster\\r\\n\\t\\t * in a hierarchy - Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"level\",\"type\":\"int\",\"doc\":\"* The degree from the root this cluster is in the hierarchy - level = 0\\r\\n\\t\\t * if this"," is a root cluster *\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Cluster\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Cluster of nodes in the social, financial, communications or other graphs. \\r\\n\\t \\r\\n\\t CHANGED in 1.7:\\r\\n\\t    - added version\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"A unique identifier use to retrieve data about this cluster. Should not be used for non-global identifiers.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_EntityTag\",\"doc\":\"This is the current list of tags for Entities:\\r\\n\\t \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"GROUP\",\"CLUSTER\",\"CLUSTER_SUMMARY\",\"FILE\",\"ANONYMOUS\",\"PROMPT_FOR_DETAILS\",\"OTHER\"]}},\"doc\":\"Entity Tags (see DataTypes, e.g. \\\"CLUSTER\\\")\"},{\"name\":\"provenance\",\"type\":[{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"This is a placeholder for future modeling of provenance. It is not a required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1}]},\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Property\",\"doc\":\"Each property on an Entity or Link is a name-value pair, with data type information, as well as optional\\r\\n\\t provenance. Tags provide a way for the data provider to associate semantic annotations to each property\\r\\n\\t in terms of the semantics of the application.  \\r\\n\\t \\r\\n\\t CHANGED IN 1.6\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"Describes a distribution of values. \\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"A frequency or probability element of a distribution.\\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]}}},{\"name\":\"rangeType\",\"type\":{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"doc\":\"Describes how the values in the distribution are summarised\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"The type of value that the distribution describes. One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]}],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"Tags are defined by the application layer as a taxonomy of user and application concepts,\\r\\n\\t independent of the data sources. This allows application semantics to be re-used with new\\r\\n\\t data, with a minimum of new software design and development. Data layer entity types, link\\r\\n\\t types and properties should be mapped into the list of tags. The application layer must be\\r\\n\\t able to search by native field name or by tag interchangeably, and properties returned must\\r\\n\\t contain both native field names as well as tags.\\r\\n\\t \\r\\n\\t The list of tags may change as application features evolve, though that will require\\r\\n\\t collaboration with the data layer providers. Evolving the tag list should not change the\\r\\n\\t Data Access or Search APIs.\\r\\n\\r\\n\\t This is the current list of tags for Properties:\\r\\n\\t \\r\\n\\t CHANGED in 1.5:\\r\\n\\t   - CREDIT/DEBIT changed to INFLOWING/OUTFLOWING\\r\\n\\t   - added USD\\r\\n\\t   - added DURATION\\r\\n\\t   \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ENTITY_TYPE\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY, COUNTRY_CODE\\r\\n\\t   \\r\\n\\t CHANGED in 1.7:\\r\\n\\t   - added CLUSTER\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"CLUSTER\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\"]}},\"doc\":\"one or more tags from the Tag list, used to map this source-specific field into the semantics of applications\"}]}}},{\"name\":\"members\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"List of id's of the members of this cluster\"},{\"name\":\"subclusters\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"doc\":\"List of id's of the subclusters of this cluster - empty if this is a leaf cluster in cluster hierarchy\"},{\"name\":\"parent\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"The id of the parent cluster if this is a cluster in a hierarchy - Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"root\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"The id of the root cluster (top level cluster) if this is a cluster in a hierarchy - Can be null if this is a root cluster *\",\"default\":null},{\"name\":\"level\",\"type\":\"int\",\"doc\":\"The degree from the root this cluster is in the hierarchy - le","vel = 0 if this is a root cluster *\",\"default\":0},{\"name\":\"version\",\"type\":\"int\",\"doc\":\"The version number of the cluster - each time the cluster contents is modified the version should be incremented *\",\"default\":1}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-  /** * A unique identifier use to retrieve data about this cluster. Should
-		 * not be used for non-global identifiers. */
+  /** A unique identifier use to retrieve data about this cluster. Should not be used for non-global identifiers. */
    private java.lang.String uid;
   /** Entity Tags (see DataTypes, e.g. "CLUSTER") */
    private java.util.List<graphene.model.idl.G_EntityTag> tags;
@@ -21,18 +22,16 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
    private java.util.List<graphene.model.idl.G_Property> properties;
   /** List of id's of the members of this cluster */
    private java.util.List<java.lang.String> members;
-  /** * List of id's of the subclusters of this cluster - empty if this is a
-		 * leaf cluster in cluster hierarchy */
+  /** List of id's of the subclusters of this cluster - empty if this is a leaf cluster in cluster hierarchy */
    private java.util.List<java.lang.String> subclusters;
-  /** * The id of the parent cluster if this is a cluster in a hierarchy -
-		 * Can be null if this is a root cluster * */
+  /** The id of the parent cluster if this is a cluster in a hierarchy - Can be null if this is a root cluster * */
    private java.lang.String parent;
-  /** * The id of the root cluster (top level cluster) if this is a cluster
-		 * in a hierarchy - Can be null if this is a root cluster * */
+  /** The id of the root cluster (top level cluster) if this is a cluster in a hierarchy - Can be null if this is a root cluster * */
    private java.lang.String root;
-  /** * The degree from the root this cluster is in the hierarchy - level = 0
-		 * if this is a root cluster * */
+  /** The degree from the root this cluster is in the hierarchy - level = 0 if this is a root cluster * */
    private int level;
+  /** The version number of the cluster - each time the cluster contents is modified the version should be incremented * */
+   private int version;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -44,7 +43,7 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
   /**
    * All-args constructor.
    */
-  public G_Cluster(java.lang.String uid, java.util.List<graphene.model.idl.G_EntityTag> tags, graphene.model.idl.G_Provenance provenance, graphene.model.idl.G_Uncertainty uncertainty, java.util.List<graphene.model.idl.G_Property> properties, java.util.List<java.lang.String> members, java.util.List<java.lang.String> subclusters, java.lang.String parent, java.lang.String root, java.lang.Integer level) {
+  public G_Cluster(java.lang.String uid, java.util.List<graphene.model.idl.G_EntityTag> tags, graphene.model.idl.G_Provenance provenance, graphene.model.idl.G_Uncertainty uncertainty, java.util.List<graphene.model.idl.G_Property> properties, java.util.List<java.lang.String> members, java.util.List<java.lang.String> subclusters, java.lang.String parent, java.lang.String root, java.lang.Integer level, java.lang.Integer version) {
     this.uid = uid;
     this.tags = tags;
     this.provenance = provenance;
@@ -55,6 +54,7 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
     this.parent = parent;
     this.root = root;
     this.level = level;
+    this.version = version;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -71,6 +71,7 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
     case 7: return parent;
     case 8: return root;
     case 9: return level;
+    case 10: return version;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -88,22 +89,21 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
     case 7: parent = (java.lang.String)value$; break;
     case 8: root = (java.lang.String)value$; break;
     case 9: level = (java.lang.Integer)value$; break;
+    case 10: version = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
    * Gets the value of the 'uid' field.
-   * * A unique identifier use to retrieve data about this cluster. Should
-		 * not be used for non-global identifiers.   */
+   * A unique identifier use to retrieve data about this cluster. Should not be used for non-global identifiers.   */
   public java.lang.String getUid() {
     return uid;
   }
 
   /**
    * Sets the value of the 'uid' field.
-   * * A unique identifier use to retrieve data about this cluster. Should
-		 * not be used for non-global identifiers.   * @param value the value to set.
+   * A unique identifier use to retrieve data about this cluster. Should not be used for non-global identifiers.   * @param value the value to set.
    */
   public void setUid(java.lang.String value) {
     this.uid = value;
@@ -186,16 +186,14 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Gets the value of the 'subclusters' field.
-   * * List of id's of the subclusters of this cluster - empty if this is a
-		 * leaf cluster in cluster hierarchy   */
+   * List of id's of the subclusters of this cluster - empty if this is a leaf cluster in cluster hierarchy   */
   public java.util.List<java.lang.String> getSubclusters() {
     return subclusters;
   }
 
   /**
    * Sets the value of the 'subclusters' field.
-   * * List of id's of the subclusters of this cluster - empty if this is a
-		 * leaf cluster in cluster hierarchy   * @param value the value to set.
+   * List of id's of the subclusters of this cluster - empty if this is a leaf cluster in cluster hierarchy   * @param value the value to set.
    */
   public void setSubclusters(java.util.List<java.lang.String> value) {
     this.subclusters = value;
@@ -203,16 +201,14 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Gets the value of the 'parent' field.
-   * * The id of the parent cluster if this is a cluster in a hierarchy -
-		 * Can be null if this is a root cluster *   */
+   * The id of the parent cluster if this is a cluster in a hierarchy - Can be null if this is a root cluster *   */
   public java.lang.String getParent() {
     return parent;
   }
 
   /**
    * Sets the value of the 'parent' field.
-   * * The id of the parent cluster if this is a cluster in a hierarchy -
-		 * Can be null if this is a root cluster *   * @param value the value to set.
+   * The id of the parent cluster if this is a cluster in a hierarchy - Can be null if this is a root cluster *   * @param value the value to set.
    */
   public void setParent(java.lang.String value) {
     this.parent = value;
@@ -220,16 +216,14 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Gets the value of the 'root' field.
-   * * The id of the root cluster (top level cluster) if this is a cluster
-		 * in a hierarchy - Can be null if this is a root cluster *   */
+   * The id of the root cluster (top level cluster) if this is a cluster in a hierarchy - Can be null if this is a root cluster *   */
   public java.lang.String getRoot() {
     return root;
   }
 
   /**
    * Sets the value of the 'root' field.
-   * * The id of the root cluster (top level cluster) if this is a cluster
-		 * in a hierarchy - Can be null if this is a root cluster *   * @param value the value to set.
+   * The id of the root cluster (top level cluster) if this is a cluster in a hierarchy - Can be null if this is a root cluster *   * @param value the value to set.
    */
   public void setRoot(java.lang.String value) {
     this.root = value;
@@ -237,19 +231,32 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Gets the value of the 'level' field.
-   * * The degree from the root this cluster is in the hierarchy - level = 0
-		 * if this is a root cluster *   */
+   * The degree from the root this cluster is in the hierarchy - level = 0 if this is a root cluster *   */
   public java.lang.Integer getLevel() {
     return level;
   }
 
   /**
    * Sets the value of the 'level' field.
-   * * The degree from the root this cluster is in the hierarchy - level = 0
-		 * if this is a root cluster *   * @param value the value to set.
+   * The degree from the root this cluster is in the hierarchy - level = 0 if this is a root cluster *   * @param value the value to set.
    */
   public void setLevel(java.lang.Integer value) {
     this.level = value;
+  }
+
+  /**
+   * Gets the value of the 'version' field.
+   * The version number of the cluster - each time the cluster contents is modified the version should be incremented *   */
+  public java.lang.Integer getVersion() {
+    return version;
+  }
+
+  /**
+   * Sets the value of the 'version' field.
+   * The version number of the cluster - each time the cluster contents is modified the version should be incremented *   * @param value the value to set.
+   */
+  public void setVersion(java.lang.Integer value) {
+    this.version = value;
   }
 
   /** Creates a new G_Cluster RecordBuilder */
@@ -283,6 +290,7 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
     private java.lang.String parent;
     private java.lang.String root;
     private int level;
+    private int version;
 
     /** Creates a new Builder */
     private Builder() {
@@ -332,6 +340,10 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
         this.level = data().deepCopy(fields()[9].schema(), other.level);
         fieldSetFlags()[9] = true;
       }
+      if (isValidValue(fields()[10], other.version)) {
+        this.version = data().deepCopy(fields()[10].schema(), other.version);
+        fieldSetFlags()[10] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing G_Cluster instance */
@@ -376,6 +388,10 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
       if (isValidValue(fields()[9], other.level)) {
         this.level = data().deepCopy(fields()[9].schema(), other.level);
         fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.version)) {
+        this.version = data().deepCopy(fields()[10].schema(), other.version);
+        fieldSetFlags()[10] = true;
       }
     }
 
@@ -628,6 +644,30 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
       return this;
     }
 
+    /** Gets the value of the 'version' field */
+    public java.lang.Integer getVersion() {
+      return version;
+    }
+    
+    /** Sets the value of the 'version' field */
+    public graphene.model.idl.G_Cluster.Builder setVersion(int value) {
+      validate(fields()[10], value);
+      this.version = value;
+      fieldSetFlags()[10] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'version' field has been set */
+    public boolean hasVersion() {
+      return fieldSetFlags()[10];
+    }
+    
+    /** Clears the value of the 'version' field */
+    public graphene.model.idl.G_Cluster.Builder clearVersion() {
+      fieldSetFlags()[10] = false;
+      return this;
+    }
+
     @Override
     public G_Cluster build() {
       try {
@@ -642,6 +682,7 @@ public class G_Cluster extends org.apache.avro.specific.SpecificRecordBase imple
         record.parent = fieldSetFlags()[7] ? this.parent : (java.lang.String) defaultValue(fields()[7]);
         record.root = fieldSetFlags()[8] ? this.root : (java.lang.String) defaultValue(fields()[8]);
         record.level = fieldSetFlags()[9] ? this.level : (java.lang.Integer) defaultValue(fields()[9]);
+        record.version = fieldSetFlags()[10] ? this.version : (java.lang.Integer) defaultValue(fields()[10]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

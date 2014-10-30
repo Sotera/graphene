@@ -19,6 +19,8 @@ package graphene.util;
  * under the License.
  */
 
+import graphene.util.validator.ValidationUtils;
+
 import java.text.BreakIterator;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -576,5 +578,25 @@ public class StringUtils {
 			String str, String delimiters) {
 
 		return tokenizeToStringCollection(str, delimiters, true, true);
+	}
+
+	/**
+	 * Opposite of tokenizing, we are combining strings into one string.
+	 * 
+	 * @param delimiter
+	 * @param values
+	 * @return 
+	 */
+	public static String coalesc(String delimiter, String... values) {
+		StringBuffer buf = new StringBuffer();
+		for (String v : values) {
+			if (ValidationUtils.isValid(v)) {
+				if (buf.length() > 0) {
+					buf.append(delimiter);
+				}
+				buf.append(v);
+			}
+		}
+		return buf.toString();
 	}
 }

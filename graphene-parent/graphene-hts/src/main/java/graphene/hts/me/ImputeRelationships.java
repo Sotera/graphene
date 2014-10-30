@@ -1,15 +1,22 @@
 package graphene.hts.me;
 
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_CanonicalTruthValues;
+import graphene.model.idl.G_EdgeType;
+import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_Gender;
-import graphene.model.idl.G_NodeType;
-import graphene.model.idl.G_RelationshipType;
+import graphene.model.idl.G_IdType;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.util.Triple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.avro.AvroRemoteException;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
  * Moved familial imputing to it's own class, outside of the main ingest class.
@@ -18,8 +25,19 @@ import java.util.Map;
  * 
  */
 public class ImputeRelationships {
-	public void impute(
-			ArrayList<Triple<Long, G_Gender, String>> fatherTriples, Object customerId1, Object relationship_bf, Object hasKinRels, Object customerId2, Object customers) {
+
+	@Inject
+	private G_EdgeTypeAccess edgeTypeAccess;
+
+	@Inject
+	private G_NodeTypeAccess nodeTypeAccess;
+
+	@Inject
+	private G_PropertyKeyTypeAccess propertyKeyTypeAccess;
+
+	public void impute(ArrayList<Triple<Long, G_Gender, String>> fatherTriples,
+			Object customerId1, Object relationship_bf, Object hasKinRels,
+			Object customerId2, Object customers) {
 		// Deal with Familial Parents of the node
 
 		int childIsMaleVote = 0;
@@ -28,16 +46,31 @@ public class ImputeRelationships {
 		for (Triple<Long, G_Gender, String> imputedFatherTriple : fatherTriples) {
 			// properties for the RELATION object, not the nodes.
 			Map<String, Object> fprops = new HashMap<String, Object>();
-			fprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(), "Dataset1");
+			fprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(),
+					"Dataset1");
 			fprops.put(G_CanonicalPropertyType.CONTEXT.toString(), "Parent Of");
 			fprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(),
 					G_CanonicalTruthValues.TRUE.toString());
-			createSafeRelationship(imputedFatherTriple.getFirst(),
-					G_RelationshipType.KIN_OF, customerId1, fprops,
-					relationship_bf, hasKinRels);
-			createSafeRelationship(imputedFatherTriple.getFirst(),
-					G_RelationshipType.KIN_OF, customerId2, fprops,
-					relationship_bf, hasKinRels);
+			try {
+				createSafeRelationship(imputedFatherTriple.getFirst(),
+						edgeTypeAccess
+								.getEdgeType(G_CanonicalRelationshipType.KIN_OF
+										.name()), customerId1, fprops,
+						relationship_bf, hasKinRels);
+			} catch (AvroRemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				createSafeRelationship(imputedFatherTriple.getFirst(),
+						edgeTypeAccess
+								.getEdgeType(G_CanonicalRelationshipType.KIN_OF
+										.name()), customerId2, fprops,
+						relationship_bf, hasKinRels);
+			} catch (AvroRemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			/*
 			 * This below is a tricky experimental part, so hold on to your
 			 * mouse:
@@ -61,16 +94,33 @@ public class ImputeRelationships {
 			 * how something was imputed.
 			 */
 			Map<String, Object> mbtsprops = new HashMap<String, Object>();
-			mbtsprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(), "Dataset1");
-			mbtsprops.put(G_CanonicalPropertyType.CONTEXT.toString(), "Parent Of");
+			mbtsprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(),
+					"Dataset1");
+			mbtsprops.put(G_CanonicalPropertyType.CONTEXT.toString(),
+					"Parent Of");
 			mbtsprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(),
 					G_CanonicalTruthValues.TRUE.toString());
-			Long nonImputedFatherId = getOrCreateNodeId(
-					G_NodeType.NAME.toString(),
-					imputedFatherTriple.getThird(), mbtsprops, customers);
-			createSafeRelationship(imputedFatherTriple.getFirst(),
-					G_RelationshipType.MAY_BE_THE_SAME, nonImputedFatherId,
-					mbtsprops, relationship_bf, hasKinRels);
+			Long nonImputedFatherId = null;
+			try {
+				nonImputedFatherId = getOrCreateNodeId(
+						nodeTypeAccess.getNodeType(G_CanonicalPropertyType.NAME
+								.name()), imputedFatherTriple.getThird(),
+						mbtsprops, customers);
+			} catch (AvroRemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				createSafeRelationship(
+						imputedFatherTriple.getFirst(),
+						edgeTypeAccess
+								.getEdgeType(G_CanonicalRelationshipType.MAY_BE_THE_SAME
+										.name()), nonImputedFatherId,
+						mbtsprops, relationship_bf, hasKinRels);
+			} catch (AvroRemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			if (imputedFatherTriple.getSecond().equals(G_Gender.MALE)) {
 
@@ -99,16 +149,16 @@ public class ImputeRelationships {
 
 	}
 
-	private Long getOrCreateNodeId(String string, String third,
+	private Long getOrCreateNodeId(G_IdType g_NodeType, String third,
 			Map<String, Object> mbtsprops, Object customers) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private void createSafeRelationship(Long first, G_RelationshipType hasKin,
+	private void createSafeRelationship(Long first, G_EdgeType hasKin,
 			Object customerId1, Map<String, Object> fprops,
 			Object relationship_bf, Object hasKinRels) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -19,25 +19,31 @@ import org.joda.time.DateTime;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
+import scala.Array;
+
 public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		WorkspaceDAO {
+	G_UserSpaceRelationshipTypeFunnel relfunnel;
+
 	public WorkspaceDAONeo4JEImpl(@UserGraph Neo4JEmbeddedService service) {
 		this.n4jService = service;
+
 	}
 
 	@Override
-	public G_Workspace addNewWorkspace(String username, G_Workspace w) {
+	public G_Workspace addNewWorkspace(int userId, G_Workspace w) {
 		boolean success = false;
 		boolean createRelationship = true;
 		Node u, wNode;
-		u = getUserNodeByUsername(username);
+		u = getUserNodeById(userId);
 		wNode = getOrCreateWorkspaceNode(w);
 		try (Transaction tx = beginTx()) {
-			for (Relationship r : u
-					.getRelationships(G_UserSpaceRelationshipType.EDITOR_OF)) {
+			for (Relationship r : u.getRelationships(relfunnel
+					.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
 				logger.debug("r.getEndNode().getId() " + r.getEndNode().getId());
 				logger.debug("wNode.getId() " + wNode.getId());
 				if (r.getEndNode().getId() == wNode.getId()) {
@@ -52,34 +58,35 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		if (success) {
 			if (createRelationship) {
 				try (Transaction tx = beginTx()) {
-					u.createRelationshipTo(wNode, G_UserSpaceRelationshipType.EDITOR_OF);
+					u.createRelationshipTo(wNode,
+							relfunnel.to(G_UserSpaceRelationshipType.EDITOR_OF));
 					tx.success();
 				}
 			}
 			return w;
 		} else {
-			logger.error("Could not add new Workspace " + w.getWorkspaceid()
-					+ " to user " + username);
+			logger.error("Could not add new Workspace " + w.getId()
+					+ " to user " + userId);
 			return null;
 		}
 	}
 
 	@Override
-	public boolean addRelationToWorkspace(String username,
-			G_UserSpaceRelationshipType rel, String workspaceid) {
+	public boolean addRelationToWorkspace(int userId,
+			G_UserSpaceRelationshipType rel, int id) {
 		boolean success = false;
 		boolean createRelationship = true;
-		Node u = getUserNodeByUsername(username);
-		Node w = getWorkspaceNodeById(workspaceid);
+		Node u = getUserNodeById(userId);
+		Node w = getWorkspaceNodeById(id);
 		if (u == null) {
-			logger.error("Could not find user " + username);
+			logger.error("Could not find user " + userId);
 			return false;
 		} else if (w == null) {
-			logger.error("Could not find workspace " + workspaceid);
+			logger.error("Could not find workspace " + id);
 			return false;
 		}
 		try (Transaction tx = beginTx()) {
-			for (Relationship r : u.getRelationships(rel)) {
+			for (Relationship r : u.getRelationships(relfunnel.to(rel))) {
 				logger.debug("r.getEndNode().getId() " + r.getEndNode().getId());
 				logger.debug("wNode.getId() " + u.getId());
 				if (r.getEndNode().getId() == w.getId()) {
@@ -94,7 +101,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		if (success) {
 			if (createRelationship) {
 				try (Transaction tx = beginTx()) {
-					u.createRelationshipTo(w, rel);
+					u.createRelationshipTo(w, relfunnel.to(rel));
 					tx.success();
 				}
 			}
@@ -130,7 +137,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public long countWorkspaces(String userId, String partialName) {
+	public long countWorkspaces(int userId, String partialName) {
 		long n = 0;
 
 		try (Transaction tx = beginTx()) {
@@ -143,7 +150,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			}
 			String queryString = "match (u:"
 					+ GrapheneNeo4JConstants.userLabel.name() + " {"
-					+ G_UserFields.username + ":'" + userId + "'})-[r:"
+					+ G_UserFields.id + ":'" + userId + "'})-[r:"
 					+ G_UserSpaceRelationshipType.EDITOR_OF + "]-(w:"
 					+ GrapheneNeo4JConstants.workspaceLabel + ") "
 					+ filterOnTitle + " return count(*) as c;";
@@ -165,16 +172,12 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				d = new G_Workspace();
 				d.setActive((boolean) u.getProperty(
 						G_WorkspaceFields.active.name(), true));
-				d.setCreatorusername((String) u.getProperty(
-						G_WorkspaceFields.creatorusername.name(),
-						"Unknown Creator"));
 				d.setJson((String) u.getProperty(G_WorkspaceFields.json.name()));
-				d.setLastmodified(new DateTime(u.getProperty(
-						G_WorkspaceFields.lastmodified.name(), 0l)).getMillis());
+				d.setModified(new DateTime(u.getProperty(
+						G_WorkspaceFields.modified.name(), 0l)).getMillis());
 				d.setTitle((String) u.getProperty(G_WorkspaceFields.title
 						.name()));
-				d.setWorkspaceid((String) u
-						.getProperty(G_WorkspaceFields.workspaceid.name()));
+				d.setId((Integer) u.getProperty(G_WorkspaceFields.id.name()));
 				tx.success();
 			}
 		}
@@ -197,7 +200,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean deleteWorkspaceById(String workspaceId) {
+	public boolean deleteWorkspaceById(int workspaceId) {
 		boolean success = false;
 		try (Transaction tx = beginTx()) {
 			Node n = getWorkspaceNodeById(workspaceId);
@@ -211,7 +214,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean deleteWorkspaceIfUnused(String workspaceId) {
+	public boolean deleteWorkspaceIfUnused(int workspaceId) {
 		boolean success = false;
 		Node wNode;
 		wNode = getWorkspaceNodeById(workspaceId);
@@ -221,9 +224,11 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			try (Transaction tx = beginTx()) {
 				// If the node has NO incoming edges of Editor, then delete it.
 				if (!wNode
-						.getRelationships(Direction.INCOMING,
-								G_UserSpaceRelationshipType.EDITOR_OF).iterator()
-						.hasNext()) {
+						.getRelationships(
+								Direction.INCOMING,
+								relfunnel
+										.to(G_UserSpaceRelationshipType.EDITOR_OF))
+						.iterator().hasNext()) {
 					deleteWorkspace(wNode);
 				}
 				tx.success();
@@ -276,7 +281,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public List<G_Workspace> findWorkspaces(String userId, String partialName,
+	public List<G_Workspace> findWorkspaces(int userId, String partialName,
 			int startIndex, int i) {
 		// MATCH (n:GUser {username:'djue'})-[r]->(m:GWorkspace) where m.title
 		// =~ '.*New.*' RETURN n,r,m LIMIT 25
@@ -292,7 +297,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				// return count(*) as c
 			String queryString = "match (u:"
 					+ GrapheneNeo4JConstants.userLabel.name() + " {"
-					+ G_UserFields.username + ":'" + userId + "'})-[r:"
+					+ G_UserFields.id + ":'" + userId + "'})-[r:"
 					+ G_UserSpaceRelationshipType.EDITOR_OF + "]-(w:"
 					+ GrapheneNeo4JConstants.workspaceLabel + ") "
 					+ filterOnTitle + " return w";
@@ -347,21 +352,18 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		try (Transaction tx = beginTx()) {
 			String queryString = "MERGE (n:"
 					+ GrapheneNeo4JConstants.workspaceLabel.name() + " {"
-					+ G_WorkspaceFields.workspaceid.name()
-					+ ": {var}}) RETURN n";
+					+ G_WorkspaceFields.id.name() + ": {var}}) RETURN n";
 			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("var", g.getWorkspaceid());
+			parameters.put("var", g.getId());
 			resultIterator = n4jService.getExecutionEngine()
 					.execute(queryString, parameters).columnAs("n");
 			n = resultIterator.next();
 			resultIterator.close();
-			setSafeProperty(n, G_WorkspaceFields.createddate.name(), DateTime
-					.now().getMillis());
-			setSafeProperty(n, G_WorkspaceFields.lastmodified.name(), DateTime
+			setSafeProperty(n, G_WorkspaceFields.created.name(), DateTime.now()
+					.getMillis());
+			setSafeProperty(n, G_WorkspaceFields.modified.name(), DateTime
 					.now().getMillis());
 			setSafeProperty(n, G_WorkspaceFields.active.name(), true);
-			setSafeProperty(n, G_WorkspaceFields.creatorusername.name(),
-					g.getCreatorusername());
 			setSafeProperty(n, G_WorkspaceFields.json.name(), g.getJson());
 			setSafeProperty(n, G_WorkspaceFields.title.name(), g.getTitle());
 
@@ -372,18 +374,18 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public G_Workspace getWorkspaceById(String id) {
+	public G_Workspace getWorkspaceById(int id) {
 		Node n = getWorkspaceNodeById(id);
 		return (n == null ? null : createDetached(n));
 	}
 
-	private Node getWorkspaceNodeById(String workspaceid) {
+	private Node getWorkspaceNodeById(int id) {
 		Node n = null;
 		try (Transaction tx = beginTx()) {
 			for (Node node : n4jService.getGraphDb()
 					.findNodesByLabelAndProperty(
 							GrapheneNeo4JConstants.workspaceLabel,
-							G_WorkspaceFields.workspaceid.name(), workspaceid)) {
+							G_WorkspaceFields.id.name(), id)) {
 				n = node;
 			}
 			tx.success();
@@ -391,20 +393,20 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			logger.error(ExceptionUtil.getRootCauseMessage(e));
 		}
 		if (n == null) {
-			logger.warn("Could not find workspace with id '" + workspaceid
-					+ "'");
+			logger.warn("Could not find workspace with id '" + id + "'");
 		}
 		return n;
 	}
 
 	@Override
-	public List<G_Workspace> getWorkspacesForUser(String username) {
+	public List<G_Workspace> getWorkspacesForUser(int userId) {
 		List<G_Workspace> list = new ArrayList<G_Workspace>();
 		try (Transaction tx = beginTx()) {
 			String queryString = "match (n:"
 					+ GrapheneNeo4JConstants.userLabel.name() + ")-[r:"
-					+ G_UserSpaceRelationshipType.EDITOR_OF.name() + "]-w where n."
-					+ G_UserFields.username + " = '" + username + "' return w";
+					+ G_UserSpaceRelationshipType.EDITOR_OF.name()
+					+ "]-w where n." + G_UserFields.id + " = '" + userId
+					+ "' return w";
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			ResourceIterator<Object> resultIterator = n4jService
 					.getExecutionEngine().execute(queryString, parameters)
@@ -423,10 +425,10 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean hasRelationship(String username, String workspaceid,
+	public boolean hasRelationship(int userId, int id,
 			G_UserSpaceRelationshipType... rel) {
-		Node u = getUserNodeByUsername(username);
-		Node w = getWorkspaceNodeById(workspaceid);
+		Node u = getUserNodeById(userId);
+		Node w = getWorkspaceNodeById(id);
 		if (u == null || w == null) {
 			logger.warn("Could not find the user or workspace requested.");
 			return false;
@@ -434,7 +436,11 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		boolean has = false;
 		try (Transaction tx = beginTx()) {
 			// iterate through all the relationships of the given types.
-			Iterable<Relationship> matchingRels = w.getRelationships(rel);
+			List<RelationshipType> relList = new ArrayList<RelationshipType>();
+			for (G_UserSpaceRelationshipType r : rel) {
+				relList.add(relfunnel.to(r));
+			}
+			Iterable<Relationship> matchingRels = w.getRelationships(relList.toArray(new RelationshipType[0]));
 			for (Relationship r : matchingRels) {
 				if (r.getStartNode().getId() == u.getId()) {
 					has = true;
@@ -454,22 +460,23 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			logger.debug("Constructing WorkspaceDAO hooked up to "
 					+ n4jService.getLocation());
 			n4jService.createNewIndex(GrapheneNeo4JConstants.workspaceLabel,
-					G_WorkspaceFields.workspaceid.name());
+					G_WorkspaceFields.id.name());
 		} else {
 			logger.error("Could not connect to graph, so WorkspaceDAO was not constructed.");
 		}
 	}
 
 	@Override
-	public boolean removeUserFromWorkspace(String username, String workspaceId) {
+	public boolean removeUserFromWorkspace(int userId, int workspaceId) {
 		boolean success = false;
 		Node uNode, wNode;
-		uNode = getUserNodeByUsername(username);
+		uNode = getUserNodeById(userId);
 		wNode = getWorkspaceNodeById(workspaceId);
 		if (uNode != null && wNode != null) {
 			try (Transaction tx = beginTx()) {
+				
 				for (Relationship r : uNode
-						.getRelationships(G_UserSpaceRelationshipType.EDITOR_OF)) {
+						.getRelationships(relfunnel.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
 					logger.debug("r.getEndNode().getId() "
 							+ r.getEndNode().getId());
 					logger.debug("wNode.getId() " + wNode.getId());
@@ -487,20 +494,20 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean removeUserPermissionFromWorkspace(String username,
-			String permission, String workspaceId) {
+	public boolean removeUserPermissionFromWorkspace(int userId,
+			String permission, int workspaceId) {
 		boolean success = false;
 		Node uNode, wNode;
-		uNode = getUserNodeByUsername(username);
+		uNode = getUserNodeById(userId);
 		wNode = getWorkspaceNodeById(workspaceId);
-		G_UserSpaceRelationshipType rel = G_UserSpaceRelationshipType.valueOf(permission);
+		G_UserSpaceRelationshipType rel = G_UserSpaceRelationshipType
+				.valueOf(permission);
 		if (uNode != null && wNode != null) {
 			try (Transaction tx = beginTx()) {
-				for (Relationship r : uNode.getRelationships(rel)) {
+				for (Relationship r : uNode.getRelationships(relfunnel.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
 					if (r.getOtherNode(uNode).equals(wNode)) {
 						logger.info("Removing relationship '" + rel
-								+ "' between " + username + " and "
-								+ workspaceId);
+								+ "' between " + userId + " and " + workspaceId);
 						r.delete();
 						success = true;
 						break;
@@ -520,20 +527,18 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		try (Transaction tx = beginTx()) {
 			String queryString = "MERGE (n:"
 					+ GrapheneNeo4JConstants.workspaceLabel.name() + " {"
-					+ G_WorkspaceFields.workspaceid.name()
-					+ ": {var}}) RETURN n";
+					+ G_WorkspaceFields.id.name() + ": {var}}) RETURN n";
 			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("var", g.getWorkspaceid());
+			parameters.put("var", g.getId());
 			resultIterator = n4jService.getExecutionEngine()
 					.execute(queryString, parameters).columnAs("n");
 			Node n = resultIterator.next();
-			setSafeProperty(n, G_WorkspaceFields.createddate.name(),
-					g.getLastmodified());
-			setSafeProperty(n, G_WorkspaceFields.lastmodified.name(),
-					g.getLastmodified());
+			setSafeProperty(n, G_WorkspaceFields.created.name(),
+					g.getModified());
+			setSafeProperty(n, G_WorkspaceFields.modified.name(),
+					g.getModified());
 			setSafeProperty(n, G_WorkspaceFields.active.name(), true);
-			setSafeProperty(n, G_WorkspaceFields.creatorusername.name(),
-					g.getCreatorusername());
+
 			setSafeProperty(n, G_WorkspaceFields.json.name(), g.getJson());
 			setSafeProperty(n, G_WorkspaceFields.title.name(), g.getTitle());
 			tx.success();

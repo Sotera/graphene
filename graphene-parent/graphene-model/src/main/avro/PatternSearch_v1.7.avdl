@@ -1,0 +1,291 @@
+/**
+ * Copyright (c) 2013 Oculus Info Inc. 
+ * http://www.oculusinfo.com/
+ * 
+ * Released under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+/**
+ This defines an API for searching a graph-like database based on patterns.
+ */
+protocol G_PatternSearch {
+	import idl "Search_v1.7.avdl";
+	import idl "FutureResults_v1.7.avdl";
+	
+	/**
+	 Description of entity match criteria within a pattern.
+	 
+	 CHANGED IN 1.5:
+	  - removed sameAs
+	  - replaced weight with constraint
+	 
+	 */
+	record G_EntityMatchDescriptor {
+		/**
+		 The UID of the PATTERN node (NOT the underlying matched entity ID).
+		 Will be referenced by G_LinkMatchDescriptors as source or target, and in results.
+		 Cannot be null.
+		 */
+		string uid;
+		
+		/** Optional role name, for labeling the pattern for human understanding */
+		union{string, null} role = null;
+		
+		/** entities should match AT LEAST ONE OF the given entity IDs, if provided */
+		union{array<string>, null} entities = null;
+
+		/** entities should match AT LEAST ONE OF the given tags (e.g ACCOUNT), if provided */
+		union{array<G_EntityTag>, null} tags = null;
+		
+		/** entities should match ALL of the provided property descriptors (e.g. LABEL, GEO, etc)
+		    e.g. logical "AND". Partial matches may be returned, if scoring is provided.  */
+		union{array<G_PropertyMatchDescriptor>, null} properties = null;
+		
+		/** used for QBE -- not used to match like the entities list, this list of entities
+		    should be used by the system to infer the above constraints when the user does not
+		    provide them.
+		*/
+		union{array<string>, null} examplars = null;
+		
+		/** MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT */
+		union {G_Constraint, null} constraint; // CHANGED IN 1.5 (was "weight")
+	}
+	
+	/**
+	 * In addition to PropertyTags, a PropertyMatchDescriptor might also be one of these.
+
+	 	ADDED IN 1.5
+	 */
+	enum G_PathMatchTag {
+		PATH_LENGTH,	// The length of a path. Used for property match descriptors in pattern search.
+		PATH_TIME,		// The time window for a path. Used for property match descriptors in pattern search.
+		PATH_SOURCES,	// Number of links from source nodes to match. If specified, this path represents multiple links from multiple sources (e.g. a fan-in pattern).
+		PATH_DESTS		// Number of links from dest nodes to match. If specified, this path represents multiple links to multiple dests (e.g. a fan-out pattern).
+	}
+
+	/**
+	 * CHANGED in 1.5 - The PathMatchDescriptor was removed, and replaced with G_PathMatchTags,
+	 *   which can be used as they key in a PropertyMatch Descriptor. Set these to require
+	 *   certain path lengths or path time window matches.
+	 */
+	record G_LinkMatchDescriptor {
+		/**
+		 The UID of the PATTERN link (NOT the underlying matched link ID). Will be referenced in results.
+		 Cannot be null.
+		 */
+		string uid;
+		
+		/** Optional role name, for labeling the pattern for human understanding */
+		union{string, null} role = null;
+		
+		/** The UID of a G_EntityMatchDescriptor node (not an underlying Entity UID) 
+			Being null indicates that matched links should have no source node
+		*/
+		union{string, null} source;
+		
+		/** The UID of a G_EntityMatchDescriptor node (not an underlying Entity UID) 
+			Being null indicates that matched links should have no target node
+		*/
+		union{string, null} target;
+
+		/** entities should match AT LEAST ONE OF the given tags (e.g FINANCIAL, COMMUNICATION, SOCIAL), if provided */
+		union{array<G_LinkTag>, null} tags = null;
+		
+		/** entities should match ALL of the provided property descriptors (e.g. LABEL, etc), if provided */
+		union{array<G_PropertyMatchDescriptor>, null} properties = null;
+
+		/** If not negative, indicates the relative order of events within the pattern. Need not be unique.
+		    If not provided, then transaction order must be inferred from the graph structure.
+		 */
+		int stage = -1;
+
+		/** MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT */
+		union {G_Constraint, null} constraint; // CHANGED IN 1.5 (replaces weight)
+	}
+	
+	/**
+	 Defines a pattern, either for input by the user, or as part of a pattern library.
+	 */
+	record G_PatternDescriptor {
+		
+		/** unique ID of the pattern **/
+		string uid;
+		
+		/** displayable name of the pattern **/
+		string name;
+		
+		/** displayable long description of the pattern **/
+		union {string, null} description = null;
+		
+		/**
+		 - ordered list of entity criteria for the pattern
+		 - the first nodes in the ordered list represent stages earlier in the sequence of events
+		 - CHANGED in 1.5: graphs may have cycles
+		 */
+		array<G_EntityMatchDescriptor> entities;
+		
+		/**
+		 - link criteria between the entities above
+		 - CHANGED in 1.5: graphs may have cycles
+		 */
+		array<G_LinkMatchDescriptor> links;
+	}
+	
+	/**
+	 An entity that returns from pattern matching as part of a subgraph.
+	 */
+	record G_EntityMatchResult {
+		/** search score */
+		double score = 0;
+		
+		/** UID of the matched G_EntityMatchDescriptor in the matched pattern */
+		string uid = null;
+
+		/** role name of the matched G_EntityMatchDescriptor in the matched pattern */
+		union{string, null} role = null;
+	
+		/** the entity */
+		G_Entity entity;
+	}
+	
+	/**
+	 A link that returns from pattern matching as part of a subgraph.
+	 */
+	record G_LinkMatchResult {
+		/** search score */
+		double score = 0;
+		
+		/** UID of the matched G_LinkMatchDescriptor in the matched pattern */
+		string uid = null;
+
+		/** role name of the matched G_LinkMatchDescriptor in the matched pattern */
+		union{string, null} role = null;
+	
+		/** the link */
+		G_Link link;		
+	}
+
+	/**
+	 A single search result is some annotated subgraph
+	 */
+	record G_PatternSearchResult {
+		/** search score */
+		double score = 0;
+		
+		/** entity results 
+			There needs to be at least one entity in the result
+		*/
+		array<G_EntityMatchResult> entities;
+		
+		/** links between those entities **/
+		union {array<G_LinkMatchResult>, null} links;
+	}
+	
+	/**
+	The set of results from a single search call. Each item also has a score.
+	 */
+	record G_PatternSearchResults {
+		/** total number of results found */
+		long total = -1;
+		
+		/** array of Items (Entities or Links) with scores */
+		array<G_PatternSearchResult> results;
+	}
+
+	/**
+	 Returns a set of sub-graphs based on specified user-defined example.
+	 
+	 Service URL: /pattern/search/example
+	 HTTP Method: POST and GET
+	 
+	 @param example		a user-authored pattern descriptor
+	 @param service		uid of an pattern service
+	 @param start		0-based index of first result to return
+	 @param max			maximum number of results to return
+	 @param dateRange	optional global date filter for results
+	 @return			either results, or a future object (use getResults or the FutureResults service)
+	 */
+	union{G_Future,G_PatternSearchResults}
+		searchByExample(
+			G_PatternDescriptor example,
+			union {string, null} service = null,
+			long start = 0,
+			long max = -1,
+			union {G_BoundedRange, null} dateRange = null, // ADDED IN 1.5
+			boolean useAptima // ADDED IN 1.5
+	);
+
+	/**
+	 Returns a set of sub-graphs based on specified pattern from the Pattern Library
+	 
+	 Service URL: /pattern/search/template
+	 HTTP Method: POST and GET
+	 
+	 @param pattern		UID of a pattern from the template library
+	 @param service		uid of an pattern service
+	 @param start		0-based index of first result to return
+	 @param max			maximum number of results to return
+	 @param dateRange	optional global date filter for results
+	 @return			either results, or a future object (use getResults or the FutureResults service)
+	 */
+	union{G_Future,G_PatternSearchResults}
+		searchByTemplate(
+			string template,
+			union {string, null} service = null,
+			long start = 0, 
+			long max = -1,
+			union {G_BoundedRange, null} dateRange = null // ADDED IN 1.5
+	);
+	
+	/**
+	 Block until all results are available.
+	 
+	 Service URL: /pattern/search/results
+	 HTTP Method: POST and GET
+	 
+	 @param future		the future returned from the original call
+	 @return 			the results
+	 */
+	G_PatternSearchResults getResults(
+		G_Future future
+	);
+
+	/**
+	 Returns a list of available patterns templates in the existing pattern library.
+	  
+	 Service URL: /pattern/templates
+	 HTTP Method: GET
+	 
+	 @return
+	 */
+	array<G_PatternDescriptor> getPatternTemplates();
+
+	/**
+	 Returns a list of available patterns templates in the existing pattern library.
+	  
+	 Service URL: /pattern/services
+	 HTTP Method: GET
+	 
+	 @return
+	 */
+	array<G_Service> getServices();
+}

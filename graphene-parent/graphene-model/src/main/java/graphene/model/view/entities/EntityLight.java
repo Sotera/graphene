@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import mil.darpa.vande.generic.V_IdProperty;
-
 /**
  * Version of Entity that contains lists of EntityAttributes - i.e. it contains
  * lists of String properties rather than typed objects
@@ -23,48 +21,9 @@ public class EntityLight {
 	private String effectiveName = null;
 	private String allNames = null;
 
-	public EntityLight(Entity e) {
-		this.setId(e.getId());
-		this.setDatasource_id(e.getDatasourceId());
-		StringBuffer sb = new StringBuffer("");
-		for (Name p : e.getNameList()) {
-			if(sb.length()>0){
-				sb.append(", ");
-			}
-			String n = p.getFullName();
-			attributes.add(new EntityAttribute("Name", "", n));
 
-			// set the effectiveName to be the shortest one.
-			if (effectiveName == null)
-				effectiveName = n;
-			else {
-				if (n.length() < effectiveName.length())
-					effectiveName = n;
-			}
-			sb.append(p.getFullName());
-		}
-		if (e.getNameList().size() > 1) {
-			effectiveName += " (" + e.getNameList().size()
-					+ " associated values)";
-		}
-		allNames = sb.toString();
-		for (CommunicationId p : e.getCommunicationIdList())
-			attributes.add(new EntityAttribute("CommunicationId", "", p
-					.getValue()));
-		for (Identifier p : e.getAddressList())
-			attributes.add(new EntityAttribute("Address", "", p
-					.getFullAddress()));
-		for (EmailAddress p : e.getEmailList())
-			attributes
-					.add(new EntityAttribute("Email", "", p.getFullAddress()));
-		for (V_IdProperty p : e.getIdentList()) {
-			attributes.add(new EntityAttribute("Identifier", p.getIdName(), p
-					.getIdValue()));
-		}
-		for (Account ac : e.getAccountList()) {
-			accountList.add(ac.getAccountNumber());
-		}
-
+	public EntityLight() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**

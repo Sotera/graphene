@@ -33,7 +33,7 @@ public class NeoCytoscapeStack implements JavaScriptStack {
 		};
 
 		final String path = String.format(
-				"context:core/js/cytoscape/cytoscape%s.js", minified ? ".min"
+				"context:core/js/libs/cytoscape-2.2.12/cytoscape%s.js", minified ? ".min"
 						: "");
 
 		javaScriptStack = F

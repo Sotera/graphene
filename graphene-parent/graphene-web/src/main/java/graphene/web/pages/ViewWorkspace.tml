@@ -5,7 +5,7 @@
 		<h2>${currentWorkspace?.title}</h2>
 		<div>
 			Last Modified:
-			<t:graphene.jodatimeoutput value="currentWorkspace?.lastmodified"
+			<t:graphene.jodatimeoutput value="currentWorkspace?.modified"
 				style="LL" />
 		</div>
 		<div t:type="outputraw" value="currentWorkspace?.json" />

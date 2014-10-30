@@ -132,7 +132,7 @@ public class WorkspaceEditor {
 
 	@Parameter(required = true)
 	@Property
-	private String workspaceId = null;
+	private int workspaceId = 0;
 
 	// Component "createForm" bubbles up the VALIDATE event when it is submitted
 
@@ -230,7 +230,7 @@ public class WorkspaceEditor {
 	 * @param workspaceVersion
 	 * @return
 	 */
-	boolean onDelete(String workspaceId, String workspaceVersion) {
+	boolean onDelete(int workspaceId, String workspaceVersion) {
 		this.workspaceId = workspaceId;
 
 		// If request is AJAX then the user has pressed Delete..., was presented
@@ -247,7 +247,7 @@ public class WorkspaceEditor {
 					// TODO: It would be a wise idea to allow revisions of the
 					// workspaces, for historys sake.
 					successfulDelete = userService.removeUserFromWorkspace(
-							user.getUsername(), workspaceId);
+							user.getId(), workspaceId);
 					// dao.deleteWorkspaceById(workspaceId);// ,
 					// workspaceVersion);
 
@@ -296,13 +296,13 @@ public class WorkspaceEditor {
 
 	boolean onFailureFromConfirmDeleteForm() {
 		// versionFlash = workspace.getVersion();
-		dateFlash = JodaTimeUtil.toDateTime(workspace.getLastmodified());
+		dateFlash = JodaTimeUtil.toDateTime(workspace.getModified());
 		// Rather than letting "failure" bubble up which doesn't say what you
 		// were trying to do, we trigger new event
 		// "failedDelete". It will bubble up because we don't have a handler
 		// method for it.
 		componentResources.triggerEvent(FAILED_CONFIRM_DELETE,
-				new Object[] { workspace.getWorkspaceid() }, null);
+				new Object[] { workspace.getId() }, null);
 		// We don't want "failure" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -327,7 +327,7 @@ public class WorkspaceEditor {
 
 	boolean onFailureFromUpdateForm() {
 		if (!request.isXHR()) {
-			dateFlash = JodaTimeUtil.toDateTime(workspace.getLastmodified());
+			dateFlash = JodaTimeUtil.toDateTime(workspace.getModified());
 			// versionFlash = workspace.getVersion();
 
 		}
@@ -348,8 +348,8 @@ public class WorkspaceEditor {
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
 		try {
-			workspace = userService.getWorkspace(user.getUsername(),
-					this.workspaceId);
+			workspace = userService
+					.getWorkspace(user.getId(), this.workspaceId);
 		} catch (AvroRemoteException e) {
 			workspace = null;
 			e.printStackTrace();
@@ -362,7 +362,7 @@ public class WorkspaceEditor {
 
 		if (confirmDeleteForm.getHasErrors()) {
 			if (workspace != null) {
-				workspace.setLastmodified(dateFlash.getMillis());
+				workspace.setModified(dateFlash.getMillis());
 				// workspace.setVersion(versionFlash);
 			}
 		}
@@ -372,7 +372,7 @@ public class WorkspaceEditor {
 	// submitted, depending on whether
 	// VALIDATE records an error
 
-	void onPrepareForRenderFromUpdateForm(String workspaceId) {
+	void onPrepareForRenderFromUpdateForm(int workspaceId) {
 		this.workspaceId = workspaceId;
 
 		if (request.isXHR()) {
@@ -382,7 +382,7 @@ public class WorkspaceEditor {
 
 			if (updateForm.isValid()) {
 				try {
-					workspace = userService.getWorkspace(user.getUsername(),
+					workspace = userService.getWorkspace(user.getId(),
 							this.workspaceId);
 				} catch (AvroRemoteException e) {
 					workspace = null;
@@ -392,7 +392,7 @@ public class WorkspaceEditor {
 
 		} else {
 			try {
-				workspace = userService.getWorkspace(user.getUsername(),
+				workspace = userService.getWorkspace(user.getId(),
 						this.workspaceId);
 			} catch (AvroRemoteException e) {
 				workspace = null;
@@ -407,7 +407,7 @@ public class WorkspaceEditor {
 
 			if (updateForm.getHasErrors()) {
 				if (workspace != null) {
-					workspace.setLastmodified(dateFlash.getMillis());
+					workspace.setModified(dateFlash.getMillis());
 					// workspace.setVersion(versionFlash);
 				}
 			}
@@ -419,8 +419,8 @@ public class WorkspaceEditor {
 	void onPrepareForSubmitFromConfirmDeleteForm() {
 		// Get objects for the form fields to overlay.
 		try {
-			workspace = userService.getWorkspace(user.getUsername(),
-					this.workspaceId);
+			workspace = userService
+					.getWorkspace(user.getId(), this.workspaceId);
 		} catch (AvroRemoteException e) {
 			workspace = null;
 			e.printStackTrace();
@@ -434,13 +434,13 @@ public class WorkspaceEditor {
 
 	// Getters
 
-	void onPrepareForSubmitFromUpdateForm(String workspaceId) {
+	void onPrepareForSubmitFromUpdateForm(int workspaceId) {
 		this.workspaceId = workspaceId;
 
 		// Get objects for the form fields to overlay.
 		try {
-			workspace = userService.getWorkspace(user.getUsername(),
-					this.workspaceId);
+			workspace = userService
+					.getWorkspace(user.getId(), this.workspaceId);
 		} catch (AvroRemoteException e) {
 			workspace = null;
 			e.printStackTrace();
@@ -457,8 +457,7 @@ public class WorkspaceEditor {
 	void onPrepareFromCreateForm() throws Exception {
 		// Instantiate a Workspace for the form data to overlay.
 		if (userExists) {
-			workspace = userService.createTempWorkspaceForUser(user
-					.getUsername());
+			workspace = userService.createTempWorkspaceForUser(user.getId());
 		} else {
 			// disallow a new workspace to be created if no user is logged in.
 			workspace = null;
@@ -473,10 +472,10 @@ public class WorkspaceEditor {
 		if (workspace != null) {
 			boolean deleted = false;
 			try {
-				deleted = userService.deleteWorkspaceIfUnused(
-						user.getUsername(), workspace.getWorkspaceid());
+				deleted = userService.deleteWorkspaceIfUnused(user.getId(),
+						workspace.getId());
 				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE,
-						new Object[] { workspace.getWorkspaceid() }, null);
+						new Object[] { workspace.getId() }, null);
 			} catch (AvroRemoteException e) {
 				logger.error(ExceptionUtil.getRootCauseMessage(e));
 				// TODO: Add a popup alert
@@ -484,7 +483,7 @@ public class WorkspaceEditor {
 			if (deleted == false) {
 				// TODO: Add a popup alert
 				componentResources.triggerEvent(FAILED_DELETE,
-						new Object[] { workspace.getWorkspaceid() }, null);
+						new Object[] { workspace.getId() }, null);
 			}
 			// We don't want "success" to bubble up, so we return true to say
 			// we've
@@ -505,10 +504,10 @@ public class WorkspaceEditor {
 		// "successfulCreate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
 		try {
-			workspace = userService.addNewWorkspaceForUser(user.getUsername(),
+			workspace = userService.addNewWorkspaceForUser(user.getId(),
 					workspace);
 			componentResources.triggerEvent(SUCCESSFUL_CREATE,
-					new Object[] { workspace.getWorkspaceid() }, null);
+					new Object[] { workspace.getId() }, null);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -533,23 +532,19 @@ public class WorkspaceEditor {
 		// "successfulUpdate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
 		try {
-			workspace = userService
-					.saveWorkspace(user.getUsername(), workspace);
-			logger.info("Successfully updated workspace "
-					+ workspace.getWorkspaceid());
+			workspace = userService.saveWorkspace(user.getId(), workspace);
+			logger.info("Successfully updated workspace " + workspace.getId());
 			componentResources.triggerEvent(SUCCESSFUL_UPDATE,
 					new Object[] { workspaceId }, null);
 			if (currentSelectedWorkspaceExists) {
-				if (currentSelectedWorkspace.getWorkspaceid().equals(
-						workspace.getWorkspaceid())) {
+				if (currentSelectedWorkspace.getId().equals(workspace.getId())) {
 					currentSelectedWorkspace = workspace;
 				}
 			}
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error("Could not update workspace"
-					+ workspace.getWorkspaceid());
+			logger.error("Could not update workspace" + workspace.getId());
 			componentResources.triggerEvent(FAILED_UPDATE,
 					new Object[] { workspaceId }, null);
 		}
@@ -585,7 +580,7 @@ public class WorkspaceEditor {
 		} else {
 
 			try {
-				userService.deleteWorkspace(user.getUsername(), workspaceId);// (workspaceId,
+				userService.deleteWorkspace(user.getId(), workspaceId);// (workspaceId,
 				// workspace.getVersion());
 			} catch (Exception e) {
 				// Display the cause. In a real system we would try harder to
@@ -612,7 +607,7 @@ public class WorkspaceEditor {
 		}
 
 		try {
-			workspace = userService.addNewWorkspaceForUser(user.getUsername(),
+			workspace = userService.addNewWorkspaceForUser(user.getId(),
 					workspace);
 		} catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
@@ -629,7 +624,7 @@ public class WorkspaceEditor {
 		}
 
 		try {
-			userService.saveWorkspace(user.getUsername(), workspace);
+			userService.saveWorkspace(user.getId(), workspace);
 		} catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
@@ -644,17 +639,17 @@ public class WorkspaceEditor {
 	@Log
 	void switchModes() {
 		if (mode == Mode.REVIEW) {
-			if (workspaceId == null) {
+			if (workspaceId == 0) {
 				workspace = null;
 				// Handle null workspace in the template.
 			} else if (user != null) {
 
 				try {
 					logger.info("Attempting to retrieve workspace "
-							+ workspaceId + " for user " + user.getUsername());
+							+ workspaceId + " for user " + user.getId());
 					// FIXME: Something is awry here; we sometimes get 'core' as
 					// a workspace id, and that fails of course.
-					workspace = userService.getWorkspace(user.getUsername(),
+					workspace = userService.getWorkspace(user.getId(),
 							workspaceId);
 				} catch (AvroRemoteException e) {
 					// TODO Auto-generated catch block

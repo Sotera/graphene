@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public enum G_UserFields { 
-  active, username, avatar, email, fullname, hashedpassword, lastlogin, lastmodified, accountcreated, numberlogins, provenance, uncertainty  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_UserFields\",\"namespace\":\"graphene.model.idl\",\"symbols\":[\"active\",\"username\",\"avatar\",\"email\",\"fullname\",\"hashedpassword\",\"lastlogin\",\"lastmodified\",\"accountcreated\",\"numberlogins\",\"provenance\",\"uncertainty\"]}");
+  id, active, username, avatar, email, fullname, hashedpassword, lastlogin, modified, created, numberlogins  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_UserFields\",\"namespace\":\"graphene.model.idl\",\"symbols\":[\"id\",\"active\",\"username\",\"avatar\",\"email\",\"fullname\",\"hashedpassword\",\"lastlogin\",\"modified\",\"created\",\"numberlogins\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

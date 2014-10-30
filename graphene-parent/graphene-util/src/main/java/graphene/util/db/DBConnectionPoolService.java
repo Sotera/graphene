@@ -5,7 +5,6 @@ import graphene.util.jvm.JVMHelper;
 
 import java.sql.Connection;
 
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
 import com.jolbox.bonecp.BoneCP;

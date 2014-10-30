@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.0.9-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>graphene-dao-sql</artifactId>
 	<name>${project.artifactId}</name>
@@ -36,6 +36,10 @@
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-sql-codegen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
 		</dependency>
 	</dependencies>
 	<description>Module for SQL implementations of DAOs in the core module.  Most classes make use of QueryDSL generated classes in the model.</description>

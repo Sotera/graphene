@@ -34,30 +34,41 @@ public interface UserDAO {
 	 * 
 	 * @param username
 	 */
-	public boolean delete(String username);
+	public boolean delete(int id);
 
 	// Disable User by Username
-	public boolean disable(String username);
+	public boolean disable(int id);
 
 	// Enable User by Username
-	public boolean enable(String username);
+	public boolean enable(int id);
 
 	// Get All Users
 	public List<G_User> getAllUsers();
 
 	public List<G_User> getByGroups(String groupName);
 
-	public List<G_User> getByPartialUsername(String partialName);
+	// Find and return a user, do not create
+	public G_User getById(int id);
 
 	public List<G_User> getByPartialUsername(String partialName, int offset,
 			int limit);
 
 	// Find and return a user, do not create
-	public G_User getByUsername(String username);
+	public G_User getByUsername(String userName);
+
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return Return the hash of the password, or null if there was an error.
+	 */
+	public String getPasswordHash(int id, String password);
+
+	public boolean isExisting(int id);
 
 	public boolean isExisting(String username);
 
-	public G_User loginUser(String username, String password)
+	public G_User loginUser(int id, String password)
 			throws AuthenticationException;
 
 	/**
@@ -67,14 +78,6 @@ public interface UserDAO {
 	 */
 	public G_User save(G_User person);
 
-	public boolean updatePassword(String username, String password);
-
-	/**
-	 * 
-	 * @param username
-	 * @param password
-	 * @return Return the hash of the password, or null if there was an error.
-	 */
-	public String getPasswordHash(String username, String password);
+	public boolean updatePassword(int id, String password);
 
 }

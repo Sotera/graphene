@@ -5,11 +5,10 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * The 21st century meaning, "conceal from unauthorized
-						 * view; censor but do not destroy" */
+/** This is the current list of tags for Links: */
 @org.apache.avro.specific.AvroGenerated
 public enum G_LinkTag { 
-  MEMBER_OF, REPORTED_IN, FINANCIAL, SOCIAL, COMMUNICATION, EVENT, OTHER, REDACTED, FATHER_OF, SON_OF, MOTHER_OF, DAUGHTER_OF, BROTHER_OF, SISTER_OF, GUARDIAN_OF, KIN_OF, COUSIN_OF, WIFE_OF, HUSBAND_OF, EMPLOYEE_OF, OWNER_OF, SELLER_OF, BUYER_OF, CREATOR_OF, FRIEND_OF, ENEMY_OF, KNOWS, SENT, TO, CC, BCC, ALIAS_OF  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_LinkTag\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* The 21st century meaning, \\\"conceal from unauthorized\\r\\n\\t\\t\\t\\t\\t\\t * view; censor but do not destroy\\\"\",\"symbols\":[\"MEMBER_OF\",\"REPORTED_IN\",\"FINANCIAL\",\"SOCIAL\",\"COMMUNICATION\",\"EVENT\",\"OTHER\",\"REDACTED\",\"FATHER_OF\",\"SON_OF\",\"MOTHER_OF\",\"DAUGHTER_OF\",\"BROTHER_OF\",\"SISTER_OF\",\"GUARDIAN_OF\",\"KIN_OF\",\"COUSIN_OF\",\"WIFE_OF\",\"HUSBAND_OF\",\"EMPLOYEE_OF\",\"OWNER_OF\",\"SELLER_OF\",\"BUYER_OF\",\"CREATOR_OF\",\"FRIEND_OF\",\"ENEMY_OF\",\"KNOWS\",\"SENT\",\"TO\",\"CC\",\"BCC\",\"ALIAS_OF\"]}");
+  FINANCIAL, SOCIAL, COMMUNICATION, OTHER  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_LinkTag\",\"namespace\":\"graphene.model.idl\",\"doc\":\"This is the current list of tags for Links:\",\"symbols\":[\"FINANCIAL\",\"SOCIAL\",\"COMMUNICATION\",\"OTHER\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

@@ -61,7 +61,7 @@ public class SearchTypeHelper {
 			tuple.setSearchType(defaultSearchType);
 			tuple.setValue(array[1]);
 		} else if (array.length == 2) {
-			tuple.setSearchType(G_SearchType.fromValue(array[0]));
+			tuple.setSearchType(G_SearchType.valueOf(array[0]));
 			tuple.setValue(array[1]);
 		} else {
 			throw new Exception("Error parsing search type");

@@ -2,6 +2,7 @@ package graphene.web.pages;
 
 import graphene.model.idl.G_User;
 
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -9,6 +10,10 @@ import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 public class SimpleBasePage {
+
+	@Inject
+	protected AlertManager alertManager;
+
 	@SessionState(create = false)
 	private G_User user;
 
@@ -16,7 +21,7 @@ public class SimpleBasePage {
 
 	@Inject
 	private Logger logger;
-	
+
 	@Inject
 	private Messages messages;
 

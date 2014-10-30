@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 public class DataFormatConstants {
 	public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
 	public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+	/**
+	 * String amountString = new DecimalFormat(
+	 * DataFormatConstants.MONEY_FORMAT_STRING).format(sum.toString());
+	 */
 	public static final String MONEY_FORMAT_STRING = "###,###,##0.00";
 	public static final String WHOLE_NUMBER_FORMAT_STRING = "###########";
 	private static Logger logger = LoggerFactory
@@ -18,7 +22,8 @@ public class DataFormatConstants {
 			String toFormat) {
 		try {
 			return new SimpleDateFormat(DataFormatConstants.DATE_FORMAT_STRING)
-					.format(new SimpleDateFormat(formatYouThinkItIsIn).parse(toFormat));
+					.format(new SimpleDateFormat(formatYouThinkItIsIn)
+							.parse(toFormat));
 		} catch (ParseException e) {
 			logger.error("Could not reformate the date identifier " + toFormat
 					+ " with format " + formatYouThinkItIsIn);

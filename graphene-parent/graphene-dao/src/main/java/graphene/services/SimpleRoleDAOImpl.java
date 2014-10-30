@@ -33,7 +33,7 @@ public SimpleRoleDAOImpl() {
 	 * @see graphene.dao.RoleDAO#getForUsername(java.lang.String)
 	 */
 	@Override
-	public List<G_Role> getForUsername(String username) {
+	public List<G_Role> getForUser(int id) {
 		// TODO Auto-generated method stub
 		ArrayList<G_Role> list = new ArrayList<G_Role>();
 		list.add(ADMIN);

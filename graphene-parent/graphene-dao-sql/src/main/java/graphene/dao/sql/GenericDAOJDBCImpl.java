@@ -25,6 +25,7 @@ import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLServer2005Templates;
 import com.mysema.query.sql.SQLServer2012Templates;
 import com.mysema.query.sql.SQLTemplates;
+import com.mysema.query.sql.mysql.MySQLQuery;
 import com.mysema.query.types.EntityPath;
 
 public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
@@ -45,6 +46,34 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 
 	@Inject
 	protected Logger logger;
+
+	/**
+	 * @return the cps
+	 */
+	public final DBConnectionPoolService getCps() {
+		return cps;
+	}
+
+	/**
+	 * @param cps the cps to set
+	 */
+	public final void setCps(DBConnectionPoolService cps) {
+		this.cps = cps;
+	}
+
+	/**
+	 * @return the logger
+	 */
+	public final Logger getLogger() {
+		return logger;
+	}
+
+	/**
+	 * @param logger the logger to set
+	 */
+	public final void setLogger(Logger logger) {
+		this.logger = logger;
+	}
 
 	private boolean ready;
 
@@ -227,17 +256,32 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 
 	/**
 	 * A safe way of adding offset and limit, directly using long values.
-	 * Deprecated: Use the version setOffsetAndLimit(Q extends BasicQuery q,
-	 * SQLQuery sq)
+	 * 
 	 * 
 	 * @param offset
 	 * @param limit
 	 * @param sq
 	 * @return a modified SQLQuery object
 	 */
-	@Deprecated
 	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
 			@Nonnegative long limit, SQLQuery sq) {
+		if (limit > 0 && offset == limit) {
+			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
+					+ sq.toString());
+			sq = null;
+		} else {
+			if (ValidationUtils.isValid(offset)) {
+				sq = sq.offset(offset);
+			}
+			if (ValidationUtils.isValid(limit)) {
+				sq = sq.limit(limit);
+			}
+		}
+		return sq;
+	}
+
+	protected MySQLQuery setOffsetAndLimit(@Nonnegative long offset,
+			@Nonnegative long limit, MySQLQuery sq) {
 		if (limit > 0 && offset == limit) {
 			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
 					+ sq.toString());

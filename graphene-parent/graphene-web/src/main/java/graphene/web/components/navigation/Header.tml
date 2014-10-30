@@ -114,8 +114,9 @@
 				<!-- end search mobile button -->
 
 				<!-- input: search field -->
-				<form action="#ajax/search.html" class="header-search pull-right">
-					<input type="text" placeholder="Find reports and more" id="search-fld" />
+				<form t:type="form" t:id="globalsearchform" class="header-search pull-right">
+					<input t:id="searchValue" t:type="TextField" type="text"
+						placeholder="Search" id="search-fld" />
 					<button type="submit">
 						<i class="fa fa-search"></i>
 					</button>

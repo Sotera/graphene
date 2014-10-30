@@ -24,12 +24,10 @@ import org.apache.tapestry5.services.Request;
 /**
  * This component will trigger the following events on its container (which in
  * this example is the page):
- * {@link UserEditor.graphene.web.components.user.UserEditor#CANCEL_CREATE}
- * ,
+ * {@link UserEditor.graphene.web.components.user.UserEditor#CANCEL_CREATE} ,
  * {@link UserEditor.graphene.web.components.user.UserEditor#SUCCESSFUL_CREATE}
  * (String username),
- * {@link UserEditor.graphene.web.components.user.UserEditor#FAILED_CREATE}
- * ,
+ * {@link UserEditor.graphene.web.components.user.UserEditor#FAILED_CREATE} ,
  * {@link UserEditor.graphene.web.components.user.UserEditor#TO_UPDATE}
  * (StrusernameonId),
  * {@link UserEditor.graphene.web.components.user.UserEditor#CANCEL_UPDATE}
@@ -79,7 +77,10 @@ public class UserEditor {
 			.getProperty("jumpstart.demo-mode");
 
 	public enum Mode {
-		CREATE, REVIEW, UPDATE, CONFIRM_DELETE;
+		CREATE,
+		REVIEW,
+		UPDATE,
+		CONFIRM_DELETE;
 	}
 
 	// Parameters
@@ -90,7 +91,7 @@ public class UserEditor {
 
 	@Parameter(required = true)
 	@Property
-	private String username;
+	private int userId;
 
 	// Screen fields
 
@@ -127,8 +128,7 @@ public class UserEditor {
 
 	@Inject
 	private Messages messages;
-	
-	
+
 	@SessionState(create = false)
 	private G_User user;
 
@@ -144,12 +144,12 @@ public class UserEditor {
 	void setupRender() {
 
 		if (mode == Mode.REVIEW) {
-			if (username == null) {
+			if (userId == 0) {
 				aUser = null;
 				// Handle null person in the template.
 			} else {
 				try {
-					aUser = dao.getUser(username);
+					aUser = dao.getUser(userId);
 				} catch (AvroRemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -243,7 +243,7 @@ public class UserEditor {
 
 	// Handle event "toUpdate"
 
-	boolean onToUpdate(String username) {
+	boolean onToUpdate(int userId) {
 		// Return false, which means we haven't handled the event so bubble it
 		// up.
 		// This method is here solely as documentation, because without this
@@ -253,7 +253,7 @@ public class UserEditor {
 
 	// Handle event "cancelUpdate"
 
-	boolean onCancelUpdate(String username) {
+	boolean onCancelUpdate(int userId) {
 		// Return false, which means we haven't handled the event so bubble it
 		// up.
 		// This method is here solely as documentation, because without this
@@ -264,8 +264,8 @@ public class UserEditor {
 	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
 	// form render
 
-	void onPrepareForRenderFromUpdateForm(String username) {
-		this.username = username;
+	void onPrepareForRenderFromUpdateForm(int userId) {
+		this.userId = userId;
 
 		if (request.isXHR()) {
 
@@ -274,7 +274,7 @@ public class UserEditor {
 
 			if (updateForm.isValid()) {
 				try {
-					aUser = dao.getUser(this.username);
+					aUser = dao.getUser(this.userId);
 				} catch (AvroRemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -284,7 +284,7 @@ public class UserEditor {
 
 		} else {
 			try {
-				aUser = dao.getUser(username);
+				aUser = dao.getUser(userId);
 			} catch (AvroRemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -309,12 +309,12 @@ public class UserEditor {
 	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during
 	// form submission
 
-	void onPrepareForSubmitFromUpdateForm(String username) {
-		this.username = username;
+	void onPrepareForSubmitFromUpdateForm(int userId) {
+		this.userId = userId;
 
 		// Get objects for the form fields to overlay.
 		try {
-			aUser = dao.getUser(this.username);
+			aUser = dao.getUser(this.userId);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -355,7 +355,7 @@ public class UserEditor {
 		// "successfulUpdate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
 		componentResources.triggerEvent(SUCCESSFUL_UPDATE,
-				new Object[] { username }, null);
+				new Object[] { userId }, null);
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -370,8 +370,8 @@ public class UserEditor {
 		// were trying to do, we trigger new event
 		// "failedUpdate". It will bubble up because we don't have a handler
 		// method for it.
-		componentResources.triggerEvent(FAILED_UPDATE,
-				new Object[] { username }, null);
+		componentResources.triggerEvent(FAILED_UPDATE, new Object[] { userId },
+				null);
 		// We don't want "failure" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -383,8 +383,8 @@ public class UserEditor {
 
 	// Handle event "delete"
 
-	boolean onDelete(String username, Integer personVersion) {
-		this.username = username;
+	boolean onDelete(int userId, Integer personVersion) {
+		this.userId = userId;
 
 		// If request is AJAX then the user has pressed Delete..., was presented
 		// with a Confirm dialog, and OK'd it.
@@ -397,8 +397,8 @@ public class UserEditor {
 			} else {
 
 				try {
-					successfulDelete= dao.deleteUser(username);
-					
+					successfulDelete = dao.deleteUser(userId);
+
 				} catch (Exception e) {
 					// Display the cause. In a real system we would try harder
 					// to get a user-friendly message.
@@ -411,12 +411,12 @@ public class UserEditor {
 				// Trigger new event "successfulDelete" (which in this example
 				// will bubble up to the page).
 				componentResources.triggerEvent(SUCCESSFUL_DELETE,
-						new Object[] { username }, null);
+						new Object[] { userId }, null);
 			} else {
 				// Trigger new event "failedDelete" (which in this example will
 				// bubble up to the page).
 				componentResources.triggerEvent(FAILED_DELETE,
-						new Object[] { username }, null);
+						new Object[] { userId }, null);
 			}
 		}
 
@@ -427,7 +427,7 @@ public class UserEditor {
 			// Trigger new event "toConfirmDelete" (which in this example will
 			// bubble up to the page).
 			componentResources.triggerEvent(TO_CONFIRM_DELETE,
-					new Object[] { username }, null);
+					new Object[] { userId }, null);
 		}
 
 		// We don't want "delete" to bubble up, so we return true to say we've
@@ -441,7 +441,7 @@ public class UserEditor {
 
 	// Handle event "cancelConfirmDelete"
 
-	boolean onCancelConfirmDelete(String username) {
+	boolean onCancelConfirmDelete(int userId) {
 		// Return false, which means we haven't handled the event so bubble it
 		// up.
 		// This method is here solely as documentation, because without this
@@ -454,7 +454,7 @@ public class UserEditor {
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
 		try {
-			aUser = dao.getUser(username);
+			aUser = dao.getUser(userId);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -478,7 +478,7 @@ public class UserEditor {
 	void onPrepareForSubmitFromConfirmDeleteForm() {
 		// Get objects for the form fields to overlay.
 		try {
-			aUser = dao.getUser(username);
+			aUser = dao.getUser(userId);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -507,7 +507,7 @@ public class UserEditor {
 		} else {
 
 			try {
-				dao.deleteUser(username);
+				dao.deleteUser(userId);
 			} catch (Exception e) {
 				// Display the cause. In a real system we would try harder to
 				// get a user-friendly message.
@@ -573,12 +573,6 @@ public class UserEditor {
 	public boolean isModeNull() {
 		return mode == null;
 	}
-
-	// public String getPersonRegion() {
-	// // Follow the same naming convention that the Select component uses
-	// return messages.get(Regions.class.getSimpleName() + "."
-	// + person.getRegion().name());
-	// }
 
 	public String getDatePattern() {
 		return "dd/MM/yyyy";

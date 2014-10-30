@@ -1,54 +1,18 @@
 package graphene.model.idl;
 
-import graphene.model.idhelper.PropertyHelper;
+import graphene.model.idlhelper.PropertyHelper;
 
 public class G_SearchTuple<T> {
+	protected G_IdType nodeType;
 	protected G_SearchType searchType;
-	protected G_CanonicalPropertyType family;
 	private String specificPropertyType;
-
-	/**
-	 * @return the specificPropertyType
-	 */
-	public final String getSpecificPropertyType() {
-		return specificPropertyType;
-	}
-
-	/**
-	 * @param specificPropertyType
-	 *            the specificPropertyType to set
-	 */
-	public final void setSpecificPropertyType(String specificPropertyType) {
-		this.specificPropertyType = specificPropertyType;
-	}
-
 	protected T value;
-
-	/**
-	 * @return the family
-	 */
-	public G_CanonicalPropertyType getFamily() {
-		return family;
-	}
-
-	/**
-	 * @param family
-	 *            the family to set
-	 */
-	public final void setFamily(G_CanonicalPropertyType family) {
-		this.family = family;
-	}
 
 	/**
 	 * Default constructor for when we are building from scratch.
 	 */
 	public G_SearchTuple() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public G_SearchTuple(T value, G_SearchType searchType) {
-		this.value = value;
-		this.searchType = searchType;
 	}
 
 	/**
@@ -61,11 +25,11 @@ public class G_SearchTuple<T> {
 	 * @param specificPropertyType
 	 * @param value
 	 */
-	public G_SearchTuple(G_SearchType searchType,
-			G_CanonicalPropertyType family, String specificPropertyType, T value) {
+	public G_SearchTuple(G_SearchType searchType, G_IdType nodeType,
+			String specificPropertyType, T value) {
 		super();
 		this.searchType = searchType;
-		this.family = family;
+		this.nodeType = nodeType;
 		this.specificPropertyType = specificPropertyType;
 		this.value = value;
 	}
@@ -77,25 +41,59 @@ public class G_SearchTuple<T> {
 	 * @param family
 	 * @param value
 	 */
-	public G_SearchTuple(G_SearchType searchType,
-			G_CanonicalPropertyType family, T value) {
+	public G_SearchTuple(G_SearchType searchType, G_IdType family, T value) {
 		super();
 		this.searchType = searchType;
-		this.family = family;
+		this.nodeType = family;
 		this.specificPropertyType = null;
 		this.value = value;
+	}
+
+	public G_SearchTuple(T value, G_SearchType searchType) {
+		this.value = value;
+		this.searchType = searchType;
+	}
+
+	/**
+	 * @return the nodeType
+	 */
+	public final G_IdType getNodeType() {
+		return nodeType;
 	}
 
 	public G_SearchType getSearchType() {
 		return searchType;
 	}
 
+	/**
+	 * @return the specificPropertyType
+	 */
+	public final String getSpecificPropertyType() {
+		return specificPropertyType;
+	}
+
 	public T getValue() {
 		return value;
 	}
 
+	/**
+	 * @param nodeType
+	 *            the nodeType to set
+	 */
+	public final void setNodeType(G_IdType nodeType) {
+		this.nodeType = nodeType;
+	}
+
 	public void setSearchType(G_SearchType searchType) {
 		this.searchType = searchType;
+	}
+
+	/**
+	 * @param specificPropertyType
+	 *            the specificPropertyType to set
+	 */
+	public final void setSpecificPropertyType(String specificPropertyType) {
+		this.specificPropertyType = specificPropertyType;
 	}
 
 	public void setValue(T value) {

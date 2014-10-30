@@ -2,10 +2,12 @@ package graphene.model.query;
 
 import graphene.model.datasourcedescriptors.DataSetField;
 import graphene.model.idl.G_SearchType;
+import graphene.util.FastNumberUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.codec.language.DoubleMetaphone;
@@ -36,29 +38,59 @@ public class SearchFilter {
 	private String value = null; // blank space delimited
 
 	public boolean doCompare(String v, String family) {
-		if (!family.equals(fieldName)){
-			return false;}
+		if (!family.equals(fieldName)) {
+			return false;
+		}
 
 		String myval = caseSensitive ? value : value.toLowerCase();
 		boolean result = false;
 
-		if (!caseSensitive){
-			v = v.toLowerCase();}
+		if (!caseSensitive) {
+			v = v.toLowerCase();
+		}
 		switch (compareType) {
 		case COMPARE_EQUALS:
 			result = v.equals(myval);
 			break;
+		case COMPARE_LESS:
+			try {
+				// XXX: Find a quick way to tell if it's parsable, without the
+				// risk of throwing exceptions all the time.
+				double vd = Double.parseDouble(v);
+				double myd = Double.parseDouble(myval);
+				result = (vd < myd);
+			} catch (Exception e) {
+			}
+
+			break;
+		case COMPARE_GREATER:
+			try {
+				// XXX: Find a quick way to tell if it's parsable, without the
+				// risk of throwing exceptions all the time.
+				double vd = Double.parseDouble(v);
+				double myd = Double.parseDouble(myval);
+				result = (vd < myd);
+			} catch (Exception e) {
+			}
+
+			break;
 		case COMPARE_INCLUDE:
-			result = v.indexOf(myval) >= 0;
+			result = v.contains(myval);
 			break;
 		case COMPARE_CONTAINS:
-			result = v.indexOf(myval) >= 0;
+			result = v.contains(myval);
+			break;
+		case COMPARE_STARTSWITH:
+			result = v.startsWith(myval);
+			break;
+		case COMPARE_ENDSWITH:
+			result = v.endsWith(myval);
 			break;
 		case COMPARE_NOTINCLUDE:
-			result = v.indexOf(myval) == -1;
+			result = !v.contains(myval);
 			break;
 		case COMPARE_SOUNDSLIKE:
-			//TODO: Improve the efficiency of this
+			// TODO: Improve the efficiency of this
 			DoubleMetaphone dm = new DoubleMetaphone();
 			String dm2;
 			if (dmcomp == null)
@@ -149,7 +181,7 @@ public class SearchFilter {
 
 	public void setOperator(String operator) {
 		this.operator = operator;
-		this.compareType = G_SearchType.fromValue(operator);
+		this.compareType = G_SearchType.valueOf(operator);
 	}
 
 	public void setPattern(Pattern pattern) {

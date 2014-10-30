@@ -5,17 +5,16 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * Structured representation of country data, which includes geo-spatial
-	 * data.
-	 * */
+/** Structured representation of country data, which includes geo-spatial data.
+	  
+	 ADDED IN 1.6 */
 @org.apache.avro.specific.AvroGenerated
 public class G_Country extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Country\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* Structured representation of country data, which includes geo-spatial\\r\\n\\t * data.\\r\\n\\t *\",\"fields\":[{\"name\":\"country\",\"type\":{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"* Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]},\"doc\":\"country geo data, including the name as text\"},{\"name\":\"region\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* the name of the global region to which the country belongs; any\\r\\n\\t\\t * common classification here is acceptable\"},{\"name\":\"continent\",\"type\":{\"type\":\"enum\",\"name\":\"G_ContinentCode\",\"doc\":\"* Standard two letter continent code\\r\\n\\t *\",\"symbols\":[\"AF\",\"AS\",\"EU\",\"NA\",\"SA\",\"OC\",\"AN\"]},\"doc\":\"continent\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Country\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Structured representation of country data, which includes geo-spatial data.\\r\\n\\t  \\r\\n\\t ADDED IN 1.6\",\"fields\":[{\"name\":\"country\",\"type\":{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]},\"doc\":\"country geo data, including the name as text\"},{\"name\":\"region\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the name of the global region to which the country belongs; any common classification here is acceptable\"},{\"name\":\"continent\",\"type\":{\"type\":\"enum\",\"name\":\"G_ContinentCode\",\"doc\":\"Standard two letter continent code\\r\\n\\t  \\r\\n\\t ADDED IN 1.6\",\"symbols\":[\"AF\",\"AS\",\"EU\",\"NA\",\"SA\",\"OC\",\"AN\"]},\"doc\":\"continent\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** country geo data, including the name as text */
    private graphene.model.idl.G_GeoData country;
-  /** * the name of the global region to which the country belongs; any
-		 * common classification here is acceptable */
+  /** the name of the global region to which the country belongs; any common classification here is acceptable */
    private java.lang.String region;
   /** continent */
    private graphene.model.idl.G_ContinentCode continent;
@@ -74,16 +73,14 @@ public class G_Country extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Gets the value of the 'region' field.
-   * * the name of the global region to which the country belongs; any
-		 * common classification here is acceptable   */
+   * the name of the global region to which the country belongs; any common classification here is acceptable   */
   public java.lang.String getRegion() {
     return region;
   }
 
   /**
    * Sets the value of the 'region' field.
-   * * the name of the global region to which the country belongs; any
-		 * common classification here is acceptable   * @param value the value to set.
+   * the name of the global region to which the country belongs; any common classification here is acceptable   * @param value the value to set.
    */
   public void setRegion(java.lang.String value) {
     this.region = value;

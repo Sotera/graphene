@@ -1,5 +1,7 @@
 package graphene.dao.solr;
 
+import graphene.util.FastNumberUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,10 +101,11 @@ public class SolrService {
 			logger.debug("using URL: " + url);
 			defaultSolrParams = new SolrRequestParameters();
 
-			defaultSolrParams.setStartRow(FastNumberUtils.parseIntWithCheck(props.getProperty(
-					"STARTING_ROW", "0")));
-			defaultSolrParams.setNumberOfRows(FastNumberUtils.parseIntWithCheck(props
-					.getProperty("NUMBER_OF_ROWS_PER_QUERY", "10")));
+			defaultSolrParams.setStartRow(FastNumberUtils
+					.parseIntWithCheck(props.getProperty("STARTING_ROW", "0")));
+			defaultSolrParams.setNumberOfRows(FastNumberUtils
+					.parseIntWithCheck(props.getProperty(
+							"NUMBER_OF_ROWS_PER_QUERY", "10")));
 
 			String defaultFields = props.getProperty("DEFAULT_RETURN_FIELDS");
 			if (defaultFields != null) {

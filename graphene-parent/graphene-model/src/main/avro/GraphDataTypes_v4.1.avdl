@@ -22,9 +22,9 @@
  */
 @namespace("graphene.model.idl")
 
-protocol G_DataTypes {
-	import idl "DataTypes_v4.1.avdl";
-
+protocol G_GraphDataTypes {
+	import idl "DataTypes_v1.7.avdl";
+	import idl "CommonDataTypes_v4.1.avdl";
 
 	/**
 	 * a Graph object
@@ -42,6 +42,6 @@ protocol G_DataTypes {
 		array<G_Property> properties;
 	}
 	
-	
+
 	
 }

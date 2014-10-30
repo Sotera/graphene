@@ -30,7 +30,8 @@ import org.slf4j.Logger;
  * sometimes done by called a different DAO for each of those object types.
  * 
  * With Graphene, we already had a similar object called G_UserDataAccess, which
- * talks to the appropriate DAOs. (G_UserDataAccess also does much more, and deals with workspaces and user groups, etc)
+ * talks to the appropriate DAOs. (G_UserDataAccess also does much more, and
+ * deals with workspaces and user groups, etc)
  * 
  * @author djue
  * 
@@ -77,7 +78,7 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 		}
 		G_User user = null;
 		try {
-			user = userDao.getUser(username);
+			user = userDao.getByUsername(username);
 		} catch (AvroRemoteException e1) {
 			e1.printStackTrace();
 		}
@@ -85,8 +86,7 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 		if (user != null) {
 			try {
 				info = new SimpleAuthorizationInfo();
-				for (G_Role role : userDao.getRolesByUsername(user
-						.getUsername())) {
+				for (G_Role role : userDao.getRolesByUser(user.getId())) {
 					info.addRole(role.getDescription());
 
 					for (G_Permission permission : userDao
@@ -108,7 +108,7 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 		logger.debug("Getting authentication for " + token);
 		G_User user = null;
 		try {
-			user = userDao.getUser(token.getUsername());
+			user = userDao.getByUsername(token.getUsername());
 		} catch (AvroRemoteException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();

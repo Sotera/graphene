@@ -3,16 +3,29 @@ package graphene.hts.me;
 import static graphene.util.validator.ValidationUtils.isValid;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalTruthValues;
+import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_Gender;
-import graphene.model.idl.G_NodeType;
+import graphene.model.idl.G_IdType;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.util.Triple;
 import graphene.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ParentalReferenceExtractor {
+import org.apache.avro.AvroRemoteException;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
+public class ParentalReferenceExtractor {
+	@Inject
+	private G_EdgeTypeAccess edgeTypeAccess;
+
+	@Inject
+	private G_NodeTypeAccess nodeTypeAccess;
+
+	@Inject
+	private G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 	FamilyReferenceExtractor fre = new FamilyReferenceExtractor();
 	private String context = "";
 
@@ -35,13 +48,13 @@ public class ParentalReferenceExtractor {
 	}
 
 	private ArrayList<Triple<Long, G_Gender, String>> getParentNodes(
-			Object names, String father, String child, String[] potentialFields) {
+			Object names, String father, String child, String[] potentialFields) throws AvroRemoteException {
 		HashMap<String, Object> p = new HashMap<String, Object>();
 
 		ArrayList<Triple<Long, G_Gender, String>> list = new ArrayList<Triple<Long, G_Gender, String>>();
 		if (isValid(father)) {
 			// This one is not imputed since it was listed in the data as Father
-			p.put(G_NodeType.NAME.toString(), father);
+			p.put(propertyKeyTypeAccess.getPropertyKey(G_CanonicalPropertyType.NAME.name()).getName(), father);
 			p.put("FamilyRole", "Parent");// change this, we should assume
 											// father,
 											// but for certain it's a 'parent'
@@ -60,12 +73,12 @@ public class ParentalReferenceExtractor {
 					provenance);
 			String unique = father + " Parent of " + child;
 			p.put(G_CanonicalPropertyType.LINK.toString(), unique);
-			Long listedFather = getOrCreateNodeId(G_NodeType.NAME.toString(),
+			Long listedFather = getOrCreateNodeId(propertyKeyTypeAccess.getPropertyKey(G_CanonicalPropertyType.NAME.name()).getName(),
 					father, p, names);
 			if (listedFather != null) {
 				Triple<Long, G_Gender, String> retval = new Triple<Long, G_Gender, String>(
 						listedFather, (G_Gender) p.get("Gender"),
-						(String) p.get(G_NodeType.NAME.toString()));
+						(String) p.get(propertyKeyTypeAccess.getPropertyKey(G_CanonicalPropertyType.NAME.name()).getName()));
 				list.add(retval);
 			}
 		}
@@ -85,9 +98,10 @@ public class ParentalReferenceExtractor {
 	 * @param list
 	 * @param s
 	 * @return
+	 * @throws AvroRemoteException 
 	 */
 	private Triple<Long, G_Gender, String> imputeParent(Object names,
-			String child, String s) {
+			String child, String s) throws AvroRemoteException {
 		HashMap<String, Object> p;
 		// No clean way to influence the 'child' node--we should create the
 		// parent nodes first, and then hang on to all the imputed gender
@@ -95,7 +109,7 @@ public class ParentalReferenceExtractor {
 		Tuple<String, G_Gender> t = fre.getParentAndImputedChildGender(s);
 		if (t != null) {
 			p = new HashMap<String, Object>();
-			p.put(G_NodeType.NAME.toString(), t.getFirst());
+			p.put(propertyKeyTypeAccess.getPropertyKey(G_CanonicalPropertyType.NAME.name()).getName(), t.getFirst());
 			p.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(),
 					G_CanonicalTruthValues.TRUE.toString());
 			p.put(G_CanonicalPropertyType.METRIC_IMPUTEDFROM.toString(),
@@ -105,7 +119,7 @@ public class ParentalReferenceExtractor {
 					provenance);
 			String unique = t.getFirst() + " Parent of " + child;
 			p.put(G_CanonicalPropertyType.LINK.toString(), unique);
-			Long fId = getOrCreateNodeId(G_NodeType.NAME.toString(), unique, p,
+			Long fId = getOrCreateNodeId(propertyKeyTypeAccess.getPropertyKey(G_CanonicalPropertyType.NAME.name()).getName(), unique, p,
 					names);
 			if (fId != null) {
 				Triple<Long, G_Gender, String> retval = new Triple<Long, G_Gender, String>(

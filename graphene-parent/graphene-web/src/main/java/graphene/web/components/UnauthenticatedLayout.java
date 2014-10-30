@@ -31,7 +31,7 @@ library = { "context:/core/js/libs/jquery-2.0.2.js",
 		"context:/core/js/bootstrap/bootstrap.min.js",
 
 		"context:/core/js/notification/GNotification.min.js",
-		"context:/core/js/gwidgets/g.widget.min.js",
+		"context:/core/js/gwidgets/g.widget.js",
 
 		"context:/core/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js",
 		"context:/core/js/plugin/sparkline/jquery.sparkline.min.js",

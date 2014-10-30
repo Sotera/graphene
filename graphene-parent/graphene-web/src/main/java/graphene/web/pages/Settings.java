@@ -56,7 +56,7 @@ public class Settings {
 		}
 		// TODO: Check to make sure this is the optimal ordering of operations
 		try {
-			service.setUserPassword(user.getUsername(), password);
+			service.setUserPassword(user.getId(), password);
 			loginPage
 					.setFlashMessage(messages.get("settings.password-changed"));
 		} catch (Exception e) {

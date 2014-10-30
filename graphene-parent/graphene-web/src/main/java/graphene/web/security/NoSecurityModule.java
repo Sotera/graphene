@@ -6,6 +6,7 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.IOCSymbols;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
@@ -26,8 +27,9 @@ import org.tynamo.security.services.impl.SecurityFilterChain;
 public class NoSecurityModule {
 	public static void bind(ServiceBinder binder) {
 
-		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class);
-		binder.bind(Realm.class, NoSecurityRealm.class);
+		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class)
+				.eagerLoad();
+		binder.bind(Realm.class, NoSecurityRealm.class).eagerLoad();
 	}
 
 	@Contribute(ValidatorMacro.class)
@@ -44,6 +46,13 @@ public class NoSecurityModule {
 				"/graphene/infrastructure/pagedenied");
 		configuration.add(SecuritySymbols.SUCCESS_URL, "/graphene/index");
 		configuration.add(SecuritySymbols.REDIRECT_TO_SAVED_URL, "true");
+
+		/*
+		 * This is a workaround for a problem with Tynamo Security using Subject
+		 * Aware Parallel Executor that is unresolved. Version 0.6 should fix
+		 * this.
+		 */
+		configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "1");
 	}
 
 	@Contribute(WebSecurityManager.class)
@@ -52,17 +61,22 @@ public class NoSecurityModule {
 		configuration.add(grapheneSecurityRealm);
 	}
 
-	@Contribute(HttpServletRequestFilter.class)
-	@Marker(Security.class)
-	public static void setupSecurity(
+	// @Contribute(HttpServletRequestFilter.class)
+	// @Marker(Security.class)
+	// public static void setupSecurity(
+	// Configuration<SecurityFilterChain> configuration,
+	// SecurityFilterChainFactory factory,
+	// WebSecurityManager securityManager) {
+	// // Set everything to anonymous access
+	// configuration.add(factory.createChain("/**").add(factory.anon()).build());
+	// }
+	public static void contributeSecurityConfiguration(
 			Configuration<SecurityFilterChain> configuration,
-			SecurityFilterChainFactory factory,
-			WebSecurityManager securityManager) {
-
-		// Set everything to anonymous access
-		configuration.add(factory.createChain("/**").add(factory.anon()).build()); 
-		
-
+			SecurityFilterChainFactory factory) {
+		// /authc/** rule covers /authc , /authc?q=name /authc#anchor urls as
+		// well
+		configuration.add(factory.createChain("/**").add(factory.anon())
+				.build());
 	}
 
 	/**

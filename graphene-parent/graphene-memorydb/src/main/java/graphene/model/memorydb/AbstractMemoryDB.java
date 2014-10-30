@@ -2,7 +2,10 @@ package graphene.model.memorydb;
 
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
-import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_IdType;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.SearchFilter;
@@ -22,6 +25,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -48,6 +52,12 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 	@Inject
 	private EntityRefDAO<T, ?> dao;
+	@Inject
+	private G_NodeTypeAccess nodeTypeAccess;
+	@Inject
+	private G_PropertyKeyTypeAccess propertyKeyTypeAccess;
+	@Inject
+	private G_EdgeTypeAccess edgeTypeAccess;
 
 	protected boolean enabled = false;
 
@@ -78,46 +88,55 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 
 		Set<MemRow> dbResults = getRowsForIdentifier(identifier);
 		Set<String> accounts = new HashSet<String>();
-		G_CanonicalPropertyType canonicalFamily = G_CanonicalPropertyType
-				.fromValue(family);
+		G_IdType nodeType;
+		try {
+			nodeType = nodeTypeAccess.getNodeType(family);
 
-		for (MemRow r : dbResults) {
-			if (idTypeDAO.getByType(r.getIdType()).getType() == canonicalFamily) {
-				// So we need this identifier
-				String custno = getCustomerNumberForID(r.entries[CUSTOMER]);
-				customersFound.add(custno);
-			}
-		}
-		// customersFound is now a unique set of customer nbrs matching the
-		// search
+			// G_CanonicalPropertyType canonicalFamily = G_CanonicalPropertyType
+			// .fromValue(family);
 
-		for (String custno : customersFound) {
-			CustomerDetails c = new CustomerDetails(custno);
-			c.setMatchString(identifier);
-			accounts.clear();
-			for (MemRow crow : getRowsForCustomer(custno)) {
-				IdType type = idTypeDAO.getByType(crow.getIdType());
-				c.addIdentifier(type, getIdValueForID(crow.entries[IDENTIFIER]));
-				if (rowPerAccount)
-					accounts.add(getIdValueForID(crow.entries[ACCOUNT]));
-				else
-					c.addAccount(getIdValueForID(crow.entries[ACCOUNT]));
+			for (MemRow r : dbResults) {
+				if (idTypeDAO.getByType(r.getIdType()).getShortName().equals(nodeType
+						.getName())) {
+					// So we need this identifier
+					String custno = getCustomerNumberForID(r.entries[CUSTOMER]);
+					customersFound.add(custno);
+				}
 			}
-			if (rowPerAccount) {
-				if (accounts.size() == 0)
-					results.add(c);
-				else
-					for (String ac : accounts) {
-						c.getAccountSet().clear();
-						c.addAccount(ac);
+			// customersFound is now a unique set of customer nbrs matching the
+			// search
+
+			for (String custno : customersFound) {
+				CustomerDetails c = new CustomerDetails(custno);
+				c.setMatchString(identifier);
+				accounts.clear();
+				for (MemRow crow : getRowsForCustomer(custno)) {
+					IdType type = idTypeDAO.getByType(crow.getIdType());
+					c.addIdentifier(type,
+							getIdValueForID(crow.entries[IDENTIFIER]));
+					if (rowPerAccount)
+						accounts.add(getIdValueForID(crow.entries[ACCOUNT]));
+					else
+						c.addAccount(getIdValueForID(crow.entries[ACCOUNT]));
+				}
+				if (rowPerAccount) {
+					if (accounts.size() == 0)
 						results.add(c);
-					}
-			} else {
-				results.add(c);
+					else
+						for (String ac : accounts) {
+							c.getAccountSet().clear();
+							c.addAccount(ac);
+							results.add(c);
+						}
+				} else {
+					results.add(c);
+				}
+
 			}
-
+		} catch (AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		return results;
 	}
 
@@ -162,7 +181,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 				if (val == null) {
 					continue;
 				}
-				String family = idTypeDAO.getFamily(r.getIdType());
+				String family = idTypeDAO.getNodeType(r.getIdType());
 				if (family == null) {
 					continue;
 				}
@@ -197,11 +216,11 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		rows = getRowsForIdentifier(f.getValue());
 
 		for (MemRow r : rows) {
-			if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(
+			if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(
 					f.getFieldName())) {
 
 				logger.trace("Family for row : "
-						+ idTypeDAO.getFamily(r.getIdType()));
+						+ idTypeDAO.getNodeType(r.getIdType()));
 				logger.trace("Field name for search " + f.getFieldName());
 
 				String cno = getCustomerNumberForID(r.entries[CUSTOMER]);
@@ -468,7 +487,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			return true;
 		} else {
 			for (MemRow r : getRowsForIdentifier(value)) {
-				if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(family))
+				if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(family))
 					return true;
 			}
 			return false;
@@ -714,7 +733,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			row = index.getHeads()[id];
 			while (row >= 0) {
 				MemRow r = grid[row];
-				if (idTypeDAO.getFamily(r.getIdType()).equalsIgnoreCase(family)) {
+				if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(family)) {
 					results.add(grid[row]);
 					row = grid[row].nextrows[col];
 				}

@@ -70,7 +70,7 @@ public class Index extends SimpleBasePage{
 	public void setupRender() {
 		if (isUserExists()) {
 			try {
-				workspaces = service.getWorkspacesOrCreateNewForUser(getUser().getUsername());
+				workspaces = service.getWorkspacesOrCreateNewForUser(getUser().getId());
 			} catch (AvroRemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

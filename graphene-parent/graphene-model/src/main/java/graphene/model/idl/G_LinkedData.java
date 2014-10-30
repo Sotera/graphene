@@ -5,18 +5,16 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * A URL and MIME type representing a pointer to text, image or other
-	 * external resource. */
+/** A URL and MIME type representing a pointer to text, image or other external resource. */
 @org.apache.avro.specific.AvroGenerated
 public class G_LinkedData extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_LinkedData\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* A URL and MIME type representing a pointer to text, image or other\\r\\n\\t * external resource.\",\"fields\":[{\"name\":\"url\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"URL of the resource\"},{\"name\":\"mimeType\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"MIME type of the resource\",\"default\":null},{\"name\":\"title\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* description of the linked resource (suitable for display to the user\\r\\n\\t\\t * in an hypertext link)\",\"default\":null}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_LinkedData\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A URL and MIME type representing a pointer to text, image or other external resource.\",\"fields\":[{\"name\":\"url\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"URL of the resource\"},{\"name\":\"mimeType\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"MIME type of the resource\",\"default\":null},{\"name\":\"title\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"description of the linked resource (suitable for display to the user in an hypertext link)\",\"default\":null}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** URL of the resource */
    private java.lang.String url;
   /** MIME type of the resource */
    private java.lang.String mimeType;
-  /** * description of the linked resource (suitable for display to the user
-		 * in an hypertext link) */
+  /** description of the linked resource (suitable for display to the user in an hypertext link) */
    private java.lang.String title;
 
   /**
@@ -88,16 +86,14 @@ public class G_LinkedData extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Gets the value of the 'title' field.
-   * * description of the linked resource (suitable for display to the user
-		 * in an hypertext link)   */
+   * description of the linked resource (suitable for display to the user in an hypertext link)   */
   public java.lang.String getTitle() {
     return title;
   }
 
   /**
    * Sets the value of the 'title' field.
-   * * description of the linked resource (suitable for display to the user
-		 * in an hypertext link)   * @param value the value to set.
+   * description of the linked resource (suitable for display to the user in an hypertext link)   * @param value the value to set.
    */
   public void setTitle(java.lang.String value) {
     this.title = value;

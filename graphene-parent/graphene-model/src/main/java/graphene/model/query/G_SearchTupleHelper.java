@@ -1,6 +1,6 @@
 package graphene.model.query;
 
-import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 
@@ -10,26 +10,25 @@ public class G_SearchTupleHelper extends G_SearchTuple<String> {
 	 * family is specified.
 	 * 
 	 * @param searchType
-	 * @param family
+	 * @param nodeType
 	 * @param specificPropertyType
 	 * @param value
 	 */
-	public G_SearchTupleHelper(G_SearchType searchType,
-			G_CanonicalPropertyType family, String specificPropertyType,
-			String value) {
-		super(searchType, family, specificPropertyType, value);
+	public G_SearchTupleHelper(G_SearchType searchType, G_IdType nodeType,
+			String specificPropertyType, String value) {
+		super(searchType, nodeType, specificPropertyType, value);
 	}
 
 	/**
 	 * Helper constructor for searching by a family type
 	 * 
 	 * @param searchType
-	 * @param family
+	 * @param nodeType
 	 * @param value
 	 */
-	public G_SearchTupleHelper(G_SearchType searchType,
-			G_CanonicalPropertyType family, String value) {
-		super(searchType, family, null, value);
+	public G_SearchTupleHelper(G_SearchType searchType, G_IdType nodeType,
+			String value) {
+		super(searchType, nodeType, null, value);
 	}
 
 	/**
@@ -37,7 +36,7 @@ public class G_SearchTupleHelper extends G_SearchTuple<String> {
 	 * value based on a customer's dataset)
 	 * 
 	 * @param searchType
-	 * @param family
+	 * @param nodeType
 	 * @param value
 	 */
 	public G_SearchTupleHelper(G_SearchType searchType,

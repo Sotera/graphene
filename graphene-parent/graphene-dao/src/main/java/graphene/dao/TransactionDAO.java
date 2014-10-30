@@ -1,9 +1,9 @@
 package graphene.dao;
 
-import java.util.List;
-
 import graphene.model.query.BasicQuery;
 import graphene.model.view.events.DirectedEventRow;
+
+import java.util.List;
 
 /**
  * This is for ONE OR TWO sided transactions.

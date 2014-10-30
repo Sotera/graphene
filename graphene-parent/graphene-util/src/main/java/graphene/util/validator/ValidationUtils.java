@@ -31,6 +31,21 @@ public class ValidationUtils {
 	}
 
 	/**
+	 * Returns the first valid object in the list.
+	 * 
+	 * @param obs
+	 * @return
+	 */
+	public static Object firstNonNull(Object... obs) {
+		for (Object o : obs) {
+			if (isValid(o)) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Used for Neo4J and possibly other parts of code. Removes invalid values
 	 * from a map. This lets you put values from beans into a map without having
 	 * to check each bean property for null before inserting (because that step
@@ -160,6 +175,8 @@ public class ValidationUtils {
 			isvalid = isValid((Number) t);
 		} else if (Boolean.class.isAssignableFrom(t.getClass())) {
 			isvalid = isValid((Boolean) t);
+		} else {
+			isvalid = isValid(t.toString());
 		}
 		return isvalid;
 	}

@@ -5,11 +5,12 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** * Allowed types for Ranges of values.
-	 * */
+/** Allowed types for Ranges of values.
+	
+	CHANGED IN 1.6 */
 @org.apache.avro.specific.AvroGenerated
 public enum G_RangeType { 
   SINGLETON, LIST, BOUNDED, DISTRIBUTION  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_RangeType\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* Allowed types for Ranges of values.\\r\\n\\t *\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_RangeType\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Allowed types for Ranges of values.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

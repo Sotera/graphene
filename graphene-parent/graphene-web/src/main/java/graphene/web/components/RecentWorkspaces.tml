@@ -17,8 +17,8 @@
 		<ul class="dropdown-menu">
 
 			<li t:type="loop" source="workspaces" value="currentWorkspace">
-				<a t:type="eventlink" event="makecurrent" context="currentWorkspace.workspaceid">
-					<t:graphene.jodatimeoutput value="currentWorkspace.lastmodified"
+				<a t:type="eventlink" event="makecurrent" context="currentWorkspace.id">
+					<t:graphene.jodatimeoutput value="currentWorkspace.modified"
 						formatter="ISODate" />
 					- ${currentWorkspace?.title}
 				</a>
@@ -39,7 +39,7 @@
 		<div>
 			<h1>&nbsp;&nbsp;
 				<small>Current Workspace:</small>&nbsp;&nbsp;
-				<a t:type="pagelink" page="graphene/ViewWorkspace" context="currentSelectedWorkspace?.workspaceid">${currentSelectedWorkspace?.title}
+				<a t:type="pagelink" page="graphene/ViewWorkspace" context="currentSelectedWorkspace?.id">${currentSelectedWorkspace?.title}
 				</a>
 			</h1>
 		</div>

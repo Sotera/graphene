@@ -7,10 +7,11 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_User extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_User\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"doc\":\"\",\"default\":true},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"},{\"name\":\"avatar\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* some id of an avatar (could be a file name or other string to look\\r\\n\\t\\t * up)\",\"default\":null},{\"name\":\"email\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's email\",\"default\":null},{\"name\":\"fullname\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's full name\",\"default\":null},{\"name\":\"hashedpassword\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's hashed password\",\"default\":null},{\"name\":\"lastlogin\",\"type\":[\"long\",\"null\"],\"doc\":\"user's lastlogin datetime\",\"default\":0},{\"name\":\"lastmodified\",\"type\":[\"long\",\"null\"],\"doc\":\"user's modified datetime\",\"default\":0},{\"name\":\"accountcreated\",\"type\":[\"long\",\"null\"],\"doc\":\"user's account created datetime\",\"default\":0},{\"name\":\"numberlogins\",\"type\":\"int\",\"doc\":\"user's numberlogins\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_User\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"doc\":\"\",\"default\":true},{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"},{\"name\":\"avatar\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* some id of an avatar (could be a file name or other string to look\\r\\n\\t\\t * up)\",\"default\":null},{\"name\":\"email\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's email\",\"default\":null},{\"name\":\"fullname\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's full name\",\"default\":null},{\"name\":\"hashedpassword\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's hashed password\",\"default\":null},{\"name\":\"lastlogin\",\"type\":[\"long\",\"null\"],\"doc\":\"user's lastlogin datetime\",\"default\":0},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"user's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"user's account created datetime\",\"default\":0},{\"name\":\"numberlogins\",\"type\":\"int\",\"doc\":\"user's numberlogins\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /**  */
    private boolean active;
+   private int id;
    private java.lang.String username;
   /** * some id of an avatar (could be a file name or other string to look
 		 * up) */
@@ -24,9 +25,9 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   /** user's lastlogin datetime */
    private java.lang.Long lastlogin;
   /** user's modified datetime */
-   private java.lang.Long lastmodified;
+   private java.lang.Long modified;
   /** user's account created datetime */
-   private java.lang.Long accountcreated;
+   private java.lang.Long created;
   /** user's numberlogins */
    private int numberlogins;
 
@@ -40,16 +41,17 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   /**
    * All-args constructor.
    */
-  public G_User(java.lang.Boolean active, java.lang.String username, java.lang.String avatar, java.lang.String email, java.lang.String fullname, java.lang.String hashedpassword, java.lang.Long lastlogin, java.lang.Long lastmodified, java.lang.Long accountcreated, java.lang.Integer numberlogins) {
+  public G_User(java.lang.Boolean active, java.lang.Integer id, java.lang.String username, java.lang.String avatar, java.lang.String email, java.lang.String fullname, java.lang.String hashedpassword, java.lang.Long lastlogin, java.lang.Long modified, java.lang.Long created, java.lang.Integer numberlogins) {
     this.active = active;
+    this.id = id;
     this.username = username;
     this.avatar = avatar;
     this.email = email;
     this.fullname = fullname;
     this.hashedpassword = hashedpassword;
     this.lastlogin = lastlogin;
-    this.lastmodified = lastmodified;
-    this.accountcreated = accountcreated;
+    this.modified = modified;
+    this.created = created;
     this.numberlogins = numberlogins;
   }
 
@@ -58,15 +60,16 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return active;
-    case 1: return username;
-    case 2: return avatar;
-    case 3: return email;
-    case 4: return fullname;
-    case 5: return hashedpassword;
-    case 6: return lastlogin;
-    case 7: return lastmodified;
-    case 8: return accountcreated;
-    case 9: return numberlogins;
+    case 1: return id;
+    case 2: return username;
+    case 3: return avatar;
+    case 4: return email;
+    case 5: return fullname;
+    case 6: return hashedpassword;
+    case 7: return lastlogin;
+    case 8: return modified;
+    case 9: return created;
+    case 10: return numberlogins;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -75,15 +78,16 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: active = (java.lang.Boolean)value$; break;
-    case 1: username = (java.lang.String)value$; break;
-    case 2: avatar = (java.lang.String)value$; break;
-    case 3: email = (java.lang.String)value$; break;
-    case 4: fullname = (java.lang.String)value$; break;
-    case 5: hashedpassword = (java.lang.String)value$; break;
-    case 6: lastlogin = (java.lang.Long)value$; break;
-    case 7: lastmodified = (java.lang.Long)value$; break;
-    case 8: accountcreated = (java.lang.Long)value$; break;
-    case 9: numberlogins = (java.lang.Integer)value$; break;
+    case 1: id = (java.lang.Integer)value$; break;
+    case 2: username = (java.lang.String)value$; break;
+    case 3: avatar = (java.lang.String)value$; break;
+    case 4: email = (java.lang.String)value$; break;
+    case 5: fullname = (java.lang.String)value$; break;
+    case 6: hashedpassword = (java.lang.String)value$; break;
+    case 7: lastlogin = (java.lang.Long)value$; break;
+    case 8: modified = (java.lang.Long)value$; break;
+    case 9: created = (java.lang.Long)value$; break;
+    case 10: numberlogins = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -101,6 +105,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
    */
   public void setActive(java.lang.Boolean value) {
     this.active = value;
+  }
+
+  /**
+   * Gets the value of the 'id' field.
+   */
+  public java.lang.Integer getId() {
+    return id;
+  }
+
+  /**
+   * Sets the value of the 'id' field.
+   * @param value the value to set.
+   */
+  public void setId(java.lang.Integer value) {
+    this.id = value;
   }
 
   /**
@@ -196,33 +215,33 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   }
 
   /**
-   * Gets the value of the 'lastmodified' field.
+   * Gets the value of the 'modified' field.
    * user's modified datetime   */
-  public java.lang.Long getLastmodified() {
-    return lastmodified;
+  public java.lang.Long getModified() {
+    return modified;
   }
 
   /**
-   * Sets the value of the 'lastmodified' field.
+   * Sets the value of the 'modified' field.
    * user's modified datetime   * @param value the value to set.
    */
-  public void setLastmodified(java.lang.Long value) {
-    this.lastmodified = value;
+  public void setModified(java.lang.Long value) {
+    this.modified = value;
   }
 
   /**
-   * Gets the value of the 'accountcreated' field.
+   * Gets the value of the 'created' field.
    * user's account created datetime   */
-  public java.lang.Long getAccountcreated() {
-    return accountcreated;
+  public java.lang.Long getCreated() {
+    return created;
   }
 
   /**
-   * Sets the value of the 'accountcreated' field.
+   * Sets the value of the 'created' field.
    * user's account created datetime   * @param value the value to set.
    */
-  public void setAccountcreated(java.lang.Long value) {
-    this.accountcreated = value;
+  public void setCreated(java.lang.Long value) {
+    this.created = value;
   }
 
   /**
@@ -262,14 +281,15 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     implements org.apache.avro.data.RecordBuilder<G_User> {
 
     private boolean active;
+    private int id;
     private java.lang.String username;
     private java.lang.String avatar;
     private java.lang.String email;
     private java.lang.String fullname;
     private java.lang.String hashedpassword;
     private java.lang.Long lastlogin;
-    private java.lang.Long lastmodified;
-    private java.lang.Long accountcreated;
+    private java.lang.Long modified;
+    private java.lang.Long created;
     private int numberlogins;
 
     /** Creates a new Builder */
@@ -284,41 +304,45 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
         this.active = data().deepCopy(fields()[0].schema(), other.active);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.username)) {
-        this.username = data().deepCopy(fields()[1].schema(), other.username);
+      if (isValidValue(fields()[1], other.id)) {
+        this.id = data().deepCopy(fields()[1].schema(), other.id);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.avatar)) {
-        this.avatar = data().deepCopy(fields()[2].schema(), other.avatar);
+      if (isValidValue(fields()[2], other.username)) {
+        this.username = data().deepCopy(fields()[2].schema(), other.username);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.email)) {
-        this.email = data().deepCopy(fields()[3].schema(), other.email);
+      if (isValidValue(fields()[3], other.avatar)) {
+        this.avatar = data().deepCopy(fields()[3].schema(), other.avatar);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.fullname)) {
-        this.fullname = data().deepCopy(fields()[4].schema(), other.fullname);
+      if (isValidValue(fields()[4], other.email)) {
+        this.email = data().deepCopy(fields()[4].schema(), other.email);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.hashedpassword)) {
-        this.hashedpassword = data().deepCopy(fields()[5].schema(), other.hashedpassword);
+      if (isValidValue(fields()[5], other.fullname)) {
+        this.fullname = data().deepCopy(fields()[5].schema(), other.fullname);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.lastlogin)) {
-        this.lastlogin = data().deepCopy(fields()[6].schema(), other.lastlogin);
+      if (isValidValue(fields()[6], other.hashedpassword)) {
+        this.hashedpassword = data().deepCopy(fields()[6].schema(), other.hashedpassword);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.lastmodified)) {
-        this.lastmodified = data().deepCopy(fields()[7].schema(), other.lastmodified);
+      if (isValidValue(fields()[7], other.lastlogin)) {
+        this.lastlogin = data().deepCopy(fields()[7].schema(), other.lastlogin);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.accountcreated)) {
-        this.accountcreated = data().deepCopy(fields()[8].schema(), other.accountcreated);
+      if (isValidValue(fields()[8], other.modified)) {
+        this.modified = data().deepCopy(fields()[8].schema(), other.modified);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.numberlogins)) {
-        this.numberlogins = data().deepCopy(fields()[9].schema(), other.numberlogins);
+      if (isValidValue(fields()[9], other.created)) {
+        this.created = data().deepCopy(fields()[9].schema(), other.created);
         fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.numberlogins)) {
+        this.numberlogins = data().deepCopy(fields()[10].schema(), other.numberlogins);
+        fieldSetFlags()[10] = true;
       }
     }
     
@@ -329,41 +353,45 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
         this.active = data().deepCopy(fields()[0].schema(), other.active);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.username)) {
-        this.username = data().deepCopy(fields()[1].schema(), other.username);
+      if (isValidValue(fields()[1], other.id)) {
+        this.id = data().deepCopy(fields()[1].schema(), other.id);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.avatar)) {
-        this.avatar = data().deepCopy(fields()[2].schema(), other.avatar);
+      if (isValidValue(fields()[2], other.username)) {
+        this.username = data().deepCopy(fields()[2].schema(), other.username);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.email)) {
-        this.email = data().deepCopy(fields()[3].schema(), other.email);
+      if (isValidValue(fields()[3], other.avatar)) {
+        this.avatar = data().deepCopy(fields()[3].schema(), other.avatar);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.fullname)) {
-        this.fullname = data().deepCopy(fields()[4].schema(), other.fullname);
+      if (isValidValue(fields()[4], other.email)) {
+        this.email = data().deepCopy(fields()[4].schema(), other.email);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.hashedpassword)) {
-        this.hashedpassword = data().deepCopy(fields()[5].schema(), other.hashedpassword);
+      if (isValidValue(fields()[5], other.fullname)) {
+        this.fullname = data().deepCopy(fields()[5].schema(), other.fullname);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.lastlogin)) {
-        this.lastlogin = data().deepCopy(fields()[6].schema(), other.lastlogin);
+      if (isValidValue(fields()[6], other.hashedpassword)) {
+        this.hashedpassword = data().deepCopy(fields()[6].schema(), other.hashedpassword);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.lastmodified)) {
-        this.lastmodified = data().deepCopy(fields()[7].schema(), other.lastmodified);
+      if (isValidValue(fields()[7], other.lastlogin)) {
+        this.lastlogin = data().deepCopy(fields()[7].schema(), other.lastlogin);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.accountcreated)) {
-        this.accountcreated = data().deepCopy(fields()[8].schema(), other.accountcreated);
+      if (isValidValue(fields()[8], other.modified)) {
+        this.modified = data().deepCopy(fields()[8].schema(), other.modified);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.numberlogins)) {
-        this.numberlogins = data().deepCopy(fields()[9].schema(), other.numberlogins);
+      if (isValidValue(fields()[9], other.created)) {
+        this.created = data().deepCopy(fields()[9].schema(), other.created);
         fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.numberlogins)) {
+        this.numberlogins = data().deepCopy(fields()[10].schema(), other.numberlogins);
+        fieldSetFlags()[10] = true;
       }
     }
 
@@ -391,6 +419,30 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
       return this;
     }
 
+    /** Gets the value of the 'id' field */
+    public java.lang.Integer getId() {
+      return id;
+    }
+    
+    /** Sets the value of the 'id' field */
+    public graphene.model.idl.G_User.Builder setId(int value) {
+      validate(fields()[1], value);
+      this.id = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'id' field has been set */
+    public boolean hasId() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'id' field */
+    public graphene.model.idl.G_User.Builder clearId() {
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
     /** Gets the value of the 'username' field */
     public java.lang.String getUsername() {
       return username;
@@ -398,21 +450,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'username' field */
     public graphene.model.idl.G_User.Builder setUsername(java.lang.String value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.username = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'username' field has been set */
     public boolean hasUsername() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'username' field */
     public graphene.model.idl.G_User.Builder clearUsername() {
       username = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -423,21 +475,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'avatar' field */
     public graphene.model.idl.G_User.Builder setAvatar(java.lang.String value) {
-      validate(fields()[2], value);
+      validate(fields()[3], value);
       this.avatar = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'avatar' field has been set */
     public boolean hasAvatar() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'avatar' field */
     public graphene.model.idl.G_User.Builder clearAvatar() {
       avatar = null;
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[3] = false;
       return this;
     }
 
@@ -448,21 +500,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'email' field */
     public graphene.model.idl.G_User.Builder setEmail(java.lang.String value) {
-      validate(fields()[3], value);
+      validate(fields()[4], value);
       this.email = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'email' field has been set */
     public boolean hasEmail() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'email' field */
     public graphene.model.idl.G_User.Builder clearEmail() {
       email = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -473,21 +525,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'fullname' field */
     public graphene.model.idl.G_User.Builder setFullname(java.lang.String value) {
-      validate(fields()[4], value);
+      validate(fields()[5], value);
       this.fullname = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'fullname' field has been set */
     public boolean hasFullname() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'fullname' field */
     public graphene.model.idl.G_User.Builder clearFullname() {
       fullname = null;
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[5] = false;
       return this;
     }
 
@@ -498,21 +550,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'hashedpassword' field */
     public graphene.model.idl.G_User.Builder setHashedpassword(java.lang.String value) {
-      validate(fields()[5], value);
+      validate(fields()[6], value);
       this.hashedpassword = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[6] = true;
       return this; 
     }
     
     /** Checks whether the 'hashedpassword' field has been set */
     public boolean hasHashedpassword() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[6];
     }
     
     /** Clears the value of the 'hashedpassword' field */
     public graphene.model.idl.G_User.Builder clearHashedpassword() {
       hashedpassword = null;
-      fieldSetFlags()[5] = false;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
@@ -523,71 +575,71 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'lastlogin' field */
     public graphene.model.idl.G_User.Builder setLastlogin(java.lang.Long value) {
-      validate(fields()[6], value);
+      validate(fields()[7], value);
       this.lastlogin = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'lastlogin' field has been set */
     public boolean hasLastlogin() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'lastlogin' field */
     public graphene.model.idl.G_User.Builder clearLastlogin() {
       lastlogin = null;
-      fieldSetFlags()[6] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'lastmodified' field */
-    public java.lang.Long getLastmodified() {
-      return lastmodified;
-    }
-    
-    /** Sets the value of the 'lastmodified' field */
-    public graphene.model.idl.G_User.Builder setLastmodified(java.lang.Long value) {
-      validate(fields()[7], value);
-      this.lastmodified = value;
-      fieldSetFlags()[7] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'lastmodified' field has been set */
-    public boolean hasLastmodified() {
-      return fieldSetFlags()[7];
-    }
-    
-    /** Clears the value of the 'lastmodified' field */
-    public graphene.model.idl.G_User.Builder clearLastmodified() {
-      lastmodified = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'accountcreated' field */
-    public java.lang.Long getAccountcreated() {
-      return accountcreated;
+    /** Gets the value of the 'modified' field */
+    public java.lang.Long getModified() {
+      return modified;
     }
     
-    /** Sets the value of the 'accountcreated' field */
-    public graphene.model.idl.G_User.Builder setAccountcreated(java.lang.Long value) {
+    /** Sets the value of the 'modified' field */
+    public graphene.model.idl.G_User.Builder setModified(java.lang.Long value) {
       validate(fields()[8], value);
-      this.accountcreated = value;
+      this.modified = value;
       fieldSetFlags()[8] = true;
       return this; 
     }
     
-    /** Checks whether the 'accountcreated' field has been set */
-    public boolean hasAccountcreated() {
+    /** Checks whether the 'modified' field has been set */
+    public boolean hasModified() {
       return fieldSetFlags()[8];
     }
     
-    /** Clears the value of the 'accountcreated' field */
-    public graphene.model.idl.G_User.Builder clearAccountcreated() {
-      accountcreated = null;
+    /** Clears the value of the 'modified' field */
+    public graphene.model.idl.G_User.Builder clearModified() {
+      modified = null;
       fieldSetFlags()[8] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'created' field */
+    public java.lang.Long getCreated() {
+      return created;
+    }
+    
+    /** Sets the value of the 'created' field */
+    public graphene.model.idl.G_User.Builder setCreated(java.lang.Long value) {
+      validate(fields()[9], value);
+      this.created = value;
+      fieldSetFlags()[9] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'created' field has been set */
+    public boolean hasCreated() {
+      return fieldSetFlags()[9];
+    }
+    
+    /** Clears the value of the 'created' field */
+    public graphene.model.idl.G_User.Builder clearCreated() {
+      created = null;
+      fieldSetFlags()[9] = false;
       return this;
     }
 
@@ -598,20 +650,20 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Sets the value of the 'numberlogins' field */
     public graphene.model.idl.G_User.Builder setNumberlogins(int value) {
-      validate(fields()[9], value);
+      validate(fields()[10], value);
       this.numberlogins = value;
-      fieldSetFlags()[9] = true;
+      fieldSetFlags()[10] = true;
       return this; 
     }
     
     /** Checks whether the 'numberlogins' field has been set */
     public boolean hasNumberlogins() {
-      return fieldSetFlags()[9];
+      return fieldSetFlags()[10];
     }
     
     /** Clears the value of the 'numberlogins' field */
     public graphene.model.idl.G_User.Builder clearNumberlogins() {
-      fieldSetFlags()[9] = false;
+      fieldSetFlags()[10] = false;
       return this;
     }
 
@@ -620,15 +672,16 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
       try {
         G_User record = new G_User();
         record.active = fieldSetFlags()[0] ? this.active : (java.lang.Boolean) defaultValue(fields()[0]);
-        record.username = fieldSetFlags()[1] ? this.username : (java.lang.String) defaultValue(fields()[1]);
-        record.avatar = fieldSetFlags()[2] ? this.avatar : (java.lang.String) defaultValue(fields()[2]);
-        record.email = fieldSetFlags()[3] ? this.email : (java.lang.String) defaultValue(fields()[3]);
-        record.fullname = fieldSetFlags()[4] ? this.fullname : (java.lang.String) defaultValue(fields()[4]);
-        record.hashedpassword = fieldSetFlags()[5] ? this.hashedpassword : (java.lang.String) defaultValue(fields()[5]);
-        record.lastlogin = fieldSetFlags()[6] ? this.lastlogin : (java.lang.Long) defaultValue(fields()[6]);
-        record.lastmodified = fieldSetFlags()[7] ? this.lastmodified : (java.lang.Long) defaultValue(fields()[7]);
-        record.accountcreated = fieldSetFlags()[8] ? this.accountcreated : (java.lang.Long) defaultValue(fields()[8]);
-        record.numberlogins = fieldSetFlags()[9] ? this.numberlogins : (java.lang.Integer) defaultValue(fields()[9]);
+        record.id = fieldSetFlags()[1] ? this.id : (java.lang.Integer) defaultValue(fields()[1]);
+        record.username = fieldSetFlags()[2] ? this.username : (java.lang.String) defaultValue(fields()[2]);
+        record.avatar = fieldSetFlags()[3] ? this.avatar : (java.lang.String) defaultValue(fields()[3]);
+        record.email = fieldSetFlags()[4] ? this.email : (java.lang.String) defaultValue(fields()[4]);
+        record.fullname = fieldSetFlags()[5] ? this.fullname : (java.lang.String) defaultValue(fields()[5]);
+        record.hashedpassword = fieldSetFlags()[6] ? this.hashedpassword : (java.lang.String) defaultValue(fields()[6]);
+        record.lastlogin = fieldSetFlags()[7] ? this.lastlogin : (java.lang.Long) defaultValue(fields()[7]);
+        record.modified = fieldSetFlags()[8] ? this.modified : (java.lang.Long) defaultValue(fields()[8]);
+        record.created = fieldSetFlags()[9] ? this.created : (java.lang.Long) defaultValue(fields()[9]);
+        record.numberlogins = fieldSetFlags()[10] ? this.numberlogins : (java.lang.Integer) defaultValue(fields()[10]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

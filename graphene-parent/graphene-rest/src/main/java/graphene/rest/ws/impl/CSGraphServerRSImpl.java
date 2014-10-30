@@ -2,8 +2,9 @@ package graphene.rest.ws.impl;
 
 import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.CSGraphServerRS;
+import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
-import graphene.services.PropertyGraphBuilder;
+import graphene.services.HyperGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
@@ -25,8 +26,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	@Inject
 	private Logger logger;
 
-	@InjectService("Property")
-	private PropertyGraphBuilder propertyGraphBuilder;
+	@InjectService("HyperProperty")
+	private HyperGraphBuilder propertyGraphBuilder;
 
 	public CSGraphServerRSImpl() {
 
@@ -49,7 +50,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("maxSecs " + maxSecs);
 		logger.debug("minimumWeight " + minimumWeight);
 
-		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 6);
+		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 2);
 		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 1000);
 		int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);

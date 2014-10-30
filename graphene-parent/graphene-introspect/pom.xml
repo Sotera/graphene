@@ -4,11 +4,11 @@
   <parent>
     <artifactId>graphene-parent</artifactId>
     <groupId>graphene</groupId>
-   <version>4.0.9-SNAPSHOT</version>
+   <version>4.1.0-SNAPSHOT</version>
   </parent>
   <groupId>graphene</groupId>
   <artifactId>graphene-introspect</artifactId>
- <version>4.0.9-SNAPSHOT</version>
+ <version>4.1.0-SNAPSHOT</version>
   <name>${project.artifactId}</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

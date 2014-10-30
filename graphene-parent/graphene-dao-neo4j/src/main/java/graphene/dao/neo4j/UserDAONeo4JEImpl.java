@@ -4,8 +4,9 @@ import graphene.business.commons.exception.DataAccessException;
 import graphene.dao.UserDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.model.idl.AuthenticationException;
+import graphene.model.idl.G_CanonicalRelationshipType;
+import graphene.model.idl.G_EdgeType;
 import graphene.model.idl.G_GroupFields;
-import graphene.model.idl.G_RelationshipType;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserFields;
 import graphene.util.ExceptionUtil;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.joda.time.DateTime;
@@ -74,8 +76,8 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		if (u != null) {
 			try (Transaction tx = beginTx()) {
 				d = new G_User();
-				d.setAccountcreated(new DateTime(u.getProperty(
-						G_UserFields.accountcreated.name(), 0l)).getMillis());
+				d.setCreated(new DateTime(u.getProperty(
+						G_UserFields.created.name(), 0l)).getMillis());
 				d.setActive((boolean) u.getProperty(G_UserFields.active.name(),
 						true));
 				d.setAvatar((String) u.getProperty(G_UserFields.avatar.name(),
@@ -124,7 +126,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 					.execute(queryString, parameters).columnAs("n");
 
 			Node n = resultIterator.next();
-			n.setProperty(G_UserFields.accountcreated.name(), DateTime.now()
+			n.setProperty(G_UserFields.created.name(), DateTime.now()
 					.getMillis());
 			n.setProperty(G_UserFields.active.name(), d.getActive());
 			n.setProperty(G_UserFields.avatar.name(), d.getAvatar());
@@ -164,10 +166,10 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean delete(String username) {
+	public boolean delete(int id) {
 		boolean success = false;
 		try (Transaction tx = beginTx()) {
-			Node u = getUserNodeByUsername(username);
+			Node u = getUserNodeById(id);
 			for (Relationship r : u.getRelationships()) {
 				r.delete();
 			}
@@ -181,18 +183,18 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean disable(String username) {
+	public boolean disable(int id) {
 		try (Transaction tx = beginTx()) {
-			getUserNodeByUsername(username).setProperty("active", false);
+			getUserNodeById(id).setProperty("active", false);
 			tx.success();
 		}
 		return true;
 	}
 
 	@Override
-	public boolean enable(String username) {
+	public boolean enable(int id) {
 		try (Transaction tx = beginTx()) {
-			getUserNodeByUsername(username).setProperty("active", true);
+			getUserNodeById(id).setProperty("active", true);
 			tx.success();
 		}
 		return true;
@@ -227,9 +229,10 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.getGraphDb()
 						.findNodesByLabelAndProperty(
 								GrapheneNeo4JConstants.groupLabel,
-								G_GroupFields.groupname.name(), groupName)
+								G_GroupFields.name.name(), groupName)
 						.iterator()) {
-
+			G_EdgeType memberOf = edgeTypeAccess
+					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
 			if (g.hasNext()) {
 				Node j = g.next();
 				TraversalDescription traversalDescription = n4jService
@@ -239,8 +242,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.evaluator(
 								Evaluators
 										.includeWhereLastRelationshipTypeIs(DynamicRelationshipType
-												.withName(G_RelationshipType.MEMBER_OF
-														.name())));
+												.withName(memberOf.getName())));
 
 				Traverser traverser = traversalDescription.traverse(j);
 				for (Path path : traverser) {
@@ -252,30 +254,9 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				}
 				tx.success();
 			}
-		}
-		return list;
-	}
-
-	/**
-	 * this way seems to be the old way of using indexes, which means we need to
-	 * grab the index names from the service. Do we grab them by the label, or
-	 * by the field name, or both?
-	 */
-	@Override
-	public List<G_User> getByPartialUsername(String partialName) {
-		List<G_User> list = new ArrayList<G_User>();
-		try (Transaction tx = beginTx()) {
-			String queryString = "start n = node(*) where n."
-					+ G_UserFields.username + " =~ '.*" + partialName
-					+ ".*' return n, count(*) as c;";
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			ResourceIterator<Object> resultIterator = n4jService
-					.getExecutionEngine().execute(queryString, parameters)
-					.columnAs("n");
-			while (resultIterator.hasNext()) {
-				list.add(createDetached((Node) resultIterator.next()));
-			}
-			tx.success();
+		} catch (AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return list;
 	}
@@ -284,11 +265,19 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	public List<G_User> getByPartialUsername(String partialName, int offset,
 			int limit) {
 		List<G_User> list = new ArrayList<G_User>();
+
 		try (Transaction tx = beginTx()) {
 			String queryString = "start n = node(*) where n."
 					+ G_UserFields.username + " =~ '.*" + partialName
-					+ ".*' return n order by n." + G_UserFields.username
-					+ " skip " + offset + " limit " + limit;
+					+ ".*' return n order by n." + G_UserFields.username;
+
+			if (offset > 0) {
+				queryString += " skip " + offset;
+			}
+			if (limit > 0) {
+				queryString += " limit " + limit;
+			}
+
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			ResourceIterator<Object> resultIterator = n4jService
 					.getExecutionEngine().execute(queryString, parameters)
@@ -301,11 +290,11 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return list;
 	}
 
-	@Override
-	public G_User getByUsername(String username) {
-		Node n = getUserNodeByUsername(username);
-		return (n == null ? null : createDetached(n));
-	}
+	// @Override
+	// public G_User getByUser(int id) {
+	// Node n = getUserNodeById(id);
+	// return (n == null ? null : createDetached(n));
+	// }
 
 	@PostInjection
 	public void initialize() throws DataAccessException {
@@ -323,14 +312,14 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean isExisting(String username) {
-		return (getUserNodeByUsername(username) == null) ? false : true;
+	public boolean isExisting(int id) {
+		return (getUserNodeById(id) == null) ? false : true;
 	}
 
 	@Override
-	public G_User loginUser(String username, String password)
+	public G_User loginUser(int id, String password)
 			throws AuthenticationException {
-		Node node = getUserNodeByUsername(username);
+		Node node = getUserNodeById(id);
 		try (Transaction tx = beginTx()) {
 
 			if (node != null) {
@@ -344,11 +333,11 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 					}
 				} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 					logger.error("Error logging in, could not validate password for "
-							+ username);
+							+ id);
 					e.printStackTrace();
 				}
 			} else {
-				logger.error("No user with username " + username);
+				logger.error("No user with id " + id);
 			}
 			tx.success();
 
@@ -381,9 +370,8 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	@Override
 	public G_User save(G_User d) {
 		try (Transaction tx = beginTx()) {
-			Node n = getUserNodeByUsername(d.getUsername());
-			setSafeProperty(n, G_UserFields.accountcreated.name(),
-					d.getAccountcreated());
+			Node n = getUserNodeById(d.getId());
+			setSafeProperty(n, G_UserFields.created.name(), d.getCreated());
 			setSafeProperty(n, G_UserFields.active.name(), d.getActive());
 			setSafeProperty(n, G_UserFields.avatar.name(), d.getAvatar());
 			setSafeProperty(n, G_UserFields.email.name(), d.getEmail());
@@ -399,9 +387,9 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean updatePassword(String username, String password) {
+	public boolean updatePassword(int id, String password) {
 		try (Transaction tx = beginTx()) {
-			setPasswordHash(getUserNodeByUsername(username), password);
+			setPasswordHash(getUserNodeById(id), password);
 			tx.success();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -411,15 +399,40 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public String getPasswordHash(String username, String password) {
+	public String getPasswordHash(int id, String password) {
 		String hash = null;
 		try {
 			hash = passwordHasher.createHash(password);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			logger.error("Error getting password hash for user " + username);
+			logger.error("Error getting password hash for id " + id);
 			e.printStackTrace();
 		}
 		return hash;
+	}
+
+	@Override
+	public G_User getById(int id) {
+		Node n = getUserNodeById(id);
+		G_User g = null;
+		try (Transaction tx = beginTx()) {
+			g = createDetached(n);
+			tx.success();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+
+		}
+		return g;
+	}
+
+	@Override
+	public G_User getByUsername(String userName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isExisting(String username) {
+		return (getByUsername(username) == null) ? false : true;
 	}
 
 }

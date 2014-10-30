@@ -1142,7 +1142,7 @@ function scrollTop() {
 /* ~ END: SCROLL TO TOP */
 
 /*
- * INITIALIZE JARVIS WIDGETS
+ * INITIALIZE JARVIS WIDGETS  NOTE: we will abandon the use of Jarvis widgets because of a recently discovered licensing issue.
  */
 
 function setup_widgets_desktop() {
