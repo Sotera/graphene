@@ -168,7 +168,10 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 		String key = null;
 		boolean foundValue = false;
 		// Allow for null values as part of the id.
-		if (addendIds != null && addendIds.length > 0) {
+		if (addendIds != null && addendIds.length == 1
+				&& ValidationUtils.isValid(addendIds[0])) {
+			key = addendIds[0].toLowerCase();
+		} else if (addendIds != null && addendIds.length > 0) {
 			for (String a : addendIds) {
 				// make sure something is non null.
 				if (a != null && !a.isEmpty()) {

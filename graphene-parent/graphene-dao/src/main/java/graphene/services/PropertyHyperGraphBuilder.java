@@ -211,11 +211,13 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		// default blank
 	}
 
-	public V_GenericNode createOrUpdateNode(String id, String idType,
+	public V_GenericNode createOrUpdateNode(String originalId, String idType,
 			String nodeType, V_GenericNode attachTo, String relationType,
 			String relationValue) {
 		V_GenericNode a = null;
-		if (ValidationUtils.isValid(id)) {
+
+		if (ValidationUtils.isValid(originalId)) {
+			String id = generateNodeId(originalId);
 			if (!stopwordService.isValid(id)) {
 				addError(new DocumentError("Bad Identifier", "The " + nodeType
 						+ " (" + id + ") contains a stopword", Severity.WARN));
@@ -229,8 +231,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					a.setIdVal(id);
 					a.setNodeType(nodeType);
 					a.setColor(style.getHexColorForNode(a.getNodeType()));
-					a.setLabel(id);
-					a.addData(nodeType, getCombinedSearchLink(id));
+					a.setLabel(originalId);
+					a.addData(nodeType, getCombinedSearchLink(originalId));
 					nodeList.addNode(a);
 				}
 				// now we have a valid node. Attach it to the other node
