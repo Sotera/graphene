@@ -490,7 +490,7 @@ Ext.define("DARPA.TransactionGraph", {
 		var self=this;
 		self.currentNode=node;
 		var nodeDisp = self.getNodeDisplay();
-		nodeDisp.setAttrs(node.data());
+		nodeDisp.setAttrs(node);
                 
 		nodeDisp.enablePivot(true); // currently all nodes are accounts
                 nodeDisp.enableHide(true);
@@ -502,7 +502,7 @@ Ext.define("DARPA.TransactionGraph", {
 		var nodeDisp = self.getNodeDisplay();
 		var d = edge.data();
 		if (d && d.attrs)
-			nodeDisp.setAttrs(d);
+			nodeDisp.setAttrs(edge);
 		
 		// TODO: Enable "SHOW" for the transactions
 		
@@ -539,18 +539,18 @@ Ext.define("DARPA.TransactionGraph", {
 				default: break;
 			}
 		}
-		
-		var window = Ext.create("DARPA.DetailsViewer", {
-			timeStamp: date
-		});
-		
+		var window = Ext.getCmp("darpa-email-viewer");
+		if (typeof window == "undefined") {
+			var window = Ext.create("DARPA.DetailsViewer", {
+				timeStamp: date
+			});
+		}
 		window.show();
 		
 		window.setTo(to);
 		window.setFrom(from);
 		window.setSubject(subject);
 		window.setBody(body);
-		
 	},
 	
 	nodeEnter:function(node)
@@ -563,7 +563,7 @@ Ext.define("DARPA.TransactionGraph", {
                 var self = Ext.getCmp('TransactionGraphInst');
                 if (self) {
                     var nodeDisp =self.getNodeDisplay();
-                    nodeDisp.setAttrs(node.data());
+                    nodeDisp.setAttrs(node);
                 }
 
 //		var self=this;

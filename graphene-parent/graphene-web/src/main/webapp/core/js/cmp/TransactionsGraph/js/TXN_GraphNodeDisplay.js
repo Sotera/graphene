@@ -55,12 +55,13 @@ Ext.define("DARPA.TXNGNodeDisplay",
 	}, // constructor
 	
 	//------------
-    setAttrs: function(data) {
+    setAttrs: function(element) {
 		var self = this;
 		var html = "<table rules='rows'>";
+		var data = element.data();
 		var attrs = data.attrs;
 		var detailsItems = self.items.items[0].items.items; // MFM
-		var elementIsEdge = false;
+		var elementIsEdge = element.isEdge();
 		
 		for (var prop in data) {
 			if (data.hasOwnProperty(prop)) {
@@ -77,8 +78,6 @@ Ext.define("DARPA.TXNGNodeDisplay",
 			var a = attrs[i];
 			if (a.key.indexOf("payload") == -1) {
 				html += "<tr><td>" + a.key + "</td> <td>&nbsp;:&nbsp;</td> <td>" + a.val + "</td></tr>";
-			} else {
-				elementIsEdge = true;
 			}
 			if (a.key == "subject") {
 				detailsItems[1].setValue(a.val);
