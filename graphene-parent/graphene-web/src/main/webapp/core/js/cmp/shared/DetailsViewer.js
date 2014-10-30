@@ -1,6 +1,7 @@
 Ext.define("DARPA.DetailsViewer", {
 	extend: 'Ext.Window',
 	title: 'Email Viewer',
+	id: "darpa-email-viewer",
 	height: 600,
 	width: 500,
 	minHeight: 300,
