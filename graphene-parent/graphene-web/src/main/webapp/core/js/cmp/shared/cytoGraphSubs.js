@@ -160,7 +160,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'line-color': _this.CONSTANTS("defaultEdge"), 
 						'target-arrow-color': _this.CONSTANTS("defaultEdge"),
 						'target-arrow-shape': 'triangle',
-						'width': 'data(lineWidth)'
+						'width': 'data(count)'
 					})
 					.selector("edge:selected").css({
 						'background-color': _this.CONSTANTS("selectedEdge"),
@@ -261,9 +261,14 @@ CytoGraphVis.prototype.setHandlers = function() {
 		if (dm.isWaiting === true) {
 			dm.setWait(false);
 			dm.setDest(e.cyTarget);
-			var paths = dm.run();
+			var results = dm.run();
 			
-			paths.edges().addClass("on-path");
+			results.paths.edges().addClass("on-path");
+			
+			if (_this.owner.getProgressBar) {
+				var pb = _this.owner.getProgressBar();
+				if (pb) pb.updateProgress(1, "Shortest Path calculated; Number of hops is " + results.distance + ".");
+			}
 		} else {
 			e.cyTarget.select();
 		}
@@ -970,11 +975,19 @@ function DijkstraManager(graphRef) {
 		
 		var result = eles.dijkstra(
 			_this.root, // root node
-			undefined,	// optional function that returns edge weight
+			// optional function that returns edge weight
+			function() { 
+				var a = this.data("weight"); 
+				//console.log("Dijkstra: weight is " + a); 
+				return a;
+			},
 			false		// only follow directed edges, yes/no
 		);
 		
-		return result.pathTo(_this.dest);
+		return {
+			paths: result.pathTo(_this.dest),
+			distance: result.distanceTo(_this.dest)
+		};
 	};
 	
 	this.clear = function() {
