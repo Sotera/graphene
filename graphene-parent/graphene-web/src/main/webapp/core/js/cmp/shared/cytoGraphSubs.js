@@ -976,8 +976,8 @@ function DijkstraManager(graphRef) {
 		var result = eles.dijkstra(
 			_this.root, // root node
 			// optional function that returns edge weight
-			function() { 
-				var a = this.data("weight"); 
+			function(edge) { 
+				var a = edge.data("weight"); 
 				//console.log("Dijkstra: weight is " + a); 
 				return a;
 			},
