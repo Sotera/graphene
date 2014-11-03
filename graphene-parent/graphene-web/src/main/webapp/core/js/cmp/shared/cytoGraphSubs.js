@@ -411,6 +411,35 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		}
 	}
 	
+	// prevent any duplicate edges from being added to the graph
+	var edges = json.edges;
+	for (i = 0; i < edges.length; i++) {
+		var edge = edges[i];
+		
+		var a = edge.data.amount;
+		var l = edge.data.label;
+		var s = edge.data.source;
+		var t = edge.data.target;
+		
+		var amountCondition = (typeof a == "string" && a.length > 0) ? "[amount = '"+a+"']" : "";
+		var labelCondition = (typeof l == "string" && l.lenght > 0) ? "[label = '"+l+"']" : "";
+		
+		// can't use IDs since they are not present in the JSON.  Only available after this.gv.add(json), which is too late.
+		// (this.source == that.source && this.target == that.target && this.amount == that.amount && this.label == that.label) is 
+		// the best match condition so far.
+		var matchedEdges = this.gv.$("edge[source = '"+s+"'][target = '"+t+"']" + amountCondition + labelCondition);
+		
+		// if edge already exists on the graph, splice it out of the json before it's loaded
+		if (matchedEdges.length > 0) {
+			edges.splice(i, 1);
+			i--;
+			
+			matchedEdges.each(function(index, e){
+				console.log("Pruned edge with id='" + e.data("id") + "'");
+			});
+		}
+	}
+	
 	this.gv.add(json);
 	
 	var retJson = {};
