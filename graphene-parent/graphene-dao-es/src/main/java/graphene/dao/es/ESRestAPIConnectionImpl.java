@@ -9,10 +9,12 @@ import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+import io.searchbox.indices.CreateIndex;
 
 import javax.annotation.Nullable;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.index.query.CommonTermsQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -26,6 +28,65 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 	@Inject
 	private JestClient client;
+
+	@Override
+	public void createIndex(String indexName, String settings) {
+		try {
+			if (settings != null) {
+				logger.debug("Creating index " + indexName + " with settings "
+						+ settings);
+				client.execute(new CreateIndex.Builder(indexName).settings(
+						ImmutableSettings.builder().loadFromSource(settings))
+						.build());
+			} else {
+				logger.debug("Creating index " + indexName
+						+ " with default settings");
+				client.execute(new CreateIndex.Builder(indexName).build());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void createIndex(String indexName, int shards, int replicas) {
+		try {
+			if (shards > 0 && replicas > 0) {
+				logger.debug("Creating index " + indexName + " with " + shards
+						+ "shard(s) and " + replicas + " replica(s).");
+				ImmutableSettings.Builder sb = ImmutableSettings
+						.settingsBuilder();
+				sb.put("number_of_shards", shards);
+				sb.put("number_of_replicas", replicas);
+				client.execute(new CreateIndex.Builder(indexName).settings(
+						sb.build().getAsMap()).build());
+			} else {
+				logger.debug("Creating index " + indexName
+						+ " with default settings");
+				client.execute(new CreateIndex.Builder(indexName).build());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+
+	/**
+	 * @return the client
+	 */
+	@Override
+	public final JestClient getClient() {
+		return client;
+	}
+
+	/**
+	 * @param client the client to set
+	 */
+	public final void setClient(JestClient client) {
+		this.client = client;
+	}
 
 	private String createCleanUrl(@Nullable String basicAuth, String baseUrl) {
 		if (basicAuth != null) {
