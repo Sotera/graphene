@@ -44,7 +44,7 @@ public interface LedgerServerRS {
 			@QueryParam("year") @DefaultValue(value = "0") int year,
 			@QueryParam("month") @DefaultValue(value = "0") int month);
 	
-	@Produces("application/json")
+	@Produces("text/csv")
 	@GET
 	@Path("/exportCSV")
 	public abstract Response exportCSVTransactions(
@@ -59,7 +59,7 @@ public interface LedgerServerRS {
 			@QueryParam("unit") @DefaultValue(value = "") String unit, 
 			@QueryParam("sortColumn") @DefaultValue(value = "trn_dt") String sortColumn);
 	
-	@Produces("application/json")
+	@Produces("application/vnd.ms-excel")
 	@GET
 	@Path("/exportXLS")
 	public abstract Response exportXLSTransactions(
