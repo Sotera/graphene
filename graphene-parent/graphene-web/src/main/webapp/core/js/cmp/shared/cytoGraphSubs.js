@@ -261,7 +261,7 @@ CytoGraphVis.prototype.setHandlers = function() {
 		if (dm.isWaiting === true) {
 			dm.setWait(false);
 			dm.setDest(e.cyTarget);
-			var results = dm.run();
+			var results = dm.run(false);
 			
 			results.paths.edges().addClass("on-path");
 			
@@ -270,6 +270,10 @@ CytoGraphVis.prototype.setHandlers = function() {
 				if (pb) pb.updateProgress(1, "Shortest Path calculated; Number of hops is " + results.distance + ".");
 			}
 		} else {
+			// if shift key is not held down, deselect everything and select clicked node
+			if (!e.originalEvent.shiftKey) {
+				e.cy.elements().unselect();
+			}
 			e.cyTarget.select();
 		}
 	});
@@ -1001,18 +1005,20 @@ function DijkstraManager(graphRef) {
 	
 	this.run = function(isDirected) {
 		var eles = graphRef.gv.elements();
+
+		// function that returns edge's weight where this == current edge
+		var getEdgeWeight = function() {
+			var a = this.data("weight"); 
+			if (typeof a == "undefined" || parseInt(a) <= 0) {
+				console.log("Could not get valid weight from edge id='" + this.data("id") + "'");
+				a = "1";
+			}
+			//console.log("Dijkstra: weight is " + a); 
+			return parseInt(a);
+		};
 		
-		var result = eles.dijkstra(
-			_this.root, // root node
-			// optional function that returns edge weight
-			function(edge) { 
-				var a = edge.data("weight"); 
-				//console.log("Dijkstra: weight is " + a); 
-				return a;
-			},
-			false		// only follow directed edges, yes/no
-		);
-		
+		// the last boolean parameter of dijkstra() is a flag to only follow edge directions, yes/no
+		var result = eles.dijkstra(_this.root, getEdgeWeight, followDirection);
 		return {
 			paths: result.pathTo(_this.dest),
 			distance: result.distanceTo(_this.dest)
