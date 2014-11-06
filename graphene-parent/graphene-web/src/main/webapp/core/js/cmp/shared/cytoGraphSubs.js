@@ -49,6 +49,7 @@ function CytoGraphVis(inId) {
 	var _layoutManager = new LayoutManager(this);
 	var _stateManager = new StateManager(this);
 	var _dijkstraManager = new DijkstraManager(this);
+	var _generator = new GraphGenerator(this);
 	
 	this.getGv = function() { return this.gv; };
 	this.getOwner = function() { return this.owner; };
@@ -58,6 +59,7 @@ function CytoGraphVis(inId) {
 	this.getLayoutManager = function() { return _layoutManager; };
 	this.getStateManager = function() { return _stateManager; };
 	this.getDijkstraManager = function() { return _dijkstraManager; };
+	this.getGenerator = function() {return _generator; };
 	
 	// extend this' API with the layout manager's methods
 	this.changeLayout = _layoutManager.changeLayout;
@@ -230,7 +232,33 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 								console.log("Set node id='" + node.data("id") + "' as root.");
 							} else { console.log("dijkstra pathfinding is unavailable."); }
 						}
-					}],
+					} 
+					// uncomment when Add/Connect/etc. are finished
+					/*,{
+						content: "Add Node",
+						select: function() {
+							var node = this;
+							var gg = _this.getGenerator();
+							if (typeof gg !== "undefined") {
+								gg.clear();
+								gg.setParent(node);
+								gg.changeState("ADD");
+							}
+						}
+					}, */
+					/*{
+						content: "Connect Node",
+						select: function() {
+							var node = this;
+							var gg = _this.getGenerator();
+							if (typeof gg !== "undefined") {
+								gg.clear();
+								gg.setParent(node);
+								gg.changeState("CONNECT");
+							}
+						}
+					}*/
+					],
 				});
 			} catch(e) {
 				console.log(e);
@@ -256,8 +284,28 @@ CytoGraphVis.prototype.setHandlers = function() {
 	var _this = this;
 	//var timoutFn = null;
 	
+	this.gv.on("click", function(e) {
+		var gg = _this.getGenerator();
+		
+		if (e.cyTarget === _this.gv) {
+			var pos = e.cyPosition;
+			// if you're trying to add a node and click white-space, add a node
+			if (gg.stateMatches("ADD")) {
+				gg.addNode(pos.x, pos.y);
+				gg.clear();
+			}
+			
+			// if you're trying to connect a node but click white-space, reset the manager
+			// to prevent unwanted interaction later on
+			if (gg.stateMatches("CONNECT")) {
+				gg.clear();
+			}
+		}
+	});
+	
 	this.gv.on("click", "node", function(e) {
 		var dm = _this.getDijkstraManager();
+		var gg = _this.getGenerator();
 		if (dm.isWaiting === true) {
 			dm.setWait(false);
 			dm.setDest(e.cyTarget);
@@ -269,9 +317,11 @@ CytoGraphVis.prototype.setHandlers = function() {
 				var pb = _this.owner.getProgressBar();
 				if (pb) pb.updateProgress(1, "Shortest Path calculated; Number of hops is " + results.distance + ".");
 			}
+		} else if (gg.stateMatches("CONNECT")) {
+			gg.connectNodes(e.cyTarget);
+			gg.clear();
 		} else {
-			// if shift key is not held down, deselect everything and select clicked node
-			if (!e.originalEvent.shiftKey) {
+			if (!e.originalEvent.shiftKey || !e.originalEvent.ctrlKey) {
 				e.cy.elements().unselect();
 			}
 			e.cyTarget.select();
@@ -1003,14 +1053,14 @@ function DijkstraManager(graphRef) {
 		_this.isWaiting = (bool === true) ? true : false;
 	};
 	
-	this.run = function(isDirected) {
+	this.run = function(followDirection) {
 		var eles = graphRef.gv.elements();
-
-		// function that returns edge's weight where this == current edge
+		var directed = (followDirection === true) ? true : false;
+		// function that returns edge weight where this == current edge
 		var getEdgeWeight = function() {
 			var a = this.data("weight"); 
 			if (typeof a == "undefined" || parseInt(a) <= 0) {
-				console.log("Could not get valid weight from edge id='" + this.data("id") + "'");
+				console.log("Could not get valid weight from edge id='" + this.data().id + "'");
 				a = "1";
 			}
 			//console.log("Dijkstra: weight is " + a); 
@@ -1018,7 +1068,7 @@ function DijkstraManager(graphRef) {
 		};
 		
 		// the last boolean parameter of dijkstra() is a flag to only follow edge directions, yes/no
-		var result = eles.dijkstra(_this.root, getEdgeWeight, followDirection);
+		var result = eles.dijkstra(_this.root, getEdgeWeight, directed);
 		return {
 			paths: result.pathTo(_this.dest),
 			distance: result.distanceTo(_this.dest)
@@ -1030,5 +1080,137 @@ function DijkstraManager(graphRef) {
 		_this.dest = null;
 		_this.isWaiting = false;
 		graphRef.gv.elements().removeClass("on-path");
+	};
+}
+
+function GraphGenerator(graphRef) {
+	var _this = this;
+	var _currentId = 0;
+	var _parentNode = null;
+	
+	var _stateEnum = {
+		ADD:		{value: false, name: "ADD"},
+		CONNECT:	{value: false, name: "CONNECT"},
+		MERGE:		{value: false, name: "MERGE"}
+	};
+	
+	var _getCurrentState = function() {
+		for (var state in _stateEnum) {
+			if (_stateEnum.hasOwnProperty(state)) {
+				if (_stateEnum[state].value === true)
+					return _stateEnum[state].name;
+			}
+		}
+		return null;
+	};
+	
+	this.setParent = function(node) {
+		if (typeof node.isNode == "function" && node.isNode() == true) {
+			_parentNode = node;
+			_this.say(0, "Dialog to add properties.  Click on graph whitespace to place new node there.");
+		}
+	};
+	
+	this.addNode = function(x, y) {
+		// create node and set node's position to (x, y)
+		var nodeJSON = {
+			data: {
+				id: "generatedNode_" + _currentId,
+				name: "TODO fill me",
+				attrs: [
+					// TODO: populate via prompt
+				]
+			},
+			group: "nodes",
+			position: {x: x, y: y}
+		};
+		
+		// create edge between new node and _parentNode
+		var edgeJSON = {
+			data: {
+				id: "generatedEdge_" + _currentId,
+				source: _parentNode.data("id"),
+				target: "generatedNode_" + _currentId,
+				attrs: [
+					// TODO populate via prompt
+				]
+			},
+			group: "edges"
+		};
+		
+		// add node and edge json graphRef.gv
+		graphRef.gv.add([nodeJSON, edgeJSON]);
+		
+		// increment the running id so we can have unique nodes/edges
+		_currentId++;
+		
+		_this.say(1, "100%");
+	};
+	
+	this.connectNodes = function(targetNode) {
+		if (_this.stateMatches("CONNECT") && typeof _parentNode !== "undefined") {
+			// create edge between targetNode and _parentNode
+			var edgeJSON = {
+				data: {
+					id: "generatedEdge_" + _currentId,
+					source: _parentNode.data("id"),
+					target: targetNode.data("id"),
+					attrs: [
+						// TODO: populate via prompt
+					]
+				},
+				group: "edges"
+			};
+			// add edge json to graphRef.gv
+			graphRef.gv.add(edgeJSON);
+			
+			// increment the running id so we can have unique nodes/edges
+			_currentId++;
+			
+			_this.say(1, "100%");
+		}
+	};
+	
+	this.changeState = function(newState) {
+		if (typeof newState !== "string") return;
+		
+		switch (newState.toUpperCase()) {
+			case "ADD":
+				_stateEnum.ADD.value = true;
+				_stateEnum.CONNECT.value = false;
+				_stateEnum.MERGE.value = false;
+				break;
+			case "CONNECT":
+				_stateEnum.ADD.value = false;
+				_stateEnum.CONNECT.value = true;
+				_stateEnum.MERGE.value = false;
+				break;
+			case "MERGE":
+				_stateEnum.ADD.value = false;
+				_stateEnum.CONNECT.value = false;
+				_stateEnum.MERGE.value = true;
+				break;
+			default:
+				break;
+		}
+	};
+	
+	this.stateMatches = function(inState) {
+		if (typeof inState !== "string") return false;
+		return inState.toUpperCase() == _getCurrentState();
+	};
+	
+	this.say = function(progressAmount, progressMessage) {
+		if (graphRef.owner.getProgressBar) {
+			var pb = graphRef.owner.getProgressBar();
+			if (pb) pb.updateProgress(progressAmount, progressMessage);
+		}
+	};
+	
+	this.clear = function() {
+		_root = null;
+		_stateEnum.ADD.value = false;
+		_stateEnum.CONNECT.value = false;
+		_stateEnum.MERGE.value = true;
 	};
 }
