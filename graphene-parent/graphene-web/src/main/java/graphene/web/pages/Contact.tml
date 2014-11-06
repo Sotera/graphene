@@ -3,7 +3,8 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 	<div class="row-fluid">
 		<div class="col-sm-12">
-			<p>Contact ${contact}</p>
+			<p>For assistance in updating the core version of this application, contact ${contact}, specifically daniel.jue@soteradefense.com / djue@phy6.net</p>
+			
 		</div>
 	</div>
 </html>

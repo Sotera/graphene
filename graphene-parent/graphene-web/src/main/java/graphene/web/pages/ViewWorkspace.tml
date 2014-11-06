@@ -12,6 +12,6 @@
 	</t:if>
 	<t:if test="currentWorkspace" negate="true">
 		Sorry, that workspace is not
-		available.
+		available, or workspaces are disabled for this version of Graphene.
 	</t:if>
 </html>

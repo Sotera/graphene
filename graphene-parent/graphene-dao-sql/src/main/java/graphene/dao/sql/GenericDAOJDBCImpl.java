@@ -272,7 +272,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 */
 	protected SQLQuery setOffsetAndLimit(EventQuery q, SQLQuery sq,
 			long defaultLimit) {
-		if (ValidationUtils.isValid(q)) {
+		if (ValidationUtils.isValid(q,sq)) {
 			if (ValidationUtils.isValid(q.getFirstResult())
 					&& defaultLimit > q.getFirstResult()) {
 				sq = sq.offset(q.getFirstResult());

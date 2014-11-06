@@ -1,13 +1,14 @@
 package graphene.rest.ws;
 
-import graphene.model.view.events.EventStatistics;
 import graphene.model.view.events.DirectedEvents;
+import graphene.model.view.events.EventStatistics;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 import org.apache.tapestry5.annotations.Log;
 /**
@@ -48,6 +49,33 @@ public interface EventServerRS {
 			@QueryParam("comments") @DefaultValue(value = "") String comments,
 			@QueryParam("sortColumn") @DefaultValue(value = "trn_dt") String sortColumn);
 
+	
+	@Produces("text/csv")
+	@GET
+	@Path("/exportEventsCSV")
+	public abstract Response exportEventsCSV(
+			@QueryParam("accountNumber") @DefaultValue(value = "") String[] account,
+			@QueryParam("start") @DefaultValue(value = "0") int start,
+			@QueryParam("limit") @DefaultValue(value = "1000") int limit,
+			@QueryParam("minAmount") @DefaultValue(value = "0") String minAmount,
+			@QueryParam("maxAmount") @DefaultValue(value = "0") String maxAmount,
+			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
+			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
+			@QueryParam("comments") @DefaultValue(value = "") String comments,
+			@QueryParam("sortColumn") @DefaultValue(value = "trn_dt") String sortColumn);
+	@Produces("application/vnd.ms-excel")
+	@GET
+	@Path("/exportEventsXLS")
+	public abstract Response exportEventsXLS(
+			@QueryParam("accountNumber") @DefaultValue(value = "") String[] account,
+			@QueryParam("start") @DefaultValue(value = "0") int start,
+			@QueryParam("limit") @DefaultValue(value = "1000") int limit,
+			@QueryParam("minAmount") @DefaultValue(value = "0") String minAmount,
+			@QueryParam("maxAmount") @DefaultValue(value = "0") String maxAmount,
+			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
+			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
+			@QueryParam("comments") @DefaultValue(value = "") String comments,
+			@QueryParam("sortColumn") @DefaultValue(value = "trn_dt") String sortColumn);
 	/**
 	 * XXX: Seems like this is not being used.
 	 * 

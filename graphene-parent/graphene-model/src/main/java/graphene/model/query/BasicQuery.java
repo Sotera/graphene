@@ -5,6 +5,7 @@ package graphene.model.query;
 
 import graphene.model.enumeration.ValueEnum;
 import graphene.util.DisplayUtil;
+import graphene.util.validator.ValidationUtils;
 
 /**
  * @author djue
@@ -230,13 +231,16 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	}
 
 	public void setSortAndDirection(String sortColumnWithDirection) {
-		if (sortColumnWithDirection.contains(DisplayUtil.DESCENDING_FLAG)) {
-			this.sortAscending = false;
-		} else {
-			this.sortAscending = true; // MFM
+		if (ValidationUtils.isValid(sortColumnWithDirection)) {
+			if (sortColumnWithDirection.contains(DisplayUtil.DESCENDING_FLAG)) {
+				this.sortAscending = false;
+			} else {
+				this.sortAscending = true; // MFM
+			}
+
+			sortColumn = sortColumnWithDirection.replace(
+					DisplayUtil.DESCENDING_FLAG, "");
 		}
-		sortColumn = sortColumnWithDirection.replace(
-				DisplayUtil.DESCENDING_FLAG, "");
 	}
 
 	/*

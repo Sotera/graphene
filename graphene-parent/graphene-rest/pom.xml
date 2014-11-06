@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>
-			<artifactId>graphene-dao-neo4j</artifactId>
+			<artifactId>graphene-export</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>

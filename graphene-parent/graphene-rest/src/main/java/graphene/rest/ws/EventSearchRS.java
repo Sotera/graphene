@@ -58,7 +58,7 @@ public interface EventSearchRS {
 	@Produces("application/json")
 	@GET
 	@Path("/between")
-	List<G_Link> getEvents(
+	public abstract List<G_Link> getEvents(
 			@QueryParam("from") @DefaultValue(value = "") String from,
 			@QueryParam("to") @DefaultValue(value = "") String to,
 			@QueryParam("offset") @DefaultValue(value = "0") int offset,

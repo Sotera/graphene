@@ -12,8 +12,9 @@ public class DirectedEventsToCSV {
 		StringBuilder result = new StringBuilder();
 
 		for (DirectedEventRow r : lt.getRows()) {
-
-			result.append(r.getDate() + ",");
+			org.joda.time.DateTime testd = new org.joda.time.DateTime(
+					r.getDateMilliSeconds());
+			result.append(testd.toString() + ",");
 			// result.append("\"");
 			result.append(r.getSenderId());
 			// result.append("\"");
@@ -21,12 +22,22 @@ public class DirectedEventsToCSV {
 			result.append(r.getReceiverId());
 			// Remove commas from amounts. Replace commas in comments with
 			// spaces
+			if (r.getDebit() != null) {
+				result.append(r.getDebit().replace(",", "") + ",");
+			} else {
+				result.append(",");
+			}
+			if (r.getCredit() != null) {
+				result.append(r.getCredit().replace(",", "") + ",");
+			} else {
+				result.append(",");
+			}
 
-			result.append(r.getDebit().replace(",", "") + ",");
-			result.append(r.getCredit().replace(",", "") + ",");
-
-			result.append(r.getComments().replace(",", " "));
-
+			if (r.getComments() != null) {
+				result.append(r.getComments().replace(",", " "));
+			} else {
+				// last column, no append.
+			}
 			result.append(eol);
 		}
 

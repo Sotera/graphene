@@ -10,42 +10,14 @@
 				The current time is:
 				<strong>${currentTime}</strong>
 			</p>
-			<p>
-				Main search screen is here: 
-				<strong><a href="index.html">HERE</a></strong>
-			</p>
-			
-			<p>Available Workspaces:</p>
 
+			<p>Available Workspaces:</p>
 			<ul t:type="loop" source="workspaces" value="currentWorkspace">
 				<a t:type="pagelink" page="graphene/ViewWorkspace" context="currentWorkspace.workspaceid">${currentWorkspace.title}</a>
 				<t:graphene.jodatimeoutput value="currentWorkspace.lastmodified"
 					style="LL" />
 			</ul>
 
-
-			<!-- A Zone is a component that can be updated in place, triggered by 
-				other components. -->
-			<t:zone t:id="zone">
-				<p>
-					You have clicked the link
-					<strong>${clickCount}</strong>
-					times.
-				</p>
-
-				<p>
-					[
-					<t:actionlink t:id="increment">increment</t:actionlink>
-					]
-            &nbsp;
-					[
-					<t:actionlink t:id="incrementAjax" zone="^">increment (via
-						Ajax)
-					</t:actionlink>
-					]
-				</p>
-
-			</t:zone>
 		</div>
 	</div>
 	<div class="row-fluid">

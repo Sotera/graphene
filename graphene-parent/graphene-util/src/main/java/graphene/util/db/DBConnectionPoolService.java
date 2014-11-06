@@ -65,6 +65,8 @@ public class DBConnectionPoolService {
 
 				// Register for automatic shutdown if JVM stops
 				registerShutdownHook(connectionPool);
+				
+				util.findJDBCDrivers();
 				// Explicitly get a connection, which forces bonecp to init in
 				// correct classloader.
 				Connection connection = connectionPool.getConnection();
@@ -131,6 +133,7 @@ public class DBConnectionPoolService {
 		config.setMaxConnectionsPerPartition(10);
 		config.setPartitionCount(1);
 		config.setAcquireRetryDelayInMs(1000);
+		config.setLazyInit(true);
 		// config.setCloseConnectionWatch(false);
 
 		/*

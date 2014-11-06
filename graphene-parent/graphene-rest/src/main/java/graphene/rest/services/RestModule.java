@@ -1,16 +1,15 @@
 package graphene.rest.services;
 
 import graphene.dao.DAOModule;
-import graphene.dao.neo4j.DAONeo4JEModule;
 import graphene.dao.sql.DAOSQLModule;
 import graphene.rest.ws.EntitySearchRS;
+import graphene.rest.ws.EventServerRS;
 import graphene.rest.ws.GraphDemo;
 import graphene.rest.ws.GraphDemoImpl;
 import graphene.rest.ws.MetaSearchRS;
-import graphene.rest.ws.EventServerRS;
 import graphene.rest.ws.impl.EntitySearchRSImpl;
-import graphene.rest.ws.impl.MetaSearchRSImpl;
 import graphene.rest.ws.impl.EventServerRSImpl;
+import graphene.rest.ws.impl.MetaSearchRSImpl;
 
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -22,7 +21,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
  * it's a good place to configure and extend Tapestry, or to place your own
  * service definitions.
  */
-@SubModule({ DAOModule.class, DAOSQLModule.class, DAONeo4JEModule.class })
+@SubModule({ DAOModule.class, DAOSQLModule.class })
 public class RestModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(EntitySearchRS.class, EntitySearchRSImpl.class);

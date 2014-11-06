@@ -28,10 +28,6 @@ public class Index extends SimpleBasePage{
 	@Inject
 	private AlertManager alertManager;
 
-	@Persist
-	@Property
-	private int clickCount;
-
 	@Property
 	private G_Workspace currentWorkspace;
 
@@ -47,23 +43,8 @@ public class Index extends SimpleBasePage{
 	@Property
 	private List<G_Workspace> workspaces;
 
-	@InjectComponent
-	private Zone zone;
-
 	public Date getCurrentTime() {
 		return new Date();
-	}
-
-	void onActionFromIncrement() {
-		clickCount++;
-		alertManager.info("Increment clicked");
-
-	}
-
-	Object onActionFromIncrementAjax() {
-		clickCount++;
-		alertManager.info("Increment (via Ajax) clicked");
-		return zone;
 	}
 
 	@SetupRender
