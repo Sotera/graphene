@@ -10,6 +10,7 @@ import graphene.model.view.events.DirectedEvents;
 import graphene.model.view.events.EventStatistics;
 import graphene.rest.ws.EventServerRS;
 import graphene.util.FastNumberUtils;
+import graphene.util.StringUtils;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 
@@ -104,8 +105,12 @@ public class EventServerRSImpl implements EventServerRS {
 		TimeReporter t = new TimeReporter("Export to CSV", logger);
 		DirectedEvents de = getEvents(account, start, limit, minAmount,
 				maxAmount, minSecs, maxSecs, comments, sortColumn);
-
-		String fname = "KBB_Events_" + account + ".csv";
+		String fileLabel = "UnknownAccount";
+		if (account != null && account.length > 0) {
+			
+			fileLabel = StringUtils.toDelimitedString(account, "_");
+		}
+		String fname = "KBB_Events_" + fileLabel + ".csv";
 		DirectedEventsToCSV converter = new DirectedEventsToCSV();
 		String csvString = converter.toCSV(de);
 		ResponseBuilder response = null;
@@ -132,7 +137,12 @@ public class EventServerRSImpl implements EventServerRS {
 		DirectedEventsToXLS converter = new DirectedEventsToXLS();
 		converter.toXLS(de, baos,
 				(de.getResultCount() <= ExportUtil.MAX_XLS_RESULTS));
-		String fname = "KBB_Events_" + account + ".xls";
+		String fileLabel = "UnknownAccount";
+		if (account != null && account.length > 0) {
+			
+			fileLabel = StringUtils.toDelimitedString(account, "_");
+		}
+		String fname = "KBB_Events_" + fileLabel + ".xls";
 		ResponseBuilder response = Response.ok(baos.toByteArray());
 		response.header("Content-Disposition", "inline; filename=\"" + fname
 				+ "\"");

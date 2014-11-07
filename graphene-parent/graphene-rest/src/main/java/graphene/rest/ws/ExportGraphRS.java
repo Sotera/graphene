@@ -10,6 +10,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.tapestry5.json.JSONObject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * History
  * 
@@ -45,7 +49,7 @@ public interface ExportGraphRS {
 	@Path("/exportGraphAsXML")
 	@Produces("text/plain")
 	Response exportGraphAsXML(
-			@QueryParam("fileName") @DefaultValue(value = "") String fileName,
+			@QueryParam("fileName") @DefaultValue(value = "Graph") String fileName,
 			@QueryParam("fileExt") @DefaultValue(value = ".xml") String fileExt,
 			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
 			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
@@ -81,16 +85,13 @@ public interface ExportGraphRS {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/exportGraphAsJSON")
-	@Produces("text/plain")
+	//@Produces("application/json")
 	Response exportGraphAsJSON(
-			@QueryParam("fileName") @DefaultValue(value = "") String fileName,
-			@QueryParam("fileExt") @DefaultValue(value = ".xml") String fileExt,
+			@QueryParam("fileName") @DefaultValue(value = "Graph") String fileName,
+			@QueryParam("fileExt") @DefaultValue(value = ".json") String fileExt,
 			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
 			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
-			/*
-			 * this is the client timestamp in millisecs as a string
-			 */
-			String graphJSONdata);
+			@QueryParam("graphJSONdata") @DefaultValue(value = "") String graphJSONdata);
 
 	/**
 	 * This service is used to download a file containing a previously exported
@@ -99,9 +100,9 @@ public interface ExportGraphRS {
 	 * @param filePath
 	 * @return
 	 */
-	@GET
-	@Path("/getExportedGraph")
-	@Produces("application/x-unknown")
-	Response getExportedGraph(
-			@QueryParam("filePath") @DefaultValue(value = "") String filePath);
+	// @GET
+	// @Path("/getExportedGraph")
+	// @Produces("application/x-unknown")
+	// Response getExportedGraph(
+	// @QueryParam("filePath") @DefaultValue(value = "") String filePath);
 }

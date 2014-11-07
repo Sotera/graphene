@@ -45,8 +45,6 @@ public class DirectedEventsToXLS {
 		WritableCellFormat dateFormat = new WritableCellFormat(customDateFormat);
 		WritableCellFormat moneyFormat = new WritableCellFormat(money);
 
-		Label account;
-		Label partics;
 		double deb;
 		double cred;
 		jxl.write.Number debit;
@@ -79,28 +77,36 @@ public class DirectedEventsToXLS {
 				org.joda.time.DateTime testd = new org.joda.time.DateTime(
 						r.getDateMilliSeconds());
 				dt = new DateTime(0, row, testd.toDate(), dateFormat);
-				account = new Label(1, row, r.getSenderId());
+			
 
-				//deb = r.getDebitAsDouble();
-				//TODO: Unit test this to make sure the Money format is parseable as a Double
-				deb = Double.valueOf(r.getCredit());
-				debit = new jxl.write.Number(2, row, deb, moneyFormat);
-				cred = Double.valueOf(r.getDebit());
-				//cred = r.getCreditAsDouble();
-				credit = new jxl.write.Number(3, row, cred, moneyFormat);
+				// TODO: Unit test this to make sure the Money format is
+				// parseable as a Double
+
 				// TODO: Finish this conversion to pairs
-				partics = new jxl.write.Label(4, row, r.getComments());
+				
 
 				try {
 					sheet.addCell(dt);
-					sheet.addCell(account);
-					if (deb != 0) {
+					sheet.addCell(new Label(1, row, r.getSenderId()));
+					sheet.addCell(new Label(2, row, r.getReceiverId()));
+					try {
+						deb = Double.valueOf(r.getDebit().replaceAll(",", ""));
+						debit = new jxl.write.Number(3, row, deb, moneyFormat);
 						sheet.addCell(debit);
+					} catch (Exception e) {
+						sheet.addCell(new jxl.write.Label(3, row, r.getDebit()));
 					}
-					if (cred != 0) {
+
+					try {
+						cred = Double
+								.valueOf(r.getCredit().replaceAll(",", ""));
+						credit = new jxl.write.Number(4, row, cred, moneyFormat);
 						sheet.addCell(credit);
+					} catch (Exception e) {
+						sheet.addCell(new jxl.write.Label(4, row, r.getCredit()));
 					}
-					sheet.addCell(partics);
+
+					sheet.addCell( new jxl.write.Label(5, row, r.getComments()));
 				} catch (RowsExceededException e) {
 					logger.error(
 							"RowsExceededException during XLS export on row "
@@ -215,19 +221,22 @@ public class DirectedEventsToXLS {
 			label.setCellFormat(labelFormat);
 			sheet.addCell(label);
 
-			label = new Label(1, row, "Account Number");
+			label = new Label(1, row, "Sender");
+			label.setCellFormat(labelFormat);
+			sheet.addCell(label);
+			label = new Label(2, row, "Receiver");
 			label.setCellFormat(labelFormat);
 			sheet.addCell(label);
 
-			label = new Label(2, row, "Debit");
+			label = new Label(3, row, "Debit");
 			label.setCellFormat(labelFormat);
 			sheet.addCell(label);
 
-			label = new Label(3, row, "Credit");
+			label = new Label(4, row, "Credit");
 			label.setCellFormat(labelFormat);
 			sheet.addCell(label);
 
-			sheet.addCell(new Label(4, row, "Comments"));
+			sheet.addCell(new Label(5, row, "Comments"));
 
 		} catch (RowsExceededException e) {
 			logger.error("RowsExceededException during XLS export on row "

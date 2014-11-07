@@ -10,31 +10,35 @@ public class DirectedEventsToCSV {
 								// UNIX
 
 		StringBuilder result = new StringBuilder();
-
+		result.append("date,");
+		result.append("sender,");
+		result.append("receiver,");
+		result.append("debit,");
+		result.append("credit,");
+		result.append("comments");
+		result.append(eol);
 		for (DirectedEventRow r : lt.getRows()) {
 			org.joda.time.DateTime testd = new org.joda.time.DateTime(
 					r.getDateMilliSeconds());
 			result.append(testd.toString() + ",");
-			// result.append("\"");
 			result.append(r.getSenderId());
-			// result.append("\"");
 			result.append(",");
 			result.append(r.getReceiverId());
+			result.append(",");
 			// Remove commas from amounts. Replace commas in comments with
 			// spaces
 			if (r.getDebit() != null) {
-				result.append(r.getDebit().replace(",", "") + ",");
-			} else {
-				result.append(",");
+				result.append(r.getDebit().replaceAll(",", ""));
 			}
+			result.append(",");
+
 			if (r.getCredit() != null) {
-				result.append(r.getCredit().replace(",", "") + ",");
-			} else {
-				result.append(",");
+				result.append(r.getCredit().replaceAll(",", ""));
 			}
+			result.append(",");
 
 			if (r.getComments() != null) {
-				result.append(r.getComments().replace(",", " "));
+				result.append(r.getComments().replaceAll(",", " "));
 			} else {
 				// last column, no append.
 			}
