@@ -941,13 +941,13 @@ function StateManager(graphRef) {
 			var id = nodes[i].data().id;
 			
 			// remove all edges whose source == id
-			graphRef.gv.remove( graphRef.gv.elements("edge[source='" + id + "']") );
+			graphRef.gv.remove("edge[source='" + id + "']");
 			
 			// remove all edges whose target == id
-			graphRef.gv.remove( graphRef.gv.elements("edge[target='" + id + "']") );
+			graphRef.gv.remove("edge[target='" + id + "']");
 			
 			// remove all nodes whose id == id
-			graphRef.gv.remove("#" + id);
+			graphRef.gv.remove("node[id='" + id + "']");
 
 			// most graph implementations store a json representation of their cyto graphs;
 			// remove traces of nodes and edges involved with selected node IDs
