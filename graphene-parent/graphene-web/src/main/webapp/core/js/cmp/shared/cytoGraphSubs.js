@@ -541,11 +541,24 @@ function LayoutManager(graphRef) {
 	
 	var _registeredLayouts = {};
 	
-	this.getRegisteredLayouts = function() {
+	/*
+	 *	Returns an array of the currently registered layouts whose names match any of the
+	 *	key strings passed as this function's array parameter.
+	 *		keysArr:Array - (optional) array containing layout identifier strings.  Only layouts
+	 *						whose keys match any of these identifiers will be returned.
+	 *		returns Array - array of objects, where each object has a layoutName property and
+	 *						config options for that layout.
+	 */
+	this.getRegisteredLayouts = function(keysArr) {
 		var arr = [];
+		var returnAll = true;
+		if (typeof keysArr == "undefined") { keysArr = []; }
+		if (typeof keysArr == "string") { keysArr = [keysArr]; }
+		if (typeof keysArr.length !== "undefined") { returnAll = keysArr.length <= 0; }
 		
 		for (var key in _registeredLayouts) {
 			if (!_registeredLayouts.hasOwnProperty(key)) continue;
+			if (!returnAll && keysArr.indexOf(key) == -1) continue;
 			
 			var layout = _registeredLayouts[key];
 			var options = {};
@@ -553,9 +566,9 @@ function LayoutManager(graphRef) {
 			for (var prop in layout) {
 				if (!layout.hasOwnProperty(prop)) continue;
 				var val = layout[prop];
-				if (typeof val !== "function") {
+				//if (typeof val !== "function") {
 					options[prop] = val;
-				}
+				//}
 			}
 			
 			arr.push({
@@ -638,6 +651,17 @@ function LayoutManager(graphRef) {
 		if (typeof startFn == "function") {
 			// if startFn was provided, assign it to this layout options using "beforeLayout" as a key (so it can be referenced with a default)
 			_registeredLayouts[layoutName]["beforeLayout"] = function() { startFn.apply(scope, arguments); };
+		}
+	};
+	
+	/*
+	 *	Deletes the registered layout whose key matches layoutName.
+	 *		layoutName:String - identifier key for the registered layout to be deleted.
+	 */
+	this.unregisterLayout = function(layoutName) {
+		if (typeof layoutName == "undefined" || typeof layoutName !== "string") return;
+		if (_registeredLayouts.hasOwnProperty(layoutName)) {
+			delete _registeredLayouts[layoutName];
 		}
 	};
 	
