@@ -42,7 +42,7 @@ Ext.define("DARPA.exportDialog", {
 	constructor: function() {
 		var thisWindow = this;
 
-		var extensionStore = ['.png', '.json', '.xml']; // expand when additional file extensions are implemented
+		var extensionStore = ['.png', '.json' /*, '.xml'*/]; // expand when additional file extensions are implemented
 	
 		var fileExtension = new Ext.form.ComboBox({
 			width: '25%',
@@ -95,32 +95,16 @@ Ext.define("DARPA.exportDialog", {
 			handler: function(btn, e) {
 				var graphJSON = thisWindow.getGraphJSON();
 		
-				if (graphJSON !== "undefined" && graphJSON.graph.nodes.length > 0) {	
-					var header;
-					var serviceURL;
-					var skipREST = false;
-					var downloadURL = "getExportedGraph";
-					var fileExt = fileExtension.getValue();
-	                    
-					switch(fileExt) {
-						case ".png":
-							skipREST = true;
-							break;
-						case ".xml":
-							header = "application/xml";
-							serviceURL = "exportGraphAsXML";
-							break;
-						                                
-						case ".json":
-						default:
-							header = "application/json";
-							serviceURL = "exportGraphAsJSON";
-							break;
-					}
-	
-					if (skipREST == true) {
+				if (typeof graphJSON == "undefined" || graphJSON.graph.nodes.length <= 0) return;
+				
+				var fileExt = fileExtension.getValue();
+				var fileName = fileNameField.getValue();
+				var a = null;
+					
+				switch(fileExt) {
+					// -------------------------------------- PNG ---------------------------------------------
+					case ".png":
 						var pngData = thisWindow.getGraphPNG();
-						
 						if (typeof pngData == "undefined") {
 							Ext.Msg.alert(
 								"Invalid PNG Data Error",
@@ -128,68 +112,50 @@ Ext.define("DARPA.exportDialog", {
 							);
 							return;
 						}
-						
-						var download = document.createElement('a');
-						download.href = pngData;
-						download.download = fileNameField.getValue() + fileExt;
-						
-						(function (obj, evt) {
-							if (document.createEvent) {
-								var evObj = document.createEvent("MouseEvents");
-								evObj.initEvent(evt, true, false);
-								obj.dispatchEvent(evObj);
-							} else if (document.createEventObject) {
-								var evObj = document.createEventObject();
-								obj.fireEvent("on" + evt, evObj);
-							}
-						})(download, "click");
-						
-						thisWindow.close();
-					} else {
-					
-						// We do Not want the response to be rendered in the Browser.
-						// Instead we want the browser to popup a dialog to download the exported file
-						Ext.Ajax.request({
-							url: 'rest/graph/' + serviceURL, 
-							method: 'POST',
-							headers: {
-								'Content-Type': header
-							},
-							params: {
-								// TODO - add username as a param
-								userName: "TODO",
-								timeStamp: ((new Date()).getTime()).toString(), // unique timestamp
-								fileName: fileNameField.getValue(),
-								fileExt: fileExt
-							},
-							jsonData: Ext.encode(graphJSON), 
-												
-							success: function(resp) {
-								thisWindow.close();
-								// DEBUG
-								//console.log("resp = " + resp.responseText);
-						
-								// The response will be the Server location of the File containing the exported graph
-								// pass this file location to doExportDownload
-								var fileURI = resp.responseText;
-								doExportDownload("rest/graph/" + downloadURL, fileURI);
-							},
-							failure: function(resp) {
-								thisWindow.close();
-								var err = new Ext.Window({
-									title: 'Export Failure',
-									height: 300,
-									width: 600,
-									html: resp.responseText
-								});
-
-								err.show();
-							}
-						}); 
-					}                    
-				} else {
-					// TODO: error handling
+						a = document.createElement('a');
+						a.href = pngData;
+						break;
+					// -------------------------------------- XML ---------------------------------------------
+					case ".xml":
+						// Currently unsupported by both the UI and any service
+						var header = "application/xml";
+						break;
+					// -------------------------------------- JSON --------------------------------------------
+					case ".json":
+					default:
+						try {
+							// Blob and URL work in both Firefox and Chrome.  Have not tested IE yet.
+							var jsonData = JSON.stringify(graphJSON);
+							var blob = new Blob([jsonData], {type: "application/json"});
+							var url = URL.createObjectURL(blob);
+							a = document.createElement('a');
+							a.href = url;
+						} catch (e) {
+							// Blob or URL might not be available for this browser.  Hmm...
+							console.error("Blob() or URL is not working or not defined.");
+							a = null;
+						}
+						break;
+					// --------------------------------------------------------------------------------------
 				}
+				
+				if (a == null) Ext.Msg.alert("Export Error", "Unable to perform export capability with current browser");
+				else {
+					// NOTE:  we will eventually HAVE to do an Ajax POST.  Export of .png or .json is currently client-side
+					a.download = fileName + fileExt;
+					(function (obj, evt) {
+						if (document.createEvent) {
+							var evObj = document.createEvent("MouseEvents");
+							evObj.initEvent(evt, true, false);
+							obj.dispatchEvent(evObj);
+						} else if (document.createEventObject) {
+							var evObj = document.createEventObject();
+							obj.fireEvent("on" + evt, evObj);
+						}
+					})(a, "click");
+				}
+				
+				thisWindow.close();
 			}
 		}, {
 			text: 'Cancel',
