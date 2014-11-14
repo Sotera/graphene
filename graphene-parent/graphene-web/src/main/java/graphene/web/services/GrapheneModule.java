@@ -38,6 +38,7 @@ import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.atmosphere.cpr.ApplicationConfig;
 import org.got5.tapestry5.jquery.JQuerySymbolConstants;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -61,6 +62,11 @@ public class GrapheneModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(ChatManager.class, ChatManagerImpl.class);
 
+	}
+
+	public static void contributeAtmosphereHttpServletRequestFilter(
+			MappedConfiguration<String, String> config) {
+		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
 	}
 
 	public static void contributeTopicAuthorizer(

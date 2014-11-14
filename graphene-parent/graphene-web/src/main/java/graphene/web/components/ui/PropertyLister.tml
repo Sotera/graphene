@@ -1,0 +1,118 @@
+
+
+
+
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+
+
+
+
+
+	<!-- CHAT CONTAINER -->
+	<div id="chat-container">
+		<span class="chat-list-open-close">
+			<i class="fa fa-user"></i>
+			<b>!</b>
+		</span>
+
+		<div class="chat-list-body custom-scroll">
+			<ul id="chat-users">
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Robin Berry
+						<span class="badge badge-inverse">${numProperties}</span>
+						<span class="state">
+							<i class="fa fa-circle txt-color-green pull-right"></i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Mark Zeukartech
+						<span class="state">
+							<i class="last-online pull-right">2</i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Belmain Dolson
+						<span class="state">
+							<i class="last-online pull-right">45</i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Galvitch Drewbery
+						<span class="state">
+							<i class="fa fa-circle txt-color-green pull-right"></i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Sadi Orlaf
+						<span class="state">
+							<i class="fa fa-circle txt-color-green pull-right"></i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Markus
+						<span class="state">
+							<i class="last-online pull-right">2</i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Sunny
+						<span class="state">
+							<i class="last-online pull-right">2</i>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void(0);">
+						<img src="${avatar}" />
+						Denmark
+						<span class="state">
+							<i class="last-online pull-right">2</i>
+						</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="chat-list-footer">
+
+			<div class="control-group">
+
+				<form class="smart-form">
+
+					<section>
+						<label class="input">
+							<input type="text" id="filter-chat-list" placeholder="Filter" />
+						</label>
+					</section>
+
+				</form>
+
+			</div>
+
+		</div>
+
+	</div>
+</t:container>

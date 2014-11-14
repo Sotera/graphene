@@ -8,6 +8,12 @@ import graphene.dao.neo4j.advice.Neo4JTransactionalAdvisor;
 import graphene.dao.neo4j.advice.Neo4JTransactionalAdvisorImpl;
 import graphene.dao.neo4j.annotations.DataGraph;
 import graphene.dao.neo4j.annotations.UserGraph;
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
+import graphene.services.G_EdgeTypeAccessImpl;
+import graphene.services.G_NodeTypeAccessImpl;
+import graphene.services.G_PropertyKeyTypeAccessImpl;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
@@ -27,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DAONeo4JTestModule {
 	public static void bind(ServiceBinder binder) {
-		//binder.bind(EntityGraphDAO.class, EntityGraphDAONeo4JEImpl.class);
 		binder.bind(Neo4JEmbeddedService.class).withId("TestDataGraph")
 				.withMarker(DataGraph.class);
 		binder.bind(Neo4JEmbeddedService.class).withId("TestUserGraph")
@@ -36,6 +41,10 @@ public class DAONeo4JTestModule {
 		binder.bind(WorkspaceDAO.class, WorkspaceDAONeo4JEImpl.class)
 				.eagerLoad();
 		binder.bind(UserDAO.class, UserDAONeo4JEImpl.class).eagerLoad();
+		binder.bind(G_NodeTypeAccess.class, G_NodeTypeAccessImpl.class);
+		binder.bind(G_EdgeTypeAccess.class, G_EdgeTypeAccessImpl.class);
+		binder.bind(G_PropertyKeyTypeAccess.class,
+				G_PropertyKeyTypeAccessImpl.class);
 	}
 
 	@Marker(UserGraph.class)

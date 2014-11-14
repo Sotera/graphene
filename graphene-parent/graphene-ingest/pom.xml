@@ -47,12 +47,6 @@
 			<artifactId>graphene-dao</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>graphene</groupId>
-			<artifactId>graphene-dao-sql</artifactId>
-		</dependency>
-
-
 		<!-- Dependencies for snapshot of batch importer -->
 		<dependency>
 			<groupId>edu.ucla.sspace</groupId>

@@ -44,7 +44,7 @@ public abstract class AbstractExtractor implements Extractor {
 	 * @param group
 	 * @return
 	 */
-	private String postProcessMatch(String match) {
+	public String postProcessMatch(String match) {
 		return match;
 	}
 
@@ -65,8 +65,17 @@ public abstract class AbstractExtractor implements Extractor {
 			uncertainty.setConfidence(1.0d);
 			G_Entity extractedIdentifierNode = new EntityHelper(id,
 					getEntityTags(), prov, uncertainty, getProperties());
-			list.add(extractedIdentifierNode);
+			list.add(postProcessEntity(extractedIdentifierNode));
 		}
 		return list;
+	}
+
+	/**
+	 * Override in concrete classes to add additional properties to this entity.
+	 * @param extractedIdentifierNode
+	 * @return
+	 */
+	public G_Entity postProcessEntity(G_Entity extractedIdentifierNode) {
+		return extractedIdentifierNode;
 	}
 }

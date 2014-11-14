@@ -41,6 +41,9 @@ protocol G_UserSpaceDataTypes {
 		
 		/** user's numberlogins */
 		int numberlogins = 0;
+		
+		/** user's last selected uimode */
+		G_UserInterfaceMode uimode;
 	}
 	
 	enum G_GroupFields {
@@ -79,4 +82,10 @@ protocol G_UserSpaceDataTypes {
 		union { long, null} created = 0;
 			
 	}
+	
+	enum G_UserInterfaceMode {
+		DOMAIN_EXPERT, 		 	// A more simplified UI, use smart defaults and hide advanced features.
+		TECHNICAL_EXPERT		 	// Show advanced buttons and features.
+	}
+	
 }

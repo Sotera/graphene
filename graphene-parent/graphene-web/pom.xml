@@ -82,7 +82,7 @@
 			<groupId>org.lazan</groupId>
 			<artifactId>tapestry-atmosphere</artifactId>
 		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-runtime-native</artifactId>
 			<version>2.1.0-RC2</version>
@@ -99,8 +99,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency> <groupId>com.yahoo.platform.yui</groupId> <artifactId>yuicompressor</artifactId> 
-			</dependency> -->
+
 		<!-- Testing -->
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire 
 			plugin (which runs the tests) will fail, preventing Maven from packaging 

@@ -1,2 +1,2 @@
-Tapestry-Module-Classes: graphene.dao.sql.DAOSQLModule
+
 

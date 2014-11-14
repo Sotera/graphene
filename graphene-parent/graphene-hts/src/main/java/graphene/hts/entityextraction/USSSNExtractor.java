@@ -50,7 +50,8 @@ public class USSSNExtractor extends AbstractExtractor {
 		return "Potential US SSN";
 	}
 
-	private String postProcessMatch(String match) {
+	@Override
+	public String postProcessMatch(String match) {
 		// replace spaces or dashes with nothing
 		return match.replaceAll("\\s|-", "");
 	}

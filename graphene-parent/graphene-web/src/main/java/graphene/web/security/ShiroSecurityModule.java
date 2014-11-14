@@ -63,7 +63,7 @@ public class ShiroSecurityModule {
 
 	@Contribute(HttpServletRequestFilter.class)
 	@Marker(Security.class)
-	public static void setupSecurity(
+	public static void contributeHttpServletRequestFilter(
 			Configuration<SecurityFilterChain> configuration,
 			SecurityFilterChainFactory factory,
 			WebSecurityManager securityManager) {

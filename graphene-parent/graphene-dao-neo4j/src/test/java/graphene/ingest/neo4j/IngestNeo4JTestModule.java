@@ -13,6 +13,12 @@ import graphene.dao.neo4j.advice.Neo4JTransactionalAdvisor;
 import graphene.dao.neo4j.advice.Neo4JTransactionalAdvisorImpl;
 import graphene.dao.neo4j.annotations.DataGraph;
 import graphene.dao.neo4j.annotations.UserGraph;
+import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_PropertyKeyTypeAccess;
+import graphene.services.G_EdgeTypeAccessImpl;
+import graphene.services.G_NodeTypeAccessImpl;
+import graphene.services.G_PropertyKeyTypeAccessImpl;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
@@ -37,13 +43,13 @@ public class IngestNeo4JTestModule {
 		binder.bind(Neo4JEmbeddedService.class).withId("TestUserGraph")
 				.withMarker(UserGraph.class);
 		binder.bind(GroupDAO.class, GroupDAONeo4JEImpl.class).eagerLoad();
-		binder.bind(WorkspaceDAO.class, WorkspaceDAONeo4JEImpl.class).eagerLoad();
+		binder.bind(WorkspaceDAO.class, WorkspaceDAONeo4JEImpl.class)
+				.eagerLoad();
 		binder.bind(UserDAO.class, UserDAONeo4JEImpl.class).eagerLoad();
-
-		// binder.bind(Neo4JTransactionalAdvisor.class,
-		// Neo4JTransactionalAdvisorImpl.class);// with an id, so we can
-		// have different
-		// flavors of advice?
+		binder.bind(G_NodeTypeAccess.class, G_NodeTypeAccessImpl.class);
+		binder.bind(G_EdgeTypeAccess.class, G_EdgeTypeAccessImpl.class);
+		binder.bind(G_PropertyKeyTypeAccess.class,
+				G_PropertyKeyTypeAccessImpl.class);
 	}
 
 	@Marker(UserGraph.class)
@@ -52,37 +58,40 @@ public class IngestNeo4JTestModule {
 		return new Neo4JTransactionalAdvisorImpl(s);
 	}
 
-	//@Advise(serviceInterface = AnnotatedAdviseMeService.class)
-	@Match("Annotated*") //Matches anything that starts with Annotated
+	// @Advise(serviceInterface = AnnotatedAdviseMeService.class)
+	@Match("Annotated*")
+	// Matches anything that starts with Annotated
 	public static void adviseTransactionally(
 			@UserGraph Neo4JTransactionalAdvisor advisor,
 			MethodAdviceReceiver receiver) {
 		advisor.addTransactionAdvice(receiver);
 	}
-//
-//	//This is the inline way of doing it.  It is preferable to put it in it's own class.
-//	@Advise(serviceInterface = AdviseMeService.class)
-//	public static void adviseAdviseMeService(
-//			final MethodAdviceReceiver receiver, @UserGraph final Neo4JService s) {
-//		MethodAdvice advice = new MethodAdvice() {
-//			public void advise(MethodInvocation invocation) {
-//				System.out
-//						.println("===========================About to start a tx");
-//				try (Transaction tx = s.getGraphDb().beginTx()) {
-//					System.out.println("===========================In a tx");
-//					invocation.proceed();
-//					tx.success();
-//					System.out
-//							.println("===========================performed method, still In a tx");
-//				} catch (Exception e) {
-//					System.out.println("===========================tx failed:"
-//							+ e.getMessage());
-//					throw new RuntimeException("Failed transaction");
-//				}
-//			}
-//		};
-//		receiver.adviseAllMethods(advice);
-//	}
+
+	//
+	// //This is the inline way of doing it. It is preferable to put it in it's
+	// own class.
+	// @Advise(serviceInterface = AdviseMeService.class)
+	// public static void adviseAdviseMeService(
+	// final MethodAdviceReceiver receiver, @UserGraph final Neo4JService s) {
+	// MethodAdvice advice = new MethodAdvice() {
+	// public void advise(MethodInvocation invocation) {
+	// System.out
+	// .println("===========================About to start a tx");
+	// try (Transaction tx = s.getGraphDb().beginTx()) {
+	// System.out.println("===========================In a tx");
+	// invocation.proceed();
+	// tx.success();
+	// System.out
+	// .println("===========================performed method, still In a tx");
+	// } catch (Exception e) {
+	// System.out.println("===========================tx failed:"
+	// + e.getMessage());
+	// throw new RuntimeException("Failed transaction");
+	// }
+	// }
+	// };
+	// receiver.adviseAllMethods(advice);
+	// }
 
 	public static Logger buildLogger() {
 		return LoggerFactory.getLogger(IngestNeo4JTestModule.class);

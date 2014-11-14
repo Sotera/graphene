@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class EmailExtractor  extends AbstractExtractor{
-	private final static String RE_MAIL = "([\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Za-z]{2,4})";
+	private final static String RE_MAIL = "([\\w\\-]([\\.\\w])+[\\w]+(@|\\s+at\\s+|\\s*[\\[\\(]\\s*at\\s*[\\)\\]]\\s*)([\\w\\-]+(\\.|\\s*[\\[\\(]\\s*(\\.|dot)\\s*[\\)\\]]\\s*))+[A-Za-z]{2,4})";
 
 	public EmailExtractor() {
 		p = Pattern.compile(RE_MAIL);
@@ -45,5 +45,10 @@ public class EmailExtractor  extends AbstractExtractor{
 	public List<G_Property> getProperties() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String postProcessMatch(String match) {
+		return match.replaceAll("\\s+at\\s+|\\s*[\\[\\(]\\s*at\\s*[\\)\\]]\\s*", "@").replaceAll("\\s*[\\[\\(]\\s*(\\.|dot)\\s*[\\)\\]]\\s*",".");
 	}
 }
