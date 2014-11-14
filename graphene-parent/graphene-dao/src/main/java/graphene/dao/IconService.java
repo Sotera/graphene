@@ -13,7 +13,8 @@ public interface IconService {
 	 * @param text
 	 * @return
 	 */
-	public abstract Collection<String> getIconsForText(String text, String... otherKeys);
+	public abstract Collection<String> getIconsForText(String text,
+			String... otherKeys);
 
 	/**
 	 * Returns a list of icon styles that match the list of keys provided.
@@ -21,7 +22,7 @@ public interface IconService {
 	 * @param keys
 	 * @return
 	 */
-	public abstract Collection<String> getIconsForKeys(String... keys);
+//	public abstract Collection<String> getIconsForKeys(String... keys);
 
 	/**
 	 * Returns a list of tuples with <icon style, count> as the values, where
@@ -32,4 +33,9 @@ public interface IconService {
 	 */
 	public abstract Collection<Tuple<String, String>> getIconsForTextWithCount(
 			String text, String... otherKeys);
+
+	public abstract void addPattern(String pattern, boolean caseSensitive,
+			String iconClass);
+
+	public abstract void removePattern(String pattern);
 }

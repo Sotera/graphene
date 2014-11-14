@@ -1,0 +1,122 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="Entity Search"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"
+	lang="en">
+	<!-- Most of the page content, including <head>, <body>, etc. tags, comes 
+		from Layout.tml -->
+	<!-- This is a span 10 in the bootstrap layout. You just need to add one 
+		or more fluid rows here. -->
+	<div class="row-fluid">
+		<div class="col-sm-12">
+			<table id="listAndEditor">
+				<tbody>
+					<tr>
+
+						<!-- This is the left side of the table: a list of entitys -->
+
+						<td id="listCell">
+							<t:zone t:id="listZone" id="listZone" t:update="prop:zoneUpdateFunction">
+
+								<!-- We can't use the form's id in the css because the Zone messes 
+									with it, so we add a div with its own id. -->
+								<div id="entityFilter" class="well">
+									<form t:type="form" t:id="filterForm" t:zone="listZone">
+										<legend>Search for Documents containing Entity</legend>
+
+										<input class="input-block-level" t:id="searchValue"
+											t:type="TextField" size="50" t:validate="maxLength=255"
+											value="searchValue" />
+										<input class="btn btn-primary btn-sm" type="submit"
+											value="Search" title="Search" />
+									</form>
+									<t:if test="results">
+										Showing ${results.numberOfResultsReturned} hits
+										out of ${results.numberOtResultsTotal}
+									</t:if>
+								</div>
+								<t:if test="results">
+									<div id="entityList">
+										<table t:type="grid" source="results.results" model="model"
+											t:row="currentEntity" width="100%">
+											[Grid here]
+											<p:reportSummaryCell>
+												<t:loop source="reportDates" value="currentDate">
+													<span class="fa fa-calendar label label-success">&nbsp;${currentDate}
+													</span>
+													<br />
+												</t:loop>
+												<span class="fa fa-calendar label label-info">&nbsp;${reportAmount}
+												</span>
+												<br />
+												<t:loop source="iconList" value="currentIcon">
+													<span class="${currentIcon} label label-danger" rel="popover-hover"
+														data-placement="top">&nbsp;
+													</span>
+												</t:loop>
+											</p:reportSummaryCell>
+											<p:reportInfoCell>
+												<t:pagelink class="btn btn-xs btn-primary" page="prop:reportPageLink"
+													context="reportId" target="reportId">
+													${reportType} ${reportId}
+												</t:pagelink>
+												<br />
+
+												<a class="btn btn-xs btn-primary" href="${extLink}"
+													target="extjs">
+													<i class="fa fa-fork"></i>
+													Graph
+												</a>
+											</p:reportInfoCell>
+
+											<p:nameListCell>
+												<t:loop source="nameList" value="currentName">
+													<a class="btn btn-xs ${styleForName}" t:type="pagelink"
+														page="CombinedEntitySearchPage" context="currentName">
+														${currentName}</a>
+													<br />
+												</t:loop>
+											</p:nameListCell>
+											<p:addressListCell>
+												<t:loop source="addressList" value="currentAddress">
+													<a class="btn btn-xs ${styleForAddress}" t:type="pagelink"
+														page="CombinedEntitySearchPage" context="currentAddress">
+														${currentAddress}</a>
+													<br />
+												</t:loop>
+											</p:addressListCell>
+											<p:communicationIdentifierListCell>
+												<t:loop source="cIdentifierList" value="currentCommunicationId">
+													<a class="btn btn-xs ${styleForIdentifier}" t:type="pagelink"
+														page="CombinedEntitySearchPage" context="currentCommunicationId">
+														${currentCommunicationId}</a>
+
+												</t:loop>
+											</p:communicationIdentifierListCell>
+											<p:identifierListCell>
+												<t:loop source="identifierList" value="currentIdentifier">
+													<a class="btn btn-xs ${styleForIdentifier}" t:type="pagelink"
+														page="CombinedEntitySearchPage" context="currentIdentifier">
+														${currentIdentifier}</a>
+
+												</t:loop>
+											</p:identifierListCell>
+										</table>
+									</div>
+								</t:if>
+								<t:block t:id="emptyentitys">
+									<div id="noentitys">
+										(No entities found)
+									</div>
+								</t:block>
+
+							</t:zone>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+		</div>
+	</div>
+	<script src="${context:js/SearchTips.js}" />
+</html>

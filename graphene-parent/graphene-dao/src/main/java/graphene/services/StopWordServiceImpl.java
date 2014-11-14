@@ -70,4 +70,24 @@ public class StopWordServiceImpl implements StopWordService {
 		}
 	}
 
+	@Override
+	public boolean removeWords(String... words) {
+		boolean somethingRemoved = false;
+		for (String w : words) {
+			if(stopwords.remove(w)){
+				somethingRemoved = true;
+			}
+		}
+		return somethingRemoved;
+	}
+
+	@Override
+	public boolean clear() {
+		try {
+			stopwords.clear();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
