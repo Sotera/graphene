@@ -465,6 +465,42 @@ Ext
 						nodeDisp.enableHide(true);
 					},
 
+					editNode: function(node) {
+						var self = this;
+						
+						if (!node || !node.isNode || !node.isNode()) {
+							console.error("Variable 'node' is not a cytoscape node object.");
+							return;
+						}
+						
+						var x_pos = node.position().x;
+						var y_pos = node.position().y;
+						
+						var window = Ext.create("DARPA.NodeEditor", {
+							nodeRef: node,
+							onComplete: function() {
+								var fields = window.getAttrs();
+								var newAttrs = [];
+								for (var i = 0; i < fields.length; i++) {
+									var field = fields[i];
+									//node.data().attrs = node.data().attrs.concat([{key: name, val: value}])
+									newAttrs.push({key: field.name, val: field.value});
+								}
+								node.data().attrs = newAttrs;
+								
+								node.data({
+									"name": window.getName(),
+									"idType": window.getIdType(),
+									"color": window.getColor(),
+									"EDITED_BY_USER": true
+								});
+							}
+						});
+						
+						// window.showAt(x_pos, y_pos - window.height)?
+						window.show();
+					},
+
 					nodeMouseOver : function(node) {
 						var self = this;
 

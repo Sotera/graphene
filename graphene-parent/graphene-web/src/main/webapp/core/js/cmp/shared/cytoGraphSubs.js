@@ -214,13 +214,6 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 							else { console.log("pivot() is undefined"); }
 						}
 					}, {
-						content: "Hide",
-						select: function() {
-							var node = this;
-							if (_this.owner.hideNode) { _this.owner.hideNode(node); } 
-							else { console.log("hideNode() is undefined"); }
-						}
-					}, {
 						content: "Shortest Path",
 						select: function() {
 							var node = this;
@@ -232,9 +225,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 								console.log("Set node id='" + node.data("id") + "' as root.");
 							} else { console.log("dijkstra pathfinding is unavailable."); }
 						}
-					} 
-					// uncomment when Add/Connect/etc. are finished
-					/*,{
+					}, {
 						content: "Add Node",
 						select: function() {
 							var node = this;
@@ -243,10 +234,10 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 								gg.clear();
 								gg.setParent(node);
 								gg.changeState("ADD");
+								gg.givePrompt();
 							}
 						}
-					}, */
-					/*{
+					}, {
 						content: "Connect Node",
 						select: function() {
 							var node = this;
@@ -255,10 +246,17 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 								gg.clear();
 								gg.setParent(node);
 								gg.changeState("CONNECT");
+								gg.givePrompt();
 							}
 						}
-					}*/
-					],
+					}, {
+						content: "Edit Node",
+						select: function() {
+							var node = this;
+							if (_this.owner.editNode) { _this.owner.editNode(node); } 
+							else { console.log("editNode() is undefined"); }
+						}
+					}],
 				});
 			} catch(e) {
 				console.log(e);
@@ -293,12 +291,13 @@ CytoGraphVis.prototype.setHandlers = function() {
 			if (gg.stateMatches("ADD")) {
 				gg.addNode(pos.x, pos.y);
 				gg.clear();
+				gg.givePrompt();
 			}
-			
 			// if you're trying to connect a node but click white-space, reset the manager
 			// to prevent unwanted interaction later on
 			if (gg.stateMatches("CONNECT")) {
 				gg.clear();
+				gg.givePrompt();
 			}
 		}
 	});
@@ -320,6 +319,12 @@ CytoGraphVis.prototype.setHandlers = function() {
 		} else if (gg.stateMatches("CONNECT")) {
 			gg.connectNodes(e.cyTarget);
 			gg.clear();
+			gg.givePrompt();
+		} else if (gg.stateMatches("ADD")) {
+			// if you're trying to add a new node but click an existing one, reset the manager
+			// to prevent unwanted interaction later on
+			gg.clear();
+			gg.givePrompt();
 		} else {
 			if (!e.originalEvent.shiftKey || !e.originalEvent.ctrlKey) {
 				e.cy.elements().unselect();
@@ -1128,10 +1133,16 @@ function GraphGenerator(graphRef) {
 		return null;
 	};
 	
+	var _say = function(progressAmount, progressMessage) {
+		if (graphRef.owner.getProgressBar) {
+			var pb = graphRef.owner.getProgressBar();
+			if (pb) pb.updateProgress(progressAmount, progressMessage);
+		}
+	};
+	
 	this.setParent = function(node) {
 		if (typeof node.isNode == "function" && node.isNode() == true) {
 			_parentNode = node;
-			_this.say(0, "Dialog to add properties.  Click on graph whitespace to place new node there.");
 		}
 	};
 	
@@ -1140,10 +1151,11 @@ function GraphGenerator(graphRef) {
 		var nodeJSON = {
 			data: {
 				id: "generatedNode_" + _currentId,
-				name: "TODO fill me",
-				attrs: [
-					// TODO: populate via prompt
-				]
+				idVal: "GeneratedNode_" + _currentId,
+				idType: "GENERATED",
+				name: "New Node",
+				color: "gray",
+				attrs: [/* Populated via NodeEditor */]
 			},
 			group: "nodes",
 			position: {x: x, y: y}
@@ -1153,11 +1165,11 @@ function GraphGenerator(graphRef) {
 		var edgeJSON = {
 			data: {
 				id: "generatedEdge_" + _currentId,
+				idVal: "GeneratedEdge_" + _currentId,
+				idType: "GENERATED",
 				source: _parentNode.data("id"),
 				target: "generatedNode_" + _currentId,
-				attrs: [
-					// TODO populate via prompt
-				]
+				attrs: [/* Populated via NodeEditor */]
 			},
 			group: "edges"
 		};
@@ -1167,8 +1179,6 @@ function GraphGenerator(graphRef) {
 		
 		// increment the running id so we can have unique nodes/edges
 		_currentId++;
-		
-		_this.say(1, "100%");
 	};
 	
 	this.connectNodes = function(targetNode) {
@@ -1177,11 +1187,11 @@ function GraphGenerator(graphRef) {
 			var edgeJSON = {
 				data: {
 					id: "generatedEdge_" + _currentId,
+					idVal: "GeneratedEdge_" + _currentId,
+					idType: "GENERATED",
 					source: _parentNode.data("id"),
 					target: targetNode.data("id"),
-					attrs: [
-						// TODO: populate via prompt
-					]
+					attrs: [/* Populated via NodeEditor */]
 				},
 				group: "edges"
 			};
@@ -1190,8 +1200,6 @@ function GraphGenerator(graphRef) {
 			
 			// increment the running id so we can have unique nodes/edges
 			_currentId++;
-			
-			_this.say(1, "100%");
 		}
 	};
 	
@@ -1224,10 +1232,20 @@ function GraphGenerator(graphRef) {
 		return inState.toUpperCase() == _getCurrentState();
 	};
 	
-	this.say = function(progressAmount, progressMessage) {
-		if (graphRef.owner.getProgressBar) {
-			var pb = graphRef.owner.getProgressBar();
-			if (pb) pb.updateProgress(progressAmount, progressMessage);
+	this.givePrompt = function() {
+		switch (_getCurrentState()) {
+			case "ADD":
+				_say(0, "Click on graph whitespace to place new node there.");
+				break;
+			case "CONNECT":
+				_say(0, "Click on another node to draw an edge.");
+				break;
+			case "MERGE":
+				// TODO 
+				break;
+			default:
+				_say(1, "100%");
+				break;
 		}
 	};
 	
@@ -1235,6 +1253,6 @@ function GraphGenerator(graphRef) {
 		_root = null;
 		_stateEnum.ADD.value = false;
 		_stateEnum.CONNECT.value = false;
-		_stateEnum.MERGE.value = true;
+		_stateEnum.MERGE.value = false;
 	};
 }
