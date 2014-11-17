@@ -152,7 +152,6 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>graphene-dao-sql</artifactId>
 				<version>${project.version}</version>
-				<classifier>jar</classifier>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -163,7 +162,6 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>graphene-rest</artifactId>
 				<version>${project.version}</version>
-				<type>jar</type>
 			</dependency>
 			<!-- Here's the war overlay -->
 			<dependency>
@@ -185,7 +183,6 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>graphene-export</artifactId>
 				<version>${project.version}</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>vande</groupId>
