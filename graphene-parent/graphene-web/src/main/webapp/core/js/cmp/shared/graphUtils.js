@@ -376,7 +376,7 @@ function importGraph(context) {
                 border: true
         });
 
-        importWindow.setInfoVis(self.GraphVis);   // reference to the graph (not the graph data)
+        importWindow.setGraphVis(self.GraphVis);   // reference to the graph (not the graph data)
         importWindow.show();
         importWindow.center();
 }
