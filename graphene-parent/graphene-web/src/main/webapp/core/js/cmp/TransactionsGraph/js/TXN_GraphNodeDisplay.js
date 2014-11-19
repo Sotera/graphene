@@ -62,25 +62,37 @@ Ext.define("DARPA.TXNGNodeDisplay",
 		var attrs = data.attrs;
 		var detailsItems = self.items.items[0].items.items; // MFM
 		var elementIsEdge = element.isEdge();
+
+		detailsItems[0].setValue(data["idType"]);
+		detailsItems[1].setValue(data["idVal"]);
 		
-		for (var prop in data) {
-			if (data.hasOwnProperty(prop)) {
-				if (prop == "idType") {
-					detailsItems[0].setValue(data[prop]);
+		var _showAttrs = function(attrs) {
+			for (var i = 0; i < attrs.length; ++i) {
+				var a = attrs[i];
+				if (a.key.indexOf("payload") == -1) {
+					html += "<tr><td>" + a.key + "</td> <td>&nbsp;:&nbsp;</td> <td>" + a.val + "</td></tr>";
 				}
-				else if (prop == "idVal") {
-					detailsItems[1].setValue(data[prop]);
+				if (a.key == "subject") {
+					detailsItems[1].setValue(a.val);
 				}
 			}
-		}
+		};
 		
-		for (var i = 0; i < attrs.length; ++i) {
-			var a = attrs[i];
-			if (a.key.indexOf("payload") == -1) {
-				html += "<tr><td>" + a.key + "</td> <td>&nbsp;:&nbsp;</td> <td>" + a.val + "</td></tr>";
-			}
-			if (a.key == "subject") {
-				detailsItems[1].setValue(a.val);
+		if (typeof element.data().subNodes == "undefined") {
+			// default behavior
+			_showAttrs(attrs);
+		} else {
+			// list subnode attrs with a header over each set of entries
+			var index = 0;
+			html += "<tr><td><b>" + index + "_" + element.data("name") + "</b></td></tr>";
+			
+			_showAttrs(attrs);
+			
+			for (var i = 0; i < element.data().subNodes.length; i++) {	
+				var subNode = element.data().subNodes[i];
+				index = i + 1;
+				html += "<tr><td><b>" + index + "_" + subNode.data("name") + "</b></td></tr>";
+				_showAttrs(subNode.data().attrs);
 			}
 		}
 		html += "</table>";

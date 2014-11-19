@@ -298,6 +298,25 @@ Ext.define("DARPA.Node_Actions", {
 			}
 		});
 		
+		var unmerge = Ext.create("Ext.Button", {
+			text: "UNMERGE",
+			id: config.id + "-UNMERGE",
+			margin: 4,
+			height: 24,
+			width: "25%",
+			handler: function(btn) {
+				var path = btn.id.split('-');
+				var graphId = path[0] + '-' + path[1];
+				var graph = Ext.getCmp(graphId);
+				if (graph) {
+					var nodes = graph.GraphVis.gv.$("node:selected");
+					nodes.each(function(i, n) {
+						graph.unmergeNode(n);
+					});
+				}
+			}
+		});
+		
 		var help = Ext.create("Ext.Button", {
 		    icon: Config.helpIcon,
 		    maxHeight: 30,
@@ -367,7 +386,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype: 'fieldcontainer',
 				height: 'auto',
 				width: '100%',
-				items: [deleteBtn, help]
+				items: [deleteBtn, unmerge, help]
 			}]
 		});
 

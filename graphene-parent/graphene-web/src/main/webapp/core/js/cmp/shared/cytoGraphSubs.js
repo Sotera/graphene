@@ -207,13 +207,6 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 							else { console.log("expand() is undefined"); }
 						}
 					}, {
-						content: "Pivot",
-						select: function() {
-							var node = this;
-							if (_this.owner.pivot) { _this.owner.pivot(node); }
-							else { console.log("pivot() is undefined"); }
-						}
-					}, {
 						content: "Shortest Path",
 						select: function() {
 							var node = this;
@@ -256,7 +249,15 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 							if (_this.owner.editNode) { _this.owner.editNode(node); } 
 							else { console.log("editNode() is undefined"); }
 						}
-					}],
+					}, {
+						content: "Merge Selected Nodes",
+						select: function() {
+							var node = this;
+							var selectedNodes = _this.gv.$("node:selected");
+							if (_this.owner.mergeNodes) { _this.owner.mergeNodes(node, selectedNodes); }
+							else { console.log("mergeNodes() is undefined"); }
+						}
+					}]
 				});
 			} catch(e) {
 				console.log(e);

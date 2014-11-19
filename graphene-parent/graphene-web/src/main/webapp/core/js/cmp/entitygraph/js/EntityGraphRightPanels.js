@@ -66,21 +66,41 @@ Ext.define("DARPA.PBNodeDisplay", {
 	},
 
 	// ------------
-	setAttrs : function(data) {
-		var attrs = data.attrs;
+	setAttrs : function(element) {
+		var attrs = element.data().attrs;
 		var self = this;
 		var html = "<table rules='rows'>";
 		var detailsItems = self.items.items[0].items.items; // MFM
-		detailsItems[0].setValue(data.idType);
-		detailsItems[1].setValue(data.idVal);
-
-		for (var i = 0; i < attrs.length; ++i) {
-			var a = attrs[i];
-			if (a.key.indexOf("node-prop") == -1) {
-				html += "<tr><td>" + a.key + ":&nbsp </td><td>" + a.val
-						+ "</td></tr>";
+		detailsItems[0].setValue(element.data("idType"));
+		detailsItems[1].setValue(element.data("idVal"));
+		
+		var _showAttrs = function(attrs) {
+			for (var i = 0; i < attrs.length; ++i) {
+				var a = attrs[i];
+				if (a.key.indexOf("node-prop") == -1) {
+					html += "<tr><td>" + a.key + ":&nbsp </td><td>" + a.val + "</td></tr>";
+				}
+			}
+		};
+		
+		if (typeof element.data().subNodes == "undefined") {
+			// default behavior
+			_showAttrs(attrs);
+		} else {
+			// list subnode attrs with a header over each set of entries
+			var index = 0;
+			html += "<tr><td><b>" + index + "_" + element.data("name") + "</b></td></tr>";
+			
+			_showAttrs(attrs);
+			
+			for (var i = 0; i < element.data().subNodes.length; i++) {	
+				var subNode = element.data().subNodes[i];
+				index = i + 1;
+				html += "<tr><td><b>" + index + "_" + subNode.data("name") + "</b></td></tr>";
+				_showAttrs(subNode.data().attrs);
 			}
 		}
+		
 		html += "</table>";
 
 		detailsItems[2].update(html);

@@ -364,8 +364,9 @@ Ext.define("DARPA.TransactionGraph", {
 				self.showjson(self.prevLoadParams.number);
 			});
 		} else {
-			self.showjson(self.prevLoadParams.number);
-			self.showjson1Hop(false, null);
+			// This isn't even really necessary...
+			//self.showjson(self.prevLoadParams.number);
+			//self.showjson1Hop(false, null);
 		}
 
 		this.callParent(arguments);
@@ -531,6 +532,119 @@ Ext.define("DARPA.TransactionGraph", {
 		});
 		// window.showAt(x_pos, y_pos - window.height)?
 		window.show();
+	},
+	
+	mergeNodes: function(superNode, selectedNodes) {
+		var doContinue = true;
+		try {
+			if (typeof superNode == "undefined") throw "Variable 'superNode' is undefined.";
+			if (typeof superNode.isNode == "undefined" || typeof superNode.isNode() == false) throw "Right-clicked element is not a node.";
+			if (typeof selectedNodes == "string" || selectedNodes.length < 1) throw "No other nodes were selected.";
+		} catch (e) {
+			doContinue = false;
+			Ext.Msg.alert("Failed to Merge", "Unable merge nodes.  Reason: " + e);
+		}
+
+		var _this = this;
+		var typesMatch = true;
+		for (var i = 0; i < selectedNodes.length; i++) {
+			if (superNode.data("idType") !== selectedNodes[i].data("idType")) {
+				typesMatch = false;
+				break;
+			}
+		}
+		
+		if (!typesMatch) {
+			doContinue = false;
+			Ext.Msg.alert("Failed to Merge", "You can only merge nodes of the same type.");
+		}
+		
+		if (!doContinue) return;
+		
+		selectedNodes.each(function(i, n) {
+			if (n.data("id") != superNode.data("id")) {
+			
+				n.connectedEdges().each(function(j, e) {
+					var edge_clone = e.json();
+					if (e.data("target") == n.data("id")) {
+						// selectedNode n is target node
+						if (typeof edge_clone.data.old_targets == "undefined") {
+							edge_clone.data.old_targets = [];
+						}
+						edge_clone.data.old_targets.push(n.data("id"));
+						edge_clone.data.target = superNode.data("id");
+					} else if (e.data("source") == n.data("id")) {
+						// selectedNode n is source node
+						if (typeof edge_clone.data.old_sources == "undefined") {
+							edge_clone.data.old_sources = [];
+						}
+						edge_clone.data.old_sources.push(n.data("id"));
+						edge_clone.data.source = superNode.data("id");
+					}
+					_this.GraphVis.gv.remove(e);
+					_this.GraphVis.gv.add(edge_clone);
+				});
+				
+				if (typeof superNode.data().subNodes == "undefined") {
+					superNode.data().subNodes = [];
+				}
+				
+				superNode.data().subNodes.push(n.json());
+				_this.GraphVis.deleteNodes([n]);
+			}
+		});
+	},
+	
+	unmergeNode: function(superNode) {
+		if (typeof superNode == "undefined" || typeof superNode.isNode == "undefined" ||
+			superNode.isNode == false || typeof superNode.data().subNodes == "undefined") {
+			// fail quietly
+			console.log("variable superNode is not valid input");
+			return;
+		}
+		
+		var _this = this;
+		
+		var subNodes = superNode.data("subNodes");
+		while (subNodes.length > 0) {
+			var subNodeJSON = subNodes.pop();
+			_this.GraphVis.gv.add(subNodeJSON);
+			_this.json.nodes.push(subNodeJSON);
+			
+			_this.GraphVis.gv.edges().each(function(i, e) {
+				var edge_clone;
+				
+				if (typeof e.data().old_sources !== "undefined" && e.data().old_sources.length > 0) {
+					var old_source = e.data().old_sources.pop();
+					if (old_source == subNodeJSON.data.id) {
+						edge_clone = e.json();
+						edge_clone.data.source = subNodeJSON.data.id;
+						_this.GraphVis.gv.remove(e);
+						_this.GraphVis.gv.add(edge_clone);
+						_this.json.edges.push(edge_clone);
+					} else {
+						// didn't match, so put it back
+						e.data().old_sources.push(old_source);
+					}
+				}
+				
+				if (typeof e.data().old_targets !== "undefined" && e.data().old_targets.length > 0) {
+					var old_target = e.data().old_targets.pop();
+					if (old_target == subNodeJSON.data.id) {
+						edge_clone = e.json();
+						edge_clone.data.target = subNodeJSON.data.id;
+						_this.GraphVis.gv.remove(e);
+						_this.GraphVis.gv.add(edge_clone);
+						_this.json.edges.push(edge_clone);
+					} else {
+						// didn't match, so put it back
+						e.data().old_targets.push(old_target);
+					}
+				}
+			});
+		}
+		// might not be necessary, since subNodes would be [] at this point
+		delete superNode.data().subNodes;
 	},
 	
 	edgeClick:function(edge)
