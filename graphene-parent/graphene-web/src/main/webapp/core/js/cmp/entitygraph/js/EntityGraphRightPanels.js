@@ -92,12 +92,12 @@ Ext.define("DARPA.PBNodeDisplay", {
 			html += "<tr><td><b>" + index + "_" + element.data("name") + "</b></td></tr>";
 			
 			_showAttrs(attrs);
-			
+			// TODO: this needs to be recursive; get subnodes of subnodes, etc.
 			for (var i = 0; i < element.data().subNodes.length; i++) {	
-				var subNode = element.data().subNodes[i];
+				var subNodeJSON = element.data().subNodes[i];
 				index = i + 1;
-				html += "<tr><td><b>" + index + "_" + subNode.data("name") + "</b></td></tr>";
-				_showAttrs(subNode.data().attrs);
+				html += "<tr><td><b>" + index + "_" + subNodeJSON.data.name + "</b></td></tr>";
+				_showAttrs(subNodeJSON.data.attrs);
 			}
 		}
 		
