@@ -10,13 +10,22 @@ function Legend() {
 	
 	var _defaultGroupName = "";
 	
-	var _makeLegendItem = function(iconPath, desc) {
-		var html = "<img src='" + iconPath + "' align='top'>" + desc + "<br/>";
-		
+	var _makeLegendItem = function(iconPath, desc, color) {
+		var imageHTML = "";
+		if (typeof color == "undefined") {
+			imageHTML = "<img src='" + iconPath + "'/>";
+		} else {
+			imageHTML = "<svg height='25' width='25'>" +
+							"<circle cx='12' cy='12' r='12' stroke='black' stroke-width='0' fill='" + color + "'/>" +
+						"</svg>";
+		}
+
 		return {
 			xtype: 'fieldset',
 			layout: {
-				type: 'hbox'
+				type: 'hbox',
+				pack: 'start',
+				align: 'middle'
 			},
 			width: 'auto',
 			height: 'auto',
@@ -24,14 +33,13 @@ function Legend() {
 			padding: 0,
 			border: 0,
 			items: [{
-				xtype: 'label',
-				margin: 2,
-				padding: 1,
+				xtype: 'panel',
 				border: false,
-				html: html,
-				style: {
-					fontsize: "small"
-				}
+				html: imageHTML
+			}, {
+				xtype: 'panel',
+				border: false,
+				html: desc
 			}]
 		};
 	};
@@ -77,8 +85,10 @@ function Legend() {
 	 *	returns Array
 	 */
 	this.getLegendByGroup = function(groupName) {
-		if (_legendItems.hasOwnProperty(groupName)) {
-			return _legendItems[groupName];
+		var gn = (typeof groupName == "undefined") ? this.getDefaultGroupName() : groupName;
+		
+		if (_legendItems.hasOwnProperty(gn)) {
+			return _legendItems[gn];
 		} else {
 			console.error("Can not find a legend group with the name '" + groupName + "'");
 			return [];
@@ -87,18 +97,21 @@ function Legend() {
 	
 	/*
 	 *	Add a single legend item to the specified legend group
-	 *	groupName - String: name of the group to be added to.
-	 *	iconPath - String: path to the icon resource representing this legend item
-	 *	text - (Optional) String: text description following the icon of this legend item
+	 *		groupName - String: name of the group to be added to.
+	 *		text - String: text description following the icon of this legend item
+	 *		iconPath - (Optional) String: path to the icon resource representing this legend item
+	 *		color - (Optional) String: hex value or name of a color
+	 *
+	 *	Note: requires either color or iconPath
 	 */
-	this.addLegendItem = function(groupName, iconPath, text) {
+	this.addLegendItem = function(groupName, text, iconPath, color) {
 		var desc = "";
 		
 		if (typeof text !== "undefined") {
 			desc = "&nbsp;- " + text;
 		}
 		
-		var legendItem = _makeLegendItem(iconPath, desc);
+		var legendItem = _makeLegendItem(iconPath, desc, color);
 		
 		if (_legendItems.hasOwnProperty(groupName)) {
 			try {
@@ -116,11 +129,14 @@ function Legend() {
 	 *	Iterates over an array of objects, each one containing parameters to define a legend item
 	 *	items - Array: each item is an Object with three fields...
 	 *			groupName - String or Array<String>: groupName(s) to insert into
-	 *			iconPath - String: path to the icon resource representing this legend item
-	 *			text - (Optional) String: text description following the icon of this legend item
+	 *			text - String: text description following the icon of this legend item
+	 *			iconPath - (Optional) String: path to the icon resource representing this legend item
+	 *			color - (Optional) String: hex value or name of a color
+	 *
+	 *	Note: the legend item constructor requires either color or iconPath
 	 */
 	this.addLegendItems = function(items) {
-		var i, l, j, groupNames, iconPath, text;
+		var i, l, j, groupNames, iconPath, text, color;
 		
 		l = items.length;
 		
@@ -130,14 +146,15 @@ function Legend() {
 			groupNames = items[i].groupNames;
 			iconPath = items[i].iconPath;
 			text = items[i].text;
+			color = items[i].color;
 			
 			if ($.isArray(groupNames)) {
 				for (j = 0; j < groupNames.length; j++) {
-					this.addLegendItem(groupNames[j], iconPath, text);
+					this.addLegendItem(groupNames[j], text, iconPath, color);
 				}
 			} else {
-				this.addLegendItem(groupNames, iconPath, text);
+				this.addLegendItem(groupNames, text, iconPath, color);
 			}
 		}
-	}
+	};
 }
