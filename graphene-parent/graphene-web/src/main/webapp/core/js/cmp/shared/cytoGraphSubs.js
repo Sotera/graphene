@@ -327,10 +327,10 @@ CytoGraphVis.prototype.setHandlers = function() {
 			gg.clear();
 			gg.givePrompt();
 		} else {
-			if (!e.originalEvent.shiftKey || !e.originalEvent.ctrlKey) {
+			if (!e.originalEvent.shiftKey && !e.originalEvent.ctrlKey) {
 				e.cy.elements().unselect();
 			}
-			e.cyTarget.select();
+			// e.cyTarget.select();
 		}
 	});
 	
