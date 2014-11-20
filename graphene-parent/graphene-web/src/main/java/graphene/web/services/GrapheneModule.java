@@ -47,6 +47,7 @@ import org.joda.time.LocalTime;
 import org.lazan.t5.atmosphere.services.AtmosphereModule;
 import org.lazan.t5.atmosphere.services.TopicAuthorizer;
 import org.lazan.t5.atmosphere.services.TopicListener;
+import org.lazan.t5.atmosphere.services.internal.AtmosphereHttpServletRequestFilter;
 import org.slf4j.Logger;
 
 /**
@@ -64,7 +65,8 @@ public class GrapheneModule {
 
 	}
 
-	public static void contributeAtmosphereHttpServletRequestFilter(
+	@Contribute(AtmosphereHttpServletRequestFilter.class)
+	public static void contributeAtmosphere(
 			MappedConfiguration<String, String> config) {
 		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
 	}
@@ -128,6 +130,9 @@ public class GrapheneModule {
 
 		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
 		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
+		
+		configuration.add(G_SymbolConstants.ENABLE_EXPERIMENTAL, false);
+		configuration.add(G_SymbolConstants.ENABLE_MISC, false);
 	}
 
 	public static void contributeComponentClassResolver(

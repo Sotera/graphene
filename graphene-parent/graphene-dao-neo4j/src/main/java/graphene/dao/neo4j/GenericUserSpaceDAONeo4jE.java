@@ -1,9 +1,16 @@
 package graphene.dao.neo4j;
 
+import graphene.business.commons.exception.DataAccessException;
+import graphene.dao.neo4j.funnel.G_UserSpaceRelationshipTypeFunnel;
+import graphene.dao.neo4j.funnel.GroupFunnel;
+import graphene.dao.neo4j.funnel.UserFunnel;
+import graphene.dao.neo4j.funnel.WorkspaceFunnel;
 import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_GroupFields;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_UserFields;
+import graphene.model.idl.G_WorkspaceFields;
 import graphene.util.ExceptionUtil;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -14,6 +21,15 @@ import org.neo4j.graphdb.schema.IndexDefinition;
 import org.slf4j.Logger;
 
 public class GenericUserSpaceDAONeo4jE {
+	protected G_UserSpaceRelationshipTypeFunnel relfunnel = new G_UserSpaceRelationshipTypeFunnel();
+
+	@Inject
+	protected GroupFunnel groupFunnel;
+	@Inject
+	protected UserFunnel userFunnel;
+	@Inject
+	protected WorkspaceFunnel workspaceFunnel;
+
 	@Inject
 	protected G_EdgeTypeAccess edgeTypeAccess;
 
@@ -29,9 +45,14 @@ public class GenericUserSpaceDAONeo4jE {
 		return n4jService.beginTx();
 	}
 
+	public void initialize() throws DataAccessException {
+		// TODO Auto-generated method stub
+
+	}
+
 	protected Neo4JEmbeddedService n4jService;
 
-	protected Node getUserNodeById(int id) {
+	protected Node getUserNodeById(String id) {
 		Node n = null;
 		try (Transaction tx = beginTx()) {
 			for (Node node : n4jService.getGraphDb()
@@ -46,6 +67,53 @@ public class GenericUserSpaceDAONeo4jE {
 		}
 		if (n == null) {
 			logger.warn("Could not find a user with id '" + id + "'");
+		}
+		return n;
+	}
+
+	protected Node getGroupNodeByGroupname(String groupname) {
+		Node n = null;
+		try (Transaction tx = beginTx()) {
+			for (Node node : n4jService.getGraphDb()
+					.findNodesByLabelAndProperty(
+							GrapheneNeo4JConstants.groupLabel,
+							G_GroupFields.name.name(), groupname)) {
+				n = node;
+			}
+			tx.success();
+		}
+		return n;
+	}
+
+	protected Node getGroupNode(String id) {
+		Node n = null;
+		try (Transaction tx = beginTx()) {
+			for (Node node : n4jService.getGraphDb()
+					.findNodesByLabelAndProperty(
+							GrapheneNeo4JConstants.groupLabel,
+							G_GroupFields.id.name(), id)) {
+				n = node;
+			}
+			tx.success();
+		}
+		return n;
+	}
+
+	protected Node getWorkspaceNodeById(String id) {
+		Node n = null;
+		try (Transaction tx = beginTx()) {
+			for (Node node : n4jService.getGraphDb()
+					.findNodesByLabelAndProperty(
+							GrapheneNeo4JConstants.workspaceLabel,
+							G_WorkspaceFields.id.name(), id)) {
+				n = node;
+			}
+			tx.success();
+		} catch (Exception e) {
+			logger.error(ExceptionUtil.getRootCauseMessage(e));
+		}
+		if (n == null) {
+			logger.warn("Could not find workspace with id '" + id + "'");
 		}
 		return n;
 	}

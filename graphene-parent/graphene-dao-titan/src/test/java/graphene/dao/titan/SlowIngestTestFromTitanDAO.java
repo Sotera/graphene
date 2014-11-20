@@ -32,7 +32,7 @@ public class SlowIngestTestFromTitanDAO {
 		for (int i = 0; i < numberOfNodes; i++) {
 			logger.debug("Adding user " + i);
 			u.setUsername("complexChange02-" + i);
-			G_User x = dao.createOrUpdate(u);
+			G_User x = dao.save(u);
 		}
 		Random generator = new Random();
 

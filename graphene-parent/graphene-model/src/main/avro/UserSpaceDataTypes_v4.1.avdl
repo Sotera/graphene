@@ -6,14 +6,31 @@ protocol G_UserSpaceDataTypes {
 	import idl "CommonDataTypes_v4.1.avdl";
 	import idl "SecurityDataTypes_v4.1.avdl";
 	
+	enum G_WorkspaceFields {
+		active,json,queries, datamap,description,title,id,modified,created
+	}
+	
+	enum G_UserSpaceRelationshipType {
+		CREATOR_OF, // For user to workspace relations
+		EDITOR_OF, // For user to workspace relations
+		REVIEWER_OF // For user to workspace relations
+	}
 	enum G_UserFields {
 		id,active,username,avatar,email,fullname,hashedpassword,lastlogin,modified,created,numberlogins
+	}
+	
+	enum G_UserInterfaceMode {
+		DOMAIN_EXPERT, 		 	// A more simplified UI, use smart defaults and hide advanced features.
+		TECHNICAL_EXPERT		 	// Show advanced buttons and features.
+	}
+	enum G_GroupFields {
+		id,name,description
 	}
 	
 	record G_User {
 		/** */
 		boolean active = true;
-		int id;
+		union {string, null} id =null;
 		string username = "notset";
 		/**
 		 * some id of an avatar (could be a file name or other string to look
@@ -44,27 +61,22 @@ protocol G_UserSpaceDataTypes {
 		
 		/** user's last selected uimode */
 		G_UserInterfaceMode uimode;
+		
+	
 	}
 	
-	enum G_GroupFields {
-		id,name,description
-	}
-	
+
 	record G_Group {
-		int id;
+		union {string, null} id =null;
 		string name = "notset";
 		string description = "notset";
+		/** groups's modified datetime */
+		union { long, null} modified = 0;
 	}
 	
-	enum G_WorkspaceFields {
-		active,json,queries, datamap,description,title,id,modified,created
-	}
+
 	
-	enum G_UserSpaceRelationshipType {
-		CREATOR_OF, // For user to workspace relations
-		EDITOR_OF, // For user to workspace relations
-		REVIEWER_OF // For user to workspace relations
-	}
+
 	
 	record G_Workspace {
 		boolean active =true;
@@ -74,7 +86,7 @@ protocol G_UserSpaceDataTypes {
 		union {string, null} datamap=null;
 		string title="untitled";
 		
-		int id;
+		union {string, null} id =null;
 			
 		 /** workspace's modified datetime */
 		union { long, null} modified = 0;
@@ -83,9 +95,23 @@ protocol G_UserSpaceDataTypes {
 			
 	}
 	
-	enum G_UserInterfaceMode {
-		DOMAIN_EXPERT, 		 	// A more simplified UI, use smart defaults and hide advanced features.
-		TECHNICAL_EXPERT		 	// Show advanced buttons and features.
+	/** A record indicating a user belongs to a group */
+	record G_UserGroup {
+		union {string, null} id =null;
+		union {string, null}  groupId =null;
+		union {string, null}  userId =null;
+		/** usergroups's modified datetime */
+		union { long, null} modified = 0;
+	}
+	
+	/** A record indicating a user has access to a workspace */
+	record G_UserWorkspace {
+		union {string, null} id =null;
+		union {string, null}  workspaceId =null;
+		union {string, null}  userId =null;
+		/** userworkspace's modified datetime */
+		union { long, null} modified = 0;
+		G_UserSpaceRelationshipType role;
 	}
 	
 }

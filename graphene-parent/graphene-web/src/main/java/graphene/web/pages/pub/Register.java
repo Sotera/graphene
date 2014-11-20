@@ -156,7 +156,7 @@ public class Register {
 		 * compared to the hashed version using whatever hashing routine is set
 		 * in the Realm.
 		 */
-		UsernamePasswordToken token = new UsernamePasswordToken(grapheneLogin,
+		UsernamePasswordToken token = new UsernamePasswordToken(grapheneLogin.toLowerCase(),
 				graphenePassword);
 		token.setRememberMe(grapheneRememberMe);
 
@@ -217,6 +217,7 @@ public class Register {
 
 	@OnEvent(value = EventConstants.SUCCESS, component = "RegisterForm")
 	public Object proceedSignup() {
+		username=username.toLowerCase();
 		try {
 			if (dao.usernameExists(username)) {
 				registerForm.recordError(messages.get("error.userexists"));
@@ -234,6 +235,7 @@ public class Register {
 				if ((tempUser = dao.registerUser(tempUser)) != null) {
 					// tempUser = null;
 					dao.setUserPassword(tempUser.getId(), password);
+					
 					return loginNewRegisteredUser(username, password, true);
 				}
 				return Index.class;

@@ -17,6 +17,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -45,6 +46,7 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 
 	public GrapheneSecurityRealm() {
 		setName(REALM_NAME);
+		//setCredentialsMatcher(new PasswordMatcher());
 		setCredentialsMatcher(new CredentialsMatcher() {
 			private PasswordHash hasher = new PasswordHash();
 
@@ -53,6 +55,12 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 					AuthenticationInfo info) {
 				boolean doesMatch = false;
 				try {
+					if (info.getCredentials() == null) {
+						logger.warn("Credentials from AuthenticationInfo was null");
+					}
+					if (token.getCredentials() == null) {
+						logger.warn("Credentials from Token was null");
+					}
 					doesMatch = hasher.validatePassword(
 							(char[]) token.getCredentials(),
 							(String) info.getCredentials());

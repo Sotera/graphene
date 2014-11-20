@@ -69,7 +69,7 @@ public class RecentWorkspaces {
 	private AlertManager alertManager;
 
 	@OnEvent("makecurrent")
-	private void makeCurrent(int workspaceId) {
+	private void makeCurrent(String workspaceId) {
 		try {
 			// TODO: instead of hitting the service layer again, just pull from
 			// the list of workspaces we got before.

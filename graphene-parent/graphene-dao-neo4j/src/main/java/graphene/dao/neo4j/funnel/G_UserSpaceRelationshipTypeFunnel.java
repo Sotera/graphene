@@ -1,4 +1,4 @@
-package graphene.dao.neo4j;
+package graphene.dao.neo4j.funnel;
 
 import graphene.model.Funnel;
 import graphene.model.idl.G_UserSpaceRelationshipType;

@@ -1,27 +1,56 @@
 package graphene.dao.neo4j.funnel;
 
+import graphene.dao.neo4j.Neo4JEmbeddedService;
 import graphene.model.Funnel;
 import graphene.model.idl.G_User;
+import graphene.model.idl.G_UserFields;
 
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.joda.time.DateTime;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
 
 public class UserFunnel implements Funnel<Node, G_User> {
+	private Neo4JEmbeddedService n4jService;
+
+	@Inject
+	public UserFunnel(Neo4JEmbeddedService n4jService2) {
+		n4jService = n4jService2;
+	}
 
 	@Override
 	public G_User from(Node f) {
-		G_User c = new G_User();
-		// c.setActive(f.getActive());
-		// c.setAvatar(f.getAvatar());
-		// c.setCreated(f.getCreated().getTime());
-		// c.setEmail(f.getEmail());
-		// c.setFullname(f.getFullname());
-		// c.setHashedpassword(f.getHashedpassword());
-		// c.setId(f.getId());
-		// c.setModified(f.getModified().getTime());
-		// c.setLastlogin(f.getLastlogin().getTime());
-		// c.setNumberlogins(f.getNumberlogins());
-		// c.setUsername(f.getUsername());
-		return c;
+		G_User d = null;
+		if (f != null) {
+			try (Transaction tx = n4jService.beginTx()) {
+				d = new G_User();
+				d.setCreated(new DateTime(f.getProperty(
+						G_UserFields.created.name(), 0l)).getMillis());
+				d.setActive((boolean) f.getProperty(G_UserFields.active.name(),
+						true));
+				d.setAvatar((String) f.getProperty(G_UserFields.avatar.name(),
+						""));
+				d.setEmail((String) f.getProperty(G_UserFields.email.name(),
+						"no email"));
+				d.setFullname((String) f.getProperty(
+						G_UserFields.fullname.name(), "no name"));
+
+				d.setHashedpassword((String) f.getProperty(
+						G_UserFields.hashedpassword.name(),
+						"no hashed password"));
+
+				d.setLastlogin(new DateTime(f.getProperty(
+						G_UserFields.lastlogin.name(), 0l)).getMillis());
+
+				d.setNumberlogins((int) f.getProperty(
+						G_UserFields.numberlogins.name(), 0));
+				d.setUsername((String) f.getProperty(
+						G_UserFields.username.name(), "username"));
+				tx.success();
+			}
+
+		}
+		return d;
 	}
 
 	@Override

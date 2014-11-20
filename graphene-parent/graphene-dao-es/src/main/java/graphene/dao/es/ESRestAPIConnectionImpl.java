@@ -14,6 +14,7 @@ import io.searchbox.indices.CreateIndex;
 import javax.annotation.Nullable;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.index.query.CommonTermsQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
@@ -28,6 +29,20 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 	@Inject
 	private JestClient client;
+
+	@Inject
+	@Symbol(JestModule.ES_SEARCH_INDEX)
+	private String indexName;
+
+	@Override
+	public String getIndexName() {
+		return indexName;
+	}
+
+	@Override
+	public void setIndexName(String indexName) {
+		this.indexName = indexName;
+	}
 
 	@Override
 	public void createIndex(String indexName, String settings) {
@@ -71,7 +86,6 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			e.printStackTrace();
 		}
 	}
-	
 
 	/**
 	 * @return the client
@@ -82,7 +96,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	}
 
 	/**
-	 * @param client the client to set
+	 * @param client
+	 *            the client to set
 	 */
 	public final void setClient(JestClient client) {
 		this.client = client;
@@ -225,11 +240,12 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 	private String performMatchQuery(String index, EntityQuery q)
 			throws Exception {
-		StringBuffer terms = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		// Dead simple, just coalesces the values as one long phrase
 		for (G_SearchTuple<String> qi : q.getAttributeList()) {
-			terms.append(qi.getValue() + " ");
+			sb.append(qi.getValue() + " ");
 		}
+		String terms = sb.toString().trim();
 		if (ValidationUtils.isValid(terms)) {
 			logger.debug("Searching for terms: " + terms + " from query " + q);
 			// Let's decide that at least half of the terms listed need to

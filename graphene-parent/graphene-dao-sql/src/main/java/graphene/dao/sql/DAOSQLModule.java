@@ -37,7 +37,10 @@ public class DAOSQLModule {
 	public static void bind(ServiceBinder binder) {
 
 	}
-
+	/**
+	 * Tell Tapestry to look for a database properties file in the WEB-INF/classes folder of the war.
+	 * @param configuration
+	 */
 	@Contribute(SymbolSource.class)
 	public void contributePropertiesFileAsSymbols(
 			OrderedConfiguration<SymbolProvider> configuration) {

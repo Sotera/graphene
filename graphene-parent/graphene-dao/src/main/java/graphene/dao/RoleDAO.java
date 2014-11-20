@@ -5,6 +5,6 @@ import graphene.model.idl.G_Role;
 import java.util.List;
 
 public interface RoleDAO {
-	List<G_Role> getForUser(int id);
+	List<G_Role> getForUser(String id);
 
 }

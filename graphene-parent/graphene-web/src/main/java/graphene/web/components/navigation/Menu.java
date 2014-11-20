@@ -1,5 +1,6 @@
 package graphene.web.components.navigation;
 
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_VisualType;
 import graphene.util.Triple;
@@ -18,6 +19,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
@@ -33,6 +35,16 @@ public class Menu {
 	@Inject
 	private Locale locale;
 	boolean onlyPluginPages = false;
+
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_EXPERIMENTAL)
+	@Property
+	private boolean enableExperimental;
+
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_MISC)
+	@Property
+	private boolean enableMisc;
 
 	@Property
 	private Triple<String, String, String> page;

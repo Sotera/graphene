@@ -24,4 +24,8 @@ public interface ESRestAPIConnection {
 
 	public abstract void createIndex(String indexName, String settings);
 
+	public abstract void setIndexName(String indexName);
+
+	public abstract String getIndexName();
+
 }

@@ -3,62 +3,33 @@ package graphene.dao.neo4j;
 import graphene.dao.GroupDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.dao.neo4j.funnel.GroupFunnel;
-import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EdgeType;
+import graphene.dao.neo4j.funnel.UserFunnel;
+import graphene.dao.neo4j.funnel.WorkspaceFunnel;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_GroupFields;
-import graphene.model.idl.G_UserFields;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.traversal.Evaluators;
-import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.graphdb.traversal.Traverser;
 
 public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		GroupDAO {
 	private Neo4JEmbeddedService n4jService;
-	GroupFunnel funnel;
 
 	public GroupDAONeo4JEImpl(@UserGraph Neo4JEmbeddedService service) {
 		this.n4jService = service;
-		funnel = new GroupFunnel(n4jService);
-	}
-
-	@Override
-	public boolean addToGroup(String username, String groupname) {
-		try (Transaction tx = beginTx()) {
-			Node u = getUserNodeByUsername(username);
-			Node g = getGroupNodeByGroupname(groupname);
-			G_EdgeType edgeType = edgeTypeAccess
-					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
-			u.createRelationshipTo(g,
-					DynamicRelationshipType.withName(edgeType.getName()));
-			tx.success();
-			return true;
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	private G_Group createDetached(Node u) {
 		G_Group d = null;
 		try (Transaction tx = beginTx()) {
-			d = funnel.from(u);
+			d = groupFunnel.from(u);
 			tx.success();
 		}
 		return d;
@@ -69,7 +40,7 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		G_Group g = null;
 		Node n;
 		try (Transaction tx = beginTx()) {
-			n = funnel.to(gd);
+			n = groupFunnel.to(gd);
 			tx.success();
 		}
 		g = createDetached(n);
@@ -107,84 +78,8 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return createDetached(getGroupNodeByGroupname(groupname));
 	}
 
-	private Node getGroupNodeByGroupname(String groupname) {
-		Node n = null;
-		try (Transaction tx = beginTx()) {
-			for (Node node : n4jService.getGraphDb()
-					.findNodesByLabelAndProperty(
-							GrapheneNeo4JConstants.groupLabel,
-							G_GroupFields.name.name(), groupname)) {
-				n = node;
-			}
-			tx.success();
-		}
-		return n;
-	}
+	
 
-	private Node getGroupNode(int id) {
-		Node n = null;
-		try (Transaction tx = beginTx()) {
-			for (Node node : n4jService.getGraphDb()
-					.findNodesByLabelAndProperty(
-							GrapheneNeo4JConstants.groupLabel,
-							G_GroupFields.id.name(), id)) {
-				n = node;
-			}
-			tx.success();
-		}
-		return n;
-	}
-
-	@Override
-	public List<G_Group> getGroupsForUser(String username) {
-		List<G_Group> list = new ArrayList<G_Group>();
-		try (Transaction tx = beginTx();
-				ResourceIterator<Node> users = n4jService
-						.getGraphDb()
-						.findNodesByLabelAndProperty(
-								GrapheneNeo4JConstants.userLabel,
-								G_UserFields.username.name(), username)
-						.iterator()) {
-
-			if (users.hasNext()) {
-
-				try {
-					G_EdgeType memberOf = edgeTypeAccess
-							.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
-
-					G_EdgeType partOf = edgeTypeAccess
-							.getCommonEdgeType(G_CanonicalRelationshipType.PART_OF);
-					Node j = users.next();
-					TraversalDescription traversalDescription = n4jService
-							.getGraphDb()
-							.traversalDescription()
-							.depthFirst()
-							.evaluator(Evaluators.excludeStartPosition())
-							.relationships(
-									DynamicRelationshipType.withName(memberOf
-											.getName()), Direction.OUTGOING)
-							.relationships(
-									DynamicRelationshipType.withName(partOf
-											.getName()), Direction.OUTGOING);
-					Traverser traverser = traversalDescription.traverse(j);
-					for (Path path : traverser) {
-						Node n = path.endNode();
-						if (n.hasLabel(GrapheneNeo4JConstants.groupLabel)) {
-							G_Group d = createDetached(n);
-							if (d != null) {
-								list.add(d);
-							}
-						}
-					}
-				} catch (AvroRemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			tx.success();
-		}
-		return list;
-	}
 
 	@PostInjection
 	public void initialize() {
@@ -199,29 +94,6 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		}
 	}
 
-	private boolean removeFromGroup(Node u, Node g) {
-		if (u == null || g == null) {
-			logger.warn("Could not perform removeUserFromWorkspace");
-			return false;
-		}
-		try (Transaction tx = beginTx()) {
-			G_EdgeType memberOf = edgeTypeAccess
-					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
-			for (Relationship r : u.getRelationships(Direction.OUTGOING,
-					DynamicRelationshipType.withName(memberOf.getName()))) {
-				if (r.getEndNode().hasLabel(GrapheneNeo4JConstants.groupLabel)
-						&& r.getEndNode().equals(g)) {
-					r.delete();
-				}
-			}
-			tx.success();
-			return true;
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
-	}
 
 	@Override
 	public G_Group save(G_Group g) {
@@ -243,12 +115,9 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public G_Group getGroupById(int id) {
+	public G_Group getGroupById(String id) {
 		return createDetached(getGroupNode(id));
 	}
 
-	@Override
-	public boolean removeFromGroup(int userId, int groupId) {
-		return removeFromGroup(getUserNodeById(userId), getGroupNode(groupId));
-	}
+
 }

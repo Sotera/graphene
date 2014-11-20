@@ -39,6 +39,19 @@
 										<table t:type="grid" source="results.results" model="model"
 											t:row="currentEntity" width="100%">
 											[Grid here]
+											<p:reportInfoCell>
+												<t:pagelink class="btn btn-default" page="prop:reportPageLink"
+													context="reportId" target="reportId">
+													<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
+												</t:pagelink>
+												<br />
+
+												<a class="btn btn-default" href="${extLink}"
+													target="extjs">
+													<i class="fa fa-code-fork"> </i>
+													Graph
+												</a>
+											</p:reportInfoCell>
 											<p:reportSummaryCell>
 												<t:loop source="reportDates" value="currentDate">
 													<span class="fa fa-calendar label label-success">&nbsp;${currentDate}
@@ -54,24 +67,12 @@
 													</span>
 												</t:loop>
 											</p:reportSummaryCell>
-											<p:reportInfoCell>
-												<t:pagelink class="btn btn-xs btn-primary" page="prop:reportPageLink"
-													context="reportId" target="reportId">
-													${reportType} ${reportId}
-												</t:pagelink>
-												<br />
-
-												<a class="btn btn-xs btn-primary" href="${extLink}"
-													target="extjs">
-													<i class="fa fa-fork"></i>
-													Graph
-												</a>
-											</p:reportInfoCell>
+											
 
 											<p:nameListCell>
 												<t:loop source="nameList" value="currentName">
 													<a class="btn btn-xs ${styleForName}" t:type="pagelink"
-														page="CombinedEntitySearchPage" context="currentName">
+														page="graphene/CombinedEntitySearchPage" context="currentName">
 														${currentName}</a>
 													<br />
 												</t:loop>
@@ -79,7 +80,7 @@
 											<p:addressListCell>
 												<t:loop source="addressList" value="currentAddress">
 													<a class="btn btn-xs ${styleForAddress}" t:type="pagelink"
-														page="CombinedEntitySearchPage" context="currentAddress">
+														page="graphene/CombinedEntitySearchPage" context="currentAddress">
 														${currentAddress}</a>
 													<br />
 												</t:loop>
@@ -87,7 +88,7 @@
 											<p:communicationIdentifierListCell>
 												<t:loop source="cIdentifierList" value="currentCommunicationId">
 													<a class="btn btn-xs ${styleForIdentifier}" t:type="pagelink"
-														page="CombinedEntitySearchPage" context="currentCommunicationId">
+														page="graphene/CombinedEntitySearchPage" context="currentCommunicationId">
 														${currentCommunicationId}</a>
 
 												</t:loop>
@@ -95,7 +96,7 @@
 											<p:identifierListCell>
 												<t:loop source="identifierList" value="currentIdentifier">
 													<a class="btn btn-xs ${styleForIdentifier}" t:type="pagelink"
-														page="CombinedEntitySearchPage" context="currentIdentifier">
+														page="graphene/CombinedEntitySearchPage" context="currentIdentifier">
 														${currentIdentifier}</a>
 
 												</t:loop>

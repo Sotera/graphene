@@ -24,16 +24,18 @@ public class SimpleRoleDAOImpl implements RoleDAO {
 
 	@Inject
 	private Logger logger;
-public SimpleRoleDAOImpl() {
-	// TODO Auto-generated constructor stub
-}
+
+	public SimpleRoleDAOImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see graphene.dao.RoleDAO#getForUsername(java.lang.String)
 	 */
 	@Override
-	public List<G_Role> getForUser(int id) {
+	public List<G_Role> getForUser(String id) {
 		// TODO Auto-generated method stub
 		ArrayList<G_Role> list = new ArrayList<G_Role>();
 		list.add(ADMIN);

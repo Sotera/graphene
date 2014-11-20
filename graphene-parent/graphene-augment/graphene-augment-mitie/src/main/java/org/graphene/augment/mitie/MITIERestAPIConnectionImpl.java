@@ -2,15 +2,14 @@ package org.graphene.augment.mitie;
 
 import graphene.business.commons.exception.DataAccessException;
 import graphene.util.net.HttpUtil;
+import graphene.util.validator.ValidationUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -33,7 +32,7 @@ public class MITIERestAPIConnectionImpl implements MITIERestAPIConnection {
 	}
 
 	private String createCleanUrl(@Nullable String basicAuth, String baseUrl) {
-		if (basicAuth != null) {
+		if (ValidationUtils.isValid(basicAuth)) {
 			logger.debug("Auth information provided, using auth info.");
 			String cleanAuth = basicAuth.replaceAll("@", "%40");
 			String cleanURL = baseUrl.replace("http://", "http://" + cleanAuth

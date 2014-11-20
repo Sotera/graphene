@@ -67,7 +67,7 @@ public class WorkspaceList {
 
 	@Parameter(required = true)
 	@Property
-	private int selectedWorkspaceId;
+	private String selectedWorkspaceId;
 
 	@Inject
 	private G_UserDataAccess service;

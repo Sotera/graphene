@@ -34,11 +34,11 @@ public class SlowIngestTestFromNeo4JDAO {
 			G_User u = new G_User();
 			u.setAvatar("bugatti.png");
 			u.setUsername("djue");
-			u = dao.createOrUpdate(u);
-			dao.updatePassword(u.getId(), "password");
+			u = dao.save(u);
+			dao.updatePasswordHash(u.getId(), "password");
 			u.setAvatar("venom.png");
 			u.setUsername("wjue");
-			dao.createOrUpdate(u);
+			dao.save(u);
 
 			AssertJUnit.assertEquals(1, dao.countUsers("djue"));
 			AssertJUnit.assertEquals(2, dao.countUsers("jue"));
@@ -59,8 +59,8 @@ public class SlowIngestTestFromNeo4JDAO {
 			G_User u = new G_User();
 			u.setAvatar("bugatti.png");
 			u.setUsername("djue");
-			G_User x = dao.createOrUpdate(u);
-			dao.updatePassword(u.getId(), "password");
+			G_User x = dao.save(u);
+			dao.updatePasswordHash(u.getId(), "password");
 			// logger.debug("Explicit tx from a separate injection");
 
 			logger.info(x.toString());
@@ -87,8 +87,8 @@ public class SlowIngestTestFromNeo4JDAO {
 			G_User u = new G_User();
 			u.setAvatar("bugatti.png");
 			u.setUsername("sampleUser2");
-			G_User x = dao.createOrUpdate(u);
-			dao.updatePassword(u.getId(), "password");
+			G_User x = dao.save(u);
+			dao.updatePasswordHash(u.getId(), "password");
 			logger.info("About to print");
 
 			for (int i = 1; i < numberOfRandomUpdates; i++) {
@@ -108,7 +108,7 @@ public class SlowIngestTestFromNeo4JDAO {
 			for (int i = 0; i < 10; i++) {
 				logger.debug("Adding user " + i);
 				u.setUsername("complexChange01-" + i);
-				G_User x = dao.createOrUpdate(u);
+				G_User x = dao.save(u);
 				if (i > 1) {
 					int previousUser = (i - 1);
 					logger.debug("Getting previous user " + previousUser);
@@ -137,7 +137,7 @@ public class SlowIngestTestFromNeo4JDAO {
 			for (int i = 0; i < numberOfNodes; i++) {
 				logger.debug("Adding user " + i);
 				u.setUsername("complexChange02-" + i);
-				G_User x = dao.createOrUpdate(u);
+				G_User x = dao.save(u);
 			}
 			Random generator = new Random();
 
@@ -160,7 +160,7 @@ public class SlowIngestTestFromNeo4JDAO {
 			for (int i = 0; i < numberOfNodes; i++) {
 				logger.debug("Adding user " + i);
 				u.setUsername("complexChange02-" + i);
-				G_User x = dao.createOrUpdate(u);
+				G_User x = dao.save(u);
 			}
 			Random generator = new Random();
 

@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"queries\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"datamap\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"queries\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"datamap\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private boolean active;
    private java.lang.String description;
@@ -15,7 +15,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
    private java.lang.String queries;
    private java.lang.String datamap;
    private java.lang.String title;
-   private int id;
+   private java.lang.String id;
   /** workspace's modified datetime */
    private java.lang.Long modified;
   /** workspace's created datetime */
@@ -31,7 +31,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String json, java.lang.String queries, java.lang.String datamap, java.lang.String title, java.lang.Integer id, java.lang.Long modified, java.lang.Long created) {
+  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String json, java.lang.String queries, java.lang.String datamap, java.lang.String title, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
     this.active = active;
     this.description = description;
     this.json = json;
@@ -69,7 +69,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     case 3: queries = (java.lang.String)value$; break;
     case 4: datamap = (java.lang.String)value$; break;
     case 5: title = (java.lang.String)value$; break;
-    case 6: id = (java.lang.Integer)value$; break;
+    case 6: id = (java.lang.String)value$; break;
     case 7: modified = (java.lang.Long)value$; break;
     case 8: created = (java.lang.Long)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -169,7 +169,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * Gets the value of the 'id' field.
    */
-  public java.lang.Integer getId() {
+  public java.lang.String getId() {
     return id;
   }
 
@@ -177,7 +177,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
    * Sets the value of the 'id' field.
    * @param value the value to set.
    */
-  public void setId(java.lang.Integer value) {
+  public void setId(java.lang.String value) {
     this.id = value;
   }
 
@@ -238,7 +238,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.String queries;
     private java.lang.String datamap;
     private java.lang.String title;
-    private int id;
+    private java.lang.String id;
     private java.lang.Long modified;
     private java.lang.Long created;
 
@@ -479,12 +479,12 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     }
 
     /** Gets the value of the 'id' field */
-    public java.lang.Integer getId() {
+    public java.lang.String getId() {
       return id;
     }
     
     /** Sets the value of the 'id' field */
-    public graphene.model.idl.G_Workspace.Builder setId(int value) {
+    public graphene.model.idl.G_Workspace.Builder setId(java.lang.String value) {
       validate(fields()[6], value);
       this.id = value;
       fieldSetFlags()[6] = true;
@@ -498,6 +498,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Clears the value of the 'id' field */
     public graphene.model.idl.G_Workspace.Builder clearId() {
+      id = null;
       fieldSetFlags()[6] = false;
       return this;
     }
@@ -562,7 +563,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         record.queries = fieldSetFlags()[3] ? this.queries : (java.lang.String) defaultValue(fields()[3]);
         record.datamap = fieldSetFlags()[4] ? this.datamap : (java.lang.String) defaultValue(fields()[4]);
         record.title = fieldSetFlags()[5] ? this.title : (java.lang.String) defaultValue(fields()[5]);
-        record.id = fieldSetFlags()[6] ? this.id : (java.lang.Integer) defaultValue(fields()[6]);
+        record.id = fieldSetFlags()[6] ? this.id : (java.lang.String) defaultValue(fields()[6]);
         record.modified = fieldSetFlags()[7] ? this.modified : (java.lang.Long) defaultValue(fields()[7]);
         record.created = fieldSetFlags()[8] ? this.created : (java.lang.Long) defaultValue(fields()[8]);
         return record;

@@ -19,11 +19,11 @@ protocol G_UserDataAccess {
 	 * @param workspace
 	 * @return
 	 */
-	G_Workspace addNewWorkspaceForUser(int userId, G_Workspace workspace);
+	G_Workspace addNewWorkspaceForUser(string userId, G_Workspace workspace);
 
 	 int countUsers(string partialUsername);
 
-	 int countWorkspaces(int userId, string partialWorkspaceTitle);
+	 int countWorkspaces(string userId, string partialWorkspaceTitle);
 
 	/**
 	 * Creates a new workspace for the user, saves it, and sets the user as the
@@ -32,7 +32,7 @@ protocol G_UserDataAccess {
 	 * @param username
 	 * @return
 	 */
-	G_Workspace createFirstWorkspaceForUser(int userId);
+	G_Workspace createFirstWorkspaceForUser(string userId);
 
 	/**
 	 * Gets the workspaces for the user.  If no workspaces were found, create a first workspace for the user and return the one element list.
@@ -40,7 +40,7 @@ protocol G_UserDataAccess {
 	 * @param username
 	 * @return
 	 */
-	array<G_Workspace> getWorkspacesOrCreateNewForUser(int userId);
+	array<G_Workspace> getWorkspacesOrCreateNewForUser(string userId);
 	/**
 	 * Creates a blank workspace for the user, but it is not saved to the
 	 * database yet.
@@ -48,9 +48,9 @@ protocol G_UserDataAccess {
 	 * @param username
 	 * @return
 	 */
-	G_Workspace createTempWorkspaceForUser(int userId);
+	G_Workspace createTempWorkspaceForUser(string userId);
 
-	 boolean deleteUser(int userId);
+	 boolean deleteUser(string userId);
 
 	/**
 	 * Deletes the workspace if the user is the creator of the workspace.
@@ -60,7 +60,7 @@ protocol G_UserDataAccess {
 	 * @return
 	 * @throws UnauthorizedActionException
 	 */
-	 boolean deleteWorkspace(int userId, int workspaceId)
+	 boolean deleteWorkspace(string userId, string workspaceId)
 			throws UnauthorizedActionException;
 
 	/**
@@ -70,19 +70,19 @@ protocol G_UserDataAccess {
 	 * @return
 	 * @throws UnauthorizedActionException
 	 */
-	boolean deleteWorkspaceIfUnused(int userId, int workspaceId)
+	boolean deleteWorkspaceIfUnused(string userId, string workspaceId)
 			throws UnauthorizedActionException;
 
 	/**
 	 * Find workspaces for the userId where the partialName matches the workspace title.
 	 */
-	array<G_Workspace> findWorkspaces(int userId, string partialWorkspaceTitle,
+	array<G_Workspace> findWorkspaces(string userId, string partialWorkspaceTitle,
 			int offset, int limit);
 
 	/**
-	 * Return the user specified by the username
+	 * Return the user specified by the userid
 	 */
-	 G_User getUser(int userId);
+	 G_User getUser(string userId);
 
 	/**
 	 * Retrieves the workspace.
@@ -95,10 +95,10 @@ protocol G_UserDataAccess {
 	 *             workspace. (also if the workspace or user ids supplied were
 	 *             not valid)
 	 */
-	G_Workspace getWorkspace(int userId, int workspaceId)
+	G_Workspace getWorkspace(string userId, string workspaceId)
 			throws UnauthorizedActionException;
 
-	array<G_Workspace> getWorkspacesForUser(int userId);
+	array<G_Workspace> getWorkspacesForUser(string userId);
 
 	/**
 	 * Finds the user and checks to see if the password hashes match. If the
@@ -109,7 +109,7 @@ protocol G_UserDataAccess {
 	 * @return a non null user.
 	 * @throws AuthenticationException
 	 */
-	 G_User loginUser(int userId, string password)
+	 G_User loginUser(string userId, string password)
 			throws AuthenticationException;
 
 	/**
@@ -125,13 +125,13 @@ protocol G_UserDataAccess {
 	  * 
 	  * Return true if permissions existed and were removed.
 	  */
-	boolean removeUserFromWorkspace(int userId, int workspaceId);
+	boolean removeUserFromWorkspace(string userId, string workspaceId);
 	 /**
 	  * Remove the specified permission between the supplied username and the supplied workspace id
 	  * 
 	  * Return true if the permission existed and was removed.
 	  */
-	boolean removeUserPermissionFromWorkspace(int userId, string permission, int workspaceId);
+	boolean removeUserPermissionFromWorkspace(string userId, string permission, string workspaceId);
 	/**
 	 * Save the provided group and return the saved group object (which may have been updated with business logic.)
 	 */
@@ -153,17 +153,17 @@ protocol G_UserDataAccess {
 	 * @return The workspace if the save was performed, null if unable to save.
 	 * @throws UnauthorizedActionException
 	 */
-	G_Workspace saveWorkspace(int userId, G_Workspace workspace)
+	G_Workspace saveWorkspace(string userId, G_Workspace workspace)
 			throws UnauthorizedActionException;
 	/**
 	 * Return true if the password was able to be set.
 	 */
-	 boolean setUserPassword(int userId, string newPassword);
+	 boolean setUserPassword(string userId, string newPassword);
 
 	 /**
 	  * Return true if the id exists, false otherwise
 	  */
-	 boolean userExists(int userId);
+	 boolean userExists(string userId);
 
 	 /**
 	  * Return true if the username exists, false otherwise
@@ -182,7 +182,7 @@ protocol G_UserDataAccess {
 	/**
 	  * Given an id, return a list of Roles
 	  */
-	 array<G_Role> getRolesByUser(int userId);
+	 array<G_Role> getRolesByUser(string userId);
 	
 	/**
 	  * Given a string role, return a list of G_Permission

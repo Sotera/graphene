@@ -1,47 +1,44 @@
 <!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 
-	<t:content>
-		<!-- Left panel : Navigation area -->
-		<!-- Note: This width of the aside area can be adjusted through LESS variables -->
-		<aside id="left-panel">
+<t:content>
+	<!-- Left panel : Navigation area -->
+	<!-- Note: This width of the aside area can be adjusted through LESS variables -->
+	<aside id="left-panel">
 
-			<!-- User info -->
-			<div class="login-info">
-				<span>
-					<!-- User image size is adjusted inside CSS, it should stay as it -->
+		<!-- User info -->
+		<div class="login-info">
+			<span> <!-- User image size is adjusted inside CSS, it should stay as it -->
 
-					<img src="${avatar}" alt="me" class="online" />
-					<a href="javascript:void(0);" id="show-shortcut">
-						${user?.fullname}
-						<i class="fa fa-angle-down"></i>
-					</a>
-				</span>
-			</div>
-			<!-- end user info -->
+				<img src="${avatar}" alt="me" class="online" /> <a
+				href="javascript:void(0);" id="show-shortcut"> ${user?.fullname}
+					<i class="fa fa-angle-down"></i>
+			</a>
+			</span>
+		</div>
+		<!-- end user info -->
 
-			<!-- NAVIGATION : This navigation is also responsive To make this navigation 
+		<!-- NAVIGATION : This navigation is also responsive To make this navigation 
 				dynamic please make sure to link the node (the reference to the nav > ul) 
 				after page load. Or the navigation will not initialize. -->
-			<nav>
-				<!-- NOTE: Notice the gaps after each icon usage <i></i>.. Please note 
+		<nav>
+			<!-- NOTE: Notice the gaps after each icon usage <i></i>.. Please note 
 					that these links work a bit different than traditional hre="" links. See 
 					documentation for details. -->
 
-				<ul>
-					<li class="" t:type="loop" source="actionPages" value="page">
-						<t:pagelink page="prop:page.first">
-							<i class="${page.second}"></i>
-							<span class="menu-item-parent"> ${page.third}</span>
-						</t:pagelink>
-					</li>
-					<li>
-						<a href="#">
-							<i class="fa fa-lg fa-fw fa-windows"></i>
+			<ul>
+				<li class="" t:type="loop" source="actionPages" value="page"><t:pagelink
+						page="prop:page.first">
+						<i class="${page.second}"></i>
+						<span class="menu-item-parent"> ${page.third}</span>
+					</t:pagelink></li>
+				<t:if test="enableMisc">
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
 							<span class="menu-item-parent">Miscellaneous</span>
-						</a>
+					</a>
 						<ul>
 							<li class="" t:type="loop" source="metaPages" value="page">
 								<t:pagelink page="prop:page.first">
@@ -49,32 +46,29 @@
 									<span class="menu-item-parent"> ${page.third}</span>
 								</t:pagelink>
 							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#">
-							<i class="fa fa-lg fa-fw fa-cog"></i>
-							<span class="menu-item-parent">Labs</span>
-						</a>
+						</ul></li>
+				</t:if>
+				<t:if test="enableExperimental">
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-cog"></i> <span
+							class="menu-item-parent">Labs</span>
+					</a>
 						<ul>
-							<li class="" t:type="loop" source="experimentalPages" value="page">
-								<t:pagelink page="prop:page.first">
+							<li class="" t:type="loop" source="experimentalPages"
+								value="page"><t:pagelink page="prop:page.first">
 									<i class="${page.second}"></i>
 									<span class="menu-item-parent"> ${page.third}</span>
-								</t:pagelink>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</nav>
-			<span class="minifyme">
-				<i class="fa fa-arrow-circle-left hit"></i>
-			</span>
+								</t:pagelink></li>
+						</ul></li>
+				</t:if>
+			</ul>
+		</nav>
+		<span class="minifyme"> <i class="fa fa-arrow-circle-left hit"></i>
+		</span>
 
 
-		</aside>
-		<!-- END NAVIGATION -->
+	</aside>
+	<!-- END NAVIGATION -->
 
 
-	</t:content>
+</t:content>
 </html>

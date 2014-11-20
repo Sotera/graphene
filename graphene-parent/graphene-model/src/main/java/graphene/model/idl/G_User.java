@@ -7,11 +7,11 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_User extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_User\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"doc\":\"\",\"default\":true},{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"},{\"name\":\"avatar\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* some id of an avatar (could be a file name or other string to look\\r\\n\\t\\t * up)\",\"default\":null},{\"name\":\"email\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's email\",\"default\":null},{\"name\":\"fullname\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's full name\",\"default\":null},{\"name\":\"hashedpassword\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's hashed password\",\"default\":null},{\"name\":\"lastlogin\",\"type\":[\"long\",\"null\"],\"doc\":\"user's lastlogin datetime\",\"default\":0},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"user's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"user's account created datetime\",\"default\":0},{\"name\":\"numberlogins\",\"type\":\"int\",\"doc\":\"user's numberlogins\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_User\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"doc\":\"\",\"default\":true},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"notset\"},{\"name\":\"avatar\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* some id of an avatar (could be a file name or other string to look\\r\\n\\t\\t * up)\",\"default\":null},{\"name\":\"email\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's email\",\"default\":null},{\"name\":\"fullname\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's full name\",\"default\":null},{\"name\":\"hashedpassword\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"user's hashed password\",\"default\":null},{\"name\":\"lastlogin\",\"type\":[\"long\",\"null\"],\"doc\":\"user's lastlogin datetime\",\"default\":0},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"user's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"user's account created datetime\",\"default\":0},{\"name\":\"numberlogins\",\"type\":\"int\",\"doc\":\"user's numberlogins\",\"default\":0},{\"name\":\"uimode\",\"type\":{\"type\":\"enum\",\"name\":\"G_UserInterfaceMode\",\"symbols\":[\"DOMAIN_EXPERT\",\"TECHNICAL_EXPERT\"]},\"doc\":\"user's last selected uimode\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /**  */
    private boolean active;
-   private int id;
+   private java.lang.String id;
    private java.lang.String username;
   /** * some id of an avatar (could be a file name or other string to look
 		 * up) */
@@ -30,6 +30,8 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
    private java.lang.Long created;
   /** user's numberlogins */
    private int numberlogins;
+  /** user's last selected uimode */
+   private graphene.model.idl.G_UserInterfaceMode uimode;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -41,7 +43,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   /**
    * All-args constructor.
    */
-  public G_User(java.lang.Boolean active, java.lang.Integer id, java.lang.String username, java.lang.String avatar, java.lang.String email, java.lang.String fullname, java.lang.String hashedpassword, java.lang.Long lastlogin, java.lang.Long modified, java.lang.Long created, java.lang.Integer numberlogins) {
+  public G_User(java.lang.Boolean active, java.lang.String id, java.lang.String username, java.lang.String avatar, java.lang.String email, java.lang.String fullname, java.lang.String hashedpassword, java.lang.Long lastlogin, java.lang.Long modified, java.lang.Long created, java.lang.Integer numberlogins, graphene.model.idl.G_UserInterfaceMode uimode) {
     this.active = active;
     this.id = id;
     this.username = username;
@@ -53,6 +55,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     this.modified = modified;
     this.created = created;
     this.numberlogins = numberlogins;
+    this.uimode = uimode;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -70,6 +73,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     case 8: return modified;
     case 9: return created;
     case 10: return numberlogins;
+    case 11: return uimode;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -78,7 +82,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: active = (java.lang.Boolean)value$; break;
-    case 1: id = (java.lang.Integer)value$; break;
+    case 1: id = (java.lang.String)value$; break;
     case 2: username = (java.lang.String)value$; break;
     case 3: avatar = (java.lang.String)value$; break;
     case 4: email = (java.lang.String)value$; break;
@@ -88,6 +92,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     case 8: modified = (java.lang.Long)value$; break;
     case 9: created = (java.lang.Long)value$; break;
     case 10: numberlogins = (java.lang.Integer)value$; break;
+    case 11: uimode = (graphene.model.idl.G_UserInterfaceMode)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -110,7 +115,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
   /**
    * Gets the value of the 'id' field.
    */
-  public java.lang.Integer getId() {
+  public java.lang.String getId() {
     return id;
   }
 
@@ -118,7 +123,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
    * Sets the value of the 'id' field.
    * @param value the value to set.
    */
-  public void setId(java.lang.Integer value) {
+  public void setId(java.lang.String value) {
     this.id = value;
   }
 
@@ -259,6 +264,21 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     this.numberlogins = value;
   }
 
+  /**
+   * Gets the value of the 'uimode' field.
+   * user's last selected uimode   */
+  public graphene.model.idl.G_UserInterfaceMode getUimode() {
+    return uimode;
+  }
+
+  /**
+   * Sets the value of the 'uimode' field.
+   * user's last selected uimode   * @param value the value to set.
+   */
+  public void setUimode(graphene.model.idl.G_UserInterfaceMode value) {
+    this.uimode = value;
+  }
+
   /** Creates a new G_User RecordBuilder */
   public static graphene.model.idl.G_User.Builder newBuilder() {
     return new graphene.model.idl.G_User.Builder();
@@ -281,7 +301,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     implements org.apache.avro.data.RecordBuilder<G_User> {
 
     private boolean active;
-    private int id;
+    private java.lang.String id;
     private java.lang.String username;
     private java.lang.String avatar;
     private java.lang.String email;
@@ -291,6 +311,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     private java.lang.Long modified;
     private java.lang.Long created;
     private int numberlogins;
+    private graphene.model.idl.G_UserInterfaceMode uimode;
 
     /** Creates a new Builder */
     private Builder() {
@@ -344,6 +365,10 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
         this.numberlogins = data().deepCopy(fields()[10].schema(), other.numberlogins);
         fieldSetFlags()[10] = true;
       }
+      if (isValidValue(fields()[11], other.uimode)) {
+        this.uimode = data().deepCopy(fields()[11].schema(), other.uimode);
+        fieldSetFlags()[11] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing G_User instance */
@@ -393,6 +418,10 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
         this.numberlogins = data().deepCopy(fields()[10].schema(), other.numberlogins);
         fieldSetFlags()[10] = true;
       }
+      if (isValidValue(fields()[11], other.uimode)) {
+        this.uimode = data().deepCopy(fields()[11].schema(), other.uimode);
+        fieldSetFlags()[11] = true;
+      }
     }
 
     /** Gets the value of the 'active' field */
@@ -420,12 +449,12 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     }
 
     /** Gets the value of the 'id' field */
-    public java.lang.Integer getId() {
+    public java.lang.String getId() {
       return id;
     }
     
     /** Sets the value of the 'id' field */
-    public graphene.model.idl.G_User.Builder setId(int value) {
+    public graphene.model.idl.G_User.Builder setId(java.lang.String value) {
       validate(fields()[1], value);
       this.id = value;
       fieldSetFlags()[1] = true;
@@ -439,6 +468,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
     
     /** Clears the value of the 'id' field */
     public graphene.model.idl.G_User.Builder clearId() {
+      id = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -667,12 +697,37 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
       return this;
     }
 
+    /** Gets the value of the 'uimode' field */
+    public graphene.model.idl.G_UserInterfaceMode getUimode() {
+      return uimode;
+    }
+    
+    /** Sets the value of the 'uimode' field */
+    public graphene.model.idl.G_User.Builder setUimode(graphene.model.idl.G_UserInterfaceMode value) {
+      validate(fields()[11], value);
+      this.uimode = value;
+      fieldSetFlags()[11] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'uimode' field has been set */
+    public boolean hasUimode() {
+      return fieldSetFlags()[11];
+    }
+    
+    /** Clears the value of the 'uimode' field */
+    public graphene.model.idl.G_User.Builder clearUimode() {
+      uimode = null;
+      fieldSetFlags()[11] = false;
+      return this;
+    }
+
     @Override
     public G_User build() {
       try {
         G_User record = new G_User();
         record.active = fieldSetFlags()[0] ? this.active : (java.lang.Boolean) defaultValue(fields()[0]);
-        record.id = fieldSetFlags()[1] ? this.id : (java.lang.Integer) defaultValue(fields()[1]);
+        record.id = fieldSetFlags()[1] ? this.id : (java.lang.String) defaultValue(fields()[1]);
         record.username = fieldSetFlags()[2] ? this.username : (java.lang.String) defaultValue(fields()[2]);
         record.avatar = fieldSetFlags()[3] ? this.avatar : (java.lang.String) defaultValue(fields()[3]);
         record.email = fieldSetFlags()[4] ? this.email : (java.lang.String) defaultValue(fields()[4]);
@@ -682,6 +737,7 @@ public class G_User extends org.apache.avro.specific.SpecificRecordBase implemen
         record.modified = fieldSetFlags()[8] ? this.modified : (java.lang.Long) defaultValue(fields()[8]);
         record.created = fieldSetFlags()[9] ? this.created : (java.lang.Long) defaultValue(fields()[9]);
         record.numberlogins = fieldSetFlags()[10] ? this.numberlogins : (java.lang.Integer) defaultValue(fields()[10]);
+        record.uimode = fieldSetFlags()[11] ? this.uimode : (graphene.model.idl.G_UserInterfaceMode) defaultValue(fields()[11]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

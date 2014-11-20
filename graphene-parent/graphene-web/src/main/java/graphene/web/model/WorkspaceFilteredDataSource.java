@@ -15,10 +15,10 @@ public class WorkspaceFilteredDataSource implements GridDataSource {
 
 	private int startIndex;
 	private List<G_Workspace> preparedResults;
-	private int userId;
+	private String userId;
 
 	public WorkspaceFilteredDataSource(G_UserDataAccess workspaceFinderService,
-			int userId, String partialName) {
+			String userId, String partialName) {
 		this.service = workspaceFinderService;
 		this.userId = userId;
 		this.partialName = partialName;

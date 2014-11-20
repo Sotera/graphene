@@ -54,15 +54,19 @@ public class Settings {
 		} else {
 			settingsForm.clearErrors();
 		}
-		// TODO: Check to make sure this is the optimal ordering of operations
+		boolean success = false;
 		try {
-			service.setUserPassword(user.getId(), password);
-			loginPage
-					.setFlashMessage(messages.get("settings.password-changed"));
+			success = service.setUserPassword(user.getId(), password);
+
 		} catch (Exception e) {
 			// if the DAO didn't update successfully, tell them so.
 			logger.error("Unable to update password for user "
-					+ user.getUsername());
+					+ user.getUsername() + " Error: " + e.getMessage());
+		}
+		if (success) {
+			loginPage
+					.setFlashMessage(messages.get("settings.password-changed"));
+		} else {
 			loginPage.setFlashMessage(messages
 					.get("settings.password-not-changed"));
 		}

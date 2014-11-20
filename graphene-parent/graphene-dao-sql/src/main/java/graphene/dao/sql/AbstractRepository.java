@@ -6,6 +6,9 @@ import java.sql.Connection;
 
 import javax.inject.Inject;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
@@ -18,11 +21,20 @@ public abstract class AbstractRepository {
 	@Inject
 	private Configuration configuration;
 
+	public long getModifiedTime() {
+		return DateTime.now(DateTimeZone.UTC).getMillis();
+	}
+
 	@Inject
 	private ConnectionContext context;
 
 	public Connection getConnection() {
 		return context.getConnection();
+	}
+
+	public void initialize() {
+		// TODO Auto-generated method stub
+
 	}
 
 	private SQLQuery query() {

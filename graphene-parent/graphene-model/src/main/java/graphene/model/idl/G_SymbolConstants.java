@@ -38,4 +38,8 @@ public class G_SymbolConstants {
 	 * For diskCache, if you are going to use it.
 	 */
 	public static final String CACHEFILELOCATION = "graphene.cache-file-location";
+	
+	
+	public static final String ENABLE_EXPERIMENTAL = "graphene.enable-experimental";
+	public static final String ENABLE_MISC = "graphene.enable-misc";
 }

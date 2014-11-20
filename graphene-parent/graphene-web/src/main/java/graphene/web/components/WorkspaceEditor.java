@@ -5,6 +5,7 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 import graphene.util.ExceptionUtil;
 import graphene.util.time.JodaTimeUtil;
+import graphene.util.validator.ValidationUtils;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -132,7 +133,7 @@ public class WorkspaceEditor {
 
 	@Parameter(required = true)
 	@Property
-	private int workspaceId = 0;
+	private String workspaceId = null;
 
 	// Component "createForm" bubbles up the VALIDATE event when it is submitted
 
@@ -230,7 +231,7 @@ public class WorkspaceEditor {
 	 * @param workspaceVersion
 	 * @return
 	 */
-	boolean onDelete(int workspaceId, String workspaceVersion) {
+	boolean onDelete(String workspaceId, String workspaceVersion) {
 		this.workspaceId = workspaceId;
 
 		// If request is AJAX then the user has pressed Delete..., was presented
@@ -372,7 +373,7 @@ public class WorkspaceEditor {
 	// submitted, depending on whether
 	// VALIDATE records an error
 
-	void onPrepareForRenderFromUpdateForm(int workspaceId) {
+	void onPrepareForRenderFromUpdateForm(String workspaceId) {
 		this.workspaceId = workspaceId;
 
 		if (request.isXHR()) {
@@ -434,7 +435,7 @@ public class WorkspaceEditor {
 
 	// Getters
 
-	void onPrepareForSubmitFromUpdateForm(int workspaceId) {
+	void onPrepareForSubmitFromUpdateForm(String workspaceId) {
 		this.workspaceId = workspaceId;
 
 		// Get objects for the form fields to overlay.
@@ -472,7 +473,7 @@ public class WorkspaceEditor {
 		if (workspace != null) {
 			boolean deleted = false;
 			try {
-				deleted = userService.deleteWorkspaceIfUnused(user.getId(),
+				deleted = userService.deleteWorkspace(user.getId(),
 						workspace.getId());
 				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE,
 						new Object[] { workspace.getId() }, null);
@@ -639,10 +640,10 @@ public class WorkspaceEditor {
 	@Log
 	void switchModes() {
 		if (mode == Mode.REVIEW) {
-			if (workspaceId == 0) {
+			if (!ValidationUtils.isValid(workspaceId)) {
 				workspace = null;
 				// Handle null workspace in the template.
-			} else if (user != null) {
+			} else if (ValidationUtils.isValid(user)) {
 
 				try {
 					logger.info("Attempting to retrieve workspace "

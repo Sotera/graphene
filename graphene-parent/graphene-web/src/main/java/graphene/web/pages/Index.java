@@ -1,5 +1,6 @@
 package graphene.web.pages;
 
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
@@ -24,13 +25,9 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
  */
 
 @PluginPage(visualType = G_VisualType.TOP, menuName = "Dashboard", icon = "fa fa-lg fa-fw fa-code-home")
-public class Index extends SimpleBasePage{
+public class Index extends SimpleBasePage {
 	@Inject
 	private AlertManager alertManager;
-
-	@Persist
-	@Property
-	private int clickCount;
 
 	@Property
 	private G_Workspace currentWorkspace;
@@ -40,42 +37,37 @@ public class Index extends SimpleBasePage{
 	@Symbol(SymbolConstants.TAPESTRY_VERSION)
 	private String tapestryVersion;
 
-
 	@Inject
 	private G_UserDataAccess service;
 
 	@Property
 	private List<G_Workspace> workspaces;
 
-	@InjectComponent
-	private Zone zone;
-
 	public Date getCurrentTime() {
 		return new Date();
 	}
 
-	void onActionFromIncrement() {
-		clickCount++;
-		alertManager.info("Increment clicked");
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_NAME)
+	private String appName;
 
-	}
-
-	Object onActionFromIncrementAjax() {
-		clickCount++;
-		alertManager.info("Increment (via Ajax) clicked");
-		return zone;
-	}
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
+	private String appVersion;
 
 	@SetupRender
 	public void setupRender() {
 		if (isUserExists()) {
 			try {
-				workspaces = service.getWorkspacesOrCreateNewForUser(getUser().getId());
+				workspaces = service.getWorkspacesOrCreateNewForUser(getUser()
+						.getId());
 			} catch (AvroRemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 

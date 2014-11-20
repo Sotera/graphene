@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
@@ -34,6 +35,7 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
@@ -163,9 +165,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Inject
 	private ReportPopulator<Object, String> reportPopulator;
 
+	@Inject
+	@Symbol(SymbolConstants.APPLICATION_FOLDER)
+	private String path;
 	/**
 	 * 
-	 // index.html?&entity=30000177088114
 	 * 
 	 * @return
 	 */
@@ -246,8 +250,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	public BeanModel getModel() {
 		BeanModel<Object> model = beanModelSource.createEditModel(Object.class,
 				messages);
-		model.add("reportSummary", null);
 		model.add("reportInfo", null);
+		model.add("reportSummary", null);
 		model.add("nameList", null);
 		model.add("addressList", null);
 		model.add("communicationIdentifierList", null);
@@ -268,7 +272,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	public String getReportType() {
-		return reportPopulator.getPageLink(currentEntity);
+		return reportPopulator.getReportType(currentEntity);
 	}
 
 	public String getStyleForAddress() {

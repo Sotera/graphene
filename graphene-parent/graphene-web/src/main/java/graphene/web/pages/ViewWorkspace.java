@@ -5,6 +5,7 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
 import graphene.util.ExceptionUtil;
+import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 
 import org.apache.avro.AvroRemoteException;
@@ -29,7 +30,7 @@ public class ViewWorkspace {
 	@Inject
 	private G_UserDataAccess service;
 	@Persist
-	private int workspaceId;
+	private String workspaceId;
 
 	@Inject
 	private AlertManager alertManager;
@@ -43,15 +44,15 @@ public class ViewWorkspace {
 	@Property
 	private boolean currentSelectedWorkspaceExists;
 
-	void onActivate(final int workspaceId) {
+	void onActivate(final String workspaceId) {
 		this.workspaceId = workspaceId;
 		if (userExists) {
-			if (workspaceId != 0) {
+			if (ValidationUtils.isValid(workspaceId)) {
 				try {
 					logger.info("Attempting to retrieve workspace "
 							+ workspaceId + " for user " + user.getUsername());
-					this.currentWorkspace = service.getWorkspace(
-							user.getId(), workspaceId);
+					this.currentWorkspace = service.getWorkspace(user.getId(),
+							workspaceId);
 				} catch (AvroRemoteException e) {
 					logger.error(ExceptionUtil.getRootCauseMessage(e));
 					alertManager.alert(Duration.SINGLE, Severity.ERROR,
@@ -69,7 +70,7 @@ public class ViewWorkspace {
 
 	// onPassivate() is called by Tapestry to get the activation context to put
 	// in the id.
-	Integer onPassivate() {
+	String onPassivate() {
 		if (currentWorkspace != null) {
 			return currentWorkspace.getId();
 		} else {

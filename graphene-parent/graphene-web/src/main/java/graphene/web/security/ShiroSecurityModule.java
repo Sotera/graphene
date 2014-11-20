@@ -56,14 +56,14 @@ public class ShiroSecurityModule {
 	}
 
 	@Contribute(WebSecurityManager.class)
-	public static void contributeWebSecurityManager(
-			Configuration<Realm> configuration, Realm grapheneSecurityRealm) {
+	public static void contributeSecurity(Configuration<Realm> configuration,
+			Realm grapheneSecurityRealm) {
 		configuration.add(grapheneSecurityRealm);
 	}
 
 	@Contribute(HttpServletRequestFilter.class)
-	@Marker(Security.class)
-	public static void contributeHttpServletRequestFilter(
+	@Security
+	public static void contributeFilter(
 			Configuration<SecurityFilterChain> configuration,
 			SecurityFilterChainFactory factory,
 			WebSecurityManager securityManager) {

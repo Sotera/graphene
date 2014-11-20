@@ -1,5 +1,6 @@
 package graphene.dao;
 
+import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_User;
 
@@ -26,7 +27,7 @@ public interface UserDAO {
 	 * @param user
 	 * @return
 	 */
-	public G_User createOrUpdate(G_User user);
+//	public G_User createOrUpdate(G_User user);
 
 	/**
 	 * Deletes the user found by username, and also deletes ALL relationships to
@@ -34,21 +35,19 @@ public interface UserDAO {
 	 * 
 	 * @param username
 	 */
-	public boolean delete(int id);
+	public boolean delete(String id);
 
 	// Disable User by Username
-	public boolean disable(int id);
+	public boolean disable(String id);
 
 	// Enable User by Username
-	public boolean enable(int id);
+	public boolean enable(String id);
 
 	// Get All Users
 	public List<G_User> getAllUsers();
 
-	public List<G_User> getByGroups(String groupName);
-
 	// Find and return a user, do not create
-	public G_User getById(int id);
+	public G_User getById(String id);
 
 	public List<G_User> getByPartialUsername(String partialName, int offset,
 			int limit);
@@ -62,13 +61,20 @@ public interface UserDAO {
 	 * @param password
 	 * @return Return the hash of the password, or null if there was an error.
 	 */
-	public String getPasswordHash(int id, String password);
+	public String getPasswordHash(String id, String password);
 
-	public boolean isExisting(int id);
+	public boolean isExistingId(String id);
 
+	/**
+	 * We need this kind of method for times where we are checking if the
+	 * username is taken.
+	 * 
+	 * @param username
+	 * @return
+	 */
 	public boolean isExisting(String username);
 
-	public G_User loginUser(int id, String password)
+	public G_User loginUser(String id, String password)
 			throws AuthenticationException;
 
 	/**
@@ -76,8 +82,10 @@ public interface UserDAO {
 	 * @param person
 	 * @return the user with any updates that the DAO might have done.
 	 */
-	public G_User save(G_User person);
+	public G_User save(G_User user);
 
-	public boolean updatePassword(int id, String password);
+	public boolean updatePasswordHash(String id, String passwordHash);
+
+	public void initialize() throws DataAccessException;
 
 }

@@ -71,80 +71,6 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 
 	}
 
-	private G_User createDetached(Node u) {
-		G_User d = null;
-		if (u != null) {
-			try (Transaction tx = beginTx()) {
-				d = new G_User();
-				d.setCreated(new DateTime(u.getProperty(
-						G_UserFields.created.name(), 0l)).getMillis());
-				d.setActive((boolean) u.getProperty(G_UserFields.active.name(),
-						true));
-				d.setAvatar((String) u.getProperty(G_UserFields.avatar.name(),
-						""));
-				d.setEmail((String) u.getProperty(G_UserFields.email.name(),
-						"no email"));
-				d.setFullname((String) u.getProperty(
-						G_UserFields.fullname.name(), "no name"));
-
-				d.setHashedpassword((String) u.getProperty(
-						G_UserFields.hashedpassword.name(),
-						"no hashed password"));
-
-				d.setLastlogin(new DateTime(u.getProperty(
-						G_UserFields.lastlogin.name(), 0l)).getMillis());
-
-				d.setNumberlogins((int) u.getProperty(
-						G_UserFields.numberlogins.name(), 0));
-				d.setUsername((String) u.getProperty(
-						G_UserFields.username.name(), "username"));
-				tx.success();
-			}
-
-		}
-		return d;
-	}
-
-	/**
-	 * Note this behaves slightly differently than the non detached version.
-	 */
-	@Override
-	public G_User createOrUpdate(G_User d) {
-
-		G_User user = null;
-		if (!ValidationUtils.isValid(d.getUsername())) {
-			return null;
-		}
-		ResourceIterator<Node> resultIterator = null;
-		try (Transaction tx = beginTx()) {
-			String queryString = "MERGE (n:"
-					+ GrapheneNeo4JConstants.userLabel.name() + " {"
-					+ G_UserFields.username.name() + ": {var}}) RETURN n";
-			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("var", d.getUsername());
-			resultIterator = n4jService.getExecutionEngine()
-					.execute(queryString, parameters).columnAs("n");
-
-			Node n = resultIterator.next();
-			n.setProperty(G_UserFields.created.name(), DateTime.now()
-					.getMillis());
-			n.setProperty(G_UserFields.active.name(), d.getActive());
-			n.setProperty(G_UserFields.avatar.name(), d.getAvatar());
-			n.setProperty(G_UserFields.email.name(), d.getEmail());
-			n.setProperty(G_UserFields.fullname.name(), d.getFullname());
-			n.setProperty(G_UserFields.lastlogin.name(), 0l);
-			n.setProperty(G_UserFields.numberlogins.name(), d.getNumberlogins());
-			n.setProperty(G_UserFields.username.name(), d.getUsername());
-
-			user = createDetached(n);// TODO: test to make sure this has all the
-										// fields we want.
-			resultIterator.close();
-			tx.success();
-		}
-
-		return user;
-	}
-
 	private Node createUniqueUser(String username, String password) {
 		Node result = null;
 		ResourceIterator<Node> resultIterator = null;
@@ -166,7 +92,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean delete(int id) {
+	public boolean delete(String id) {
 		boolean success = false;
 		try (Transaction tx = beginTx()) {
 			Node u = getUserNodeById(id);
@@ -183,7 +109,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean disable(int id) {
+	public boolean disable(String id) {
 		try (Transaction tx = beginTx()) {
 			getUserNodeById(id).setProperty("active", false);
 			tx.success();
@@ -192,7 +118,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean enable(int id) {
+	public boolean enable(String id) {
 		try (Transaction tx = beginTx()) {
 			getUserNodeById(id).setProperty("active", true);
 			tx.success();
@@ -208,7 +134,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 					.getAllNodesWithLabel(GrapheneNeo4JConstants.userLabel)
 					.iterator()) {
 				while (iter.hasNext()) {
-					G_User d = createDetached(iter.next());
+					G_User d = userFunnel.from(iter.next());
 					if (d != null) {
 						list.add(d);
 					}
@@ -222,43 +148,17 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public List<G_User> getByGroups(String groupName) {
-		List<G_User> list = new ArrayList<G_User>();
-		try (Transaction tx = beginTx();
-				ResourceIterator<Node> g = n4jService
-						.getGraphDb()
-						.findNodesByLabelAndProperty(
-								GrapheneNeo4JConstants.groupLabel,
-								G_GroupFields.name.name(), groupName)
-						.iterator()) {
-			G_EdgeType memberOf = edgeTypeAccess
-					.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
-			if (g.hasNext()) {
-				Node j = g.next();
-				TraversalDescription traversalDescription = n4jService
-						.getGraphDb()
-						.traversalDescription()
-						.breadthFirst()
-						.evaluator(
-								Evaluators
-										.includeWhereLastRelationshipTypeIs(DynamicRelationshipType
-												.withName(memberOf.getName())));
+	public G_User getById(String id) {
+		Node n = getUserNodeById(id);
+		G_User g = null;
+		try (Transaction tx = beginTx()) {
+			g = userFunnel.from(n);
+			tx.success();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 
-				Traverser traverser = traversalDescription.traverse(j);
-				for (Path path : traverser) {
-					Node n = path.endNode();
-					G_User d = createDetached(n);
-					if (d != null) {
-						list.add(d);
-					}
-				}
-				tx.success();
-			}
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		return list;
+		return g;
 	}
 
 	@Override
@@ -283,7 +183,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 					.getExecutionEngine().execute(queryString, parameters)
 					.columnAs("n");
 			while (resultIterator.hasNext()) {
-				list.add(createDetached((Node) resultIterator.next()));
+				list.add(userFunnel.from((Node) resultIterator.next()));
 			}
 			tx.success();
 		}
@@ -295,6 +195,24 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	// Node n = getUserNodeById(id);
 	// return (n == null ? null : createDetached(n));
 	// }
+
+	@Override
+	public G_User getByUsername(String userName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPasswordHash(String id, String password) {
+		String hash = null;
+		try {
+			hash = passwordHasher.createHash(password);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			logger.error("Error getting password hash for id " + id);
+			e.printStackTrace();
+		}
+		return hash;
+	}
 
 	@PostInjection
 	public void initialize() throws DataAccessException {
@@ -312,12 +230,17 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public boolean isExisting(int id) {
+	public boolean isExisting(String username) {
+		return (getByUsername(username) == null) ? false : true;
+	}
+
+	@Override
+	public boolean isExistingId(String id) {
 		return (getUserNodeById(id) == null) ? false : true;
 	}
 
 	@Override
-	public G_User loginUser(int id, String password)
+	public G_User loginUser(String id, String password)
 			throws AuthenticationException {
 		Node node = getUserNodeById(id);
 		try (Transaction tx = beginTx()) {
@@ -345,8 +268,68 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			logger.error(e.getMessage());
 			throw new AuthenticationException(e.getMessage());
 		}
-		return createDetached(node);
+		return userFunnel.from(node);
 	}
+
+	/**
+	 * Note this behaves slightly differently than the non detached version.
+	 */
+	@Override
+	public G_User save(G_User d) {
+
+		G_User user = null;
+		if (!ValidationUtils.isValid(d.getUsername())) {
+			return null;
+		}
+		ResourceIterator<Node> resultIterator = null;
+		try (Transaction tx = beginTx()) {
+			String queryString = "MERGE (n:"
+					+ GrapheneNeo4JConstants.userLabel.name() + " {"
+					+ G_UserFields.username.name() + ": {var}}) RETURN n";
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("var", d.getUsername());
+			resultIterator = n4jService.getExecutionEngine()
+					.execute(queryString, parameters).columnAs("n");
+
+			Node n = resultIterator.next();
+			n.setProperty(G_UserFields.created.name(), DateTime.now()
+					.getMillis());
+			n.setProperty(G_UserFields.active.name(), d.getActive());
+			n.setProperty(G_UserFields.avatar.name(), d.getAvatar());
+			n.setProperty(G_UserFields.email.name(), d.getEmail());
+			n.setProperty(G_UserFields.fullname.name(), d.getFullname());
+			n.setProperty(G_UserFields.lastlogin.name(), 0l);
+			n.setProperty(G_UserFields.numberlogins.name(), d.getNumberlogins());
+			n.setProperty(G_UserFields.username.name(), d.getUsername());
+
+			user = userFunnel.from(n);// TODO: test to make sure this has all
+										// the
+										// fields we want.
+			resultIterator.close();
+			tx.success();
+		}
+
+		return user;
+	}
+
+//	@Override
+//	public G_User save(G_User d) {
+//		try (Transaction tx = beginTx()) {
+//			Node n = getUserNodeById(d.getId());
+//			setSafeProperty(n, G_UserFields.created.name(), d.getCreated());
+//			setSafeProperty(n, G_UserFields.active.name(), d.getActive());
+//			setSafeProperty(n, G_UserFields.avatar.name(), d.getAvatar());
+//			setSafeProperty(n, G_UserFields.email.name(), d.getEmail());
+//			setSafeProperty(n, G_UserFields.fullname.name(), d.getFullname());
+//			setSafeProperty(n, G_UserFields.lastlogin.name(), d.getLastlogin());
+//			setSafeProperty(n, G_UserFields.username.name(), d.getUsername());
+//			tx.success();
+//			return userFunnel.from(n);
+//		} catch (Exception e) {
+//			logger.error(e.getMessage());
+//			return null;
+//		}
+//	}
 
 	public Node setPasswordHash(Node n, String password) {
 		// NOTE: Does not check to see if the password is a good one, only that
@@ -368,26 +351,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public G_User save(G_User d) {
-		try (Transaction tx = beginTx()) {
-			Node n = getUserNodeById(d.getId());
-			setSafeProperty(n, G_UserFields.created.name(), d.getCreated());
-			setSafeProperty(n, G_UserFields.active.name(), d.getActive());
-			setSafeProperty(n, G_UserFields.avatar.name(), d.getAvatar());
-			setSafeProperty(n, G_UserFields.email.name(), d.getEmail());
-			setSafeProperty(n, G_UserFields.fullname.name(), d.getFullname());
-			setSafeProperty(n, G_UserFields.lastlogin.name(), d.getLastlogin());
-			setSafeProperty(n, G_UserFields.username.name(), d.getUsername());
-			tx.success();
-			return createDetached(n);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return null;
-		}
-	}
-
-	@Override
-	public boolean updatePassword(int id, String password) {
+	public boolean updatePasswordHash(String id, String password) {
 		try (Transaction tx = beginTx()) {
 			setPasswordHash(getUserNodeById(id), password);
 			tx.success();
@@ -396,43 +360,6 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public String getPasswordHash(int id, String password) {
-		String hash = null;
-		try {
-			hash = passwordHasher.createHash(password);
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			logger.error("Error getting password hash for id " + id);
-			e.printStackTrace();
-		}
-		return hash;
-	}
-
-	@Override
-	public G_User getById(int id) {
-		Node n = getUserNodeById(id);
-		G_User g = null;
-		try (Transaction tx = beginTx()) {
-			g = createDetached(n);
-			tx.success();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-
-		}
-		return g;
-	}
-
-	@Override
-	public G_User getByUsername(String userName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isExisting(String username) {
-		return (getByUsername(username) == null) ? false : true;
 	}
 
 }

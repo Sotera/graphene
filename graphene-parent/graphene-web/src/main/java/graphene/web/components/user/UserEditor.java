@@ -2,6 +2,7 @@ package graphene.web.components.user;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.util.validator.ValidationUtils;
 import graphene.web.components.CustomForm;
 
 import java.text.Format;
@@ -91,7 +92,7 @@ public class UserEditor {
 
 	@Parameter(required = true)
 	@Property
-	private int userId;
+	private String userId;
 
 	// Screen fields
 
@@ -144,7 +145,7 @@ public class UserEditor {
 	void setupRender() {
 
 		if (mode == Mode.REVIEW) {
-			if (userId == 0) {
+			if (ValidationUtils.isValid(userId)) {
 				aUser = null;
 				// Handle null person in the template.
 			} else {
@@ -264,7 +265,7 @@ public class UserEditor {
 	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
 	// form render
 
-	void onPrepareForRenderFromUpdateForm(int userId) {
+	void onPrepareForRenderFromUpdateForm(String userId) {
 		this.userId = userId;
 
 		if (request.isXHR()) {
@@ -309,7 +310,7 @@ public class UserEditor {
 	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during
 	// form submission
 
-	void onPrepareForSubmitFromUpdateForm(int userId) {
+	void onPrepareForSubmitFromUpdateForm(String userId) {
 		this.userId = userId;
 
 		// Get objects for the form fields to overlay.
@@ -383,7 +384,7 @@ public class UserEditor {
 
 	// Handle event "delete"
 
-	boolean onDelete(int userId, Integer personVersion) {
+	boolean onDelete(String userId, Integer personVersion) {
 		this.userId = userId;
 
 		// If request is AJAX then the user has pressed Delete..., was presented
