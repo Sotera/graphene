@@ -462,7 +462,7 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		var radius = this.CONSTANTS("minLeafDistance") + l + l;
 		
 		if (node.data.id != innode.data().id) {
-			node.data.color = this.CONSTANTS("expandedDefNode");
+			// node.data.color = this.CONSTANTS("expandedDefNode");
 			node.data.expanded = true;
 			node.position = {
 				x: pos.x + (radius * Math.cos(rad)),
@@ -480,6 +480,8 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		var l = edge.data.label;
 		var s = edge.data.source;
 		var t = edge.data.target;
+		
+		//edge.data.color = this.CONSTANTS("expandedDefNode");
 		
 		var amountCondition = (typeof a == "string" && a.length > 0) ? "[amount = '"+a+"']" : "";
 		var labelCondition = (typeof l == "string" && l.lenght > 0) ? "[label = '"+l+"']" : "";
