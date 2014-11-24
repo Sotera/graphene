@@ -1,9 +1,11 @@
 package graphene.web.components.ui;
 
+import graphene.dao.StyleService;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyConduit;
@@ -25,7 +27,6 @@ public class MeaningfulBeanDisplay {
 	@Parameter(required = true, allowNull = false, autoconnect = true)
 	@Property(write = false)
 	private Object object;
-
 
 	/**
 	 * If true, then the CSS class attribute on the &lt;dt&gt; and &lt;dd&gt;
@@ -91,6 +92,9 @@ public class MeaningfulBeanDisplay {
 	private ComponentResources overrides;
 
 	@Inject
+	protected StyleService style;
+
+	@Inject
 	private ComponentResources resources;
 
 	@Inject
@@ -101,7 +105,10 @@ public class MeaningfulBeanDisplay {
 
 	private boolean modified = false;
 
+	private String className;
+
 	void setupRender() {
+		className = object.getClass().getName();
 		if (model == null) {
 			model = modelSource.createDisplayModel(object.getClass(),
 					overrides.getContainerMessages());
@@ -131,6 +138,25 @@ public class MeaningfulBeanDisplay {
 
 	public String getPropertyClass() {
 		return lean ? null : getPropertyModel().getId();
+	}
+
+	public String getPropertyLinkClass() {
+		String textColor = "txt-color-white";
+		String hexColorForNode = style.getHexColorForNode(className);
+		if (StringUtils.containsIgnoreCase(className, "Location")) {
+			return "btn btn-xs bg-color-blueLight txt-color-white";
+		} else if (StringUtils.containsIgnoreCase(className, "Address")) {
+			return "btn btn-xs bg-color-blueDark txt-color-white";
+		} else if (StringUtils.containsIgnoreCase(className, "Account")) {
+			return "btn btn-xs bg-color-orange txt-color-white";
+		} else if (StringUtils.containsIgnoreCase(className, "Subject")) {
+			return "btn btn-xs bg-color-purple txt-color-white";
+		} else if (StringUtils.containsIgnoreCase(className, "Name")) {
+			return "btn btn-xs bg-color-greenLight txt-color-white";
+		} else {
+			return "btn btn-xs bg-color-teal txt-color-white";
+		}
+
 	}
 
 	public boolean isMeaningful(Object obj) {

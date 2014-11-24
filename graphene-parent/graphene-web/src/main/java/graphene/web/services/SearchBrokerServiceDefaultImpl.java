@@ -1,11 +1,12 @@
 package graphene.web.services;
 
+import graphene.web.pages.CombinedEntitySearchPage;
+
 public class SearchBrokerServiceDefaultImpl implements SearchBrokerService {
 
 	@Override
 	public String getSearchPage(String searchValue) {
-		// TODO Auto-generated method stub
-		return null;
+		return "graphene/"+CombinedEntitySearchPage.class.getSimpleName();
 	}
 
 }

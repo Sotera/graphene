@@ -1,7 +1,7 @@
 package graphene.dao.neo4j;
 
 import graphene.dao.EntityGraphDAO;
-import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.dao.neo4j.annotations.DataGraph;
 import graphene.model.idl.G_EdgeType;
 import graphene.model.idl.G_IdType;
 import graphene.model.query.EntityGraphQuery;
@@ -17,6 +17,7 @@ import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericNode;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.kernel.impl.core.NodeProxy;
@@ -26,16 +27,16 @@ public class EntityGraphDAONeo4JEImpl implements
 		EntityGraphDAO<InfoVisGraphAdjacency, EntityGraphQuery> {
 	private static final boolean DEBUGMODE = true;
 
-	public EntityGraphDAONeo4JEImpl(Neo4JEmbeddedService service) {
+	@Inject
+	public EntityGraphDAONeo4JEImpl(@DataGraph Neo4JEmbeddedService service) {
 		this.service = service;
 		if (this.service == null) {
 			System.out.println("Waiting to initialize service...");
 		}
 	}
 
-	// inject a pre-configured service.
-	// @InjectService("UnifiedEntity")
 	private Neo4JEmbeddedService service;
+
 	@Inject
 	private Logger logger;
 

@@ -1,6 +1,7 @@
 package graphene.dao.neo4j.funnel;
 
 import graphene.dao.neo4j.Neo4JEmbeddedService;
+import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.model.Funnel;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserFields;
@@ -14,7 +15,7 @@ public class UserFunnel implements Funnel<Node, G_User> {
 	private Neo4JEmbeddedService n4jService;
 
 	@Inject
-	public UserFunnel(Neo4JEmbeddedService n4jService2) {
+	public UserFunnel(@UserGraph Neo4JEmbeddedService n4jService2) {
 		n4jService = n4jService2;
 	}
 

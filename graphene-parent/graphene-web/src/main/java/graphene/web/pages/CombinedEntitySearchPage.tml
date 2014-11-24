@@ -119,5 +119,5 @@
 
 		</div>
 	</div>
-	<script src="${context:js/SearchTips.js}" />
+	<script src="${context:core/js/SearchTips.js}" />
 </html>

@@ -1,5 +1,7 @@
 package graphene.dao;
 
+import java.awt.Color;
+
 public interface StyleService {
 	public String getHexColorForNode(String key);
 
@@ -8,5 +10,11 @@ public interface StyleService {
 	public String getStyleForNode(String key);
 
 	public String getStyleForEdge(String key);
+
+	public abstract String getDarkOrLight(int red, int green, int blue);
+
+	public abstract String getContrastingColor(String hexColor);
+
+	public abstract Color hex2Rgb(String hexColor);
 
 }

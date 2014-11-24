@@ -2,9 +2,6 @@ package graphene.dao.neo4j;
 
 import graphene.dao.GroupDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
-import graphene.dao.neo4j.funnel.GroupFunnel;
-import graphene.dao.neo4j.funnel.UserFunnel;
-import graphene.dao.neo4j.funnel.WorkspaceFunnel;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_GroupFields;
 
