@@ -35,6 +35,9 @@ function CytoGraphVis(inId) {
 			expandedDefNode: '#F66CFB',
 			dijkstraPath: "red",
 			dijkstraSize: 5,
+
+			outgoingHoverColor: "#2D55BE",
+			incomingHoverColor: "#FF8040",
 			//expandedDefEdge: '#BE26C4',
 			
 			fillColor: "rgba(0, 0, 200, 0.75)",
@@ -159,8 +162,8 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'text-outline-width': 1,
 						'font-size': _this.CONSTANTS("fontSize"),
 						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
-						'line-color': _this.CONSTANTS("defaultEdge"), 
-						'target-arrow-color': _this.CONSTANTS("defaultEdge"),
+						'line-color': 'data(color)', //_this.CONSTANTS("defaultEdge"), 
+						'target-arrow-color': 'data(color)', //_this.CONSTANTS("defaultEdge"),
 						'target-arrow-shape': 'triangle',
 						'width': 'data(count)'
 					})
@@ -184,6 +187,18 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'line-color': _this.CONSTANTS("dijkstraPath"),
 						'target-arrow-color': _this.CONSTANTS("dijkstraPath"),
 						'width': _this.CONSTANTS("dijkstraSize")
+					})
+					.selector(".parent-of").css({
+						'color': "white",
+						'line-color': _this.CONSTANTS("outgoingHoverColor"),
+						'target-arrow-color': _this.CONSTANTS("outgoingHoverColor"),
+						'text-outline-color': _this.CONSTANTS("outgoingHoverColor")
+					})
+					.selector(".child-of").css({
+						'color': 'white',
+						'line-color': _this.CONSTANTS("incomingHoverColor"),
+						'target-arrow-color': _this.CONSTANTS("incomingHoverColor"),
+						'text-outline-color': _this.CONSTANTS("incomingHoverColor")
 					})
 			});
 			
@@ -282,6 +297,19 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 CytoGraphVis.prototype.setHandlers = function() {
 	var _this = this;
 	//var timoutFn = null;
+
+	var _highlightElements = function(ele, dir, addCls) {
+		var accessProp = (dir == "incoming") ? "source" : "target";
+		var cssClass = (dir == "incoming") ? "child-of" : "parent-of";
+		
+		var node = _this.gv.nodes("node[id = '" + ele.data(accessProp) + "']")[0];
+		if (!ele.selected()) {
+			(addCls == true) ? ele.addClass(cssClass) : ele.removeClass(cssClass);
+		}
+		if (!node.selected()) {
+			(addCls == true) ?  node.addClass(cssClass) : node.removeClass(cssClass);
+		}
+	};
 	
 	this.gv.on("click", function(e) {
 		var gg = _this.getGenerator();
@@ -354,7 +382,38 @@ CytoGraphVis.prototype.setHandlers = function() {
 			_this.owner.edgeRightClick(edge);
 		} 
 	});
-	/*
+	
+	this.gv.on("mouseover", "node", function(e) {
+		var node = e.cyTarget;
+		
+		var outgoingEdges = _this.gv.edges("edge[source = '" + node.data("id") + "']");
+		var incomingEdges = _this.gv.edges("edge[target = '" + node.data("id") + "']");
+		
+		outgoingEdges.each(function(i, ele) {
+			_highlightElements(ele, "outgoing", true);
+		});
+		
+		incomingEdges.each(function(i, ele) {
+			_highlightElements(ele, "incoming", true);
+		});
+	});
+	
+	this.gv.on("mouseout", "node", function(e) {
+		var node = e.cyTarget;
+		
+		var outgoingEdges = _this.gv.edges("edge[source = '" + node.data("id") + "']");
+		var incomingEdges = _this.gv.edges("edge[target = '" + node.data("id") + "']");
+		
+		outgoingEdges.each(function(i, ele) {
+			_highlightElements(ele, "outgoing", false);
+		});
+		
+		incomingEdges.each(function(i, ele) {
+			_highlightElements(ele, "incoming", false);
+		});
+	});
+	
+	/* OLD hover handlers: spawned a pop-up window with node attrs in it *//*
 	this.gv.on('mouseover', 'node', function(e) {
 		var x = e.originalEvent.layerX;
 		var y = e.originalEvent.layerY;
@@ -782,7 +841,7 @@ function LayoutManager(graphRef) {
 	
 	this.registerLayout("arbor-snow", graphRef, {
 			name: "arbor", liveUpdate: true, maxSimulationTime: 90000, fit: true, padding: [50, 10, 50, 10],
-			ungrabifyWhileSimulating: false, repulsion: 8000, stiffness: 300, friction: undefined,
+			ungrabifyWhileSimulating: true, repulsion: 8000, stiffness: 300, friction: undefined,
 			gravity: true, fps: 240, precision: 0.2, nodeMass: undefined, edgeLength: 3, stepSize: 1
 		},
 		function stop() {
@@ -827,7 +886,7 @@ function LayoutManager(graphRef) {
 	
 	this.registerLayout("arbor-wheel", graphRef, {
 			name: "arbor", liveUpdate: true, maxSimulationTime: 90000, fit: true, padding: [50, 10, 50, 10],
-			ungrabifyWhileSimulating: false, repulsion: 8000, stiffness: 300, friction: undefined,
+			ungrabifyWhileSimulating: true, repulsion: 8000, stiffness: 300, friction: undefined,
 			gravity: true, fps: 240, precision: 0.2, nodeMass: undefined, edgeLength: 3, stepSize: 1
 		},
 		function stop() {
@@ -1170,6 +1229,7 @@ function GraphGenerator(graphRef) {
 				id: "generatedEdge_" + _currentId,
 				idVal: "GeneratedEdge_" + _currentId,
 				idType: "GENERATED",
+				color: graphRef.CONSTANTS("defaultEdge"),
 				source: _parentNode.data("id"),
 				target: "generatedNode_" + _currentId,
 				attrs: [/* Populated via NodeEditor */]
@@ -1192,6 +1252,7 @@ function GraphGenerator(graphRef) {
 					id: "generatedEdge_" + _currentId,
 					idVal: "GeneratedEdge_" + _currentId,
 					idType: "GENERATED",
+					color: graphRef.CONSTANTS("defaultEdge"),
 					source: _parentNode.data("id"),
 					target: targetNode.data("id"),
 					attrs: [/* Populated via NodeEditor */]
