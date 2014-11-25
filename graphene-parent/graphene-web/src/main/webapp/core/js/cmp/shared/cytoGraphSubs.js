@@ -160,6 +160,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'text-valign': 'center',
 						'color': _this.CONSTANTS("textColor"),
 						'text-outline-width': 1,
+						'line-style': 'data(lineStyle)',
 						'font-size': _this.CONSTANTS("fontSize"),
 						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
 						'line-color': 'data(color)', //_this.CONSTANTS("defaultEdge"), 
