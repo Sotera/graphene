@@ -310,9 +310,10 @@ Ext.define("DARPA.Node_Actions", {
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
 					var nodes = graph.GraphVis.gv.$("node:selected");
-					nodes.each(function(i, n) {
-						graph.unmergeNode(n);
-					});
+					//nodes.each(function(i, n) {
+					//	graph.unmergeNode(n);
+					//});
+					graph.givePromptToUnmerge(nodes);
 				}
 			}
 		});
