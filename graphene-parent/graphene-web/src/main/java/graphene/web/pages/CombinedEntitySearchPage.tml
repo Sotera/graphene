@@ -79,7 +79,7 @@
 										<table t:type="grid" source="results.results" model="model"
 											t:row="currentEntity" width="100%">
 											[Grid here]
-											<p:reportInfoCell>
+											<p:actionsCell>
 												<t:pagelink class="btn btn-default" page="prop:reportPageLink"
 													context="reportId" target="reportId">
 													<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
@@ -91,7 +91,7 @@
 													<i class="fa fa-code-fork"> </i>
 													Graph
 												</a>
-											</p:reportInfoCell>
+											</p:actionsCell>
 											<p:reportSummaryCell>
 												<t:loop source="reportDates" value="currentDate">
 													<span class="fa fa-calendar label label-success">&nbsp;${currentDate}
