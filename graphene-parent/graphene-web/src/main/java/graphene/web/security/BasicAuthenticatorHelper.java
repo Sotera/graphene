@@ -9,8 +9,10 @@ import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Session;
 import org.slf4j.Logger;
+import org.tynamo.security.internal.services.LoginContextService;
 
 /**
  * Basic Security Realm implementation to be replaced with Shiro integration
@@ -68,17 +70,20 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 		}
 	}
 
-	@Override
-	public Object loginAndRedirect(String loginMessage, String grapheneLogin,
-			String graphenePassword, boolean grapheneRememberMe) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void loginAuthenticatedUser(String username) {
 		// TODO Auto-generated method stub
 		return;
+	}
+
+	@Override
+	public Object loginAndRedirect(String loginMessage, String grapheneLogin,
+			String graphenePassword, boolean grapheneRememberMe,
+			RequestGlobals requestGlobals,
+			LoginContextService loginContextService) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
