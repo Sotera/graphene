@@ -270,8 +270,13 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						select: function() {
 							var node = this;
 							var selectedNodes = _this.gv.$("node:selected");
-							if (_this.owner.mergeNodes) { _this.owner.mergeNodes(node, selectedNodes); }
-							else { console.log("mergeNodes() is undefined"); }
+							if (_this.owner.givePromptToMerge) {
+								_this.owner.givePromptToMerge(node, selectedNodes);
+							} else if (_this.owner.mergeNodes) {
+								_this.owner.mergeNodes(node, selectedNodes);
+							} else {
+								console.log("Capability to merge nodes is undefined"); 
+							}
 						}
 					}]
 				});

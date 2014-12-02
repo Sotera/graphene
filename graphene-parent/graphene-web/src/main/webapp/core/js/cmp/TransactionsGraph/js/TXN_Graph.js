@@ -534,6 +534,96 @@ Ext.define("DARPA.TransactionGraph", {
 		window.show();
 	},
 	
+	givePromptToMerge: function(superNode, selectedNodes) {
+		var owner = this;
+		var window = Ext.create("DARPA.NodeMergeDialog", {
+			confirmFn: function(reason) {
+				// first, do the client-side merge of all the nodes and get subNodeIds
+				var subNodeIds = owner.mergeNodes(superNode, selectedNodes); 
+
+				var graph = {
+					nodes: owner.GraphVis.gv.nodes().jsons(),
+					edges: owner.GraphVis.gv.edges().jsons()
+				};
+				
+				// ...then persist those unmerges to the back-end service via REST
+				/*
+				Ext.Ajax.request({
+					method: "POST",
+					url: "TODO",
+					//headers: {"Content-Type": "application/json"},
+					params: {
+						isMerge: true,
+						superNodeIds: [superNode.data("id")],
+						subNodeIds: subNodeIds,
+						userComment: reason,
+						graph: graph
+						//TODO: get user ID
+					},
+					scope: this,
+					success: function(resp) {
+						console.log("Persist POST success.");
+					},
+					failure: function(resp) {
+						console.error("Persist POST failed.");
+					}
+				});
+				*/
+			},
+			cancelFn: function() {
+				// don't merge
+			}
+		});
+		window.show();
+	},
+	
+	givePromptToUnmerge: function(superNodes) {
+		var owner = this;
+		var window = Ext.create("DARPA.NodeMergeDialog", {
+			confirmFn: function(reason) {
+				// first, do the client-side merge of all the nodes
+				var superNodeIds = [];
+				superNodes.each(function(i, n) {
+					superNodeIds.push(n.data("id"));
+					owner.unmergeNode(n);
+				});
+
+				var graph = {
+					nodes: owner.GraphVis.gv.nodes().jsons(),
+					edges: owner.GraphVis.gv.edges().jsons()
+				};
+				
+				// ...then persist those unmerges to the back-end service via REST
+				/*
+				Ext.Ajax.request({
+					method: "POST",
+					url: "TODO",
+					//headers: {"Content-Type": "application/json"},
+					params: {
+						isMerge: false,
+						superNodeIds: superNodeIds
+						subNodeIds: [],
+						userComment: reason,
+						graph: graph
+						//TODO: get user ID
+					},
+					scope: this,
+					success: function(resp) {
+						console.log("Persist POST success.");
+					},
+					failure: function(resp) {
+						console.error("Persist POST failed.");
+					}
+				});
+				*/
+			},
+			cancelFn: function() {
+				// don't merge
+			}
+		});
+		window.show();
+	},
+	
 	mergeNodes: function(superNode, selectedNodes) {
 		var doContinue = true;
 		try {
@@ -561,9 +651,13 @@ Ext.define("DARPA.TransactionGraph", {
 		
 		if (!doContinue) return;
 		
+		var subNodeIds = [];
+		
 		selectedNodes.each(function(i, n) {
 			if (n.data("id") != superNode.data("id")) {
 			
+				subNodeIds.push(n.data("id"));
+				
 				n.connectedEdges().each(function(j, e) {
 					var edge_clone = e.json();
 					if (e.data("target") == n.data("id")) {
@@ -593,6 +687,8 @@ Ext.define("DARPA.TransactionGraph", {
 				_this.GraphVis.deleteNodes([n]);
 			}
 		});
+		
+		return subNodeIds;
 	},
 	
 	unmergeNode: function(superNode) {
