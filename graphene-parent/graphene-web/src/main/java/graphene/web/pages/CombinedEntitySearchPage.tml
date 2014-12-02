@@ -34,6 +34,46 @@
 										out of ${results.numberOtResultsTotal}
 									</t:if>
 								</div>
+								
+								<!-- WIP legend -->
+								<div style="border: 1px solid gray; padding:3px">
+									<span style="width:100%; display: inline-block;">
+										<span style="margin-right: 3px"> 
+											Legend: 
+										</span>
+										<span class="label bg-color-red txt-color-white" style="margin-right: 3px"
+											data-placement="top" rel="popover-hover" 
+											data-content="An attribute or any other identifier that contains the term you searched for."> 
+												Item Containing Search Term 
+										</span>
+										<span class="label label-success" style="margin-right: 3px"
+											data-placement="top" rel="popover-hover" 
+											data-content="Example: date the report was filed on or the date it was received."> 
+												Dates Relevant to Report 
+										</span>
+										<span class="label label-info" style="margin-right: 3px"
+											data-placement="top" rel="popover-hover" 
+											data-content="The amount of money involved with a report."> 
+												Transaction Amount 
+										</span>
+										<span class="label bg-color-orange txt-color-white" style="margin-right: 3px" 
+											data-placement="top" rel="popover-hover" 
+											data-content="Formal name of a person or group involved or mentioned in the report."> 
+												Entity Name 
+										</span>
+										<span class="label bg-color-yellow txt-color-white" style="margin-right: 3px"
+											data-placement="top" rel="popover-hover" 
+											data-content="Street address, state, province, or any location identifier."> 
+												Address 
+										</span>
+										<span class="label bg-color-magenta txt-color-white" style="margin-right: 3px"
+											data-placement="top" rel="popover-hover" 
+											data-content="Any other attribute or identifier."> 
+												Attribute 
+										</span>
+									</span>
+								</div>
+								
 								<t:if test="results">
 									<div id="entityList">
 										<table t:type="grid" source="results.results" model="model"
