@@ -541,6 +541,11 @@ Ext.define("DARPA.TransactionGraph", {
 				// first, do the client-side merge of all the nodes and get subNodeIds
 				var subNodeIds = owner.mergeNodes(superNode, selectedNodes); 
 
+				var graph = {
+					nodes: owner.GraphVis.gv.nodes().jsons(),
+					edges: owner.GraphVis.gv.edges().jsons()
+				};
+				
 				// ...then persist those unmerges to the back-end service via REST
 				/*
 				Ext.Ajax.request({
@@ -551,7 +556,8 @@ Ext.define("DARPA.TransactionGraph", {
 						isMerge: true,
 						superNodeIds: [superNode.data("id")],
 						subNodeIds: subNodeIds,
-						userComment: reason
+						userComment: reason,
+						graph: graph
 						//TODO: get user ID
 					},
 					scope: this,
@@ -582,6 +588,11 @@ Ext.define("DARPA.TransactionGraph", {
 					owner.unmergeNode(n);
 				});
 
+				var graph = {
+					nodes: owner.GraphVis.gv.nodes().jsons(),
+					edges: owner.GraphVis.gv.edges().jsons()
+				};
+				
 				// ...then persist those unmerges to the back-end service via REST
 				/*
 				Ext.Ajax.request({
@@ -592,7 +603,8 @@ Ext.define("DARPA.TransactionGraph", {
 						isMerge: false,
 						superNodeIds: superNodeIds
 						subNodeIds: [],
-						userComment: reason
+						userComment: reason,
+						graph: graph
 						//TODO: get user ID
 					},
 					scope: this,
