@@ -21,7 +21,7 @@ import org.tynamo.security.services.SecurityService;
  */
 public class Settings {
 	@Inject
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 
 	@Inject
 	private Messages messages;
@@ -56,7 +56,7 @@ public class Settings {
 		}
 		boolean success = false;
 		try {
-			success = service.setUserPassword(user.getId(), password);
+			success = userDataAccess.setUserPassword(user.getId(), password);
 
 		} catch (Exception e) {
 			// if the DAO didn't update successfully, tell them so.

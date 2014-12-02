@@ -38,7 +38,7 @@ import org.slf4j.Logger;
  */
 public class NoSecurityRealm extends AuthorizingRealm {
 	@Inject
-	private G_UserDataAccess userDao;
+	private G_UserDataAccess userDataAccess;
 	@Inject
 	private Logger logger;
 	private static String REALM_NAME = "grapheneRealm";
@@ -68,7 +68,7 @@ public class NoSecurityRealm extends AuthorizingRealm {
 		}
 		G_User user = null;
 		try {
-			user = userDao.getByUsername(username);
+			user = userDataAccess.getByUsername(username);
 		} catch (AvroRemoteException e1) {
 			e1.printStackTrace();
 		}
@@ -76,10 +76,10 @@ public class NoSecurityRealm extends AuthorizingRealm {
 		if (user != null) {
 			try {
 				info = new SimpleAuthorizationInfo();
-				for (G_Role role : userDao.getRolesByUser(user.getId())) {
+				for (G_Role role : userDataAccess.getRolesByUser(user.getId())) {
 					info.addRole(role.getDescription());
 
-					for (G_Permission permission : userDao
+					for (G_Permission permission : userDataAccess
 							.getPermissionsByRole(role)) {
 						info.addStringPermission(permission.getDescription());
 					}
@@ -98,7 +98,7 @@ public class NoSecurityRealm extends AuthorizingRealm {
 		logger.debug("Getting authentication for " + token);
 		G_User user = null;
 		try {
-			user = userDao.getByUsername(token.getUsername());
+			user = userDataAccess.getByUsername(token.getUsername());
 		} catch (AvroRemoteException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();

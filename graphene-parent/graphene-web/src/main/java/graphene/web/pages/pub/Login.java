@@ -5,7 +5,6 @@ import graphene.web.annotations.AnonymousAccess;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;

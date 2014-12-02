@@ -2,6 +2,7 @@ package graphene.web.security;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.util.validator.ValidationUtils;
 import graphene.web.model.BusinessException;
 
 import org.apache.avro.AvroRemoteException;
@@ -16,20 +17,20 @@ import org.slf4j.Logger;
  * from Tynamo.
  */
 @Deprecated
-public class BasicAuthenticator implements AuthenticatorHelper {
+public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 
 	public static final String AUTH_TOKEN = "authToken";
 
 	@Inject
-	public BasicAuthenticator(G_UserDataAccess s,
+	public BasicAuthenticatorHelper(G_UserDataAccess userDataAccess,
 			ApplicationStateManager applicationStateManager, Logger logger) {
-		this.service = s;
+		this.userDataAccess = userDataAccess;
 		this.applicationStateManager = applicationStateManager;
 		this.logger = logger;
 	}
 
 	private Logger logger;
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 
 	// Use this to save the logged in user to the session.
 	private ApplicationStateManager applicationStateManager;
@@ -39,11 +40,14 @@ public class BasicAuthenticator implements AuthenticatorHelper {
 
 	public void login(String username, String password)
 			throws AvroRemoteException, BusinessException {
-		G_User user = service.getByUsername(username);
-		if (user != null) {
-			user = service.loginUser(user.getId(), password);
+		G_User user = userDataAccess.getByUsername(username);
+		if (ValidationUtils.isValid(user)
+				&& ValidationUtils.isValid(user.getId())) {
+			user = userDataAccess.loginUser(user.getId(), password);
 			applicationStateManager.set(G_User.class, user);
 			request.getSession(true).setAttribute(AUTH_TOKEN, user);
+		} else {
+			logger.error("Could not login user with username " + username);
 		}
 	}
 
@@ -62,6 +66,19 @@ public class BasicAuthenticator implements AuthenticatorHelper {
 			session.setAttribute(AUTH_TOKEN, null);
 			session.invalidate();
 		}
+	}
+
+	@Override
+	public Object loginAndRedirect(String loginMessage, String grapheneLogin,
+			String graphenePassword, boolean grapheneRememberMe) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void loginAuthenticatedUser(String username) {
+		// TODO Auto-generated method stub
+		return;
 	}
 
 }

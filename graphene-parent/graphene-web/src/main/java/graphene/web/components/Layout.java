@@ -1,16 +1,23 @@
 package graphene.web.components;
 
 import graphene.model.idl.G_SymbolConstants;
+import graphene.model.idl.G_User;
+import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idl.G_Workspace;
 import graphene.web.pages.pub.Login;
 import graphene.web.security.AuthenticatorHelper;
 
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.Tuple;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -19,6 +26,7 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.slf4j.Logger;
+import org.tynamo.security.services.SecurityService;
 
 import com.trsvax.bootstrap.annotations.Exclude;
 
@@ -36,6 +44,10 @@ import com.trsvax.bootstrap.annotations.Exclude;
 		"context:/core/css/googlefonts.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
 public class Layout {
+	@SessionState(create = false)
+	private G_User user;
+
+	private boolean userExists;
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
@@ -50,8 +62,12 @@ public class Layout {
 	private AssetSource assetSource;
 
 	@Inject
+	@Property
+	private SecurityService securityService;
+
+	@Inject
 	private ComponentClassResolver componentClassResolver;
-	
+
 	@Inject
 	private Locale locale;
 	@Inject
@@ -77,25 +93,34 @@ public class Layout {
 	}
 
 	@Inject
-	private AuthenticatorHelper authenticator;
+	private G_UserDataAccess userDataAccess;
+	@Inject
+	private AuthenticatorHelper authenticatorHelper;
+
+	@Property
+	private List<G_Workspace> workspaces;
 
 	@Log
 	public Object onLogout() {
-		authenticator.logout();
+		authenticatorHelper.logout();
 		return Login.class;
 	}
 
-	/**
-	 * Workaround for HTML5 support, which doesn't have a DTD.
-	 * 
-	 * @return
-	 */
-	// @SetupRender
-	// final void renderDocType(final MarkupWriter writer) {
-	// writer.getDocument().raw("<!DOCTYPE html>");
-	// }
-
-	// public void setUser(G_User s) {
-	// user = s;
-	// }
+	@SetupRender
+	public void loginIfNeeded() {
+		if (!authenticatorHelper.isUserObjectCreated()
+				&& securityService.isAuthenticated()) {
+			authenticatorHelper.loginAuthenticatedUser((String) securityService
+					.getSubject().getPrincipal());
+		}
+		if (userExists) {
+			try {
+				workspaces = userDataAccess.getWorkspacesOrCreateNewForUser(user
+						.getId());
+			} catch (AvroRemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }

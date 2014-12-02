@@ -10,21 +10,21 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
 
 public class UserFilteredDataSource implements GridDataSource {
-	private G_UserDataAccess dao;
+	private G_UserDataAccess userDataAccess;
 	private String partialName;
 
 	private int startIndex;
 	private List<G_User> preparedResults;
 
-	public UserFilteredDataSource(G_UserDataAccess personFinderService, String partialName) {
-		this.dao = personFinderService;
+	public UserFilteredDataSource(G_UserDataAccess userDataAccess, String partialName) {
+		this.userDataAccess = userDataAccess;
 		this.partialName = partialName;
 	}
 
 	@Override
 	public int getAvailableRows() {
 		try {
-			return (int) dao.countUsers(partialName);
+			return (int) userDataAccess.countUsers(partialName);
 		} catch (AvroRemoteException e) {
 			e.printStackTrace();
 		}
@@ -34,7 +34,7 @@ public class UserFilteredDataSource implements GridDataSource {
 	@Override
 	public void prepare(final int startIndex, final int endIndex, final List<SortConstraint> sortConstraints) {
 		try {
-			preparedResults = dao.getByPartialUsername(partialName, startIndex, endIndex - startIndex + 1);
+			preparedResults = userDataAccess.getByPartialUsername(partialName, startIndex, endIndex - startIndex + 1);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

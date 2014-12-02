@@ -70,7 +70,7 @@ public class WorkspaceList {
 	private String selectedWorkspaceId;
 
 	@Inject
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 	@SessionState(create = false)
 	private G_User user;
 	private boolean userExists;
@@ -134,7 +134,7 @@ public class WorkspaceList {
 	 */
 	public GridDataSource getWorkspaces() {
 		if (userExists) {
-			return new WorkspaceFilteredDataSource(service, user.getId(),
+			return new WorkspaceFilteredDataSource(userDataAccess, user.getId(),
 					partialName);
 		} else {
 			logger.error("No user name to get workspaces for.");

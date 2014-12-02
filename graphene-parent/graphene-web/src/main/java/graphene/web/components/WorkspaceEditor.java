@@ -105,7 +105,7 @@ public class WorkspaceEditor {
 	private G_User user;
 
 	@Inject
-	private G_UserDataAccess userService;
+	private G_UserDataAccess userDataAccess;
 
 	private boolean userExists;
 
@@ -247,7 +247,7 @@ public class WorkspaceEditor {
 				try {
 					// TODO: It would be a wise idea to allow revisions of the
 					// workspaces, for historys sake.
-					successfulDelete = userService.removeUserFromWorkspace(
+					successfulDelete = userDataAccess.removeUserFromWorkspace(
 							user.getId(), workspaceId);
 					// dao.deleteWorkspaceById(workspaceId);// ,
 					// workspaceVersion);
@@ -349,7 +349,7 @@ public class WorkspaceEditor {
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
 		try {
-			workspace = userService
+			workspace = userDataAccess
 					.getWorkspace(user.getId(), this.workspaceId);
 		} catch (AvroRemoteException e) {
 			workspace = null;
@@ -383,7 +383,7 @@ public class WorkspaceEditor {
 
 			if (updateForm.isValid()) {
 				try {
-					workspace = userService.getWorkspace(user.getId(),
+					workspace = userDataAccess.getWorkspace(user.getId(),
 							this.workspaceId);
 				} catch (AvroRemoteException e) {
 					workspace = null;
@@ -393,7 +393,7 @@ public class WorkspaceEditor {
 
 		} else {
 			try {
-				workspace = userService.getWorkspace(user.getId(),
+				workspace = userDataAccess.getWorkspace(user.getId(),
 						this.workspaceId);
 			} catch (AvroRemoteException e) {
 				workspace = null;
@@ -420,7 +420,7 @@ public class WorkspaceEditor {
 	void onPrepareForSubmitFromConfirmDeleteForm() {
 		// Get objects for the form fields to overlay.
 		try {
-			workspace = userService
+			workspace = userDataAccess
 					.getWorkspace(user.getId(), this.workspaceId);
 		} catch (AvroRemoteException e) {
 			workspace = null;
@@ -440,7 +440,7 @@ public class WorkspaceEditor {
 
 		// Get objects for the form fields to overlay.
 		try {
-			workspace = userService
+			workspace = userDataAccess
 					.getWorkspace(user.getId(), this.workspaceId);
 		} catch (AvroRemoteException e) {
 			workspace = null;
@@ -458,7 +458,7 @@ public class WorkspaceEditor {
 	void onPrepareFromCreateForm() throws Exception {
 		// Instantiate a Workspace for the form data to overlay.
 		if (userExists) {
-			workspace = userService.createTempWorkspaceForUser(user.getId());
+			workspace = userDataAccess.createTempWorkspaceForUser(user.getId());
 		} else {
 			// disallow a new workspace to be created if no user is logged in.
 			workspace = null;
@@ -473,7 +473,7 @@ public class WorkspaceEditor {
 		if (workspace != null) {
 			boolean deleted = false;
 			try {
-				deleted = userService.deleteWorkspace(user.getId(),
+				deleted = userDataAccess.deleteWorkspace(user.getId(),
 						workspace.getId());
 				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE,
 						new Object[] { workspace.getId() }, null);
@@ -505,7 +505,7 @@ public class WorkspaceEditor {
 		// "successfulCreate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
 		try {
-			workspace = userService.addNewWorkspaceForUser(user.getId(),
+			workspace = userDataAccess.addNewWorkspaceForUser(user.getId(),
 					workspace);
 			componentResources.triggerEvent(SUCCESSFUL_CREATE,
 					new Object[] { workspace.getId() }, null);
@@ -533,7 +533,7 @@ public class WorkspaceEditor {
 		// "successfulUpdate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
 		try {
-			workspace = userService.saveWorkspace(user.getId(), workspace);
+			workspace = userDataAccess.saveWorkspace(user.getId(), workspace);
 			logger.info("Successfully updated workspace " + workspace.getId());
 			componentResources.triggerEvent(SUCCESSFUL_UPDATE,
 					new Object[] { workspaceId }, null);
@@ -581,7 +581,7 @@ public class WorkspaceEditor {
 		} else {
 
 			try {
-				userService.deleteWorkspace(user.getId(), workspaceId);// (workspaceId,
+				userDataAccess.deleteWorkspace(user.getId(), workspaceId);// (workspaceId,
 				// workspace.getVersion());
 			} catch (Exception e) {
 				// Display the cause. In a real system we would try harder to
@@ -607,14 +607,14 @@ public class WorkspaceEditor {
 			return;
 		}
 
-		try {
-			workspace = userService.addNewWorkspaceForUser(user.getId(),
-					workspace);
-		} catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a
-			// user-friendly message.
-			createForm.recordError(ExceptionUtil.getRootCauseMessage(e));
-		}
+//		try {
+//			workspace = userService.addNewWorkspaceForUser(user.getId(),
+//					workspace);
+//		} catch (Exception e) {
+//			// Display the cause. In a real system we would try harder to get a
+//			// user-friendly message.
+//			createForm.recordError(ExceptionUtil.getRootCauseMessage(e));
+//		}
 	}
 
 	void onValidateFromUpdateForm() {
@@ -625,7 +625,7 @@ public class WorkspaceEditor {
 		}
 
 		try {
-			userService.saveWorkspace(user.getId(), workspace);
+			userDataAccess.saveWorkspace(user.getId(), workspace);
 		} catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
@@ -650,7 +650,7 @@ public class WorkspaceEditor {
 							+ workspaceId + " for user " + user.getId());
 					// FIXME: Something is awry here; we sometimes get 'core' as
 					// a workspace id, and that fails of course.
-					workspace = userService.getWorkspace(user.getId(),
+					workspace = userDataAccess.getWorkspace(user.getId(),
 							workspaceId);
 				} catch (AvroRemoteException e) {
 					// TODO Auto-generated catch block

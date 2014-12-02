@@ -88,4 +88,6 @@ public interface UserDAO {
 
 	public void initialize() throws DataAccessException;
 
+	public G_User loginAuthenticatedUser(String id);
+
 }

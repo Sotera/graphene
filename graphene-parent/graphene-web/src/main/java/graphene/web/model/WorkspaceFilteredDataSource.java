@@ -10,16 +10,16 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
 
 public class WorkspaceFilteredDataSource implements GridDataSource {
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 	private String partialName;
 
 	private int startIndex;
 	private List<G_Workspace> preparedResults;
 	private String userId;
 
-	public WorkspaceFilteredDataSource(G_UserDataAccess workspaceFinderService,
+	public WorkspaceFilteredDataSource(G_UserDataAccess userDataAccess,
 			String userId, String partialName) {
-		this.service = workspaceFinderService;
+		this.userDataAccess = userDataAccess;
 		this.userId = userId;
 		this.partialName = partialName;
 	}
@@ -27,7 +27,7 @@ public class WorkspaceFilteredDataSource implements GridDataSource {
 	@Override
 	public int getAvailableRows() {
 		try {
-			return service.countWorkspaces(userId, partialName);
+			return userDataAccess.countWorkspaces(userId, partialName);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -41,7 +41,7 @@ public class WorkspaceFilteredDataSource implements GridDataSource {
 			final List<SortConstraint> sortConstraints) {
 
 		try {
-			preparedResults = service.findWorkspaces(userId, partialName,
+			preparedResults = userDataAccess.findWorkspaces(userId, partialName,
 					startIndex, endIndex - startIndex + 1);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block

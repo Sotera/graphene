@@ -28,52 +28,53 @@ import org.slf4j.Logger;
  */
 public class RecentWorkspaces {
 	@Inject
-	private G_UserDataAccess dao;
-
-	@Property
-	private DateTimeFormatter ISODate = ISODateTimeFormat.date();
-	@SessionState(create = false)
-	private G_User user;
-
-	private boolean userExists;
-	@Property
-	private List<G_Workspace> workspaces;
-
-	@Property
-	private G_Workspace currentWorkspace;
+	private AlertManager alertManager;
 
 	@Property
 	@SessionState(create = false)
 	private G_Workspace currentSelectedWorkspace;
-
 	@Property
 	private boolean currentSelectedWorkspaceExists;
+
+	@Property
+	private G_Workspace currentWorkspace;
+	@Inject
+	private G_UserDataAccess userDataAccess;
+
+	@Property
+	private DateTimeFormatter ISODate = ISODateTimeFormat.date();
+
+	@Inject
+	private Logger logger;
+
+	@SessionState(create = false)
+	private G_User user;
+
+	private boolean userExists;
+
+	@Property
+	private List<G_Workspace> workspaces;
 
 	@SetupRender
 	boolean listWorkspaces() {
 
 		if (userExists) {
 			try {
-				workspaces = dao.getWorkspacesForUser(user.getId());
+				workspaces = userDataAccess.getWorkspacesForUser(user.getId());
 			} catch (AvroRemoteException e) {
-				// TODO Auto-generated catch block
+				workspaces = null;
 				e.printStackTrace();
 			}
 		}
 		return workspaces != null ? true : false;
 	}
 
-	@Inject
-	private Logger logger;
-	@Inject
-	private AlertManager alertManager;
-
 	@OnEvent("makecurrent")
 	private void makeCurrent(String workspaceId) {
 		try {
 			// TODO: instead of hitting the service layer again, just pull from
 			// the list of workspaces we got before.
-			currentSelectedWorkspace = dao.getWorkspace(user.getId(),
+			currentSelectedWorkspace = userDataAccess.getWorkspace(user.getId(),
 					workspaceId);
 			if (currentSelectedWorkspace == null) {
 				String warnMessage = "Unable to load workspace id "

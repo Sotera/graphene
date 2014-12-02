@@ -2,14 +2,30 @@ package graphene.web.security;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.util.validator.ValidationUtils;
 import graphene.web.model.BusinessException;
 
+import java.io.IOException;
+
 import org.apache.avro.AvroRemoteException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.util.SavedRequest;
+import org.apache.shiro.web.util.WebUtils;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.Response;
 import org.slf4j.Logger;
+import org.tynamo.security.SecuritySymbols;
+import org.tynamo.security.internal.services.LoginContextService;
 import org.tynamo.security.services.SecurityService;
 
 /**
@@ -25,13 +41,23 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 
 	// Use this to save the logged in user to the session.
 	private ApplicationStateManager applicationStateManager;
-
+	@Inject
+	private Messages messages;
+	
+//	private LoginContextService loginContextService;
 	private Logger logger;
 	@Inject
 	private Request request;
+
+//	@Inject
+//	private Response response;
+
+//	@Inject
+//	private RequestGlobals requestGlobals;
+
 	private SecurityService securityService;
 
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 
 	@SessionState(create = false)
 	private G_User user;
@@ -39,10 +65,14 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	private boolean userExists;
 
 	@Inject
-	public ShiroAuthenticatorHelper(G_UserDataAccess s,
+	@Symbol(SecuritySymbols.REDIRECT_TO_SAVED_URL)
+	private boolean redirectToSavedUrl;
+
+	@Inject
+	public ShiroAuthenticatorHelper(G_UserDataAccess userDataAccess,
 			ApplicationStateManager applicationStateManager, Logger logger,
 			SecurityService securityService) {
-		this.service = s;
+		this.userDataAccess = userDataAccess;
 		this.securityService = securityService;
 		this.applicationStateManager = applicationStateManager;
 		this.logger = logger;
@@ -60,20 +90,121 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 		return userSsoExists;
 	}
 
+	@Override
+	public Object loginAndRedirect(String loginMessage, String grapheneLogin,
+			String graphenePassword, boolean grapheneRememberMe,RequestGlobals requestGlobals, LoginContextService loginContextService) {
+
+		Subject currentUser = securityService.getSubject();
+
+		if (currentUser == null) {
+			logger.error("Subject can`t be null");
+			// throw new IllegalStateException("Subject can`t be null");
+			loginMessage = messages.get("AuthenticationError");
+			return null;
+		}
+
+		/**
+		 * We store the password entered into this token. It will later be
+		 * compared to the hashed version using whatever hashing routine is set
+		 * in the Realm.
+		 */
+		UsernamePasswordToken token = new UsernamePasswordToken(grapheneLogin,
+				graphenePassword);
+		token.setRememberMe(grapheneRememberMe);
+
+		try {
+			currentUser.login(token);
+			login(grapheneLogin, graphenePassword);
+			SavedRequest savedRequest = WebUtils
+					.getAndClearSavedRequest(requestGlobals
+							.getHTTPServletRequest());
+
+			if (savedRequest != null
+					&& savedRequest.getMethod().equalsIgnoreCase("GET")) {
+				if (ValidationUtils.isValid(savedRequest.getRequestUrl())) {
+					//response.sendRedirect(savedRequest.getRequestUrl());
+					//loginContextService.redirectToSavedRequest(savedRequest.getRequestUrl());
+					return savedRequest.getRequestUrl();
+				} else {
+					logger.warn("Can't redirect to saved request.");
+					return loginContextService.getSuccessPage();
+				}
+			} else if (redirectToSavedUrl) {
+				String requestUri = loginContextService.getSuccessPage();
+				if (!requestUri.startsWith("/")) {
+					requestUri = "/" + requestUri;
+				}
+				//loginContextService.redirectToSavedRequest(requestUri);
+				//this isn't working but should:  return requestUri;
+				return loginContextService.getSuccessPage();
+			}
+			// Cookie[] cookies =
+			// requestGlobals.getHTTPServletRequest().getCookies();
+			// if (cookies != null) for (Cookie cookie : cookies) if
+			// (WebUtils.SAVED_REQUEST_KEY.equals(cookie.getName())) {
+			// String requestUri = cookie.getValue();
+			// WebUtils.issueRedirect(requestGlobals.getHTTPServletRequest(),
+			// requestGlobals.getHTTPServletResponse(), requestUri);
+			// return null;
+			// }
+			return loginContextService.getSuccessPage();
+		} catch (UnknownAccountException e) {
+			loginMessage = messages.get("AccountDoesNotExists");
+		} catch (IncorrectCredentialsException e) {
+			loginMessage = messages.get("WrongPassword");
+		} catch (LockedAccountException e) {
+			loginMessage = messages.get("AccountLocked");
+		} catch (AvroRemoteException e) {
+			loginMessage = messages.get("InternalAuthenticationError");
+			e.printStackTrace();
+		} catch (BusinessException e) {
+			loginMessage = messages.get("InternalAuthenticationError");
+			e.printStackTrace();
+		} catch (IOException e) {
+			loginMessage = messages.get("InternalAuthenticationError");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void login(String username, String password)
 			throws AvroRemoteException, BusinessException {
 
-		G_User user = service.getByUsername(username);
-		if (user != null) {
-			user = service.loginUser(user.getId(), password);
+		G_User user = userDataAccess.getByUsername(username);
+		if (ValidationUtils.isValid(user)
+				&& ValidationUtils.isValid(user.getId())) {
+			user = userDataAccess.loginUser(user.getId(), password);
 
 			applicationStateManager.set(G_User.class, user);
 			// request.getSession(true).setAttribute(AUTH_TOKEN, user);
+		} else {
+			logger.error("Could not login user with username " + username);
+		}
+	}
+
+	/**
+	 * Login a user who is previously authenticated
+	 * 
+	 * @param username
+	 */
+	@Override
+	public void loginAuthenticatedUser(String username) {
+		G_User user;
+		try {
+			user = userDataAccess.getByUsername(username);
+			if (user != null) {
+				user = userDataAccess.loginAuthenticatedUser(user.getId());
+
+				applicationStateManager.set(G_User.class, user);
+				// request.getSession(true).setAttribute(AUTH_TOKEN, user);
+			}
+		} catch (AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	public void logout() {
-
 		logger.debug(securityService.isAuthenticated() ? "During Logout: User is authenticated"
 				: "During Logout: User is not authenticated");
 		logger.debug(userExists ? "During Logout: User SSO exists"

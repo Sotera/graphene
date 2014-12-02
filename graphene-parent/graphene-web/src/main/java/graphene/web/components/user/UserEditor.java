@@ -21,6 +21,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
+import org.tynamo.security.services.SecurityService;
 
 /**
  * This component will trigger the following events on its container (which in
@@ -78,12 +79,12 @@ public class UserEditor {
 			.getProperty("jumpstart.demo-mode");
 
 	public enum Mode {
-		CREATE,
-		REVIEW,
-		UPDATE,
-		CONFIRM_DELETE;
+		CREATE, REVIEW, UPDATE, CONFIRM_DELETE;
 	}
 
+	@Inject
+	@Property
+	private SecurityService securityService;
 	// Parameters
 
 	@Parameter(required = true)
@@ -140,7 +141,7 @@ public class UserEditor {
 	// setupRender() is called by Tapestry right before it starts rendering the
 	// component.
 	@Inject
-	private G_UserDataAccess dao;
+	private G_UserDataAccess userDataAccess;
 
 	void setupRender() {
 
@@ -150,7 +151,7 @@ public class UserEditor {
 				// Handle null person in the template.
 			} else {
 				try {
-					aUser = dao.getUser(userId);
+					aUser = userDataAccess.getUser(userId);
 				} catch (AvroRemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -199,7 +200,7 @@ public class UserEditor {
 		}
 
 		try {
-			aUser = dao.registerUser(aUser);
+			aUser = userDataAccess.registerUser(aUser, "temppassword", false);
 		} catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
@@ -275,7 +276,7 @@ public class UserEditor {
 
 			if (updateForm.isValid()) {
 				try {
-					aUser = dao.getUser(this.userId);
+					aUser = userDataAccess.getUser(this.userId);
 				} catch (AvroRemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -285,7 +286,7 @@ public class UserEditor {
 
 		} else {
 			try {
-				aUser = dao.getUser(userId);
+				aUser = userDataAccess.getUser(userId);
 			} catch (AvroRemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -315,7 +316,7 @@ public class UserEditor {
 
 		// Get objects for the form fields to overlay.
 		try {
-			aUser = dao.getUser(this.userId);
+			aUser = userDataAccess.getUser(this.userId);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -338,7 +339,7 @@ public class UserEditor {
 		}
 
 		try {
-			dao.saveUser(aUser);
+			userDataAccess.saveUser(aUser);
 		} catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
@@ -398,7 +399,7 @@ public class UserEditor {
 			} else {
 
 				try {
-					successfulDelete = dao.deleteUser(userId);
+					successfulDelete = userDataAccess.deleteUser(userId);
 
 				} catch (Exception e) {
 					// Display the cause. In a real system we would try harder
@@ -455,7 +456,7 @@ public class UserEditor {
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
 		try {
-			aUser = dao.getUser(userId);
+			aUser = userDataAccess.getUser(userId);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -479,7 +480,7 @@ public class UserEditor {
 	void onPrepareForSubmitFromConfirmDeleteForm() {
 		// Get objects for the form fields to overlay.
 		try {
-			aUser = dao.getUser(userId);
+			aUser = userDataAccess.getUser(userId);
 		} catch (AvroRemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -508,7 +509,7 @@ public class UserEditor {
 		} else {
 
 			try {
-				dao.deleteUser(userId);
+				userDataAccess.deleteUser(userId);
 			} catch (Exception e) {
 				// Display the cause. In a real system we would try harder to
 				// get a user-friendly message.

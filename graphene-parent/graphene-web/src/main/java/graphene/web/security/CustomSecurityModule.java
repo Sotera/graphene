@@ -16,7 +16,7 @@ import org.apache.tapestry5.validator.ValidatorMacro;
 
 public class CustomSecurityModule {
 	public static void bind(ServiceBinder binder) {
-		binder.bind(AuthenticatorHelper.class, BasicAuthenticator.class);
+		binder.bind(AuthenticatorHelper.class, BasicAuthenticatorHelper.class);
 	}
 
 	@Contribute(ValidatorMacro.class)

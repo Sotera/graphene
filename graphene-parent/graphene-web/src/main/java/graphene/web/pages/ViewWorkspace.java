@@ -28,7 +28,7 @@ public class ViewWorkspace {
 
 	private boolean userExists;
 	@Inject
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 	@Persist
 	private String workspaceId;
 
@@ -51,7 +51,7 @@ public class ViewWorkspace {
 				try {
 					logger.info("Attempting to retrieve workspace "
 							+ workspaceId + " for user " + user.getUsername());
-					this.currentWorkspace = service.getWorkspace(user.getId(),
+					this.currentWorkspace = userDataAccess.getWorkspace(user.getId(),
 							workspaceId);
 				} catch (AvroRemoteException e) {
 					logger.error(ExceptionUtil.getRootCauseMessage(e));

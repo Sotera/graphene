@@ -34,8 +34,8 @@ public class ShiroSecurityModule {
 	@Contribute(ValidatorMacro.class)
 	public static void combineValidators(
 			MappedConfiguration<String, String> configuration) {
-		configuration.add("username", "required, minlength=3, maxlength=15");
-		configuration.add("password", "required, minlength=6, maxlength=12");
+		configuration.add("username", "required, minlength=3, maxlength=50");
+		configuration.add("password", "required, minlength=5, maxlength=50");
 	}
 
 	public static void contributeApplicationDefaults(

@@ -164,7 +164,7 @@ public class AuthenticationFilter implements ComponentRequestFilter {
 		return false;
 	}
 
-	private G_UserDataAccess service;
+	private G_UserDataAccess userDataAccess;
 
 	/**
 	 * Automatically logs you in as the given user. Intended for use in
@@ -174,7 +174,7 @@ public class AuthenticationFilter implements ComponentRequestFilter {
 		// Lazy-load the business services locator because it is only needed for
 		// auto-login
 		try {
-			G_User user = service.getByUsername("eli");
+			G_User user = userDataAccess.getByUsername("eli");
 			// Visit visit = new Visit(user);
 			logger.info(user.getUsername() + " has been auto-logged-in.");
 			sessionStateManager.set(G_User.class, user);

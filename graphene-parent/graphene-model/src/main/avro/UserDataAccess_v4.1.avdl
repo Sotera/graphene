@@ -113,12 +113,23 @@ protocol G_UserDataAccess {
 			throws AuthenticationException;
 
 	/**
+	 * Finds the user who was already deemed authenticated and logs the user in.  
+	 * 
+	 * @param username
+	 * @return a non null user.
+	 * @throws AuthenticationException
+	 */
+	 G_User loginAuthenticatedUser(string userId)
+			throws AuthenticationException;
+	/**
 	 * Performs the creation of a new user.
 	 * 
-	 * @param d
-	 * @return
+	 * @param d the user to create on the backend
+	 * @param password the password to use for the new user
+	 * @param a flag for whether or not a new workspace should be automatically created.
+	 * @return a user object.
 	 */
-	 G_User registerUser(G_User d);
+	 G_User registerUser(G_User d, string password, boolean createWorkspace);
 
 	 /**
 	  * Remove all relationships between the supplied username and the supplied workspace id

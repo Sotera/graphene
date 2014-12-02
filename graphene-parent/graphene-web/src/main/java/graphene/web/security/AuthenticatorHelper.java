@@ -5,11 +5,14 @@ import graphene.web.model.BusinessException;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.tynamo.security.internal.services.LoginContextService;
 
 /**
  * Basic security interface for synchonizing the login/logout functions with the
  * creation/destruction of related session state objects. Some implementations
- * may also provide authentication.  Others will integrate with 3rd Party authenticators, like Shiro Realms.
+ * may also provide authentication. Others will integrate with 3rd Party
+ * authenticators, like Shiro Realms.
  * 
  * @author karesti, djue
  */
@@ -49,4 +52,11 @@ public interface AuthenticatorHelper {
 	 */
 	@Log
 	void logout();
+
+	Object loginAndRedirect(String loginMessage, String grapheneLogin,
+			String graphenePassword, boolean grapheneRememberMe,
+			RequestGlobals requestGlobals,
+			LoginContextService loginContextService);
+
+	void loginAuthenticatedUser(String username);
 }

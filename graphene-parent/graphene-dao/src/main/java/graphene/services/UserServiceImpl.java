@@ -36,39 +36,37 @@ import org.slf4j.Logger;
  */
 public class UserServiceImpl implements G_UserDataAccess {
 	@Inject
+	private GroupDAO gDao;
+	@Inject
+	private Logger logger;
+	PasswordHash passwordHasher = new PasswordHash();
+	@Inject
 	private PermissionDAO pDao;
 	@Inject
 	private RoleDAO rDao;
 	@Inject
-	private GroupDAO gDao;
-	@Inject
-	private Logger logger;
-	@Inject
 	private UserDAO uDao;
 	@Inject
-	private WorkspaceDAO wDao;
+	private UserGroupDAO ugDao;
 	@Inject
 	private UserWorkspaceDAO uwDao;
-	@Inject
-	private UserGroupDAO ugDao;
 
-	PasswordHash passwordHasher = new PasswordHash();
+	@Inject
+	private WorkspaceDAO wDao;
 
 	@Override
-	public G_Workspace addNewWorkspaceForUser(String userId, G_Workspace workspace) {
+	public G_Workspace addNewWorkspaceForUser(String userId,
+			G_Workspace workspace) {
 		// save the workspace
 		try {
 			G_Workspace w = wDao.save(workspace);
 			if (w == null) {
 				logger.error("Could not create new workspace");
 			} else {
-				G_UserWorkspace relation = new G_UserWorkspace();
-				relation.setWorkspaceId(workspace.getId());
-				relation.setUserId(userId);
-				relation.setRole(G_UserSpaceRelationshipType.EDITOR_OF);
-				relation = uwDao.save(relation);
-				// add user as editor
-				if (relation == null) {
+				boolean success = uwDao.addRelationToWorkspace(userId,
+						G_UserSpaceRelationshipType.EDITOR_OF,
+						workspace.getId());
+				if (!success) {
 					logger.error("Could not create editor relationship for workspace");
 				}
 			}
@@ -111,28 +109,16 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 	@Override
 	public G_Workspace createFirstWorkspaceForUser(String userId) {
-
 		G_Workspace w = createTempWorkspaceForUser(userId);
 		w.setTitle("First Workspace");
-		G_Workspace workspace = wDao.save(w);
-		if (ValidationUtils.isValid(workspace)) {
-			G_UserWorkspace relation = new G_UserWorkspace();
-			relation.setWorkspaceId(workspace.getId());
-			relation.setUserId(userId);
-			relation.setRole(G_UserSpaceRelationshipType.CREATOR_OF);
-			relation = uwDao.save(relation);
-			G_UserWorkspace relation2 = new G_UserWorkspace();
-			relation.setWorkspaceId(workspace.getId());
-			relation.setUserId(userId);
-			relation.setRole(G_UserSpaceRelationshipType.EDITOR_OF);
-			relation2 = uwDao.save(relation2);
-
-			// uwDao.addRelationToWorkspace(userId,
-			// G_UserSpaceRelationshipType.CREATOR_OF, workspace.getId());
-			// uwDao.addRelationToWorkspace(userId,
-			// G_UserSpaceRelationshipType.EDITOR_OF, workspace.getId());
+		w = wDao.save(w);
+		if (ValidationUtils.isValid(w)) {
+			uwDao.addRelationToWorkspace(userId,
+					G_UserSpaceRelationshipType.CREATOR_OF, w.getId());
+			uwDao.addRelationToWorkspace(userId,
+					G_UserSpaceRelationshipType.EDITOR_OF, w.getId());
 		}
-		return workspace;
+		return w;
 	}
 
 	@Override
@@ -196,7 +182,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 	public List<G_Workspace> findWorkspaces(String userId, String partialName,
 			int offset, int limit) {
 		// TODO: Put business logic here to let admins see all workspaces.
-		return wDao.findWorkspaces(userId, partialName, offset, limit);
+		return uwDao.getWorkspacesForUser(userId);
 	}
 
 	@Override
@@ -210,6 +196,17 @@ public class UserServiceImpl implements G_UserDataAccess {
 	public G_User getByUsername(String username) {
 		// TODO: Put business logic here to let admins see all users.
 		return uDao.getByUsername(username);
+	}
+
+	@Override
+	public List<G_Permission> getPermissionsByRole(G_Role role)
+			throws AvroRemoteException {
+		return pDao.getForRole(role);
+	}
+
+	@Override
+	public List<G_Role> getRolesByUser(String id) throws AvroRemoteException {
+		return rDao.getForUser(id);
 	}
 
 	@Override
@@ -251,6 +248,23 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
+	public List<G_Workspace> getWorkspacesOrCreateNewForUser(String userId)
+			throws AvroRemoteException {
+		List<G_Workspace> workspaces = getWorkspacesForUser(userId);
+		if (workspaces.size() == 0) {
+			G_Workspace g = createFirstWorkspaceForUser(userId);
+			workspaces.add(g);
+		}
+		return workspaces;
+	}
+
+	@Override
+	public G_User loginAuthenticatedUser(String userId)
+			throws AvroRemoteException, AuthenticationException {
+		return uDao.loginAuthenticatedUser(userId);
+	}
+
+	@Override
 	public G_User loginUser(String userId, String password)
 			throws AuthenticationException {
 		G_User u = uDao.loginUser(userId, password);
@@ -262,20 +276,35 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public G_User registerUser(G_User d) {
+	public G_User registerUser(G_User d, String password,
+			boolean createWorkspace) throws AvroRemoteException {
 		// Perform any business logic
 		if (ValidationUtils.isValid(d)) {
 			if (!ValidationUtils.isValid(d.getAvatar())) {
 				d.setAvatar("unknown.png");
 			}
-
+			try {
+				String hash = passwordHasher.createHash(password);
+				d.setHashedpassword(hash);
+			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error("Could not store hashed password for new user registration");
+			}
 			d.setActive(true);
-
 			d.setLastlogin(0l);
 			d.setNumberlogins(0);
-			return uDao.save(d);
+			d = uDao.save(d);
+			if (ValidationUtils.isValid(d)) {
+				logger.debug("User registered!");
+			} else {
+				logger.error("Error registering new user!");
+			}
+		} else {
+			logger.error("Could not register null user!");
 		}
-		return null;
+
+		return d;
 	}
 
 	@Override
@@ -337,32 +366,10 @@ public class UserServiceImpl implements G_UserDataAccess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(!success){
+		if (!success) {
 			logger.error("Problem saving password hash");
 		}
 		return success;
-	}
-
-	@Override
-	public List<G_Workspace> getWorkspacesOrCreateNewForUser(String userId)
-			throws AvroRemoteException {
-		List<G_Workspace> workspaces = getWorkspacesForUser(userId);
-		if (workspaces.size() == 0) {
-			G_Workspace g = createFirstWorkspaceForUser(userId);
-			workspaces.add(g);
-		}
-		return workspaces;
-	}
-
-	@Override
-	public List<G_Role> getRolesByUser(String id) throws AvroRemoteException {
-		return rDao.getForUser(id);
-	}
-
-	@Override
-	public List<G_Permission> getPermissionsByRole(G_Role role)
-			throws AvroRemoteException {
-		return pDao.getForRole(role);
 	}
 
 	@Override
@@ -372,7 +379,13 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 	@Override
 	public boolean usernameExists(String username) throws AvroRemoteException {
-		return uDao.isExisting(username);
+		boolean exists = uDao.isExisting(username);
+		if (exists) {
+			logger.warn("Username already exists");
+		} else {
+			logger.info("Username has not been taken");
+		}
+		return exists;
 	}
 
 }

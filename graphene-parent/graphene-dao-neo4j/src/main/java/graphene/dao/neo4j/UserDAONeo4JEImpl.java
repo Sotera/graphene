@@ -4,9 +4,6 @@ import graphene.business.commons.exception.DataAccessException;
 import graphene.dao.UserDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.model.idl.AuthenticationException;
-import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EdgeType;
-import graphene.model.idl.G_GroupFields;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserFields;
 import graphene.util.ExceptionUtil;
@@ -20,20 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.traversal.Evaluators;
-import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.graphdb.traversal.Traverser;
 import org.slf4j.Logger;
 
 public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
@@ -312,24 +303,24 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return user;
 	}
 
-//	@Override
-//	public G_User save(G_User d) {
-//		try (Transaction tx = beginTx()) {
-//			Node n = getUserNodeById(d.getId());
-//			setSafeProperty(n, G_UserFields.created.name(), d.getCreated());
-//			setSafeProperty(n, G_UserFields.active.name(), d.getActive());
-//			setSafeProperty(n, G_UserFields.avatar.name(), d.getAvatar());
-//			setSafeProperty(n, G_UserFields.email.name(), d.getEmail());
-//			setSafeProperty(n, G_UserFields.fullname.name(), d.getFullname());
-//			setSafeProperty(n, G_UserFields.lastlogin.name(), d.getLastlogin());
-//			setSafeProperty(n, G_UserFields.username.name(), d.getUsername());
-//			tx.success();
-//			return userFunnel.from(n);
-//		} catch (Exception e) {
-//			logger.error(e.getMessage());
-//			return null;
-//		}
-//	}
+	// @Override
+	// public G_User save(G_User d) {
+	// try (Transaction tx = beginTx()) {
+	// Node n = getUserNodeById(d.getId());
+	// setSafeProperty(n, G_UserFields.created.name(), d.getCreated());
+	// setSafeProperty(n, G_UserFields.active.name(), d.getActive());
+	// setSafeProperty(n, G_UserFields.avatar.name(), d.getAvatar());
+	// setSafeProperty(n, G_UserFields.email.name(), d.getEmail());
+	// setSafeProperty(n, G_UserFields.fullname.name(), d.getFullname());
+	// setSafeProperty(n, G_UserFields.lastlogin.name(), d.getLastlogin());
+	// setSafeProperty(n, G_UserFields.username.name(), d.getUsername());
+	// tx.success();
+	// return userFunnel.from(n);
+	// } catch (Exception e) {
+	// logger.error(e.getMessage());
+	// return null;
+	// }
+	// }
 
 	public Node setPasswordHash(Node n, String password) {
 		// NOTE: Does not check to see if the password is a good one, only that
@@ -360,6 +351,11 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public G_User loginAuthenticatedUser(String id) {
+		return userFunnel.from(getUserNodeById(id));
 	}
 
 }

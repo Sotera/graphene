@@ -1,28 +1,16 @@
 package graphene.web.pages.pub;
 
-import java.io.IOException;
-
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.util.ExceptionUtil;
 import graphene.web.annotations.AnonymousAccess;
-import graphene.web.model.BusinessException;
 import graphene.web.pages.Index;
 import graphene.web.security.AuthenticatorHelper;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.util.SavedRequest;
-import org.apache.shiro.web.util.WebUtils;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
@@ -62,11 +50,9 @@ public class Register {
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
-	//
-	// @Inject
-	// private Authenticator authenticator;
+
 	@Inject
-	private G_UserDataAccess dao;
+	private G_UserDataAccess userDataAccess;
 
 	@Property
 	@Validate("required,email")
@@ -135,95 +121,15 @@ public class Register {
 	@Symbol(SecuritySymbols.REDIRECT_TO_SAVED_URL)
 	private boolean redirectToSavedUrl;
 
-	public Object loginNewRegisteredUser(String grapheneLogin,
-			String graphenePassword, boolean grapheneRememberMe)
-			throws IOException {
-
-		Subject currentUser = securityService.getSubject();
-
-		if (currentUser == null) {
-			logger.error("Subject can`t be null");
-			// throw new IllegalStateException("Subject can`t be null");
-			loginMessage = messages.get("AuthenticationError");
-			return null;
-		}
-		if (grapheneLogin.contains("@")) {
-			grapheneLogin = grapheneLogin.split("@")[0];
-		}
-
-		/**
-		 * We store the password entered into this token. It will later be
-		 * compared to the hashed version using whatever hashing routine is set
-		 * in the Realm.
-		 */
-		UsernamePasswordToken token = new UsernamePasswordToken(grapheneLogin.toLowerCase(),
-				graphenePassword);
-		token.setRememberMe(grapheneRememberMe);
-
-		try {
-			currentUser.login(token);
-		} catch (UnknownAccountException e) {
-			loginMessage = messages.get("AccountDoesNotExists");
-			return null;
-		} catch (IncorrectCredentialsException e) {
-			loginMessage = messages.get("WrongPassword");
-			return null;
-		} catch (LockedAccountException e) {
-			loginMessage = messages.get("AccountLocked");
-			return null;
-		} catch (AuthenticationException e) {
-			loginMessage = messages.get("AuthenticationError");
-			return null;
-		}
-		try {
-			authenticatorHelper.login(grapheneLogin, graphenePassword);
-		} catch (BusinessException e) {
-			loginMessage = messages.get("InternalAuthenticationError");
-			e.printStackTrace();
-			return null;
-		}
-
-		SavedRequest savedRequest = WebUtils
-				.getAndClearSavedRequest(requestGlobals.getHTTPServletRequest());
-
-		if (savedRequest != null
-				&& savedRequest.getMethod().equalsIgnoreCase("GET")) {
-			try {
-				response.sendRedirect(savedRequest.getRequestUrl());
-				return null;
-			} catch (IOException e) {
-				logger.warn("Can't redirect to saved request.");
-				return loginContextService.getSuccessPage();
-			}
-		} else if (redirectToSavedUrl) {
-			String requestUri = loginContextService.getSuccessPage();
-			if (!requestUri.startsWith("/")) {
-				requestUri = "/" + requestUri;
-			}
-			loginContextService.redirectToSavedRequest(requestUri);
-			return null;
-		}
-		// Cookie[] cookies =
-		// requestGlobals.getHTTPServletRequest().getCookies();
-		// if (cookies != null) for (Cookie cookie : cookies) if
-		// (WebUtils.SAVED_REQUEST_KEY.equals(cookie.getName())) {
-		// String requestUri = cookie.getValue();
-		// WebUtils.issueRedirect(requestGlobals.getHTTPServletRequest(),
-		// requestGlobals.getHTTPServletResponse(), requestUri);
-		// return null;
-		// }
-		return loginContextService.getSuccessPage();
-	}
-
 	@OnEvent(value = EventConstants.SUCCESS, component = "RegisterForm")
 	public Object proceedSignup() {
-		username=username.toLowerCase();
+		username = username.toLowerCase();
 		try {
-			if (dao.usernameExists(username)) {
+			if (userDataAccess.usernameExists(username)) {
 				registerForm.recordError(messages.get("error.userexists"));
 				return null;
 			} else {
-				
+
 				String fullName = firstName + " " + lastName;
 				G_User tempUser = new G_User();
 				tempUser.setFullname(fullName);
@@ -232,11 +138,18 @@ public class Register {
 
 				// Get the version that has been registered, because it will
 				// have added business logic.
-				if ((tempUser = dao.registerUser(tempUser)) != null) {
-					// tempUser = null;
-					dao.setUserPassword(tempUser.getId(), password);
+				tempUser = userDataAccess.registerUser(tempUser, password, true);
+				if (tempUser != null) {
+					authenticatorHelper.logout();
+					manager.alert(Duration.TRANSIENT, Severity.SUCCESS,
+							"You are being logged in.");
 					
-					return loginNewRegisteredUser(username, password, true);
+					return authenticatorHelper.loginAndRedirect(loginMessage,
+							username, password, true, requestGlobals, loginContextService);
+				} else {
+					logger.error("An error occured while registering the user.");
+					manager.alert(Duration.SINGLE, Severity.ERROR,
+							"An error occured while registering the user.");
 				}
 				return Index.class;
 			}

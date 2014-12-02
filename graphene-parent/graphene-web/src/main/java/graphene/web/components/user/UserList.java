@@ -40,7 +40,7 @@ public class UserList {
 	// Generally useful bits and pieces
 
 	@Inject
-	private G_UserDataAccess userFinderService;
+	private G_UserDataAccess userDataAccess;
 
 	@Inject
 	private ComponentResources componentResources;
@@ -68,7 +68,7 @@ public class UserList {
 	// Getters
 
 	public GridDataSource getPersons() {
-		return new UserFilteredDataSource(userFinderService, partialName);
+		return new UserFilteredDataSource(userDataAccess, partialName);
 	}
 
 	public boolean isAjax() {

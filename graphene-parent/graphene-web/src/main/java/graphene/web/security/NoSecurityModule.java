@@ -10,14 +10,11 @@ import org.apache.tapestry5.ioc.IOCSymbols;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateCreator;
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.validator.ValidatorMacro;
-import org.tynamo.security.Security;
 import org.tynamo.security.SecuritySymbols;
 import org.tynamo.security.services.SecurityFilterChainFactory;
 import org.tynamo.security.services.SecurityModule;
@@ -26,7 +23,6 @@ import org.tynamo.security.services.impl.SecurityFilterChain;
 @SubModule({ SecurityModule.class })
 public class NoSecurityModule {
 	public static void bind(ServiceBinder binder) {
-
 		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class)
 				.eagerLoad();
 		binder.bind(Realm.class, NoSecurityRealm.class).eagerLoad();

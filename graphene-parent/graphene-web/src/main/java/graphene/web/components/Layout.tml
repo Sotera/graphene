@@ -1,126 +1,135 @@
 <!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
-	<head>
+<head>
 
-		<meta charset="utf-8" />
-		<!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> -->
+<meta charset="utf-8" />
+<!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> -->
 
-		<title> ${appName} ${appVersion} ${page}</title>
-		<meta name="description" content="${appName} ${appVersion}" />
-		<meta name="keyword" content="${appName}" />
-
-
-		<meta name="HandheldFriendly" content="True" />
-		<meta name="MobileOptimized" content="320" />
-		<meta name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
-		<!-- FAVICONS -->
-		<link rel="shortcut icon" href="${context:core/img/favicon/favicon.ico}"
-			type="image/x-icon" />
-		<link rel="icon" href="${context:core/img/favicon/favicon.ico}" type="image/x-icon" />
+<title>${appName} ${appVersion} ${page}</title>
+<meta name="description" content="${appName} ${appVersion}" />
+<meta name="keyword" content="${appName}" />
 
 
+<meta name="HandheldFriendly" content="True" />
+<meta name="MobileOptimized" content="320" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	</head>
+<!-- FAVICONS -->
+<link rel="shortcut icon" href="${context:core/img/favicon/favicon.ico}"
+	type="image/x-icon" />
+<link rel="icon" href="${context:core/img/favicon/favicon.ico}"
+	type="image/x-icon" />
 
 
-	<body class=""> <!-- possible classes: minified, fixed-ribbon, fixed-header, fixed-width -->
-		<noscript class="js-required">
-			${message:javascript_required}
-		</noscript>
-		<t:jquery.jgrowl />
-		<!-- HEADER -->
-		<div t:type="graphene/navigation/header" t:user="user"></div>
-		<!-- END HEADER -->
 
-		<!-- Left panel : Navigation area -->
-		<t:graphene.navigation.menu t:user="user" />
-		<!-- END NAVIGATION -->
-		<!-- SHORTCUT AREA : With large tiles (activated via clicking user name 
+</head>
+
+
+<body class="">
+	<!-- possible classes: minified, fixed-ribbon, fixed-header, fixed-width -->
+	<noscript class="js-required">
+		${message:javascript_required}</noscript>
+	<t:jquery.jgrowl />
+	<!-- HEADER -->
+	
+
+	<div t:type="graphene/navigation/header" t:user="user"></div>
+	<!-- END HEADER -->
+
+	<!-- Left panel : Navigation area -->
+	<t:graphene.navigation.menu t:user="user" />
+
+	<!-- END NAVIGATION -->
+	<!-- SHORTCUT AREA : With large tiles (activated via clicking user name 
 			tag) Note: These tiles are completely responsive, you can add as many as 
 			you like -->
-		<div t:type="graphene/navigation/shortcutsMenu" t:user="user"></div>
-		<!-- END SHORTCUT AREA -->
-		<!-- MAIN PANEL -->
-		<div id="main" role="main">
+	<div t:type="graphene/navigation/shortcutsMenu" t:user="user"></div>
+	<!-- END SHORTCUT AREA -->
+	<!-- MAIN PANEL -->
+	<div id="main" role="main">
 
-			<!-- RIBBON -->
-			<div t:type="graphene/navigation/ribbon"></div>
-			<!-- END RIBBON -->
+		<!-- RIBBON -->
+		<div t:type="graphene/navigation/ribbon"></div>
+		<!-- END RIBBON -->
 
-			<!-- MAIN CONTENT -->
-			<div id="content">
+		<!-- MAIN CONTENT -->
+		<div id="content">
 
-				<t:body />
-
-			</div>
-			<!-- END MAIN CONTENT -->
+			<t:body />
 
 		</div>
-		<!-- END MAIN PANEL -->
+		<!-- END MAIN CONTENT -->
 
-		<!--================================================== -->
+	</div>
+	<!-- END MAIN PANEL -->
 
-		<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: 
+	<!--================================================== -->
+
+	<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: 
 			uses lots of memory on iDevices) <script data-pace-options='{ "restartOnRequestAfter": 
 			true }' src="js/plugin/pace/pace.min.js"></script> -->
-		<script data-pace-options='{ "restartOnRequestAfter": true }'
-			src="${context:/core/js/plugin/pace/pace.min.js}" />
+	<script data-pace-options='{ "restartOnRequestAfter": true }'
+		src="${context:/core/js/plugin/pace/pace.min.js}" />
 
 
-		<!-- JS TOUCH : include this plugin for mobile drag / drop touch events 
+	<!-- JS TOUCH : include this plugin for mobile drag / drop touch events 
 			<script src="js/plugin/jquery-touch/jquery.ui.touch-punch.min.js"></script> -->
 
-		<!-- BOOTSTRAP JS -->
-		<script src="${context:/core/js/bootstrap/bootstrap.min.js}" />
+	<!-- BOOTSTRAP JS -->
+	<script src="${context:/core/js/bootstrap/bootstrap.min.js}" />
 
-		<!-- CUSTOM NOTIFICATION -->
-		<script src="${context:/core/js/notification/GNotification.min.js}" />
+	<!-- CUSTOM NOTIFICATION -->
+	<script src="${context:/core/js/notification/GNotification.min.js}" />
 
-		<!-- JARVIS WIDGETS -->
-		<script src="${context:/core/js/gwidgets/g.widget.js}" />
+	<!-- JARVIS WIDGETS -->
+	<script src="${context:/core/js/gwidgets/g.widget.js}" />
 
-		<!-- EASY PIE CHARTS -->
-		<script src="${context:/core/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js}" />
+	<!-- EASY PIE CHARTS -->
+	<script
+		src="${context:/core/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js}" />
 
-		<!-- SPARKLINES -->
-		<script src="${context:/core/js/plugin/sparkline/jquery.sparkline.min.js}" />
+	<!-- SPARKLINES -->
+	<script
+		src="${context:/core/js/plugin/sparkline/jquery.sparkline.min.js}" />
 
-		<!-- JQUERY VALIDATE -->
-		<script src="${context:/core/js/plugin/jquery-validate/jquery.validate.min.js}" />
+	<!-- JQUERY VALIDATE -->
+	<script
+		src="${context:/core/js/plugin/jquery-validate/jquery.validate.min.js}" />
 
-		<!-- JQUERY MASKED INPUT -->
-		<script src="${context:/core/js/plugin/masked-input/jquery.maskedinput.min.js}" />
+	<!-- JQUERY MASKED INPUT -->
+	<script
+		src="${context:/core/js/plugin/masked-input/jquery.maskedinput.min.js}" />
 
-		<!-- JQUERY SELECT2 INPUT -->
-		<script src="${context:/core/js/plugin/select2/select2.min.js}" />
+	<!-- JQUERY SELECT2 INPUT -->
+	<script src="${context:/core/js/plugin/select2/select2.min.js}" />
 
-		<!-- JQUERY UI + Bootstrap Slider -->
-		<script src="${context:/core/js/plugin/bootstrap-slider/bootstrap-slider.min.js}" />
+	<!-- JQUERY UI + Bootstrap Slider -->
+	<script
+		src="${context:/core/js/plugin/bootstrap-slider/bootstrap-slider.min.js}" />
 
-		<!-- browser msie issue fix -->
-		<script src="${context:/core/js/plugin/msie-fix/jquery.mb.browser.min.js}" />
+	<!-- browser msie issue fix -->
+	<script
+		src="${context:/core/js/plugin/msie-fix/jquery.mb.browser.min.js}" />
 
-		<script src="${context:/core/js/demo.js}" />
-		<script src="${context:/core/js/app.js}" />
-		
-		<script type="text/javascript">
-			function logout() {
-			window.location =
-			'${LogoutEventLink}';
-			};
-		</script>
-		<script type="text/javascript">
-			// DO NOT REMOVE : GLOBAL FUNCTIONS!
-			pageSetUp();
+	<script src="${context:/core/js/demo.js}" />
+	<script src="${context:/core/js/app.js}" />
 
-			// PAGE RELATED SCRIPTS
+	<script type="text/javascript">
+		function logout() {
+			window.location = '${LogoutEventLink}';
+		};
+	</script>
+	<script type="text/javascript">
+		// DO NOT REMOVE : GLOBAL FUNCTIONS!
+		pageSetUp();
 
-		</script>
-	</body>
+		// PAGE RELATED SCRIPTS
+	</script>
+</body>
 
 
 </html>
