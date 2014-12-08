@@ -51,34 +51,42 @@ Ext.define("DARPA.AbstractNodeDisplay", {
 	getStopButton: function() 		{ return Ext.getCmp(this.id + "-Actions").getStopButton(); },
     
 	enablePivot:function(enable) {
-		var self = this;
-		var button = self.getPivotButton();
-		
-		if (enable) {
-			button.enable();
-		} else {
-			button.disable();
-		}
+		var button = this.getPivotButton();
+		(enable === true) ? button.enable() : button.disable();
+	},
+	
+	enableUnPivot: function(enable) {
+		var button = this.getUnPivotButton();
+		(enable === true) ? button.enable() : button.disable();
 	},
 	
 	enableHide:function(enable) {
-		var self = this;
-		var button = self.getHideButton();
-		
-		if (enable) {
-			button.enable();
-		} else {
-			button.disable();
-		}
+		var button = this.getHideButton();
+		(enable === true) ? button.enable() : button.disable();
+	},
+	
+	enableUnHide: function(enable) {
+		var button = this.getUnHideButton();
+		(enable === true) ? button.enable() : button.disable();
+	},
+	
+	enableExpand: function(enable) {
+		var button = this.getExpandButton();
+		(enable === true) ? button.enable() : button.disable();
+	},
+	
+	enableUnExpand: function(enable) {
+		var button = this.getShowButton();
+		(enable === true) ? button.enable() : button.disable();
 	},
 	
 	enableShow:function(enable) {
-		var self = this;
-		var button = self.getShowButton();
-		if (enable) {
-			button.enable();
-		} else {
-			button.disable();
-		}
+		var button = this.getHideButton();
+		(enable === true) ? button.enable() : button.disable();
+	},
+	
+	enableStop: function(enable) {
+		var button = this.getStopButton();
+		(enable === true) ? button.enable() : button.disable();
 	}
 });
