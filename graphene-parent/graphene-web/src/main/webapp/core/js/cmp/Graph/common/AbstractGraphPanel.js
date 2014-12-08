@@ -145,7 +145,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	
 	// why is this even here?
 	applySettings: function() {
-		this.load(this.prevLoadPrams.value); 
+		this.load(this.prevLoadParams.value); 
 	},
 	
 	afterLayout: function() {

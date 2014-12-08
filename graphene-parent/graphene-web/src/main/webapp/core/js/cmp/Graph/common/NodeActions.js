@@ -137,12 +137,19 @@ Ext.define("DARPA.Node_Actions", {
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
 					var nodes = graph.GraphVis.gv.$("node:selected");
-					if (nodes.length > 0) {
+					if (nodes.length == 1) {
+						/* FIXME: this makes consecutive REST calls;  change REST service to expand on an
+						 	array of nodes instead of just one */
 						but.disable();
 						nodes.each(function(i, n) {
 							graph.expand(n);
 						});
 						but.enable();
+					} else {
+						var msg = (nodes.length == 0) ?
+							"You must first select a node before you can attempt to expand it" :
+							"Please select only one node before attempting to expand the graph.";
+						Ext.Msg.alert("Warning", msg);
 					}
 
 					/* uncomment once the selection manager is implemented *//*
@@ -172,6 +179,7 @@ Ext.define("DARPA.Node_Actions", {
 				if (graph) {
 					var nodes = graph.GraphVis.gv.$("node:selected");
 					if (nodes.length > 0) {
+						// unexpand does not hit a REST service; iterate all you want
 						but.disable();
 						nodes.each(function(i, n) {
 							graph.unexpand(n);
