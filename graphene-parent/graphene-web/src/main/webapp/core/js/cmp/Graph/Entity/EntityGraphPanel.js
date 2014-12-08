@@ -194,7 +194,8 @@ Ext.define("DARPA.EntityGraphPanel", {
 					self.clear();
 					return;
 				}
-				
+
+				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;;
 
 				// results could be empty, check for this here
