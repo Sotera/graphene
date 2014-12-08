@@ -34,16 +34,7 @@ Ext.define("DARPA.Node_Actions", {
 					if (unpivot) {
 						unpivot.enable();
 					};
-					if (but) {
-						but.disable();
-					};
 					graph.pivot(nodes[0]);
-
-					// DRAPER API
-					// Send a User Activity Message with optional metadata
-					//activityLogger.logUserActivity('Pivot on Selected Node', 'PB Graph Tab', activityLogger.WF_OTHER, 
-					//    {'Tab':'PB Graph', 'action': 'Pivot', 'selectedNode': node.data().name });
-
 				} else {
 					var msg = (nodes.length == 0) ?
 						"You must first select a node before you can attempt to pivot the graph." :
@@ -81,11 +72,6 @@ Ext.define("DARPA.Node_Actions", {
 							unhide.setDisabled(false);
 						};
 					}
-
-					// DRAPER API
-					// Send a User Activity Message with optional metadata
-					//activityLogger.logUserActivity('Hide Selected Node', 'PB Graph Tab', activityLogger.WF_OTHER, 
-					//    {'Tab':'PB Graph', 'action': 'Hide', 'selectedNode': node.data().name });
 				};
 			} // handler
 		}); // hide
@@ -107,17 +93,15 @@ Ext.define("DARPA.Node_Actions", {
 					if (pivot) {
 						pivot.enable();
 					}
-					if (but) {
+					graph.unpivot();
+					
+					/* if there are no more prev ids to unpivot on (reached bottom of stack), 
+						disable the unpivot button */
+					if (but && graph.previousPivotIds.length == 0) {
 						but.disable();
 					}
-					graph.unpivot('customer');
 
-					// DRAPER API
-					// Send a User Activity Message with optional metadata
-					//activityLogger.logUserActivity('Pivot on Selected Node', 'PB Graph Tab', activityLogger.WF_OTHER, 
-					//    {'Tab':'PB Graph', 'action': 'Pivot', 'selectedNode': node.data().name });
-
-				}; // if node
+				} // if node
 			} // handler
 		}); // unpivot
 
@@ -136,15 +120,9 @@ Ext.define("DARPA.Node_Actions", {
 				if (graph) {
 					graph.GraphVis.showAll();
 					but.setDisabled(true);
-					
-					// DRAPER API
-					// Send a User Activity Message with optional metadata
-					//activityLogger.logUserActivity('UNHide Selected Node', 'PB Graph Tab', activityLogger.WF_OTHER, 
-					//    {'Tab':'PB Graph', 'action': 'UNHide', 'selectedNode': gf.prevNode.name });
-				}; // if graph
+				} // if graph
 			} // handler
-		} // extend config
-		); // extend
+		}); // unhide
 
 		var expand = Ext.create("Ext.Button", {
 		    text:'EXPAND',
@@ -158,10 +136,12 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					var node = graph.currentNode;
-					if (node) {
+					var nodes = graph.GraphVis.gv.$("node:selected");
+					if (nodes.length > 0) {
 						but.disable();
-						graph.expand(node); // expand out 1 hop from this node
+						nodes.each(function(i, n) {
+							graph.expand(n);
+						});
 						but.enable();
 					}
 
@@ -174,14 +154,9 @@ Ext.define("DARPA.Node_Actions", {
 						}
 						but.enable();
 					*/
-					
-					// DRAPER API
-					// Send a User Activity Message with optional metadata
-					//activityLogger.logUserActivity('Expand Selected Node', 'PB Graph Tab', activityLogger.WF_SEARCH, 
-					//    {'Tab':'PB Graph', 'action': 'Expand', 'selectedNode': node.data().name });
 				}
 		    }
-		});
+		}); // expand
 
 		var unexpand = Ext.create("Ext.Button", {
 		    text:'UNEXPAND',
@@ -195,10 +170,12 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					var node = graph.currentNode;
-					if (node) {
+					var nodes = graph.GraphVis.gv.$("node:selected");
+					if (nodes.length > 0) {
 						but.disable();
-						graph.unexpand(node);
+						nodes.each(function(i, n) {
+							graph.unexpand(n);
+						});
 						but.enable();
 					}
 
@@ -213,14 +190,9 @@ Ext.define("DARPA.Node_Actions", {
 						but.enable();
 						graph.SM.clear();
 					*/
-					
-					// DRAPER API
-					// Send a User Activity Message with optional metadata
-					//activityLogger.logUserActivity('Expand Selected Node', 'PB Graph Tab', activityLogger.WF_SEARCH, 
-					//    {'Tab':'PB Graph', 'action': 'Expand', 'selectedNode': node.data().name });
 				}
 		    }
-		});
+		}); // unexpand
 		
 		var show = Ext.create("Ext.Button", {
 			text:'SHOW',
@@ -243,7 +215,7 @@ Ext.define("DARPA.Node_Actions", {
 					Ext.Msg.alert("Warning", "You must first select one or more nodes before you can create its tab");
 				}
 		    }
-		});
+		}); // show
 
 		var stop = Ext.create("Ext.Button", {
 			text: "HALT",
@@ -270,7 +242,7 @@ Ext.define("DARPA.Node_Actions", {
 						break;
 				}
 			}
-		});
+		}); // stop
 		
 		var deleteBtn = Ext.create("Ext.Button", {
 			text: "DELETE",
@@ -296,7 +268,7 @@ Ext.define("DARPA.Node_Actions", {
 					}
 				}
 			}
-		});
+		}); // delete
 		
 		var unmerge = Ext.create("Ext.Button", {
 			text: "UNMERGE",
@@ -316,7 +288,7 @@ Ext.define("DARPA.Node_Actions", {
 					graph.givePromptToUnmerge(nodes);
 				}
 			}
-		});
+		}); // unmerge
 		
 		var help = Ext.create("Ext.Button", {
 		    icon: Config.helpIcon,
@@ -343,11 +315,6 @@ Ext.define("DARPA.Node_Actions", {
 				   "<p><b>Halt</b>: Stop a procedurally-generated layout in process.</p>" +
 				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>"
 			    );
-		
-			    // DRAPER API
-				// Send a User Activity Message with optional metadata
-			       // activityLogger.logUserActivity('View ACTIONS Help', 'PB Graph Tab', activityLogger.WF_OTHER, 
-			       //     {'Tab':'PB Graph', 'action': 'ACTIONS Help', 'selectedNode': 'NA' });
 			}
 		});
 		

@@ -104,7 +104,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 		var degree = parseInt(hops) + 1;
 		
         self.prevLoadParams.searchNumber = custno;
-        self.prevLoadParams.prevNumber = self.prevLoadParams.number;
+        self.prevLoadParams.prevValue = custno;
         self.prevLoadParams.number = custno;
         
         this.getProgressBar().wait({

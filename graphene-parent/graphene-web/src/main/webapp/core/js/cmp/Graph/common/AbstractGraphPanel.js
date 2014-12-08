@@ -20,6 +20,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	json1Hop: null,
 	
 	serviceURL: "",
+	previousPivotIds: [],
 	
 	prevLoadParams: {
 		searchValue: null,
@@ -495,15 +496,16 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	
 	pivot: function(node) {
 		var self = this;
-		//self.prevLoadParams.type = 'customer';
-		self.prevLoadParams.prevValue = node.data("idVal");
-		self.load(self.prevLoadParams.prevValue);
+		var id = node.data("idVal");
+		self.previousPivotIds.push(self.prevLoadParams.prevValue);
+		self.load(id);
 	},
 	
 	unpivot: function() {
-		var idValue = self.prevLoadParams.prevValue;
-		if (idValue) {
-			this.load(idValue);
+		var self = this;
+		var prevId = self.previousPivotIds.pop();
+		if (typeof prevId !== "undefined") {
+			this.load(prevId);
 		}
 	},
 	
