@@ -119,15 +119,19 @@ Ext.define("DARPA.EntityGraphPanel", {
 
 				self.getProgressBar().reset();
 
-				if (success == false) {
-					self.setStatus("Search failed due to server error.");
+				if (success == false || records == null || records.length == 0) {
+					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH");
+					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
+					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
 					self.clear();
 					return;
 				}
-				
+
+				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;
+				
 				if (self.json && self.json.nodes.length == 0) {
-					self.setStatus("No data was found for this identifier.");
+					self.setStatus("NO DATA FOUND TO PLOT");
 					// self.clear(); // don't clear what is already shown
 				} else {
 					if (self.GraphVis.getGv() != null) {
@@ -170,50 +174,56 @@ Ext.define("DARPA.EntityGraphPanel", {
 		self.json1Hop = null; // prevents us from trying to display the previous graph if we switch to this tab before we have fully loaded the new graph
 		self.json1HopNode = node;
 
+		self.getProgressBar().wait({
+        	interval: 1000,
+        	duration: 90000,
+        	increment: 10,
+        	text: "Expanding..."
+        });
+		
 		graphStore.load({
 			scope : this, // ?
 			callback : function(records, operation, success) {
 
-				if (success == false) {
-					alert("Failed to retrieve graph results due to a server error. Please contact your System Administrator."); // MFM
-					self.json1HopNode = null;
-					if (pb) {
-						pb.updateText("Search failed due to server error.");
-						pb.reset();
-					}
-					// don't alter or clear the existing graph
-				} else {
-					var graph = records[0].raw;
-					self.json1Hop = graph;
-
-					// results could be empty, check for this here
-					if (self.json1Hop && self.json1Hop.nodes.length <= 2) { 
-						// don't include this node already connected to another node in the graph
-						alert("No additional items were found for this id.");
-						self.json1HopNode = null;
-						// don't alter the existing graph
-					} else {
-						if (self.json1Hop.length > maxNewCallsAlertThresh) {
-							Ext.Msg.confirm(
-								'Confirm',
-								'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
-								function(ans) {
-									if (ans == 'yes') {
-										self.showjson1Hop(true);
-									}
-								}
-							);
-						} else {
-							self.showjson1Hop(true);
-						}
-					}
-
-					var nodeCount = self.json.nodes.length;
-					self.appendTabTitle("(" + nodeCount.toString() + ")");
-					
-					// Update title to display the communicationId value and value of nodes found
-					// self.updateTitle(graph.nodes.length, self.prevLoadParams.value );
+				self.getProgressBar().reset();
+				
+				if (success == false || records == null || records.length == 0) {
+					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH");
+					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
+					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
+					self.clear();
+					return;
 				}
+				
+				self.json = records[0].raw;;
+
+				// results could be empty, check for this here
+				if (self.json && self.json.nodes.length <= 2) { 
+					self.setStatus("No additional items were found for this id.");
+					self.json1HopNode = null;
+					// don't alter the existing graph
+				} else {
+					// should be self.json.nodes.length
+					if (self.json.length > maxNewCallsAlertThresh) {
+						Ext.Msg.confirm(
+							'Confirm',
+							'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
+							function(ans) {
+								if (ans == 'yes') {
+									self.GraphVis.showGraph1Hop(self.json, node);
+								}
+							}
+						);
+					} else {
+						self.GraphVis.showGraph1Hop(self.json, node);
+					}
+				}
+
+				var nodeCount = self.json.nodes.length;
+				self.appendTabTitle("(" + nodeCount.toString() + ")");
+				
+				// Update title to display the communicationId value and value of nodes found
+				// self.updateTitle(graph.nodes.length, self.prevLoadParams.value );
 			}
 		});
 	},
@@ -225,7 +235,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 		nodeDisp.showNodeAttrs(node);
 		var type = node.data().idType;
 		var isEntity = false;
-		if (typeof isPivotableType !== "undefined") {
+		if (typeof isPivotableType == "function") {
 			// isPivotableType is a global function found in .html
 			isEntity = isPivotableType(type);
 		} else {

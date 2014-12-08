@@ -119,7 +119,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 		graphStore.proxy.extraParams.Type = 'account';
         
 		graphStore.load({
-			scope:this, //?
+			scope: this, //?
 			callback: function(records,operation,success) {
 				self.getProgressBar().reset();
 				
@@ -128,22 +128,23 @@ Ext.define("DARPA.TransactionGraphPanel", {
 					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
 					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
 					self.clear();
-				} else {
-					self.setStatus("LOADED DATA", 1);
-					self.json=records[0].raw;
-
-					if (self.json && self.json.nodes.length == 0) {
-						self.setStatus("NO DATA FOUND TO PLOT");
-					} else { 
-						if (self.GraphVis.getGv() != null) {
-							self.clear();
-							self.showjson(self.prevLoadParams.number);
-						}
-					}
-
-					var nodeCount = self.json.nodes.length;
-					self.appendTabTitle("(" + nodeCount.toString() + ")");
+					return;
 				}
+				
+				self.setStatus("LOADED DATA", 1);
+				self.json=records[0].raw;
+
+				if (self.json && self.json.nodes.length == 0) {
+					self.setStatus("NO DATA FOUND TO PLOT");
+				} else { 
+					if (self.GraphVis.getGv() != null) {
+						self.clear();
+						self.showjson(self.prevLoadParams.number);
+					}
+				}
+				
+				var nodeCount = self.json.nodes.length;
+				self.appendTabTitle("(" + nodeCount.toString() + ")");
 			}
 		});
 	},
@@ -190,35 +191,36 @@ Ext.define("DARPA.TransactionGraphPanel", {
 					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
 					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
 					self.clear();
-				} else {
-					var graph = records[0].raw;
-					self.json = graph;
-					self.setStatus("LOADED DATA", 1);
-
-					// results could be empty, check for this here
-					if (self.json && self.json.nodes.length <= 2) { 
-						//  don't include this node already connected to another node in the graph
-						self.setStatus("No additional items were found for this id.");
-						self.json1HopNode = null;
-						// don't alter the existing graph
-					} else {
-						if (self.json.length > maxNewCallsAlertThresh) {
-							Ext.Msg.confirm('Confirm', 
-								'This number has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display.\n' + 
-								'Do you want to continue displaying it?', 
-								function(ans) {
-									if (ans == 'yes') {
-										self.GraphVis.showGraph1Hop(self.json, node);
-									}
-								}
-							);
-						} else {
-							self.GraphVis.showGraph1Hop(self.json, node);
-						}
-					}
-					// Update title to display the communication id and number of nodes found 
-					//self.updateTitle(graph.nodes.length, self.prevLoadParams.number );
+					return;
 				}
+				
+				self.json = records[0].raw;
+				self.setStatus("LOADED DATA", 1);
+
+				// results could be empty, check for this here
+				if (self.json && self.json.nodes.length <= 2) { 
+					//  don't include this node already connected to another node in the graph
+					self.setStatus("No additional items were found for this id.");
+					self.json1HopNode = null;
+					// don't alter the existing graph
+				} else {
+					// should be self.json.nodes.length
+					if (self.json.length > maxNewCallsAlertThresh) {
+						Ext.Msg.confirm('Confirm', 
+							'This number has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display.\n' + 
+							'Do you want to continue displaying it?', 
+							function(ans) {
+								if (ans == 'yes') {
+									self.GraphVis.showGraph1Hop(self.json, node);
+								}
+							}
+						);
+					} else {
+						self.GraphVis.showGraph1Hop(self.json, node);
+					}
+				}
+				// Update title to display the communication id and number of nodes found 
+				//self.updateTitle(graph.nodes.length, self.prevLoadParams.number );
 			}
 		});
 	},
