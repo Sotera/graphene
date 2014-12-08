@@ -51,7 +51,7 @@ Ext.define("DARPA.DetailsViewer", {
 		var email_body = Ext.create("Ext.form.TextArea", {
 			value: "THIS IS BODY",
 			width: "100%",
-			height: '100%',
+			flex: 1,//height: '100%',
 			readOnly: true,
 			autoScroll: true
 		});
