@@ -2,6 +2,8 @@ package graphene.web.pages;
 
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idl.G_VisualType;
+import graphene.web.annotations.PluginPage;
 import graphene.web.pages.pub.Login;
 
 import org.apache.tapestry5.annotations.Component;
@@ -19,6 +21,7 @@ import org.tynamo.security.services.SecurityService;
  * 
  * @author djue
  */
+@PluginPage(visualType = G_VisualType.SETTINGS, menuName = "Profile", icon = "fa fa-lg fa-fw fa-list-alt")
 public class Settings {
 	@Inject
 	private G_UserDataAccess userDataAccess;

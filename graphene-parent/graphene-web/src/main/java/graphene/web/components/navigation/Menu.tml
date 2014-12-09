@@ -14,7 +14,7 @@
 			<span> <!-- User image size is adjusted inside CSS, it should stay as it -->
 
 				<img src="${avatar}" alt="me" class="online" /> <a
-				href="javascript:void(0);" id="show-shortcut"> ${user?.fullname}
+				href="javascript:void(0);" id="show-shortcut">${user?.fullname}
 					<i class="fa fa-angle-down"></i>
 			</a>
 			</span>
@@ -35,6 +35,32 @@
 						<i class="${page.second}"></i>
 						<span class="menu-item-parent"> ${page.third}</span>
 					</t:pagelink></li>
+				<t:if test="enableSettings">
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
+							<span class="menu-item-parent">Settings</span>
+					</a>
+						<ul>
+							<li class="" t:type="loop" source="settingsPages" value="page">
+								<t:pagelink page="prop:page.first">
+									<i class="${page.second}"></i>
+									<span class="menu-item-parent"> ${page.third}</span>
+								</t:pagelink>
+							</li>
+						</ul></li>
+				</t:if>
+				<t:if test="enableAdmin">
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
+							<span class="menu-item-parent">Admin</span>
+					</a>
+						<ul>
+							<li class="" t:type="loop" source="adminPages" value="page">
+								<t:pagelink page="prop:page.first">
+									<i class="${page.second}"></i>
+									<span class="menu-item-parent"> ${page.third}</span>
+								</t:pagelink>
+							</li>
+						</ul></li>
+				</t:if>
 				<t:if test="enableMisc">
 					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
 							<span class="menu-item-parent">Miscellaneous</span>

@@ -73,7 +73,7 @@
 			</div>
 
 			<!-- projects dropdown -->
-			<div t:type="graphene/recentworkspaces" t:user="user"></div>
+			<div t:type="graphene/navigation/recentworkspaces" t:user="user"></div>
 			<!-- end projects dropdown -->
 
 

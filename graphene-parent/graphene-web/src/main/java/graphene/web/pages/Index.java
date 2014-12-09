@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -33,8 +34,7 @@ public class Index extends SimpleBasePage {
 	@Inject
 	private G_UserDataAccess userDataAccess;
 
-	@Property
-	private List<G_Workspace> workspaces;
+
 
 	@Property
 	@Inject

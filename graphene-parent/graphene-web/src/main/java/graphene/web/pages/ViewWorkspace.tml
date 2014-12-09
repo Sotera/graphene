@@ -1,17 +1,20 @@
 <!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
 <html t:type="graphene/layout" title="View Workspace"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
-	<t:if test="currentWorkspace">
-		<h2>${currentWorkspace?.title}</h2>
-		<div>
-			Last Modified:
-			<t:graphene.jodatimeoutput value="currentWorkspace?.modified"
-				style="LL" />
-		</div>
-		<div t:type="outputraw" value="currentWorkspace?.json" />
-	</t:if>
-	<t:if test="currentWorkspace" negate="true">
-		Sorry, that workspace is not
-		available.
-	</t:if>
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+<t:if test="currentSelectedWorkspaceExists">
+	<h2>${currentSelectedWorkspace?.title}</h2>
+	<div>
+		<h3>Last Modified</h3>
+		<t:graphene.jodatimeoutput value="currentSelectedWorkspace?.modified"
+			style="LL" />
+	</div>
+	<div>
+		<h3>JSON</h3>
+		<div t:type="outputraw" value="currentSelectedWorkspace?.json" />
+	</div>
+
+	<p:else>Please select a workspace to view.
+		</p:else>
+</t:if>
 </html>

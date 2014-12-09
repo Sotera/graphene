@@ -3,8 +3,10 @@
  */
 package graphene.model.query;
 
-import graphene.model.enumeration.ValueEnum;
+import org.joda.time.DateTime;
+
 import graphene.util.DisplayUtil;
+import graphene.util.time.JodaTimeUtil;
 
 /**
  * @author djue
@@ -21,8 +23,18 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 */
 	private String dataSource;
 	private long firstResult = 0;
-
 	private long maxResult = 0;
+	/*
+	 * Used for logging and persistence purposes
+	 */
+	private String id = null;
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	/*
 	 * end date, in seconds since epoch
@@ -42,8 +54,16 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	private String schema;
 
 	private boolean sortAscending = true;
+
 	private String sortColumn;
-	private ValueEnum sortField;
+
+	private String sortField;
+
+	private long timeInitiated = DateTime.now().getMillis();
+
+	private String userId = "None";
+
+	private String userName = "None";
 
 	/**
 	 * 
@@ -90,6 +110,16 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 			if (other.sortField != null)
 				return false;
 		} else if (!sortField.equals(other.sortField))
+			return false;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		if (userName == null) {
+			if (other.userName != null)
+				return false;
+		} else if (!userName.equals(other.userName))
 			return false;
 		return true;
 	}
@@ -151,8 +181,20 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	/**
 	 * @return the sortField
 	 */
-	public final ValueEnum getSortField() {
+	public final String getSortField() {
 		return sortField;
+	}
+
+	public long getTimeInitiated() {
+		return timeInitiated;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public String getUserName() {
+		return userName;
 	}
 
 	@Override
@@ -171,6 +213,9 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 				+ ((sortColumn == null) ? 0 : sortColumn.hashCode());
 		result = prime * result
 				+ ((sortField == null) ? 0 : sortField.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result
+				+ ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
 
@@ -270,7 +315,29 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @param sortField
 	 *            the sortField to set
 	 */
-	public final void setSortField(ValueEnum sortField) {
+	public final void setSortField(String sortField) {
 		this.sortField = sortField;
+	}
+
+	public void setTimeInitiated(long timeInitiated) {
+		this.timeInitiated = timeInitiated;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	@Override
+	public String toString() {
+		return "BasicQuery [dataSource=" + dataSource + ", firstResult="
+				+ firstResult + ", maxResult=" + maxResult + ", maxSecs="
+				+ maxSecs + ", minSecs=" + minSecs + ", schema=" + schema
+				+ ", sortAscending=" + sortAscending + ", sortColumn="
+				+ sortColumn + ", sortField=" + sortField + ", userId="
+				+ userId + ", userName=" + userName + "]";
 	}
 }

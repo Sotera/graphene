@@ -1,4 +1,4 @@
-package graphene.web.pages;
+package graphene.web.pages.pub;
 
 import graphene.web.annotations.AnonymousAccess;
 

@@ -50,7 +50,7 @@ public class WorkspaceList {
 	// The code
 
 	@Inject
-	private AlertManager manager;
+	private AlertManager alertManager;
 
 	private BeanModel<G_Workspace> model;
 

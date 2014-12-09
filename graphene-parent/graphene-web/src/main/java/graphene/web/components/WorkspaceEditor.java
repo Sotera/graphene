@@ -634,7 +634,7 @@ public class WorkspaceEditor {
 	}
 
 	@Inject
-	private AlertManager manager;
+	private AlertManager alertManager;
 
 	@SetupRender
 	@Log
@@ -670,7 +670,7 @@ public class WorkspaceEditor {
 				 * them to log in.
 				 */
 				logger.error("User was not logged in, but needs to be logged in to view this page.");
-				manager.alert(Duration.UNTIL_DISMISSED, Severity.ERROR,
+				alertManager.alert(Duration.UNTIL_DISMISSED, Severity.ERROR,
 						"User was not logged in, but needs to be logged in to view this page.");
 			}
 		}

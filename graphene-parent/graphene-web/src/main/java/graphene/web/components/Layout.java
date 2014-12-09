@@ -15,6 +15,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -36,7 +37,7 @@ import com.trsvax.bootstrap.annotations.Exclude;
  * 
  */
 @Exclude(stylesheet = { "core" })
-@Import(stylesheet = { "context:/core/css/bootstrap.min.css",
+@Import(stylesheet = { "context:/core/css/t5default.css","context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css",
 		"context:/core/css/graphene-production.css",
 		"context:/core/css/pace-radar.css",
@@ -98,6 +99,7 @@ public class Layout {
 	private AuthenticatorHelper authenticatorHelper;
 
 	@Property
+	@SessionState(create = false)
 	private List<G_Workspace> workspaces;
 
 	@Log

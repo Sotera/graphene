@@ -1,5 +1,7 @@
 package graphene.web.pages;
 
+import graphene.model.idl.G_VisualType;
+import graphene.web.annotations.PluginPage;
 import graphene.web.components.WorkspaceEditor.Mode;
 
 import javax.inject.Inject;
@@ -13,7 +15,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
-
+@PluginPage(visualType = G_VisualType.SETTINGS, menuName = "Manage Workspaces", icon = "fa fa-lg fa-fw fa-list-alt")
 public class Workspaces {
 
 	// The activation context

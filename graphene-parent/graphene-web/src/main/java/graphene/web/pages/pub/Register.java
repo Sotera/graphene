@@ -79,7 +79,7 @@ public class Register {
 	@Component
 	private Form registerForm;
 	@Inject
-	private AlertManager manager;
+	private AlertManager alertManager;
 	@InjectPage
 	private Login signin;
 
@@ -138,24 +138,26 @@ public class Register {
 
 				// Get the version that has been registered, because it will
 				// have added business logic.
-				tempUser = userDataAccess.registerUser(tempUser, password, true);
+				tempUser = userDataAccess
+						.registerUser(tempUser, password, true);
 				if (tempUser != null) {
 					authenticatorHelper.logout();
-					manager.alert(Duration.TRANSIENT, Severity.SUCCESS,
+					alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS,
 							"You are being logged in.");
-					
-					return authenticatorHelper.loginAndRedirect(loginMessage,
-							username, password, true, requestGlobals, loginContextService);
+
+					return authenticatorHelper.loginAndRedirect(
+							username, password, true, requestGlobals,
+							loginContextService, response, messages, alertManager);
 				} else {
 					logger.error("An error occured while registering the user.");
-					manager.alert(Duration.SINGLE, Severity.ERROR,
+					alertManager.alert(Duration.SINGLE, Severity.ERROR,
 							"An error occured while registering the user.");
 				}
 				return Index.class;
 			}
 		} catch (Exception ex) {
 			String message = ExceptionUtil.getRootCauseMessage(ex);
-			manager.alert(Duration.SINGLE, Severity.ERROR, "ERROR: " + message);
+			alertManager.alert(Duration.SINGLE, Severity.ERROR, "ERROR: " + message);
 			logger.error(message);
 			ex.printStackTrace();
 

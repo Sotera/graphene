@@ -11,7 +11,9 @@ package graphene.model.enumeration;
  * 
  * @author djue
  * 
+ * Deprecated, use a String instead.
  */
+@Deprecated
 public abstract interface ValueEnum {
 
 	/**

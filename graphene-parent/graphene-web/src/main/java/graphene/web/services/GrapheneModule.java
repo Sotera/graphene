@@ -30,6 +30,8 @@ import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.EditBlockContribution;
 import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.MarkupRendererFilter;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
@@ -62,7 +64,12 @@ import org.slf4j.Logger;
 public class GrapheneModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(ChatManager.class, ChatManagerImpl.class);
+	}
 
+	@Contribute(MarkupRenderer.class)
+	public static void deactivateDefaultCSS(
+			OrderedConfiguration<MarkupRendererFilter> config) {
+		config.override("InjectDefaultStylesheet", null);
 	}
 
 	@Contribute(AtmosphereHttpServletRequestFilter.class)
@@ -130,9 +137,11 @@ public class GrapheneModule {
 
 		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
 		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
-		
+
 		configuration.add(G_SymbolConstants.ENABLE_EXPERIMENTAL, false);
 		configuration.add(G_SymbolConstants.ENABLE_MISC, false);
+		configuration.add(G_SymbolConstants.ENABLE_SETTINGS, true);
+		configuration.add(G_SymbolConstants.ENABLE_ADMIN, true);
 	}
 
 	public static void contributeComponentClassResolver(

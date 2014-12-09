@@ -1,61 +1,55 @@
 package graphene.dao.es;
 
 import graphene.dao.LoggingDAO;
+import graphene.model.idl.G_Workspace;
+import graphene.model.query.EntityQuery;
+import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestClient;
+import io.searchbox.client.JestResult;
 import io.searchbox.core.Index;
-import io.searchbox.indices.mapping.PutMapping;
+import io.searchbox.core.Search;
+import io.searchbox.core.search.sort.Sort;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.elasticsearch.index.mapper.DocumentMapper;
-import org.elasticsearch.index.mapper.core.StringFieldMapper;
-import org.elasticsearch.index.mapper.object.RootObjectMapper;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LoggingDAOESImpl implements LoggingDAO {
-	private JestClient jestClient;
-	private ESRestAPIConnection c;
-	private String auth;
-	private ObjectMapper mapper;
+public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
+	@Inject
+	@Symbol(JestModule.ES_LOGGING_INDEX)
+	private String indexName;
 
 	@Inject
-	public LoggingDAOESImpl(ESRestAPIConnection c, JestClient jestClient) {
+	public LoggingDAODefaultESImpl(ESRestAPIConnection c,
+			JestClient jestClient, Logger logger) {
 		this.auth = null;
 		this.c = c;
 		this.jestClient = jestClient;
 		this.mapper = new ObjectMapper(); // can reuse, share globally
+		this.logger = logger;
 	}
 
-	public void setup() {
-		Object source;
-		RootObjectMapper.Builder romb = new RootObjectMapper.Builder(
-				"g_log_mapping").add(new StringFieldMapper.Builder("message")
-				.store(true));
-
-		DocumentMapper dm = new DocumentMapper.Builder("g_index", null, romb)
-				.build(null);
-		String expectedMappingSource = dm.mappingSource().toString();
-
-		PutMapping putMapping = new PutMapping.Builder("logging_index",
-				"logging", expectedMappingSource).build();
-		try {
-			jestClient.execute(putMapping);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void index(Object o, String indexName, String type, String id) {
-		Index index = new Index.Builder(o).index(indexName).type(type).id(id)
-				.build();
-		try {
-			jestClient.execute(index);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	@PostInjection
+	public void initialize() {
+		this.setIndex(indexName);
+		this.setType("queryLog");
+		super.initialize();
 	}
 
 	@Override
@@ -74,6 +68,87 @@ public class LoggingDAOESImpl implements LoggingDAO {
 	public boolean recordExport(String queryString) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<EntityQuery> getQueries(String userId, String partialTerm,
+			int limit) {
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		if (ValidationUtils.isValid(userId)) {
+
+			if (ValidationUtils.isValid(partialTerm)) {
+				// use the partial name to filter
+				searchSourceBuilder.query(QueryBuilders.filteredQuery(
+						QueryBuilders.fuzzyQuery("value", partialTerm),
+						FilterBuilders.andFilter(FilterBuilders.termFilter(
+								"userId", userId))));
+			} else {
+				// don't filter on name, get all of them.
+				searchSourceBuilder.query(QueryBuilders.matchQuery("userId",
+						userId));
+			}
+		} else {
+			if (ValidationUtils.isValid(partialTerm)) {
+				// use the partial name to filter
+				searchSourceBuilder.query(QueryBuilders.fuzzyQuery("value",
+						partialTerm));
+			} else {
+				searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+			}
+		}
+		SortBuilder byDate = SortBuilders.fieldSort("timeInitiated")
+				.order(SortOrder.DESC).ignoreUnmapped(true);
+
+		Search search = new Search.Builder(searchSourceBuilder.sort(byDate)
+				.toString()).addIndex(indexName).addType(type).build();
+		System.out.println(searchSourceBuilder.toString());
+		JestResult result;
+		List<EntityQuery> returnValue = new ArrayList<EntityQuery>(0);
+		try {
+			result = jestClient.execute(search);
+			returnValue = result.getSourceAsObjectList(EntityQuery.class);
+			for (EntityQuery u : returnValue) {
+				System.out.println(u);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return returnValue;
+
+	}
+
+	@Override
+	public void recordQuery(EntityQuery sq) {
+		EntityQuery returnVal = sq;
+		Index saveAction;
+		if (ValidationUtils.isValid(returnVal)) {
+			if (!ValidationUtils.isValid(returnVal.getId())) {
+				// auto id
+				saveAction = new Index.Builder(sq).index(indexName).type(type)
+						.build();
+			} else {
+				// use id that was provided
+				saveAction = new Index.Builder(returnVal).index(indexName)
+						.id(returnVal.getId()).type(type).build();
+			}
+			try {
+				JestResult result = jestClient.execute(saveAction);
+				if (!ValidationUtils.isValid(returnVal.getId())
+						&& ValidationUtils.isValid(result.getValue("_id"))) {
+
+				}
+			} catch (ExecutionException | InterruptedException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			logger.error("Attempted to save a null user object!");
+		}
+		return;
 	}
 
 }

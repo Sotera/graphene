@@ -1,11 +1,14 @@
 package graphene.web.security;
 
+import graphene.business.commons.exception.BusinessException;
 import graphene.model.idl.AuthenticationException;
-import graphene.web.model.BusinessException;
 
 import org.apache.avro.AvroRemoteException;
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.Response;
 import org.tynamo.security.internal.services.LoginContextService;
 
 /**
@@ -53,10 +56,11 @@ public interface AuthenticatorHelper {
 	@Log
 	void logout();
 
-	Object loginAndRedirect(String loginMessage, String grapheneLogin,
+	Object loginAndRedirect( String grapheneLogin,
 			String graphenePassword, boolean grapheneRememberMe,
 			RequestGlobals requestGlobals,
-			LoginContextService loginContextService);
+			LoginContextService loginContextService, Response response,
+			Messages messages, AlertManager alertManager);
 
 	void loginAuthenticatedUser(String username);
 }

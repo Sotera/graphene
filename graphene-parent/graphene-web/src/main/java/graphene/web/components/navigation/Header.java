@@ -7,7 +7,6 @@ import graphene.web.services.SearchBrokerService;
 import java.util.Date;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;

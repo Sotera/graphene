@@ -1,15 +1,18 @@
 package graphene.web.security;
 
+import graphene.business.commons.exception.BusinessException;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.util.validator.ValidationUtils;
-import graphene.web.model.BusinessException;
 
 import org.apache.avro.AvroRemoteException;
+import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.Session;
 import org.slf4j.Logger;
 import org.tynamo.security.internal.services.LoginContextService;
@@ -70,7 +73,6 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 		}
 	}
 
-
 	@Override
 	public void loginAuthenticatedUser(String username) {
 		// TODO Auto-generated method stub
@@ -78,10 +80,11 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 	}
 
 	@Override
-	public Object loginAndRedirect(String loginMessage, String grapheneLogin,
+	public Object loginAndRedirect( String grapheneLogin,
 			String graphenePassword, boolean grapheneRememberMe,
 			RequestGlobals requestGlobals,
-			LoginContextService loginContextService) {
+			LoginContextService loginContextService, Response response,
+			Messages messages, AlertManager alertManager) {
 		// TODO Auto-generated method stub
 		return null;
 	}

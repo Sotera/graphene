@@ -6,6 +6,7 @@ import graphene.dao.ReportPopulator;
 import graphene.model.GrapheneResults;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_VisualType;
 import graphene.model.query.EntityQuery;
 import graphene.model.query.SearchCriteria;
@@ -124,9 +125,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	private Logger logger;
 
 	@Inject
-	private AlertManager manager;
-
-	@Inject
 	private Messages messages;
 
 	private String previousSearchValue;
@@ -168,13 +166,18 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Inject
 	@Symbol(SymbolConstants.APPLICATION_FOLDER)
 	private String path;
+
+	@Inject
+	@Symbol(G_SymbolConstants.EXT_PATH)
+	private String extPath;
+
 	/**
 	 * 
 	 * 
 	 * @return
 	 */
 	public String getExtLink() {
-		return "/graphene-fincen-web/index.html?&entity=" + getReportId();
+		return extPath + getReportId();
 	}
 
 	public Set<String> getReportDates() {
@@ -207,8 +210,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	public String getDatePattern() {
-		return DataFormatConstants.DATE_FORMAT_STRING;// "dd/MM/yyyy";
+		return DataFormatConstants.DATE_FORMAT_STRING;
 	}
+
+
 
 	private GrapheneResults<Object> getEntities(String type, String value) {
 		GrapheneResults<Object> metaresults = null;
@@ -218,7 +223,13 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 					G_SearchType.COMPARE_CONTAINS));
 			sq.setMaxResult(200);
 			sq.setSchema(type);
+			if(isUserExists()){
+				sq.setUserId(getUser().getId());
+				sq.setUserName(getUser().getUsername());
+			}
+			
 			try {
+				loggingDao.recordQuery(sq);
 				metaresults = dao.findByQueryWithMeta(sq);
 
 			} catch (Exception e) {
@@ -328,8 +339,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				} catch (Exception ex) {
 					// record error to screen!
 					String message = ExceptionUtil.getRootCauseMessage(ex);
-					manager.alert(Duration.SINGLE, Severity.ERROR, "ERROR: "
-							+ message);
+					alertManager.alert(Duration.SINGLE, Severity.ERROR,
+							"ERROR: " + message);
 					logger.error(message);
 				}
 				previousSearchValue = searchValue;

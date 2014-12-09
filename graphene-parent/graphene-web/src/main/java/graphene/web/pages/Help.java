@@ -8,8 +8,8 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
-@PluginPage(visualType = G_VisualType.META, menuName = "About Graphene", icon = "fa fa-lg fa-fw fa-question")
-public class About {
+@PluginPage(visualType = G_VisualType.TOP, menuName = "About Graphene", icon = "fa fa-lg fa-fw fa-question")
+public class Help {
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)

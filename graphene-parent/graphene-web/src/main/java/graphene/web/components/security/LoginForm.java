@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.apache.shiro.util.StringUtils;
 import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
@@ -84,11 +85,14 @@ public class LoginForm {
 	@Inject
 	@Symbol(SecuritySymbols.REDIRECT_TO_SAVED_URL)
 	private boolean redirectToSavedUrl;
+	@Inject
+	private AlertManager alertManager;
 
 	public Object onActionFromGrapheneLoginForm() throws IOException {
-		return authenticatorHelper.loginAndRedirect(loginMessage,
-				grapheneLogin, graphenePassword, grapheneRememberMe, requestGlobals, loginContextService);
-		
+		return authenticatorHelper.loginAndRedirect(
+				grapheneLogin, graphenePassword, grapheneRememberMe,
+				requestGlobals, loginContextService, response, messages, alertManager);
+
 	}
 
 	public void setLoginMessage(String loginMessage) {

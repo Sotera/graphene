@@ -1,9 +1,14 @@
 package graphene.web.pages;
 
+import java.util.List;
+
+import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idl.G_Workspace;
 
 import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -11,6 +16,11 @@ import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 public class SimpleBasePage {
+	@Property
+	@SessionState(create = false)
+	private List<G_Workspace> workspaces;
+	@Inject
+	protected LoggingDAO loggingDao;
 
 	@Inject
 	protected AlertManager alertManager;

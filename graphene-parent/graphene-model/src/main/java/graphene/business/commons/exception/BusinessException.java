@@ -1,5 +1,9 @@
-package graphene.web.model;
+package graphene.business.commons.exception;
 
-abstract public class BusinessException extends Exception {
+public class BusinessException extends Exception {
 	private static final long serialVersionUID = 1L;
+
+	public BusinessException(String string) {
+		super(string);
+	}
 }

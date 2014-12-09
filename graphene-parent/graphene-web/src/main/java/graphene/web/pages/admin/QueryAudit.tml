@@ -1,0 +1,87 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="Contact ${contact}"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+<div class="row-fluid">
+	<div class="col-sm-12">
+
+
+
+		<!-- Widget ID (each widget will need unique ID)-->
+		<div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1"
+			data-widget-editbutton="false">
+			<!-- widget options:
+				usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+				data-widget-colorbutton="false"
+				data-widget-editbutton="false"
+				data-widget-togglebutton="false"
+				data-widget-deletebutton="false"
+				data-widget-fullscreenbutton="false"
+				data-widget-custombutton="false"
+				data-widget-collapsed="true"
+				data-widget-sortable="false"
+
+				-->
+			<header>
+				<span class="widget-icon"> <i class="fa fa-table"></i>
+				</span>
+				<h2>Column Filters</h2>
+
+			</header>
+
+			<!-- widget div-->
+			<div>
+
+				<!-- widget edit box -->
+				<div class="jarviswidget-editbox">
+					<!-- This area used as dropdown edit box -->
+
+				</div>
+				<!-- end widget edit box -->
+
+				<!-- widget content -->
+				<div class="widget-body no-padding">
+					<t:jquery.datatable t:id="queryList"
+						class="table table-striped table-bordered table-hover"
+						t:source="list" t:row="currentQuery" t:rowsPerPage="20"
+						t:options="options" t:model="model"
+						t:exclude="id,minSecs,maxSecs,dataSource,firstResult,maxResult,sortColumn,sortField,sortAscending"
+						t:empty="block:emptyQueryList" t:inplace="ajax">
+						<p:timeInitiatedHeader>
+							<div>Time Initiated</div>
+							<label class="input"> <input type="text"
+								name="search_engine" value="Filter time" class="search_init" />
+							</label>
+						</p:timeInitiatedHeader>
+
+
+						<p:attributeListCell>
+							<t:loop source="currentQuery.attributeList" value="currentTuple">
+						${currentTuple.searchType}: ${currentTuple.value} <br />
+							</t:loop>
+						</p:attributeListCell>
+
+						<p:timeInitiatedCell>
+							<t:graphene.jodatimeoutput value="currentQuery.timeInitiated"
+								formatter="ISODate" />
+						</p:timeInitiatedCell>
+							
+										[Grid here]
+					</t:jquery.datatable>
+					<t:block t:id="emptyQueryList">
+						<div id="noQueries">(No queries found)</div>
+					</t:block>
+				</div>
+				<!-- end widget content -->
+
+			</div>
+			<!-- end widget div -->
+
+		</div>
+		<!-- end widget -->
+
+
+	</div>
+</div>
+</html>

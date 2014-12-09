@@ -21,7 +21,8 @@ import org.slf4j.Logger;
 @PluginPage(visualType = G_VisualType.TOP, menuName = "View Workspace", icon = "fa fa-lg fa-fw fa-list-alt")
 public class ViewWorkspace {
 	@Property
-	private G_Workspace currentWorkspace = null;
+	@SessionState(create = false)
+	private G_Workspace currentSelectedWorkspace;
 
 	@SessionState(create = false)
 	private G_User user;
@@ -38,10 +39,6 @@ public class ViewWorkspace {
 	private Logger logger;
 
 	@Property
-	@SessionState(create = false)
-	private G_Workspace currentSelectedWorkspace;
-
-	@Property
 	private boolean currentSelectedWorkspaceExists;
 
 	void onActivate(final String workspaceId) {
@@ -51,14 +48,18 @@ public class ViewWorkspace {
 				try {
 					logger.info("Attempting to retrieve workspace "
 							+ workspaceId + " for user " + user.getUsername());
-					this.currentWorkspace = userDataAccess.getWorkspace(user.getId(),
-							workspaceId);
+					this.currentSelectedWorkspace = userDataAccess.getWorkspace(
+							user.getId(), workspaceId);
 				} catch (AvroRemoteException e) {
 					logger.error(ExceptionUtil.getRootCauseMessage(e));
 					alertManager.alert(Duration.SINGLE, Severity.ERROR,
 							"You are not authorized to view the workspace "
 									+ workspaceId + ".");
 				}
+			}else if(currentSelectedWorkspaceExists){
+				//view previously selected workspace
+				logger.info("Viewing the workspace that was already current "
+						+ currentSelectedWorkspace.getId() + " for user " + user.getUsername());
 			}
 		} else {
 			alertManager.alert(Duration.UNTIL_DISMISSED, Severity.ERROR,
@@ -71,8 +72,8 @@ public class ViewWorkspace {
 	// onPassivate() is called by Tapestry to get the activation context to put
 	// in the id.
 	String onPassivate() {
-		if (currentWorkspace != null) {
-			return currentWorkspace.getId();
+		if (currentSelectedWorkspaceExists) {
+			return currentSelectedWorkspace.getId();
 		} else {
 			return null;
 		}

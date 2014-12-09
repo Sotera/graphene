@@ -6,7 +6,7 @@ function getSelected() {
 	} else {
 		var selection = document.selection && document.selection.createRange();
 		if (selection.text) {
-			return selection.text
+			return selection.text;
 		}
 		return false;
 	}
@@ -50,4 +50,4 @@ var selectedText = "";
 			$.MakeTextSelect();
 		}
 	});
-})(jQuery)
+})(jQuery);

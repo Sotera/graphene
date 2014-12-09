@@ -1,4 +1,4 @@
-package graphene.web.pages;
+package graphene.web.pages.admin;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Path;
@@ -8,7 +8,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import graphene.model.idl.G_VisualType;
 import graphene.web.annotations.PluginPage;
 
-@PluginPage(visualType = G_VisualType.META, menuName = "System Status", icon = "fa fa-lg fa-fw fa-question")
+@PluginPage(visualType = G_VisualType.ADMIN, menuName = "System Status", icon = "fa fa-lg fa-fw fa-question")
 public class Status {
 
 	@Inject

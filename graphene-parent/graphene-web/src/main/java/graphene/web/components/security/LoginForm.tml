@@ -38,7 +38,7 @@
 						</t:passwordfield>
 					</label>
 					<div class="note">
-						<t:pagelink page="graphene/forgot">Forgot your username or password?
+						<t:pagelink page="graphene/pub/forgot">Forgot your username or password?
 						</t:pagelink>
 					</div>
 				</section>

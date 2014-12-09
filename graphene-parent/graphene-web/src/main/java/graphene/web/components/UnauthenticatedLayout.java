@@ -20,7 +20,7 @@ import com.trsvax.bootstrap.annotations.Exclude;
  * 
  */
 @Exclude(stylesheet = { "core" })
-@Import(stylesheet = { "context:/core/css/bootstrap.min.css",
+@Import(stylesheet = {"context:/core/css/t5default.css", "context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css",
 		"context:/core/css/graphene-production.css",
 		"context:/core/css/graphene-skins.css", "context:/core/css/demo.css",

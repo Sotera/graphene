@@ -1,163 +1,151 @@
 <!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
 <html t:type="graphene/layout" title="Entity Search"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"
-	lang="en">
-	<!-- Most of the page content, including <head>, <body>, etc. tags, comes 
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter" lang="en">
+<!-- Most of the page content, including <head>, <body>, etc. tags, comes 
 		from Layout.tml -->
-	<!-- This is a span 10 in the bootstrap layout. You just need to add one 
+<!-- This is a span 10 in the bootstrap layout. You just need to add one 
 		or more fluid rows here. -->
-	<div class="row-fluid">
-		<div class="col-sm-12">
-			<table id="listAndEditor">
-				<tbody>
-					<tr>
+<div class="row-fluid">
+	<div class="col-sm-12">
+		<table id="listAndEditor">
+			<tbody>
+				<tr>
+					<!-- This is the left side of the table: a list of entitys -->
+					<td id="listCell"><t:zone t:id="listZone" id="listZone"
+							t:update="prop:zoneUpdateFunction">
 
-						<!-- This is the left side of the table: a list of entitys -->
-
-						<td id="listCell">
-							<t:zone t:id="listZone" id="listZone" t:update="prop:zoneUpdateFunction">
-
-								<!-- We can't use the form's id in the css because the Zone messes 
+							<!-- We can't use the form's id in the css because the Zone messes 
 									with it, so we add a div with its own id. -->
-								<div id="entityFilter" class="well">
-									<form t:type="form" t:id="filterForm" t:zone="listZone">
-										<legend>Search for Documents containing Entity</legend>
+							<div id="entityFilter" class="well">
+								<form t:type="form" t:id="filterForm" t:zone="listZone">
+									<legend>Search for Documents containing Entity</legend>
 
-										<input class="input-block-level" t:id="searchValue"
-											t:type="TextField" size="50" t:validate="maxLength=255"
-											value="searchValue" />
-										<input class="btn btn-primary btn-sm" type="submit"
-											value="Search" title="Search" />
-									</form>
-									<t:if test="results">
+									<input class="input-block-level" t:id="searchValue"
+										t:type="TextField" size="50" t:validate="maxLength=255"
+										value="searchValue" /> <input class="btn btn-primary btn-sm"
+										type="submit" value="Search" title="Search" />
+								</form>
+								<t:if test="results">
 										Showing ${results.numberOfResultsReturned} hits
 										out of ${results.numberOtResultsTotal}
 									</t:if>
-								</div>
-								
-								<!-- WIP legend -->
-								<div style="border: 1px solid gray; padding:3px">
-									<span style="width:100%; display: inline-block;">
-										<span style="margin-right: 3px"> 
-											Legend: 
-										</span>
-										<span class="label bg-color-red txt-color-white" style="margin-right: 3px"
-											data-placement="top" rel="popover-hover" 
-											data-content="An attribute or any other identifier that contains the term you searched for."> 
-												Item Containing Search Term 
-										</span>
-										<span class="label label-success" style="margin-right: 3px"
-											data-placement="top" rel="popover-hover" 
-											data-content="Example: date the report was filed on or the date it was received."> 
-												Dates Relevant to Report 
-										</span>
-										<span class="label label-info" style="margin-right: 3px"
-											data-placement="top" rel="popover-hover" 
-											data-content="The amount of money involved with a report."> 
-												Transaction Amount 
-										</span>
-										<span class="label bg-color-orange txt-color-white" style="margin-right: 3px" 
-											data-placement="top" rel="popover-hover" 
-											data-content="Formal name of a person or group involved or mentioned in the report."> 
-												Entity Name 
-										</span>
-										<span class="label bg-color-yellow txt-color-white" style="margin-right: 3px"
-											data-placement="top" rel="popover-hover" 
-											data-content="Street address, state, province, or any location identifier."> 
-												Address 
-										</span>
-										<span class="label bg-color-magenta txt-color-white" style="margin-right: 3px"
-											data-placement="top" rel="popover-hover" 
-											data-content="Any other attribute or identifier."> 
-												Attribute 
-										</span>
-									</span>
-								</div>
-								
-								<t:if test="results">
-									<div id="entityList">
-										<table t:type="grid" source="results.results" model="model"
-											t:row="currentEntity" width="100%">
-											[Grid here]
-											<p:actionsCell>
-												<t:pagelink class="btn btn-default" page="prop:reportPageLink"
-													context="reportId" target="reportId">
-													<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
-												</t:pagelink>
-												<br />
+							</div>
 
-												<a class="btn btn-default" href="${extLink}"
-													target="extjs">
-													<i class="fa fa-code-fork"> </i>
-													Graph
-												</a>
-											</p:actionsCell>
-											<p:reportSummaryCell>
-												<t:loop source="reportDates" value="currentDate">
-													<span class="fa fa-calendar label label-success">&nbsp;${currentDate}
-													</span>
-													<br />
-												</t:loop>
-												<span class="fa fa-calendar label label-info">&nbsp;${reportAmount}
+							<!-- WIP legend -->
+							<div style="border: 1px solid gray; padding: 3px">
+								<span style="width: 100%; display: inline-block;"> <span
+									style="margin-right: 3px"> Legend: </span> <span
+									class="label bg-color-red txt-color-white"
+									style="margin-right: 3px" data-placement="top"
+									rel="popover-hover"
+									data-content="An attribute or any other identifier that contains the term you searched for.">
+										Item Containing Search Term </span> <span class="label label-success"
+									style="margin-right: 3px" data-placement="top"
+									rel="popover-hover"
+									data-content="Example: date the report was filed on or the date it was received.">
+										Dates Relevant to Report </span> <span class="label label-info"
+									style="margin-right: 3px" data-placement="top"
+									rel="popover-hover"
+									data-content="The amount of money involved with a report.">
+										Transaction Amount </span> <span
+									class="label bg-color-orange txt-color-white"
+									style="margin-right: 3px" data-placement="top"
+									rel="popover-hover"
+									data-content="Formal name of a person or group involved or mentioned in the report.">
+										Entity Name </span> <span
+									class="label bg-color-yellow txt-color-white"
+									style="margin-right: 3px" data-placement="top"
+									rel="popover-hover"
+									data-content="Street address, state, province, or any location identifier.">
+										Address </span> <span class="label bg-color-magenta txt-color-white"
+									style="margin-right: 3px" data-placement="top"
+									rel="popover-hover"
+									data-content="Any other attribute or identifier.">
+										Attribute </span>
+								</span>
+							</div>
+
+							<t:if test="results">
+								<div id="entityList">
+									<table t:type="grid" source="results.results" model="model"
+										t:row="currentEntity" width="100%"
+										class="table table-bordered">
+										[Grid here]
+										<p:actionsCell>
+											<t:pagelink class="btn btn-default"
+												page="prop:reportPageLink" context="reportId"
+												target="reportId">
+												<i class="fa fa-folder-open-o" /> ${reportType} ${reportId}
+												</t:pagelink>
+											<br />
+
+											<a class="btn btn-default" href="${extLink}" target="extjs">
+												<i class="fa fa-code-fork"> </i> Graph
+											</a>
+										</p:actionsCell>
+										<p:reportSummaryCell>
+											<t:loop source="reportDates" value="currentDate">
+												<span class="fa fa-calendar label label-success">&nbsp;${currentDate}
 												</span>
 												<br />
-												<t:loop source="iconList" value="currentIcon">
-													<span class="${currentIcon} label label-danger" rel="popover-hover"
-														data-placement="top">&nbsp;
-													</span>
-												</t:loop>
-											</p:reportSummaryCell>
-											
-
-											<p:nameListCell>
-												<t:loop source="nameList" value="currentName">
-													<a class="btn btn-xs ${styleForName}" t:type="pagelink"
-														page="graphene/CombinedEntitySearchPage" context="currentName">
-														${currentName}</a>
-													<br />
-												</t:loop>
-											</p:nameListCell>
-											<p:addressListCell>
-												<t:loop source="addressList" value="currentAddress">
-													<a class="btn btn-xs ${styleForAddress}" t:type="pagelink"
-														page="graphene/CombinedEntitySearchPage" context="currentAddress">
-														${currentAddress}</a>
-													<br />
-												</t:loop>
-											</p:addressListCell>
-											<p:communicationIdentifierListCell>
-												<t:loop source="cIdentifierList" value="currentCommunicationId">
-													<a class="btn btn-xs ${styleForIdentifier}" t:type="pagelink"
-														page="graphene/CombinedEntitySearchPage" context="currentCommunicationId">
-														${currentCommunicationId}</a>
-
-												</t:loop>
-											</p:communicationIdentifierListCell>
-											<p:identifierListCell>
-												<t:loop source="identifierList" value="currentIdentifier">
-													<a class="btn btn-xs ${styleForIdentifier}" t:type="pagelink"
-														page="graphene/CombinedEntitySearchPage" context="currentIdentifier">
-														${currentIdentifier}</a>
-
-												</t:loop>
-											</p:identifierListCell>
-										</table>
-									</div>
-								</t:if>
-								<t:block t:id="emptyentitys">
-									<div id="noentitys">
-										(No entities found)
-									</div>
-								</t:block>
-
-							</t:zone>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+											</t:loop>
+											<span class="fa fa-calendar label label-info">&nbsp;${reportAmount}
+											</span>
+											<br />
+											<t:loop source="iconList" value="currentIcon">
+												<span class="${currentIcon} label label-danger"
+													rel="popover-hover" data-placement="top">&nbsp; </span>
+											</t:loop>
+										</p:reportSummaryCell>
 
 
-		</div>
+										<p:nameListCell>
+											<t:loop source="nameList" value="currentName">
+												<a class="btn btn-xs ${styleForName}" t:type="pagelink"
+													page="graphene/CombinedEntitySearchPage"
+													context="currentName"> ${currentName}</a>
+												<br />
+											</t:loop>
+										</p:nameListCell>
+										<p:addressListCell>
+											<t:loop source="addressList" value="currentAddress">
+												<a class="btn btn-xs ${styleForAddress}" t:type="pagelink"
+													page="graphene/CombinedEntitySearchPage"
+													context="currentAddress"> ${currentAddress}</a>
+												<br />
+											</t:loop>
+										</p:addressListCell>
+										<p:communicationIdentifierListCell>
+											<t:loop source="cIdentifierList"
+												value="currentCommunicationId">
+												<a class="btn btn-xs ${styleForIdentifier}"
+													t:type="pagelink" page="graphene/CombinedEntitySearchPage"
+													context="currentCommunicationId">
+													${currentCommunicationId}</a>
+
+											</t:loop>
+										</p:communicationIdentifierListCell>
+										<p:identifierListCell>
+											<t:loop source="identifierList" value="currentIdentifier">
+												<a class="btn btn-xs ${styleForIdentifier}"
+													t:type="pagelink" page="graphene/CombinedEntitySearchPage"
+													context="currentIdentifier"> ${currentIdentifier}</a>
+
+											</t:loop>
+										</p:identifierListCell>
+									</table>
+								</div>
+							</t:if>
+							<t:block t:id="emptyentitys">
+								<div id="noentitys">(No results found)</div>
+							</t:block>
+
+						</t:zone></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
-	<script src="${context:core/js/SearchTips.js}" />
+</div>
+<script src="${context:core/js/SearchTips.js}" />
 </html>

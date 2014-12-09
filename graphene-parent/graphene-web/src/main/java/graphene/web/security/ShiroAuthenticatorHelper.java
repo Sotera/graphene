@@ -1,9 +1,9 @@
 package graphene.web.security;
 
+import graphene.business.commons.exception.BusinessException;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.util.validator.ValidationUtils;
-import graphene.web.model.BusinessException;
 
 import java.io.IOException;
 
@@ -15,6 +15,9 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
+import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.alerts.Duration;
+import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -41,19 +44,8 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 
 	// Use this to save the logged in user to the session.
 	private ApplicationStateManager applicationStateManager;
-	@Inject
-	private Messages messages;
-	
-//	private LoginContextService loginContextService;
+
 	private Logger logger;
-	@Inject
-	private Request request;
-
-//	@Inject
-//	private Response response;
-
-//	@Inject
-//	private RequestGlobals requestGlobals;
 
 	private SecurityService securityService;
 
@@ -91,15 +83,18 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	}
 
 	@Override
-	public Object loginAndRedirect(String loginMessage, String grapheneLogin,
-			String graphenePassword, boolean grapheneRememberMe,RequestGlobals requestGlobals, LoginContextService loginContextService) {
+	public Object loginAndRedirect(String grapheneLogin,
+			String graphenePassword, boolean grapheneRememberMe,
+			RequestGlobals requestGlobals,
+			LoginContextService loginContextService, Response response,
+			Messages messages, AlertManager alertManager) {
 
 		Subject currentUser = securityService.getSubject();
 
 		if (currentUser == null) {
-			logger.error("Subject can`t be null");
-			// throw new IllegalStateException("Subject can`t be null");
-			loginMessage = messages.get("AuthenticationError");
+			logger.error("Subject can't be null");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("AuthenticationError"));
 			return null;
 		}
 
@@ -122,9 +117,10 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 			if (savedRequest != null
 					&& savedRequest.getMethod().equalsIgnoreCase("GET")) {
 				if (ValidationUtils.isValid(savedRequest.getRequestUrl())) {
-					//response.sendRedirect(savedRequest.getRequestUrl());
-					//loginContextService.redirectToSavedRequest(savedRequest.getRequestUrl());
-					return savedRequest.getRequestUrl();
+					response.sendRedirect(savedRequest.getRequestUrl());
+					logger.debug("A redirect request was sent, returning null response for authentication helper.");
+					// loginContextService.redirectToSavedRequest(savedRequest.getRequestUrl());
+					return null;
 				} else {
 					logger.warn("Can't redirect to saved request.");
 					return loginContextService.getSuccessPage();
@@ -134,8 +130,8 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 				if (!requestUri.startsWith("/")) {
 					requestUri = "/" + requestUri;
 				}
-				//loginContextService.redirectToSavedRequest(requestUri);
-				//this isn't working but should:  return requestUri;
+				// loginContextService.redirectToSavedRequest(requestUri);
+				// this isn't working but should: return requestUri;
 				return loginContextService.getSuccessPage();
 			}
 			// Cookie[] cookies =
@@ -149,19 +145,25 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 			// }
 			return loginContextService.getSuccessPage();
 		} catch (UnknownAccountException e) {
-			loginMessage = messages.get("AccountDoesNotExists");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("AccountDoesNotExist"));
 		} catch (IncorrectCredentialsException e) {
-			loginMessage = messages.get("WrongPassword");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("WrongPassword"));
 		} catch (LockedAccountException e) {
-			loginMessage = messages.get("AccountLocked");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("AccountLocked"));
 		} catch (AvroRemoteException e) {
-			loginMessage = messages.get("InternalAuthenticationError");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("InternalAuthenticationError"));
 			e.printStackTrace();
 		} catch (BusinessException e) {
-			loginMessage = messages.get("InternalAuthenticationError");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("InternalAuthenticationError"));
 			e.printStackTrace();
 		} catch (IOException e) {
-			loginMessage = messages.get("InternalAuthenticationError");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+					messages.get("InternalAuthenticationError"));
 			e.printStackTrace();
 		}
 		return null;
@@ -179,6 +181,7 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 			// request.getSession(true).setAttribute(AUTH_TOKEN, user);
 		} else {
 			logger.error("Could not login user with username " + username);
+			throw new BusinessException("Could not login user with username " + username);
 		}
 	}
 

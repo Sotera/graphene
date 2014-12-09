@@ -5,6 +5,7 @@ import graphene.model.idl.G_User;
 import graphene.model.idl.G_VisualType;
 import graphene.util.Triple;
 import graphene.web.annotations.PluginPage;
+import graphene.web.model.MenuType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,17 +26,16 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
 public class Menu {
-	private static final String EXPERIMENTAL = "experimental";
-	private static final String ACTION = "action";
-	private static final String META = "meta";
 	@Inject
 	private AssetSource assetSource;
 	@Inject
 	private ComponentClassResolver componentClassResolver;
+	
 	@Inject
-	private Locale locale;
-	boolean onlyPluginPages = false;
-
+	@Symbol(G_SymbolConstants.ENABLE_ADMIN)
+	@Property
+	private boolean enableAdmin;
+	
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_EXPERIMENTAL)
 	@Property
@@ -46,6 +46,17 @@ public class Menu {
 	@Property
 	private boolean enableMisc;
 
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_SETTINGS)
+	@Property
+	private boolean enableSettings;
+
+	@Inject
+	private Locale locale;
+	@Inject
+	private Logger logger;
+	boolean onlyPluginPages = false;
+
 	@Property
 	private Triple<String, String, String> page;
 
@@ -53,25 +64,21 @@ public class Menu {
 	private String pageName;
 
 	@Persist
-	private Map<String, Collection<Triple<String, String, String>>> pageNames;
-
-	private boolean userExists;
-
-	public Collection<Triple<String, String, String>> getActionPages() {
-		return pageNames.get(ACTION);
-	}
-
-	public Collection<Triple<String, String, String>> getExperimentalPages() {
-		return pageNames.get(EXPERIMENTAL);
-	}
-
-	public Collection<Triple<String, String, String>> getMetaPages() {
-		return pageNames.get(META);
-	}
+	private Map<MenuType, Collection<Triple<String, String, String>>> menuHierarchy;
 
 	@Property
 	@SessionState(create = false)
 	private G_User user;
+
+	private boolean userExists;
+
+	public Collection<Triple<String, String, String>> getActionPages() {
+		return menuHierarchy.get(MenuType.ACTION);
+	}
+
+	public Collection<Triple<String, String, String>> getAdminPages() {
+		return menuHierarchy.get(MenuType.ADMIN);
+	}
 
 	public String getAvatar() {
 		if (userExists) {
@@ -84,20 +91,33 @@ public class Menu {
 		}
 	}
 
-	@Inject
-	private Logger logger;
+	public Collection<Triple<String, String, String>> getExperimentalPages() {
+		return menuHierarchy.get(MenuType.EXPERIMENTAL);
+	}
+
+	public Collection<Triple<String, String, String>> getMetaPages() {
+		return menuHierarchy.get(MenuType.META);
+	}
+
+	public Collection<Triple<String, String, String>> getSettingsPages() {
+		return menuHierarchy.get(MenuType.SETTINGS);
+	}
 
 	@SetupRender
 	void initializeValue() {
-		if (pageNames == null) {
+		if (menuHierarchy == null) {
 			logger.info("Constructing page links for side menu items.");
 			List<String> pageList = this.componentClassResolver.getPageNames();
-			pageNames = new HashMap<String, Collection<Triple<String, String, String>>>();
-			pageNames.put("action",
+			menuHierarchy = new HashMap<MenuType, Collection<Triple<String, String, String>>>();
+			menuHierarchy.put(MenuType.ACTION,
 					new ArrayList<Triple<String, String, String>>(1));
-			pageNames.put("meta",
+			menuHierarchy.put(MenuType.META,
 					new ArrayList<Triple<String, String, String>>(1));
-			pageNames.put("experimental",
+			menuHierarchy.put(MenuType.EXPERIMENTAL,
+					new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.ADMIN, new ArrayList<Triple<String, String, String>>(
+					1));
+			menuHierarchy.put(MenuType.SETTINGS,
 					new ArrayList<Triple<String, String, String>>(1));
 			for (final String pageName : pageList) {
 				String className = this.componentClassResolver
@@ -117,20 +137,30 @@ public class Menu {
 								|| vtlist.contains(G_VisualType.SEARCH)
 								|| vtlist.contains(G_VisualType.MONEY)
 								|| vtlist.contains(G_VisualType.LIST)) {
-							pageNames.get(ACTION).add(
+							menuHierarchy.get(MenuType.ACTION).add(
 									new Triple<String, String, String>(
 											pageName, p.icon(), p.menuName()));
 
 						} else if (vtlist.contains(G_VisualType.META)) {
-							pageNames.get(META).add(
+							menuHierarchy.get(MenuType.META).add(
 									new Triple<String, String, String>(
 											pageName, p.icon(), p.menuName()));
+						} else if (vtlist.contains(G_VisualType.SETTINGS)) {
+							menuHierarchy.get(MenuType.SETTINGS).add(
+									new Triple<String, String, String>(
+											pageName, p.icon(), p.menuName()));
+
+						} else if (vtlist.contains(G_VisualType.ADMIN)) {
+							menuHierarchy.get(MenuType.ADMIN).add(
+									new Triple<String, String, String>(
+											pageName, p.icon(), p.menuName()));
+
 						} else if (vtlist.contains(G_VisualType.EXPERIMENTAL)) {
-							pageNames.get(EXPERIMENTAL).add(
+							menuHierarchy.get(MenuType.EXPERIMENTAL).add(
 									new Triple<String, String, String>(
 											pageName, p.icon(), p.menuName()));
 						} else {
-							pageNames.get(EXPERIMENTAL).add(
+							menuHierarchy.get(MenuType.EXPERIMENTAL).add(
 									new Triple<String, String, String>(
 											pageName, p.icon(), p.menuName()));
 						}

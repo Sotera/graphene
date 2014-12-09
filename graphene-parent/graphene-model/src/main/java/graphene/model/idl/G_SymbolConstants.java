@@ -42,4 +42,10 @@ public class G_SymbolConstants {
 	
 	public static final String ENABLE_EXPERIMENTAL = "graphene.enable-experimental";
 	public static final String ENABLE_MISC = "graphene.enable-misc";
+	public static final String ENABLE_ADMIN = "graphene.admin-misc";
+	public static final String ENABLE_SETTINGS = "graphene.settings-misc";
+	/**
+	 * Something like "/graphene-customer-web/index.html?&entity="
+	 */
+	public static final String EXT_PATH = "graphene.ext-path";
 }
