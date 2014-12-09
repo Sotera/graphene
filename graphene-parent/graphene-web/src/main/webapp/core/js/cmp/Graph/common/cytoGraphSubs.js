@@ -1238,6 +1238,7 @@ function GraphGenerator(graphRef) {
 				color: graphRef.CONSTANTS("defaultEdge"),
 				source: _parentNode.data("id"),
 				target: "generatedNode_" + _currentId,
+				lineStyle: "dashed",
 				attrs: [/* Populated via NodeEditor */]
 			},
 			group: "edges"
@@ -1261,6 +1262,7 @@ function GraphGenerator(graphRef) {
 					color: graphRef.CONSTANTS("defaultEdge"),
 					source: _parentNode.data("id"),
 					target: targetNode.data("id"),
+					lineStyle: "dashed",
 					attrs: [/* Populated via NodeEditor */]
 				},
 				group: "edges"

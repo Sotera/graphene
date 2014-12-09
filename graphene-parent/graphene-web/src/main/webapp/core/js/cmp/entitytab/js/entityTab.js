@@ -61,7 +61,7 @@ Ext.define("DARPA.EntityTab", {
 		}
 		
 		if (this.hasTransactionGraph) { 
-			var transactionsGraph = Ext.create("DARPA.TransactionGraph", {
+			var transactionsGraph = Ext.create("DARPA.TransactionGraphPanel", {
 				title:'EMAIL GRAPH', 
 				id:config.id + '-TransGraph',
 				entityId: config.id, 	
@@ -73,13 +73,13 @@ Ext.define("DARPA.EntityTab", {
 		}
 		
 		if (this.hasEntityGraph) { 
-			var entityGraph = Ext.create("DARPA.PBGraph", {
+			var entityGraph = Ext.create("DARPA.EntityGraphPanel", {
 				title:'ENTITY GRAPH', 
 				entityId: config.id, 
 				id:config.id + '-EntityGraph',
 				institution: config.institution,
 				resizable: false
-			})
+			});
 			this.items.push(entityGraph); 
 		}
 		
