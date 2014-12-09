@@ -146,7 +146,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 		});
 	},
 	
-	loadOneHop: function(node) {
+	loadOneHop: function(node, intype) {
 		var self = this;
 		var graphStore = self.graphStore;
 		var s = self.getSettings();
