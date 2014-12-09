@@ -1,8 +1,8 @@
 package graphene.rest.ws.impl;
 
 import graphene.dao.FederatedEventGraphServer;
+import graphene.dao.LoggingDAO;
 import graphene.rest.ws.CSGraphServerRS;
-import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.ExceptionUtil;
@@ -32,6 +32,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	public CSGraphServerRSImpl() {
 
 	}
+	@Inject
+	protected LoggingDAO loggingDao;
 
 	@Override
 	public V_CSGraph getEvents(String objectType, String[] value,
@@ -50,7 +52,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("maxSecs " + maxSecs);
 		logger.debug("minimumWeight " + minimumWeight);
 
-		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 2);
+		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 3);
 		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 1000);
 		int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);
@@ -66,6 +68,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		q.setMaxEdgesPerNode(maxedges);
 		q.setMaxHops(maxdegree);
 		q.addSearchIds(value);
+		
 		V_CSGraph m = null;
 		if (ValidationUtils.isValid(value)) {
 			try {
@@ -75,6 +78,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 				if (gb != null) {
 					logger.debug("Found Graph Builder for " + objectType + ": "
 							+ gb.getClass().getName());
+					loggingDao.recordQuery(q);
 					g = gb.makeGraphResponse(q);
 				} else {
 					logger.error("Unable to handle graph request for type "
@@ -123,6 +127,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			q.setMaxNodes(maxNodesInt);
 			q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
 			q.setMaxHops(maxDegreeInt);
+			loggingDao.recordQuery(q);
 			g = propertyGraphBuilder.makeGraphResponse(q);
 			m = new V_CSGraph(g, true);
 		} catch (Exception e) {

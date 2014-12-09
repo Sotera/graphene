@@ -23,19 +23,11 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 */
 	private String dataSource;
 	private long firstResult = 0;
-	private long maxResult = 0;
 	/*
 	 * Used for logging and persistence purposes
 	 */
 	private String id = null;
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
+	private long maxResult = 0;
 	/*
 	 * end date, in seconds since epoch
 	 */
@@ -137,6 +129,10 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	public long getFirstResult() {
 		// TODO Auto-generated method stub
 		return firstResult;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	/*
@@ -242,6 +238,10 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	@Override
 	public void setFirstResult(long firstResult) {
 		this.firstResult = firstResult;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/*

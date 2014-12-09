@@ -34,7 +34,7 @@ public interface CSGraphServerRS {
 	@Produces("application/json")
 	public abstract V_CSGraph getProperties(@PathParam("type") String type,
 			@PathParam("value") String[] value,
-			@QueryParam("degree") String degree,
+			@QueryParam("degree")  @DefaultValue(value = "3") String degree,
 			@QueryParam("maxNodes") String maxNodes,
 			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
 			@QueryParam("bipartite") boolean bipartite,
@@ -65,7 +65,7 @@ public interface CSGraphServerRS {
 			@PathParam("objectType") String objectType, // Dataset name etc
 			@PathParam("value") String[] value,
 			@QueryParam("Type") String valueType,
-			@QueryParam("degree") String degree,
+			@QueryParam("degree") @DefaultValue(value = "3") String degree,
 			@QueryParam("maxNodes") String maxNodes,
 			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
 			@QueryParam("showIcons") boolean showIcons,
@@ -108,7 +108,7 @@ public interface CSGraphServerRS {
 			@PathParam("objectType") String objectType,
 			@QueryParam("ids") String[] ids,
 			@QueryParam("Type") String valueType,
-			@QueryParam("maxHops") String maxHops,
+			@QueryParam("maxHops") @DefaultValue(value = "3") String maxHops,
 			@QueryParam("maxNodes") String maxNodes,
 			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
 			@QueryParam("showIcons") boolean showIcons,

@@ -1,9 +1,13 @@
 package graphene.dao;
 
+import graphene.business.commons.ReportViewEvent;
+import graphene.model.query.BasicQuery;
+import graphene.model.query.EntityQuery;
+
 import java.util.List;
 
-import graphene.model.idl.G_User;
-import graphene.model.query.EntityQuery;
+import mil.darpa.vande.generic.V_GraphQuery;
+import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.joda.time.DateTime;
 
@@ -50,7 +54,15 @@ public interface LoggingDAO {
 	 * @param sq
 	 *            The entity query initiated by the user
 	 */
-	public abstract void recordQuery(EntityQuery sq);
+	public abstract void recordQuery(BasicQuery sq);
 
 	List<EntityQuery> getQueries(String userId, String partialTerm, int limit);
+	List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm, int limit);
+	List<ReportViewEvent> getReportViewEvents(String userId,int limit);
+	List<Object> getAllEvents(String userId, String partialTerm, int limit);
+
+	public abstract void recordQuery(V_GraphQuery q);
+
+	public abstract void recordReportViewEvent(ReportViewEvent q);
+
 }

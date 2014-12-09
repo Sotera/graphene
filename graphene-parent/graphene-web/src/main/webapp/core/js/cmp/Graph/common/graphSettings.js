@@ -65,21 +65,21 @@ Ext.define("DARPA.GraphSettings",
 				xtype:'textfield',
 				fieldLabel:'Maximum Hops',
 				labelLength:150,
-				value:'2',
+				value:'3',
 				width:200
 			},
 			{
 				xtype:'textfield',		
 				fieldLabel:'Maximum Nodes',
 				labelLength:150,
-				value:'500',
+				value:'1000',
 				width: 200
 			},
 			{
 				xtype:'textfield',		
 				fieldLabel:'Maximum Edges per Node',
 				labelLength:150,
-				value:'20',
+				value:'40',
 				width: 200
 			},
 			{
