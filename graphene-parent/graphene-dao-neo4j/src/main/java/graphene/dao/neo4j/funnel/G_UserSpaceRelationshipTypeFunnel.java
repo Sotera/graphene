@@ -1,6 +1,6 @@
 package graphene.dao.neo4j.funnel;
 
-import graphene.model.Funnel;
+import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 
 import org.neo4j.graphdb.DynamicRelationshipType;
