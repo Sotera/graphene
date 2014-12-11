@@ -3,10 +3,9 @@
  */
 package graphene.model.query;
 
-import org.joda.time.DateTime;
-
 import graphene.util.DisplayUtil;
-import graphene.util.time.JodaTimeUtil;
+
+import org.joda.time.DateTime;
 
 /**
  * @author djue
