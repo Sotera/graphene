@@ -1,7 +1,7 @@
 package graphene.dao;
 
-import graphene.model.GrapheneResults;
 import graphene.model.query.EntityQuery;
+import graphene.model.view.GrapheneResults;
 
 /**
  * For hitting a backend that will return either multiple datatypes or unknown

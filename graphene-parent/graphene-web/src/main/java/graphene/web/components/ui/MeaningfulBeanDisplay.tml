@@ -1,19 +1,19 @@
-<dl class="well dl-horizontal" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+<div class="col-md-12 well"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 	<t:loop t:source="model.propertyNames" formState="ITERATION"
 		t:value="propertyName">
-
-
-		<dt class="${propertyClass}">${propertyModel.label}</dt>
-		<dd t:type="any" t:mixins="NotEmpty" class="${propertyClass}">
-			<a class="${propertyLinkClass}" t:type="pagelink"
-				page="graphene/CombinedEntitySearchPage" context="${propertyValue}">
-				<t:propertydisplay model="propertyModel"
-					overrides="overrides" object="object" />
-			</a>
-		</dd>
-
+		<div class="row">
+			<div class="col-sm-12 col-md-6 ${propertyClass}">${propertyModel.label}</div>
+			<div t:type="any" t:mixins="NotEmpty"
+				class="col-sm-12 col-md-6 ${propertyClass}">
+				<a class="${propertyLinkClass}" t:type="pagelink"
+					page="graphene/CombinedEntitySearchPage" context="${propertyValue}">
+					<t:propertydisplay model="propertyModel" overrides="overrides"
+						object="object" />
+				</a>
+			</div>
+		</div>
 
 	</t:loop>
-
-
-</dl>
+</div>
