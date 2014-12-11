@@ -159,6 +159,7 @@ Running a Graphene application
 
    By default, Graphene expects some other software to be available (Although it is easy to change this or override the defaults) 
 
+* JDK 1.7 (latest will be fine).  Graphene and its dependencies are not built with JDK 8 compatibility.
 * Tomcat 7 or 8, with any JDBC on the class path (i.e. tomcat/lib or packaged with your app)
 * You should set the Catalina_Home environment variable
 * Graphene supports Chrome and Firefox, and does not require any browser plugins. 
