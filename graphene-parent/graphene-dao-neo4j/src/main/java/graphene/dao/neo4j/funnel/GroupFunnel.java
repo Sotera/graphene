@@ -3,7 +3,7 @@ package graphene.dao.neo4j.funnel;
 import graphene.dao.neo4j.GrapheneNeo4JConstants;
 import graphene.dao.neo4j.Neo4JEmbeddedService;
 import graphene.dao.neo4j.annotations.UserGraph;
-import graphene.model.Funnel;
+import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_GroupFields;
 
