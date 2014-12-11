@@ -2,12 +2,13 @@ package graphene.rest.ws.impl;
 
 import graphene.dao.FederatedEventGraphServer;
 import graphene.rest.ws.GraphmlServerRS;
-import graphene.services.AbstractGraphBuilder;
 import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.validator.ValidationUtils;
+
+import java.util.Arrays;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -31,12 +32,12 @@ import org.slf4j.Logger;
  */
 public class GraphmlServerRSImpl implements GraphmlServerRS {
 
-//	@InjectService("Property")
-//	private AbstractGraphBuilder propertyGraphBuilder;
+	// @InjectService("Property")
+	// private AbstractGraphBuilder propertyGraphBuilder;
 
 	@InjectService("HyperProperty")
 	private HyperGraphBuilder propertyGraphBuilder;
-	
+
 	@Inject
 	private FederatedEventGraphServer feg;
 
@@ -101,7 +102,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 			String maxSecs, String minimumWeight) {
 		logger.debug("-------");
 		logger.debug("get Interaction Graph for type " + objectType);
-		logger.debug("Value     " + value);
+		logger.debug("Value     " + Arrays.toString(value));
 		logger.debug("valueType     " + valueType);
 		logger.debug("Degrees   " + degree);
 		logger.debug("Max Nodes " + maxNodes);
@@ -129,7 +130,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 		q.addSearchIds(value);
 
 		GraphmlGraph m = null;
-		GraphmlContainer c = null;
+		GraphmlContainer c = new GraphmlContainer();
 		if (ValidationUtils.isValid(value)) {
 			try {
 				V_GenericGraph g = null;
@@ -139,20 +140,18 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 					logger.debug("Found Graph Builder for " + objectType + ": "
 							+ gb.getClass().getName());
 					g = gb.makeGraphResponse(q);
+					m = new GraphmlGraph(g, true);
+					c = new GraphmlContainer(m);
 				} else {
 					logger.error("Unable to handle graph request for type "
 							+ objectType);
 				}
-				g = gb.makeGraphResponse(q);
-				m = new GraphmlGraph(g, true);
-				c = new GraphmlContainer(m);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				c = new GraphmlContainer();
 			}
-
 		} else {
-			c = new GraphmlContainer();
 			// c.setStrStatus("A query was sent without any ids");
 			logger.error("A query was sent without any ids");
 		}

@@ -18,7 +18,6 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
-
 public class EventServerRSImpl implements EventServerRS {
 
 	@Inject
@@ -60,7 +59,9 @@ public class EventServerRSImpl implements EventServerRS {
 		q.setComments(comments);
 		q.setSortAndDirection(sortColumn);
 
-		return eventServer.getEvents(q);
+		DirectedEvents e = eventServer.getEvents(q);
+		t.logAsCompleted();
+		return e;
 	}
 
 	public EventStatistics getPairMonthlyStatistics(

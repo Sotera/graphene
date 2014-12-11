@@ -1,5 +1,7 @@
 package graphene.rest.ws.impl;
 
+import java.util.Arrays;
+
 import graphene.dao.FederatedEventGraphServer;
 import graphene.dao.LoggingDAO;
 import graphene.rest.ws.CSGraphServerRS;
@@ -32,6 +34,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	public CSGraphServerRSImpl() {
 
 	}
+
 	@Inject
 	protected LoggingDAO loggingDao;
 
@@ -42,7 +45,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			String maxSecs, String minimumWeight) {
 		logger.debug("-------");
 		logger.debug("get Interaction Graph for type " + objectType);
-		logger.debug("Value     " + value);
+		logger.debug("Value     " + Arrays.toString(value));
 		logger.debug("valueType     " + valueType);
 		logger.debug("Degrees   " + degree);
 		logger.debug("Max Nodes " + maxNodes);
@@ -68,7 +71,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		q.setMaxEdgesPerNode(maxedges);
 		q.setMaxHops(maxdegree);
 		q.addSearchIds(value);
-		
+
 		V_CSGraph m = null;
 		if (ValidationUtils.isValid(value)) {
 			try {
@@ -116,7 +119,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("showNameNodes " + showNameNodes);
 		int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, 6);
 		int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
-		int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
+		int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(
+				maxEdgesPerNode, 100);
 
 		V_GenericGraph g = null;
 		V_CSGraph m = null;
@@ -140,8 +144,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	}
 
 	@Override
-	public V_CSGraph getTemporalEvents(String objectType,
-			String[] ids, String valueType, String maxHops, String maxNodes,
+	public V_CSGraph getTemporalEvents(String objectType, String[] ids,
+			String valueType, String maxHops, String maxNodes,
 			String maxEdgesPerNode, boolean showIcons, String minSecs,
 			String maxSecs, String minLinksPairOverall,
 			String minValueAnyInteraction, boolean daily, boolean monthly,
@@ -150,7 +154,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	{
 		logger.debug("-------");
 		logger.debug("get Interaction Graph for type " + objectType);
-		logger.debug("IDs     " + ids);
+		logger.debug("IDs     " + Arrays.toString(ids));
 		logger.debug("Max Hops   " + maxHops);
 		logger.debug("Max Nodes " + maxNodes);
 		logger.debug("Max Edges " + maxEdgesPerNode);
@@ -165,10 +169,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 		q.setMaxHops(FastNumberUtils.parseIntWithCheck(maxHops, 3));
 		q.setMaxNodes(FastNumberUtils.parseIntWithCheck(maxNodes, 500));
-		q.setMaxEdgesPerNode(FastNumberUtils.parseIntWithCheck(
-				maxEdgesPerNode, 50));
-		q.setMinLinks(FastNumberUtils
-				.parseIntWithCheck(minLinksPairOverall, 2));
+		q.setMaxEdgesPerNode(FastNumberUtils.parseIntWithCheck(maxEdgesPerNode,
+				50));
+		q.setMinLinks(FastNumberUtils.parseIntWithCheck(minLinksPairOverall, 2));
 		q.setMinTransValue(FastNumberUtils.parseIntWithCheck(
 				minValueAnyInteraction, 0));
 		q.setMinEdgeValue(FastNumberUtils.parseIntWithCheck(
@@ -186,7 +189,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 		// egb.setOriginalQuery(gq);
 
-		V_CSGraph m = null;
+		V_CSGraph m = new V_CSGraph();
 		if (ValidationUtils.isValid(ids)) {
 			try {
 				// V_GenericGraph g = eventGraphBuilder.makeGraphResponse(gq);
@@ -197,15 +200,25 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					logger.debug("Found Graph Builder for " + objectType + ": "
 							+ gb.getClass().getName());
 					g = gb.makeGraphResponse(q);
+					if (ValidationUtils.isValid(g)) {
+						m = new V_CSGraph(g, true);
+						if (ValidationUtils.isValid(g.getNodes(), g.getEdges())) {
+							logger.debug("Made graph with "
+									+ g.getNodes().size() + " Nodes and "
+									+ g.getEdges().size() + " Edges");
+						}
+					} else {
+						logger.error("Problem creating graph response.");
+					}
 				} else {
 					logger.error("Unable to handle graph request for type "
 							+ objectType);
 				}
-				m = new V_CSGraph(g, true);
-				logger.debug("Made graph with " + g.getNodes().size()
-						+ " Nodes and " + g.getEdges().size() + " Edges");
+
 			} catch (Exception e) {
 				logger.error(e.getMessage());
+				m.setStrStatus("An error occurred when creating the graph: "
+						+ e.getMessage());
 				e.printStackTrace();
 			}
 		} else {
@@ -213,9 +226,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			m.setStrStatus("A query was sent without any ids");
 			logger.error("A query was sent without any ids");
 		}
-
 		return m;
-
 	}
 
 }

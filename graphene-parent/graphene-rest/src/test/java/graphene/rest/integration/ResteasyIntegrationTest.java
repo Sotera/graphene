@@ -3,8 +3,6 @@ package graphene.rest.integration;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import org.tynamo.test.AbstractContainerTest;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
