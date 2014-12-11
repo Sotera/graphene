@@ -2,7 +2,7 @@ package graphene.dao.neo4j.funnel;
 
 import graphene.dao.neo4j.Neo4JEmbeddedService;
 import graphene.dao.neo4j.annotations.UserGraph;
-import graphene.model.Funnel;
+import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.G_WorkspaceFields;
 
