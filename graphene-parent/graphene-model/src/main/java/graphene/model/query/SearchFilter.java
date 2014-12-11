@@ -2,12 +2,10 @@ package graphene.model.query;
 
 import graphene.model.datasourcedescriptors.DataSetField;
 import graphene.model.idl.G_SearchType;
-import graphene.util.FastNumberUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.codec.language.DoubleMetaphone;

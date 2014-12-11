@@ -1,7 +1,8 @@
 package graphene.dao;
 
 import graphene.dao.annotations.EntityLightFunnelMarker;
-import graphene.model.Funnel;
+import graphene.model.funnels.DefaultEntityLightFunnel;
+import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_EdgeType;
@@ -11,7 +12,6 @@ import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKey;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_UserDataAccess;
-import graphene.model.view.entities.DefaultEntityLightFunnel;
 import graphene.services.EventServerImpl;
 import graphene.services.FederatedEventGraphImpl;
 import graphene.services.FederatedPropertyGraphImpl;

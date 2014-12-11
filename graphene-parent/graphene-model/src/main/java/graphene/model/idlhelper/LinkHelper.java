@@ -81,7 +81,7 @@ public class LinkHelper extends G_Link {
 
 	public static PropertyHelper getFirstProperty(G_Link link, String key) {
 		for (G_Property property : link.getProperties()) {
-			if (property.getKey() == key)
+			if (property.getKey().equals(key))
 				return PropertyHelper.from(property);
 		}
 		return null;
@@ -99,7 +99,7 @@ public class LinkHelper extends G_Link {
 	public static List<PropertyHelper> getProperties(G_Link link, String key) {
 		List<PropertyHelper> matches = new ArrayList<PropertyHelper>();
 		for (G_Property property : link.getProperties()) {
-			if (property.getKey() == key)
+			if (property.getKey().equals(key))
 				matches.add(PropertyHelper.from(property));
 		}
 		return matches;

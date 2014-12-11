@@ -37,5 +37,5 @@ public interface IconService {
 	public abstract void addPattern(String pattern, boolean caseSensitive,
 			String iconClass);
 
-	public abstract void removePattern(String pattern);
+	public abstract void removePattern(String pattern,boolean caseSensitive);
 }

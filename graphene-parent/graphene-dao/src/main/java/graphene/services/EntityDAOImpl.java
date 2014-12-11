@@ -4,7 +4,7 @@ import graphene.dao.EntityDAO;
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
 import graphene.dao.annotations.EntityLightFunnelMarker;
-import graphene.model.Funnel;
+import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;

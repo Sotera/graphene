@@ -65,7 +65,7 @@ Ext.define("DARPA.GraphSettings",
 				xtype:'textfield',
 				fieldLabel:'Maximum Hops',
 				labelLength:150,
-				value:'3',
+				value:'2',
 				width:200
 			},
 			{

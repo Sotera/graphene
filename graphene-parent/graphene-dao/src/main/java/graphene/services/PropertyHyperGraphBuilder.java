@@ -1,9 +1,9 @@
 package graphene.services;
 
+import graphene.business.commons.DocumentError;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.GenericDAO;
 import graphene.dao.StyleService;
-import graphene.model.DocumentError;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
@@ -217,18 +217,18 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		V_GenericNode a = null;
 
 		if (ValidationUtils.isValid(originalId)) {
-			String id = generateNodeId(originalId);
-			if (!stopwordService.isValid(id)) {
+			if (!stopwordService.isValid(originalId)) {
 				addError(new DocumentError("Bad Identifier", "The " + nodeType
-						+ " (" + id + ") contains a stopword", Severity.WARN));
+						+ " (" + originalId + ") contains a stopword", Severity.WARN));
 			} else {
+				String id = generateNodeId(originalId);
 				a = nodeList.getNode(id);
 				if (a == null) {
 					a = new V_GenericNode(id);
 					a.setIdType(idType);
 					// This is important because we use it to search on the next
 					// traversal.
-					a.setIdVal(id);
+					a.setIdVal(originalId);
 					a.setNodeType(nodeType);
 					a.setColor(style.getHexColorForNode(a.getNodeType()));
 					a.setLabel(originalId);

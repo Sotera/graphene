@@ -1,6 +1,6 @@
 package graphene.services;
 
-import graphene.model.DocumentError;
+import graphene.business.commons.DocumentError;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
