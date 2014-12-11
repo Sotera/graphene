@@ -1,24 +1,23 @@
 package graphene.hts.entityextraction;
 
 import graphene.model.idl.G_Entity;
-import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
-import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_Provenance;
 import graphene.model.idl.G_Uncertainty;
 import graphene.model.idlhelper.EntityHelper;
-import graphene.model.idlhelper.PropertyHelper;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 
+ * @author djue
+ * 
+ */
 public abstract class AbstractExtractor implements Extractor {
 
 	private Matcher m;
@@ -72,6 +71,7 @@ public abstract class AbstractExtractor implements Extractor {
 
 	/**
 	 * Override in concrete classes to add additional properties to this entity.
+	 * 
 	 * @param extractedIdentifierNode
 	 * @return
 	 */
