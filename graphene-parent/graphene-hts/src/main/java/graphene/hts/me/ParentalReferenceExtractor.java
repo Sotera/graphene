@@ -5,7 +5,6 @@ import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalTruthValues;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_Gender;
-import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.util.Triple;
