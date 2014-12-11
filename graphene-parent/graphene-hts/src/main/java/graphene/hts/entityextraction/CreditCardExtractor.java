@@ -5,6 +5,7 @@ import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;
+import graphene.util.validator.ValidationUtils;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -30,15 +31,17 @@ public class CreditCardExtractor extends AbstractExtractor {
 
 	@Override
 	public G_Entity postProcessEntity(G_Entity extractedIdentifierNode) {
-		if (extractedIdentifierNode.getUid().startsWith("4")) {
-			extractedIdentifierNode.put("CC Brand", "VISA");
-		} else if (extractedIdentifierNode.getUid().startsWith("5")) {
-			extractedIdentifierNode.put("CC Brand", "MASTERCARD");
-		} else if (extractedIdentifierNode.getUid().startsWith("6")) {
-			extractedIdentifierNode.put("CC Brand", "DISCOVER");
-		} else {
-			extractedIdentifierNode.put("CC Brand", "UNKNOWN");
-		}
+		if (ValidationUtils.isValid(extractedIdentifierNode)
+				&& ValidationUtils.isValid(extractedIdentifierNode.getUid()))
+			if (extractedIdentifierNode.getUid().startsWith("4")) {
+				extractedIdentifierNode.put("CC Brand", "VISA");
+			} else if (extractedIdentifierNode.getUid().startsWith("5")) {
+				extractedIdentifierNode.put("CC Brand", "MASTERCARD");
+			} else if (extractedIdentifierNode.getUid().startsWith("6")) {
+				extractedIdentifierNode.put("CC Brand", "DISCOVER");
+			} else {
+				extractedIdentifierNode.put("CC Brand", "UNKNOWN");
+			}
 		return super.postProcessEntity(extractedIdentifierNode);
 	}
 

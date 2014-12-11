@@ -11,6 +11,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * 
+ * @author djue
+ * 
+ */
 public class SentenceExtractorImpl extends AbstractExtractor {
 
 	private final static String RE_1 = "([\\w\\d]{3,})";
@@ -21,7 +26,7 @@ public class SentenceExtractorImpl extends AbstractExtractor {
 
 	@Override
 	public Collection<String> extract(String source) {
-		List<String> matchList = new ArrayList<String>();
+		final List<String> matchList = new ArrayList<String>();
 		source = StringUtils.cleanUpAllCaps(source, 0.2d);
 		matchList.addAll(StringUtils.convertToSentences(source));
 		return matchList;
