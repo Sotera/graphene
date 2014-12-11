@@ -7,6 +7,7 @@ public class MITIEModule {
 
 	public static final String BASIC_AUTH = "mitie.basic-auth";
 	public static final String BASE_URL = "mitie.base-url";
+	public static final String ENABLED = "mitie.enabled";
 
 	public void contributeApplicationDefaults(
 			MappedConfiguration<String, String> configuration) {
@@ -14,7 +15,7 @@ public class MITIEModule {
 		// MITIE defaults (if no mitie.properties file is provided, or not in
 		// catalina.properties, etc)
 		configuration.add(BASIC_AUTH, "");// obviously just an
-														// example
+											// example
 		configuration.add(BASE_URL, "http://localhost/mitie");// obviously just
 																// an example
 	}
