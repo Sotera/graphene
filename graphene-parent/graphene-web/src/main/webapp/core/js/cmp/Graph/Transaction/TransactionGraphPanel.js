@@ -134,6 +134,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				self.setStatus("LOADED DATA", 1);
 				self.json=records[0].raw;
 
+				// temporary implementation. TempGlobalLegend found in .html
+				var stringifiedLegendFromServer = TempGlobalLegend;
+				
+				if (typeof stringifiedLegendFromServer == "string") {
+					stringifiedLegendFromServer = Ext.decode(stringifiedLegendFromServer);
+				} // else assume JSON
+				
 				if (self.json && self.json.nodes.length == 0) {
 					self.setStatus("NO DATA FOUND TO PLOT");
 				} else { 
@@ -145,6 +152,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				
 				var nodeCount = self.json.nodes.length;
 				self.appendTabTitle("(" + nodeCount.toString() + ")");
+				self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "TransactionGraph");
 			}
 		});
 	},
@@ -197,6 +205,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				self.json = records[0].raw;
 				self.setStatus("LOADED DATA", 1);
 
+				// temporary implementation. TempGlobalLegend found in .html
+				var stringifiedLegendFromServer = TempGlobalLegend;
+				
+				if (typeof stringifiedLegendFromServer == "string") {
+					stringifiedLegendFromServer = Ext.decode(stringifiedLegendFromServer);
+				} // else assume JSON
+				
 				// results could be empty, check for this here
 				if (self.json && self.json.nodes.length <= 2) { 
 					//  don't include this node already connected to another node in the graph
@@ -212,11 +227,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 							function(ans) {
 								if (ans == 'yes') {
 									self.GraphVis.showGraph1Hop(self.json, node);
+									self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "TransactionGraph");
 								}
 							}
 						);
 					} else {
 						self.GraphVis.showGraph1Hop(self.json, node);
+						self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "TransactionGraph");
 					}
 				}
 				// Update title to display the communication id and number of nodes found 

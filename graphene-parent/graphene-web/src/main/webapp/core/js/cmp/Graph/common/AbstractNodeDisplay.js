@@ -15,22 +15,32 @@ Ext.define("DARPA.AbstractNodeDisplay", {
 	
 	showNodeAttrs: function(node) {
     	// TODO implement in extending class
+		return null;
 	},
     
 	showEdgeAttrs: function(edge) {
     	// TODO implement in extending class
+		return null;
 	},
 	
     getIdentifierType: function() {
     	// TODO implement in extending class
+		return null;
     },
     
     getIdentifier: function() {
     	// TODO implement in extending class
+		return null;
     },
     
     getIdentifierDetails: function() {
     	// TODO implement in extending class
+		return null;
+    },
+    
+    getLegendPanel: function() {
+    	// TODO implement in extending class
+		return null;
     },
     
  	getGraph:function() {
@@ -40,6 +50,35 @@ Ext.define("DARPA.AbstractNodeDisplay", {
 		var graph = Ext.getCmp(graphId);
 		return graph;
     },        
+    
+    updateLegend: function(jsonArray, groupName) {
+    	var legendPanel = this.getLegendPanel();
+		// assume jsonArray is array of objects, each containing "text" and "color" or "iconPath"
+    	
+    	if (typeof legendPanel !== "undefined") {
+    		// create a legend item for each object present in jsonArray
+    		while (jsonArray.length > 0) {
+    			var i = jsonArray.shift();
+    			GLegend.addLegendItem(groupName, i.text, i.iconPath, i.color);
+    		}
+    		
+    		// legend objects based on jsonArray
+    		var newLegend = GLegend.getLegendByGroup(groupName);
+    		
+    		// default legend objects defined in .HTML
+			var defaultLegend = GLegend.getLegendByGroup(GLegend.getDefaultGroupName());
+			
+			// mash the two legend arrays together to make one big legendary family
+			var finalLegend = newLegend.concat(defaultLegend);
+			
+			// remove existing legend ( otherwise, the legend would grow with each call of this.updateLegend() )
+			legendPanel.items.each(function(child) { this.remove(child); }, legendPanel);
+			
+			// replace with new legend
+    		legendPanel.add(finalLegend);
+			legendPanel.doLayout();
+    	}
+    },
     
 	getPivotButton: function() 		{ return Ext.getCmp(this.id + "-Actions").getPivotButton(); },
 	getUnPivotButton: function() 	{ return Ext.getCmp(this.id + "-Actions").getUnPivotButton(); },

@@ -34,7 +34,8 @@ Ext.define("DARPA.TransactionNodeDisplay", {
 			}),
 			Ext.create("Ext.panel.Panel", {
 				title: 'LEGEND',
-				items: GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
+				id: config.id + '-Legend',
+				//items: GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
 			})
 		];
 		
@@ -54,6 +55,10 @@ Ext.define("DARPA.TransactionNodeDisplay", {
     getIdentifierDetails: function() {
         var detailsItems = this.items.items[0].items.items;
         return detailsItems[2].getValue();
+    },
+    
+    getLegendPanel: function() {
+    	return this.items.items[2]; //.items.items[0];
     },
     
 	showNodeAttrs: function(node) {
