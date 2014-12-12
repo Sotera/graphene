@@ -30,13 +30,17 @@ Ext.define("DARPA.EntityNodeDisplay", {
 			idPanel,
 			Ext.create("DARPA.Node_Actions", {
 				id: config.id + '-Actions',
-				height: 'auto'
+				height: 'auto',
+				collapsible: true,
+				collapseDirection: "bottom"
 			}),
 			Ext.create("Ext.panel.Panel", {
 				title: 'LEGEND',
 				id: config.id + '-Legend',
 				maxHeight: 300,
-				autoScroll: true
+				autoScroll: true,
+				collapsible: true,
+				collapseDirection: "bottom"
 				//items: GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
 			})
 		];
