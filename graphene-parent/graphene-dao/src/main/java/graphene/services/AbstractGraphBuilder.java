@@ -23,6 +23,7 @@ import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
+import mil.darpa.vande.generic.V_LegendItem;
 import mil.darpa.vande.generic.V_NodeList;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -123,6 +124,7 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 	protected Stack<EntityQuery> queriesToRun = new Stack<EntityQuery>();
 	protected Stack<EntityQuery> queriesToRunNextDegree = new Stack<EntityQuery>();
 	protected V_NodeList nodeList = new V_NodeList();
+	protected ArrayList<V_LegendItem> legendItems = new ArrayList<V_LegendItem>();
 	@Inject
 	private Logger logger;
 

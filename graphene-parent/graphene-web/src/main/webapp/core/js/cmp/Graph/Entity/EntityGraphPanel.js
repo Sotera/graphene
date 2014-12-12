@@ -130,11 +130,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;
 				
-				// temporary implementation. TempGlobalLegend found in .html
-				var stringifiedLegendFromServer = TempGlobalLegend;
-				
-				if (typeof stringifiedLegendFromServer == "string") {
-					stringifiedLegendFromServer = Ext.decode(stringifiedLegendFromServer);
+				var serverLegend = records[0].raw.legend;
+				if (typeof serverLegend == "string") {
+					serverLegend = Ext.decode(serverLegend);
 				} // else assume JSON
 				
 				if (self.json && self.json.nodes.length == 0) {
@@ -149,7 +147,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 
 				var nodeCount = self.json.nodes.length;
 				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "EntityGraph");
+				self.getNodeDisplay().updateLegend(serverLegend, "EntityGraph");
 			}
 		});
 	},
@@ -206,11 +204,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;;
 
-				// temporary implementation. TempGlobalLegend found in .html
-				var stringifiedLegendFromServer = TempGlobalLegend;
-				
-				if (typeof stringifiedLegendFromServer == "string") {
-					stringifiedLegendFromServer = Ext.decode(stringifiedLegendFromServer);
+				var serverLegend = records[0].raw.legend;
+				if (typeof serverLegend == "string") {
+					serverLegend = Ext.decode(serverLegend);
 				} // else assume JSON
 				
 				// results could be empty, check for this here
@@ -227,13 +223,13 @@ Ext.define("DARPA.EntityGraphPanel", {
 							function(ans) {
 								if (ans == 'yes') {
 									self.GraphVis.showGraph1Hop(self.json, node);
-									self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "EntityGraph");
+									self.getNodeDisplay().updateLegend(serverLegend, "EntityGraph");
 								}
 							}
 						);
 					} else {
 						self.GraphVis.showGraph1Hop(self.json, node);
-						self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "EntityGraph");
+						self.getNodeDisplay().updateLegend(serverLegend, "EntityGraph");
 					}
 				}
 

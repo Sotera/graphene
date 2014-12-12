@@ -35,6 +35,8 @@ Ext.define("DARPA.TransactionNodeDisplay", {
 			Ext.create("Ext.panel.Panel", {
 				title: 'LEGEND',
 				id: config.id + '-Legend',
+				maxHeight: 300,
+				autoScroll: true
 				//items: GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
 			})
 		];

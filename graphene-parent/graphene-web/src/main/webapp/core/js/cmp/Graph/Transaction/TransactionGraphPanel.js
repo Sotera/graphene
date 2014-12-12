@@ -133,12 +133,10 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				
 				self.setStatus("LOADED DATA", 1);
 				self.json=records[0].raw;
-
-				// temporary implementation. TempGlobalLegend found in .html
-				var stringifiedLegendFromServer = TempGlobalLegend;
 				
-				if (typeof stringifiedLegendFromServer == "string") {
-					stringifiedLegendFromServer = Ext.decode(stringifiedLegendFromServer);
+				var serverLegend = records[0].raw.legend;
+				if (typeof serverLegend == "string") {
+					serverLegend = Ext.decode(serverLegend);
 				} // else assume JSON
 				
 				if (self.json && self.json.nodes.length == 0) {
@@ -152,7 +150,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				
 				var nodeCount = self.json.nodes.length;
 				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "TransactionGraph");
+				self.getNodeDisplay().updateLegend(serverLegend, "TransactionGraph");
 			}
 		});
 	},
@@ -205,11 +203,9 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				self.json = records[0].raw;
 				self.setStatus("LOADED DATA", 1);
 
-				// temporary implementation. TempGlobalLegend found in .html
-				var stringifiedLegendFromServer = TempGlobalLegend;
-				
-				if (typeof stringifiedLegendFromServer == "string") {
-					stringifiedLegendFromServer = Ext.decode(stringifiedLegendFromServer);
+				var serverLegend = records[0].raw.legend;
+				if (typeof serverLegend == "string") {
+					serverLegend = Ext.decode(serverLegend);
 				} // else assume JSON
 				
 				// results could be empty, check for this here
@@ -227,13 +223,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 							function(ans) {
 								if (ans == 'yes') {
 									self.GraphVis.showGraph1Hop(self.json, node);
-									self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "TransactionGraph");
+									self.getNodeDisplay().updateLegend(serverLegend, "TransactionGraph");
 								}
 							}
 						);
 					} else {
 						self.GraphVis.showGraph1Hop(self.json, node);
-						self.getNodeDisplay().updateLegend(stringifiedLegendFromServer, "TransactionGraph");
+						self.getNodeDisplay().updateLegend(serverLegend, "TransactionGraph");
 					}
 				}
 				// Update title to display the communication id and number of nodes found 
