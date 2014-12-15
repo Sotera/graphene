@@ -265,14 +265,16 @@ Ext.define("DARPA.Node_Actions", {
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
 					var nodes = graph.GraphVis.gv.$("node:selected");
-					if (nodes.length > 0) {
-						Ext.Msg.confirm("Warning", "Deleting selected nodes will remove them from the graph entirely.  Are you sure?", function(btn) {
+					var edges = graph.GraphVis.gv.$("edge:selected");
+					if (nodes.length > 0 || edges.length > 0) {
+						Ext.Msg.confirm("Warning", "Deleting selected elements will remove them from the graph entirely.  Are you sure?", function(btn) {
 							if (btn == "yes") {
 								graph.GraphVis.deleteNodes(nodes);
+								graph.GraphVis.deleteEdges(edges);
 							}
 						});
 					} else {
-						Ext.Msg.alert("Warning", "You must first select one or more nodes before you can delete them.");
+						Ext.Msg.alert("Warning", "You must first select one or more elements before you can delete them.");
 					}
 				}
 			}
