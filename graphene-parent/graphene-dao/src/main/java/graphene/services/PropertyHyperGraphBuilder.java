@@ -41,7 +41,7 @@ import org.slf4j.Logger;
  */
 @UsesConfiguration(DocumentGraphParser.class)
 public abstract class PropertyHyperGraphBuilder<T> extends
-		AbstractGraphBuilder<T> implements HyperGraphBuilder<T> {
+		AbstractGraphBuilder<T,EntityQuery> implements HyperGraphBuilder<T> {
 
 	private static final boolean INHERIT_ATTRIBUTES = true;
 	@Inject

@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T> {
+public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_GraphQuery> {
 	@Inject
 	private Logger logger;
 

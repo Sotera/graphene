@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 public class CallbackTest {
 
-	public class ExampleCallback implements G_CallBack<Object> {
+	public class ExampleCallback implements G_CallBack<Object,Object> {
 
 		@Override
 		public boolean callBack(Object t) {
@@ -15,6 +15,12 @@ public class CallbackTest {
 				return false;
 			}
 			return true;
+		}
+
+		@Override
+		public boolean callBack(Object t, Object q) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}

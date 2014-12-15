@@ -169,7 +169,7 @@ public class EntityHelper extends G_Entity {
 	public static List<G_Property> getPropertiesByKey(G_Entity entity,
 			String key) {
 		List<G_Property> list = new ArrayList<G_Property>(1);
-		if (entity != null) {
+		if (entity != null && entity.getProperties() != null) {
 			for (G_Property x : entity.getProperties()) {
 				if (x.getKey().equalsIgnoreCase(key)) {
 					list.add(x);

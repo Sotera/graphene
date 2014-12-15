@@ -6,8 +6,9 @@ import graphene.util.G_CallBack;
  * @author djue
  * 
  * @param <T>
+ * @param <Q>
  */
-public interface DiskCache<T> extends G_CallBack<T> {
+public interface DiskCache<T, Q> extends G_CallBack<T,Q> {
 	/**
 	 * Close any file streams
 	 */

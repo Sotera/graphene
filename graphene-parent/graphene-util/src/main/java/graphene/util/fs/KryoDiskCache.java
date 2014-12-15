@@ -19,8 +19,9 @@ import com.esotericsoftware.kryo.io.Output;
  * @param <T>
  *            The class of object you are serializing, usually a POJO based on a
  *            DB call.
+ * @param <Q>
  */
-public class KryoDiskCache<T> implements DiskCache<T> {
+public class KryoDiskCache<T, Q> implements DiskCache<T, Q> {
 
 	private static final long FLUSH_THRESHOLD = 10000;
 
@@ -142,6 +143,11 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 	@Override
 	public long getNumberOfRecordsCached() {
 		return numberOfRecordsCached;
+	}
+
+	@Override
+	public boolean callBack(T t, Q q) {
+		return write(t);
 	}
 
 }

@@ -79,7 +79,7 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	 * @param q
 	 * @return true if the callback succeeded, or did not find any errors.
 	 */
-	boolean performCallback(long offset, long maxResults, G_CallBack<T> cb,
+	boolean performCallback(long offset, long maxResults, G_CallBack<T,QUERYOBJECT> cb,
 			QUERYOBJECT q);
 
 }

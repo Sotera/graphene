@@ -19,7 +19,7 @@ import java.util.Set;
  * 
  */
 
-public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
+public interface EntityRefDAO<T> extends GenericDAO<T, EntityQuery> {
 
 	/**
 	 * 
@@ -104,7 +104,7 @@ public interface EntityRefDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> 
 	 * @return Set<String> of matching values
 	 * @throws Exception
 	 */
-	Set<String> valueSearch(final Q q) throws Exception;
+	Set<String> valueSearch(final EntityQuery q) throws Exception;
 
 	/**
 	 * Returns a flavor of entity ref that all implementations can agree on.

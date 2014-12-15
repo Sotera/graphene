@@ -92,7 +92,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @return
 	 */
 	public boolean basicCallback(long initialOffset, long maxResults,
-			G_CallBack<T> cb, Q q) {
+			G_CallBack<T,Q> cb, Q q) {
 		if (initialOffset == 0) {
 			// For SQL offsets, it is one based.
 			initialOffset = 1;
@@ -250,7 +250,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 */
 	@Override
 	public boolean performCallback(long offset, long maxResults,
-			G_CallBack<T> cb, Q q) {
+			G_CallBack<T,Q> cb, Q q) {
 		return basicCallback(offset, maxResults, cb, q);
 	}
 
@@ -354,7 +354,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @return true if successful, false otherwise.
 	 */
 	public boolean throttlingCallback(long initialOffset, long maxResults,
-			G_CallBack<T> cb, Q q) {
+			G_CallBack<T,Q> cb, Q q) {
 		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
 		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10,
 				250000);
@@ -407,7 +407,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @return
 	 */
 	public boolean throttlingCallback(long initialOffset, long maxResults,
-			G_CallBack<T> cb, Q q, long initialChunkSize, long minChunkSize,
+			G_CallBack<T,Q> cb, Q q, long initialChunkSize, long minChunkSize,
 			long maxChunkSize) {
 		logger.debug("Performing throttling callback performer");
 		logger.debug("initialOffset = " + initialOffset);
@@ -609,7 +609,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @return
 	 */
 	public boolean throttlingCallbackOnValues(long initialOffset,
-			long maxResults, G_CallBack<T> cb, Q q, long initialChunkSize,
+			long maxResults, G_CallBack<T,Q> cb, Q q, long initialChunkSize,
 			long minChunkSize, long maxChunkSize, long minValue, long maxValue) {
 		logger.debug("Performing throttling callback performer against values");
 		logger.debug("initialOffset = " + initialOffset);

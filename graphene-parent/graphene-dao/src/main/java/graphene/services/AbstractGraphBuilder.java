@@ -6,6 +6,7 @@ import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.query.EntityQuery;
 import graphene.util.G_CallBack;
+import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.URLEncoder;
 import org.slf4j.Logger;
 
-public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
+public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 	@Inject
 	protected G_EdgeTypeAccess edgeTypeAccess;
 
@@ -41,7 +42,7 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 
 	protected String getCombinedSearchLink(String identifier) {
 		String context = encoder.encode(identifier);
-		return "<a href=\"CombinedEntitySearchPage/" + context
+		return "<a href=\"graphene\\CombinedEntitySearchPage/" + context
 				+ "\" class=\"btn btn-primary\" >" + identifier + "</a>";
 	}
 
@@ -177,7 +178,7 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 		// Allow for null values as part of the id.
 		if (addendIds != null && addendIds.length == 1
 				&& ValidationUtils.isValid(addendIds[0])) {
-			//removes all non alphanumeric, and converts to lowercase
+			// removes all non alphanumeric, and converts to lowercase
 			key = addendIds[0].replaceAll("[\\W]|_", "").toLowerCase();
 		} else if (addendIds != null && addendIds.length > 0) {
 			for (String a : addendIds) {
@@ -203,5 +204,26 @@ public abstract class AbstractGraphBuilder<T> implements G_CallBack<T> {
 
 	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
 			throws Exception;
+
+	public boolean createEdge(String fromId, String relationType, String toId,
+			String relationValue) {
+		String key = generateEdgeId(fromId, relationType, toId);
+		V_GenericNode a = nodeList.getNode(fromId);
+		V_GenericNode b = nodeList.getNode(toId);
+		if (ValidationUtils.isValid(key, a, b) && !edgeMap.containsKey(key)) {
+
+			V_GenericEdge v = new V_GenericEdge(a, b);
+			v.setIdType(relationType);
+			v.setLabel(null);
+			v.setIdVal(relationType);
+			v.addData(
+					"Value",
+					StringUtils.coalesc(" ", a.getLabel(), relationValue,
+							b.getLabel()));
+			edgeMap.put(key, v);
+			return true;
+		}
+		return false;
+	}
 
 }

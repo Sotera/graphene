@@ -11,7 +11,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	protected String cacheFileLocation = null;
 	protected boolean deleteExisting = false;
 
-	protected DiskCache<T> diskCache;
+	protected DiskCache<T,Q> diskCache;
 
 	@Inject
 	private Logger logger;
@@ -39,7 +39,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	/**
 	 * @return the diskCache
 	 */
-	public final DiskCache<T> getDiskCache() {
+	public final DiskCache<T,Q> getDiskCache() {
 		return diskCache;
 	}
 
@@ -72,7 +72,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	}
 
 	public boolean performCallback(final long offset, final long maxResults,
-			final G_CallBack<T> cb, final Q q) {
+			final G_CallBack<T,Q> cb, final Q q) {
 		logger.debug("Performing callback at the Disk Cache level...");
 
 		boolean readerAvailable = getCacheToDisk(deleteExisting, trySerialized,
@@ -122,7 +122,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param diskCache
 	 *            the diskCache to set
 	 */
-	public final void setDiskCache(DiskCache<T> diskCache) {
+	public final void setDiskCache(DiskCache<T,Q> diskCache) {
 		this.diskCache = diskCache;
 	}
 

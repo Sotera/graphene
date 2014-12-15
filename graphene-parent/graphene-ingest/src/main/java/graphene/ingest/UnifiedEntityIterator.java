@@ -21,7 +21,7 @@ public class UnifiedEntityIterator<GUnifiedEntities101> {
 	private UnifiedEntityDAO dao;
 
 	@Inject
-	private DiskCache<?> diskCache;
+	private DiskCache<?,?> diskCache;
 
 	@Inject
 	private Logger logger;
@@ -30,7 +30,7 @@ public class UnifiedEntityIterator<GUnifiedEntities101> {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UnifiedEntityIterator(Logger logger2, JavaDiskCache<?> diskCache2,
+	public UnifiedEntityIterator(Logger logger2, JavaDiskCache<?,?> diskCache2,
 			UnifiedEntityDAO<?, ?> dao2) {
 		// TODO Auto-generated constructor stub
 		logger = logger2;

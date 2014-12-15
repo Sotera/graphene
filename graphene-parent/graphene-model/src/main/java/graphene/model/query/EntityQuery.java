@@ -13,6 +13,8 @@ public class EntityQuery extends BasicQuery {
 	private boolean caseSensitive = false;
 	private boolean customerQueryFlag = true;
 
+	private String initiatorId;
+
 	public void addAttribute(Collection<G_SearchTuple<String>> attr) {
 		attributeList.addAll(attr);
 	}
@@ -47,6 +49,10 @@ public class EntityQuery extends BasicQuery {
 	 */
 	public final List<G_SearchTuple<String>> getAttributeList() {
 		return attributeList;
+	}
+
+	public String getInitiatorId() {
+		return initiatorId;
 	}
 
 	@Override
@@ -94,6 +100,10 @@ public class EntityQuery extends BasicQuery {
 		this.customerQueryFlag = customerQueryFlag;
 	}
 
+	public void setInitiatorId(String id) {
+		this.initiatorId = id;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -110,7 +120,5 @@ public class EntityQuery extends BasicQuery {
 				.append("]");
 		return builder.toString();
 	}
-
-
 
 }

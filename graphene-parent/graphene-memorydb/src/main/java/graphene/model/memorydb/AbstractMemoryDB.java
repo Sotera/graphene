@@ -8,6 +8,7 @@ import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
+import graphene.model.query.EntityQuery;
 import graphene.model.query.SearchFilter;
 import graphene.model.view.entities.CustomerDetails;
 import graphene.model.view.entities.IdType;
@@ -32,7 +33,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
+public abstract class AbstractMemoryDB<T, I, EntityQuery> implements G_CallBack<T, EntityQuery>,
 		IMemoryDB<T, I, CustomerDetails> {
 	protected static MemIndex accounts;
 	protected static int currentRow;
@@ -51,7 +52,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 	protected Set<String> customerSet;
 
 	@Inject
-	private EntityRefDAO<T, ?> dao;
+	private EntityRefDAO<T> dao;
 	@Inject
 	private G_NodeTypeAccess nodeTypeAccess;
 	@Inject
@@ -73,12 +74,14 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 	protected long numProcessed = 0;
 	protected int state;
 
-	public AbstractMemoryDB(EntityRefDAO<T, ?> dao, IdTypeDAO<?, ?> idTypeDAO) {
+	public AbstractMemoryDB(EntityRefDAO<T> dao, IdTypeDAO<?, ?> idTypeDAO) {
 		this.dao = dao;
 		this.idTypeDAO = idTypeDAO;
 	}
 
 	public abstract boolean callBack(T p);
+
+	public abstract boolean callBack(T p, EntityQuery q);
 
 	@Override
 	public List<CustomerDetails> customersForIdentifier(String identifier,
@@ -96,8 +99,8 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			// .fromValue(family);
 
 			for (MemRow r : dbResults) {
-				if (idTypeDAO.getByType(r.getIdType()).getShortName().equals(nodeType
-						.getName())) {
+				if (idTypeDAO.getByType(r.getIdType()).getShortName()
+						.equals(nodeType.getName())) {
 					// So we need this identifier
 					String custno = getCustomerNumberForID(r.entries[CUSTOMER]);
 					customersFound.add(custno);
@@ -487,7 +490,8 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			return true;
 		} else {
 			for (MemRow r : getRowsForIdentifier(value)) {
-				if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(family))
+				if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(
+						family))
 					return true;
 			}
 			return false;
@@ -517,7 +521,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		currentRow = 0;
 		state = STATE_LOAD_GRID;
 		numProcessed = 0;
-		boolean loadGridSuccessful = dao.performCallback(0, maxRecords, this,
+		boolean loadGridSuccessful = dao.performCallback(0, maxRecords, (G_CallBack<T, graphene.model.query.EntityQuery>) this,
 				null);
 		if (!loadGridSuccessful) {
 			logger.error("Unsuccessful attempt to populate MemoryDB: callback unsuccessful for loadGrid");
@@ -558,7 +562,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 		accountSet = new HashSet<String>();
 		numProcessed = 0;
 		boolean loadStringsSuccessful = dao.performCallback(0, maxRecords,
-				this, null);
+				(G_CallBack<T, graphene.model.query.EntityQuery>) this, null);
 		if (!loadStringsSuccessful) {
 			logger.error("Unsuccessful attempt to populate MemoryDB: callback unsuccessful for loadStrings");
 		} else {
@@ -733,7 +737,8 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack<T>,
 			row = index.getHeads()[id];
 			while (row >= 0) {
 				MemRow r = grid[row];
-				if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(family)) {
+				if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(
+						family)) {
 					results.add(grid[row]);
 					row = grid[row].nextrows[col];
 				}

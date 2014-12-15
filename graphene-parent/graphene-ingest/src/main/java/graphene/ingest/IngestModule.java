@@ -20,7 +20,7 @@ public class IngestModule {
 	}
 
 	public static UnifiedCommunicationEventIterator buildUnifiedCommunicationEventIterator(
-			Logger logger, DiskCache<?> diskCache,
+			Logger logger, DiskCache<?,?> diskCache,
 			UnifiedCommunicationEventDAO<?, ?> dao) {
 		return new UnifiedCommunicationEventIterator(logger, diskCache, dao);
 	}

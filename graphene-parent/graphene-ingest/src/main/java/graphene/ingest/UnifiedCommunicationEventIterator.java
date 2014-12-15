@@ -20,7 +20,7 @@ public class UnifiedCommunicationEventIterator<UnifiedCommunicationEvent101> {
 	private UnifiedCommunicationEventDAO dao;
 
 	@Inject
-	private DiskCache<?> diskCache;
+	private DiskCache<?,?> diskCache;
 
 	@Inject
 	private Logger logger;
@@ -30,7 +30,7 @@ public class UnifiedCommunicationEventIterator<UnifiedCommunicationEvent101> {
 	}
 
 	public UnifiedCommunicationEventIterator(Logger logger2,
-			DiskCache<?> diskCache2, UnifiedCommunicationEventDAO<?, ?> dao2) {
+			DiskCache<?,?> diskCache2, UnifiedCommunicationEventDAO<?, ?> dao2) {
 		// TODO Auto-generated constructor stub
 		logger = logger2;
 		diskCache = diskCache2;

@@ -19,7 +19,7 @@ import org.slf4j.Logger;
  *            The class of object you are serializing, usually a POJO based on a
  *            DB call.
  */
-public class JavaDiskCache<T> implements DiskCache<T> {
+public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 	@Inject
 	private Logger logger;
 
@@ -135,7 +135,12 @@ public class JavaDiskCache<T> implements DiskCache<T> {
 	@Override
 	public void init(Class<T> clazz) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public boolean callBack(T t, Q q) {
+		return write(t);
 	}
 
 }
