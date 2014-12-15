@@ -24,6 +24,7 @@ import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
+import mil.darpa.vande.generic.V_LegendItem;
 
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -191,11 +192,14 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		}
 
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
-				edgeList.getEdges());
+		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 
+		for (V_LegendItem li : legendItems)  {
+			g.addLegendItem(li.getColor(), li.getText());
+		}
+		
 		return g;
 	}
 
@@ -234,6 +238,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					a.setLabel(originalId);
 					a.addData(nodeType, getCombinedSearchLink(originalId));
 					nodeList.addNode(a);
+					
+					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
 				}
 				// now we have a valid node. Attach it to the other node
 				// provided.

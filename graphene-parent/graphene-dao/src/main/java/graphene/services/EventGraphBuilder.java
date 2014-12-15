@@ -16,6 +16,7 @@ import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
+import mil.darpa.vande.generic.V_LegendItem;
 import mil.darpa.vande.generic.V_NodeList;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
@@ -181,10 +182,14 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 		}
 		//nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
-				edgeList.getEdges());
+		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
+		
+		for (V_LegendItem li : legendItems) {
+			g.addLegendItem(li);
+		}
+		
 		return g;
 	}
 

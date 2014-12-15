@@ -17,6 +17,7 @@ import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
+import mil.darpa.vande.generic.V_LegendItem;
 import mil.darpa.vande.generic.V_NodeList;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -134,10 +135,13 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 						node.setCluster(true);
 					} else {
 						// we will search on it.
-						eq.addAttribute(new G_SearchTuple<String>(
-								G_SearchType.COMPARE_EQUALS, nodeTypeAccess
-										.getNodeType(node.getNodeType()),
-								valueToSearchOn));
+						eq.addAttribute(
+							new G_SearchTuple<String>(
+								G_SearchType.COMPARE_EQUALS, 
+								nodeTypeAccess.getNodeType(node.getNodeType()),
+								valueToSearchOn
+							)
+						);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -174,10 +178,14 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 
 		//nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
-				edgeList.getEdges());
+		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
+		
+		for (V_LegendItem li : legendItems) {
+			g.addLegendItem(li);
+		}
+		
 		return g;
 	}
 

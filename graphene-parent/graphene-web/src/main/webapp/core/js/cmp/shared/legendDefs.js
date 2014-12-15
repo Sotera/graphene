@@ -27,6 +27,7 @@ function Legend() {
 				pack: 'start',
 				align: 'middle'
 			},
+			identifier: imageHTML + desc, // used to check for duplicates
 			width: 'auto',
 			height: 'auto',
 			margin: 0,
@@ -115,7 +116,17 @@ function Legend() {
 		
 		if (_legendItems.hasOwnProperty(groupName)) {
 			try {
-				_legendItems[groupName].push(legendItem);
+				// prevents duplicate legend items from being added to this legend set
+				var legendSet = _legendItems[groupName];
+				var exists = false;
+				for (var i = 0; i < legendSet.length; i++) {
+					if (legendSet[i].identifier == legendItem.identifier) {
+						exists = true;
+						break;
+					}
+				}
+				// if not a duplicate, add it to this legend set
+				if (!exists) _legendItems[groupName].push(legendItem);
 			} catch (e) {
 				// TODO: handle exception
 			}
