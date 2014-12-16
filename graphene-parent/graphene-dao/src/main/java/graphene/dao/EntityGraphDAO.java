@@ -16,6 +16,7 @@ import mil.darpa.vande.generic.V_GenericNode;
  * @author djue A DAO base class for identity and relational graphs.
  * 
  */
+@Deprecated
 public interface EntityGraphDAO<T, Q> {
 	public List<T> findByQuery(Q q) throws Exception;
 
