@@ -90,16 +90,15 @@
 												</span>
 												<br />
 											</t:loop>
-											<span class="fa fa-calendar label label-info">&nbsp;${reportAmount}
-											</span>
-											<br />
 											<t:loop source="iconList" value="currentIcon">
 												<span class="${currentIcon} label label-danger"
 													rel="popover-hover" data-placement="top">&nbsp; </span>
 											</t:loop>
 										</p:reportSummaryCell>
-
-
+										<p:amountCell>
+											<span class="fa fa-calendar label label-info">&nbsp;${reportAmount}</span>
+											<br />
+										</p:amountCell>
 										<p:nameListCell>
 											<t:loop source="nameList" value="currentName">
 												<a class="btn btn-xs ${styleForName}" t:type="pagelink"
