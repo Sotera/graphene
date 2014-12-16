@@ -20,6 +20,8 @@ public class UtilModule {
 		binder.bind(ColorUtil.class);
 	}
 
+	public static final String PASSWORD_HASH_ENCODING = "graphene.password-hash-encoding";
+
 	public static Logger buildLogger(Class clazz) {
 		return LoggerFactory.getLogger(clazz);
 	}

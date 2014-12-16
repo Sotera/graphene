@@ -1,10 +1,36 @@
 package graphene.util.crypto;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import graphene.util.crypto.PasswordHash;
 
+import org.apache.commons.codec.binary.Base64;
 import org.testng.annotations.Test;
 
 public class PasswordHashTest {
+	@Test
+	public void testSalt() {
+		PasswordHash p = new PasswordHash();
+
+		try {
+			// System.out.println(p.createHash("password"));
+			byte[] s = p.pbkdf2("password".toCharArray(), "salt".getBytes(),
+					p.PBKDF2_ITERATIONS, p.HASH_BYTE_SIZE);
+			System.out.println(s);
+			System.out.println("base64 bytes: "
+					+ Base64.encodeBase64String("salt".getBytes()));
+			System.out.println("hex of \"salt\".getBytes(): "
+					+ p.toHex("salt".getBytes()));
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
 
 	/**
 	 * Tests the basic functionality of the PasswordHash class
