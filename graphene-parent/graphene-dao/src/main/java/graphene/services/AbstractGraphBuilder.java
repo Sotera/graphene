@@ -1,6 +1,7 @@
 package graphene.services;
 
 import graphene.business.commons.DocumentError;
+import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
@@ -40,6 +41,8 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	@Inject
 	protected URLEncoder encoder;
+	public static final int MIN_NODE_SIZE = 16;
+	public static final int MAX_NODE_SIZE = 0;
 
 	protected String getCombinedSearchLink(String identifier) {
 		String context = encoder.encode(identifier);
@@ -177,11 +180,14 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 	protected String generateNodeId(String... addendIds) {
 		String key = null;
 		boolean foundValue = false;
+
 		// Allow for null values as part of the id.
 		if (addendIds != null && addendIds.length == 1
 				&& ValidationUtils.isValid(addendIds[0])) {
 			// removes all non alphanumeric, and converts to lowercase
 			key = addendIds[0].replaceAll("[\\W]|_", "").toLowerCase();
+			// replace leading zeros as part of the id.
+			key = StringUtils.removeLeadingZeros(key);
 		} else if (addendIds != null && addendIds.length > 0) {
 			for (String a : addendIds) {
 				// make sure something is non null.
@@ -204,8 +210,57 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		return supportedDatasets;
 	}
 
+	/**
+	 * Creates a log based integer for node size that is larger than minSize,
+	 * and capped at maxSize (if maxSize is non-zero)
+	 * 
+	 * @param amount
+	 * @param minSize
+	 * @param maxSize
+	 * @return an integer that can be used for sizing nodes on a display
+	 */
+	protected int getLogSize(Long amount, int minSize, int maxSize) {
+		int size = minSize;
+		if (ValidationUtils.isValid(amount)) {
+			long l = Math.round(0.5 * Math.log(amount));
+			// if we are given a max size, cap the size at that value
+			if (maxSize > 0) {
+				size = (int) Math.min((l + minSize), maxSize);
+			} else {
+				size = (int) (l + minSize);
+			}
+		}
+		return size;
+	}
+
 	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
 			throws Exception;
+
+	public void addReportDetails(V_GenericNode reportNode,
+			Map<String, Object> properties) {
+
+		reportNode.setSize(getLogSize(
+				(Long) properties.get(DocumentGraphParser.TOTALAMOUNTNBR),
+				MIN_NODE_SIZE, MAX_NODE_SIZE));
+
+		reportNode.addData("Amount involved",
+				(String) properties.get(DocumentGraphParser.TOTALAMOUNTSTR));
+		List<String> datesOfEvents = (List<String>) properties
+				.get(DocumentGraphParser.DATES_OF_EVENTS);
+		for (String d : datesOfEvents) {
+			reportNode.addData("Date of Event", d);
+		}
+		List<String> datesFiled = (List<String>) properties
+				.get(DocumentGraphParser.DATES_FILED);
+		for (String d : datesOfEvents) {
+			reportNode.addData("Date filed", d);
+		}
+		List<String> datesReceieved = (List<String>) properties
+				.get(DocumentGraphParser.DATES_FILED);
+		for (String d : datesOfEvents) {
+			reportNode.addData("Date received", d);
+		}
+	}
 
 	public boolean createEdge(String fromId, String relationType, String toId,
 			String relationValue) {
