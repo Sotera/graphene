@@ -393,18 +393,17 @@ CytoGraphVis.prototype.setHandlers = function() {
 			if (e.originalEvent.ctrlKey == true && e.originalEvent.shiftKey == true) {
 				e.cy.elements().unselect();
 				e.cy.nodes("[idType = '" + node.data("idType") + "']").select();
-				e.cy.nodes("[id = '"+node.data("id")+"']").unselect(); //GRRRR!  deselecting it here selects it afterwards.  WHYYYY!?	
 			} 
 			// if alt + shift, select all neighbors of the clicked node
 			else if (e.originalEvent.altKey == true && e.originalEvent.shiftKey == true) {
 				e.cy.elements().unselect();
 				node.connectedEdges().connectedNodes().select();
-				e.cy.nodes("[id = '"+node.data("id")+"']").unselect(); //GRRRR!  deselecting it here selects it afterwards.  WHYYYY!?	
 			} 
 			// if shift key is not held down, deselect everything else before selecting the clicked node
 			else if (e.originalEvent.shiftKey !== true) {
 				e.cy.elements().unselect();
 			}
+			node.select();
 		}
 	});
 	
