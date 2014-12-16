@@ -35,9 +35,12 @@ function CytoGraphVis(inId) {
 			expandedDefNode: '#F66CFB',
 			dijkstraPath: "red",
 			dijkstraSize: 5,
-
-			outgoingHoverColor: "#2D55BE",
-			incomingHoverColor: "#FF8040",
+			outgoingHoverTextColor: "#2D55BE",
+			outgoingHoverColor: "#111111",
+			outgoingHoverSize: 2,
+			incomingHoverTextColor: "#FF8040",
+			incomingHoverColor: "#111111",
+			incomingHoverSize: 2,
 			//expandedDefEdge: '#BE26C4',
 			
 			fillColor: "rgba(0, 0, 200, 0.75)",
@@ -127,8 +130,10 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'font-size': _this.CONSTANTS("fontSize"),
 						'text-outline-width': 1,
 						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
-						'width': _this.CONSTANTS("nodeSize"),
-						'height': _this.CONSTANTS("nodeSize")
+						//'width': _this.CONSTANTS("nodeSize"),
+						//'height': _this.CONSTANTS("nodeSize")
+						'width': 'data(size)',
+						'height': 'data(size)'
 					})
 					.selector("$node > node").css({
 						'padding-top': '10px',
@@ -190,13 +195,13 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'width': _this.CONSTANTS("dijkstraSize")
 					})
 					.selector(".parent-of").css({
-						'color': "white",
+						'color': _this.CONSTANTS("outgoingHoverTextColor"),
 						'line-color': _this.CONSTANTS("outgoingHoverColor"),
 						'target-arrow-color': _this.CONSTANTS("outgoingHoverColor"),
 						'text-outline-color': _this.CONSTANTS("outgoingHoverColor")
 					})
 					.selector(".child-of").css({
-						'color': 'white',
+						'color': _this.CONSTANTS("incomingHoverTextColor"),
 						'line-color': _this.CONSTANTS("incomingHoverColor"),
 						'target-arrow-color': _this.CONSTANTS("incomingHoverColor"),
 						'text-outline-color': _this.CONSTANTS("incomingHoverColor")
