@@ -1,11 +1,15 @@
 package graphene.rest.ws;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 
@@ -14,6 +18,17 @@ import org.apache.tapestry5.annotations.Log;
 @Path("/csgraph/")
 @Produces("application/json")
 public interface CSGraphServerRS {
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/save")
+	@Produces("text/plain")
+	Response saveGraph(
+			@QueryParam("graphSeed") @DefaultValue(value = "unknown") String graphSeed,
+			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
+			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
+			String graphJSONdata);
+
 	/**
 	 * REST service to return a property-type graph.
 	 * 
@@ -32,19 +47,21 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/json")
-	public abstract V_CSGraph getProperties(@PathParam("type") String type,
+	public abstract V_CSGraph getProperties(
+			@PathParam("type") String type,
 			@PathParam("value") String[] value,
-			@QueryParam("degree")  @DefaultValue(value = "3") String degree,
+			@QueryParam("degree") @DefaultValue(value = "3") String degree,
 			@QueryParam("maxNodes") String maxNodes,
 			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
 			@QueryParam("bipartite") boolean bipartite,
 			@QueryParam("showLeafNodes") boolean leafNodes,
 			@QueryParam("showNameNodes") boolean showNameNodes,
-			@QueryParam("showIcons") boolean showIcons);
+			@QueryParam("showIcons") boolean showIcons,
+			@QueryParam("useSaved") @DefaultValue(value = "true") boolean useSaved);
 
 	/**
-	 * REST service to return a interaction-type graph.
-	 * TODO: Rename this method
+	 * REST service to return a interaction-type graph. TODO: Rename this method
+	 * 
 	 * @param objectType
 	 * @param value
 	 * @param valueType
@@ -71,7 +88,8 @@ public interface CSGraphServerRS {
 			@QueryParam("showIcons") boolean showIcons,
 			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
 			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
-			@QueryParam("minWeight") String minimumWeight);
+			@QueryParam("minWeight") String minimumWeight,
+			@QueryParam("useSaved") @DefaultValue(value = "true") boolean useSaved);
 
 	/**
 	 * 

@@ -1,9 +1,9 @@
 package graphene.rest.ws.impl;
 
-import java.util.Arrays;
-
 import graphene.dao.FederatedEventGraphServer;
 import graphene.dao.LoggingDAO;
+import graphene.dao.WorkspaceDAO;
+import graphene.model.graph.G_PersistedGraph;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
@@ -11,6 +11,11 @@ import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
+
+import java.util.Arrays;
+
+import javax.ws.rs.core.Response;
+
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
@@ -18,7 +23,10 @@ import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CSGraphServerRSImpl implements CSGraphServerRS {
 
@@ -42,7 +50,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	public V_CSGraph getEvents(String objectType, String[] value,
 			String valueType, String degree, String maxNodes,
 			String maxEdgesPerNode, boolean showIcons, String minSecs,
-			String maxSecs, String minimumWeight) {
+			String maxSecs, String minimumWeight, boolean useSaved) {
 		logger.debug("-------");
 		logger.debug("get Interaction Graph for type " + objectType);
 		logger.debug("Value     " + Arrays.toString(value));
@@ -54,7 +62,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("minSecs " + minSecs);
 		logger.debug("maxSecs " + maxSecs);
 		logger.debug("minimumWeight " + minimumWeight);
-
+		logger.debug("useSaved " + useSaved);
 		int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 3);
 		int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 1000);
@@ -106,7 +114,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	public V_CSGraph getProperties(String type, String[] value,
 			String maxDegree, String maxNodes, String maxEdgesPerNode,
 			boolean bipartite, boolean leafNodes, boolean showNameNodes,
-			boolean showIcons) {
+			boolean showIcons, boolean useSaved) {
 		logger.debug("-------");
 		logger.debug("get property graph for type " + type);
 		logger.debug("Value     " + StringUtils.toString(value));
@@ -117,28 +125,47 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("LeafNodes " + leafNodes);
 		logger.debug("Bipartite " + bipartite);
 		logger.debug("showNameNodes " + showNameNodes);
+		logger.debug("useSaved " + useSaved);
 		int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, 6);
 		int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(
 				maxEdgesPerNode, 100);
-
-		V_GenericGraph g = null;
 		V_CSGraph m = null;
-		try {
-			V_GraphQuery q = new V_GraphQuery();
-			q.addSearchIds(value);
-			q.setDirected(false);
-			q.setMaxNodes(maxNodesInt);
-			q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
-			q.setMaxHops(maxDegreeInt);
-			loggingDao.recordQuery(q);
-			g = propertyGraphBuilder.makeGraphResponse(q);
-			m = new V_CSGraph(g, true);
-		} catch (Exception e) {
-			logger.error(ExceptionUtil.getRootCauseMessage(e));
-			e.printStackTrace();
+		if (useSaved) {
+			try {
+				// TODO: fix which key is going to be used as the seed
+				G_PersistedGraph existingGraph = wdao.getExistingGraph(
+						value[0], null, null);
+				ObjectMapper mapper = new ObjectMapper();
+				if (existingGraph != null) {
+					logger.debug(existingGraph.toString());
+					m = mapper.readValue(existingGraph.getGraphJSONdata(),
+							V_CSGraph.class);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e.getMessage());
+			}
 		}
+		// If pulling from cache didn't work, get a new graph
+		if (m == null) {
+			V_GenericGraph g = null;
 
+			try {
+				V_GraphQuery q = new V_GraphQuery();
+				q.addSearchIds(value);
+				q.setDirected(false);
+				q.setMaxNodes(maxNodesInt);
+				q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
+				q.setMaxHops(maxDegreeInt);
+				loggingDao.recordQuery(q);
+				g = propertyGraphBuilder.makeGraphResponse(q);
+				m = new V_CSGraph(g, true);
+			} catch (Exception e) {
+				logger.error(ExceptionUtil.getRootCauseMessage(e));
+				e.printStackTrace();
+			}
+		}
 		return m;
 
 	}
@@ -227,6 +254,30 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			logger.error("A query was sent without any ids");
 		}
 		return m;
+	}
+
+	@Inject
+	private WorkspaceDAO wdao;
+
+	@Override
+	public Response saveGraph(String graphSeed, String userName,
+			String timeStamp, String graphJSONdata) {
+		G_PersistedGraph pg = new G_PersistedGraph();
+		pg.setCreated(DateTime.now().getMillis());
+		pg.setModified(DateTime.now().getMillis());
+		pg.setGraphSeed(graphSeed);
+		pg.setUserName(userName);
+		pg.setGraphJSONdata(graphJSONdata);
+
+		G_PersistedGraph saveGraph = wdao.saveGraph(pg);
+		if (saveGraph != null) {
+			return Response.status(200)
+					.entity("Saved " + graphSeed + " as " + saveGraph.getId())
+					.build();
+		} else {
+			return Response.status(200).entity("Unable to save " + graphSeed)
+					.build();
+		}
 	}
 
 }
