@@ -22,7 +22,7 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.kernel.impl.core.NodeProxy;
 import org.slf4j.Logger;
-
+@Deprecated
 public class EntityGraphDAONeo4JEImpl implements
 		EntityGraphDAO<InfoVisGraphAdjacency, EntityGraphQuery> {
 	private static final boolean DEBUGMODE = true;
