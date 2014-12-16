@@ -585,7 +585,7 @@ public class StringUtils {
 	 * 
 	 * @param delimiter
 	 * @param values
-	 * @return 
+	 * @return
 	 */
 	public static String coalesc(String delimiter, String... values) {
 		StringBuffer buf = new StringBuffer();
@@ -598,5 +598,9 @@ public class StringUtils {
 			}
 		}
 		return buf.toString();
+	}
+
+	public static String removeLeadingZeros(String key) {
+		return key.replaceFirst("^0+(?!$)", "");
 	}
 }
