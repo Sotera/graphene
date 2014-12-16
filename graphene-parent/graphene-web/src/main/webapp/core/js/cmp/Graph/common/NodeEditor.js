@@ -1,6 +1,6 @@
-Ext.define("DARPA.NodeEditor", {
+Ext.define("DARPA.ElementEditor", {
 	extend: "Ext.Window",
-	title: 'Edit Node Values',
+	title: 'Edit Element Values',
 	height: 400,
 	width: 400,
 	closeAction: 'destroy',
@@ -11,12 +11,12 @@ Ext.define("DARPA.NodeEditor", {
 	layout: 'fit',
 
 	onComplete: function() { console.error("You forgot to implement the onComplete() fn."); },
-	nodeRef: null,
+	eleRef: null,
 	
 	constructor: function(config) {
 		var _this = this;
 		
-		_this.nodeRef = config.nodeRef;
+		_this.eleRef = config.eleRef;
 		
 		var dataRows = new Ext.Container({
 			id: "attr_rows",
@@ -30,8 +30,8 @@ Ext.define("DARPA.NodeEditor", {
 		
 		var northPanel = new Ext.Panel({
 			region: "north",
-			title: "Node Values",
-			id: "node_values",
+			title: "Element Values",
+			id: "ele_values",
 			padding: '1 1 1 1',
 			layout: {
 				type: 'vbox',
@@ -53,8 +53,8 @@ Ext.define("DARPA.NodeEditor", {
 					fieldLabel: "Name",
 					labelWidth: 60,
 					width: '100%',
-					name: "node_name",
-					value: config.nodeRef.data("name"),
+					name: "ele_name",
+					value: config.eleRef.data("label"),
 					allowBlank: false
 				}]
 			}, {
@@ -72,16 +72,16 @@ Ext.define("DARPA.NodeEditor", {
 					fieldLabel: "ID Type",
 					labelWidth: 60,
 					width: '50%',
-					name: "node_type",
-					value: config.nodeRef.data("idType"),
+					name: "ele_type",
+					value: config.eleRef.data("idType"),
 					allowBlank: false
 				}, {
 					xtype: 'textfield',
 					fieldLabel: "Color",
 					labelWidth: 60,
 					width: '50%',
-					name: "node_color",
-					value: config.nodeRef.data("color"),
+					name: "ele_color",
+					value: config.eleRef.data("color"),
 					allowBlank: false
 				}]
 			}]
@@ -99,7 +99,7 @@ Ext.define("DARPA.NodeEditor", {
 		
 		var dataForm = new Ext.Panel({
 			layout: "border",
-			title: "Node Attributes",
+			title: "eleent Attributes",
 			border: false,
 			frame: false,
 			region: "center",
@@ -139,21 +139,27 @@ Ext.define("DARPA.NodeEditor", {
 		}];
 		
 		_this.callParent(arguments);
-		_this.autoPopulate(config.nodeRef);
+		_this.autoPopulate(config.eleRef);
 	},
 	
 	getName: function() {
-		var panel = Ext.getCmp("node_values");
-		return panel.getName();
+		var panel = Ext.getCmp("ele_values");
+		var name = panel.getName();
+		
+		// postfix '*' to the end of the element's label to show it has been edited
+		if (name[name.length - 1] !== "*") 
+			name += "*";
+		
+		return name;
 	},
 	
 	getIdType: function() {
-		var panel = Ext.getCmp("node_values");
+		var panel = Ext.getCmp("ele_values");
 		return panel.getIdType();
 	},
 	
 	getColor: function() {
-		var panel = Ext.getCmp("node_values");
+		var panel = Ext.getCmp("ele_values");
 		return panel.getColor();
 	},
 	
@@ -251,12 +257,12 @@ Ext.define("DARPA.NodeEditor", {
 		return dataRow;
 	},
 	
-	autoPopulate: function(node) {
+	autoPopulate: function(ele) {
 		var attrRows = Ext.getCmp("attr_rows");
-		var nodeAttrs = node.data().attrs;
+		var eleAttrs = ele.data().attrs;
 		
-		for (var i = 0; i < nodeAttrs.length; i++) {
-			var attr = nodeAttrs[i];
+		for (var i = 0; i < eleAttrs.length; i++) {
+			var attr = eleAttrs[i];
 			attrRows.add(this.makeNewDataRow(attr.key, attr.val));
 		}
 		

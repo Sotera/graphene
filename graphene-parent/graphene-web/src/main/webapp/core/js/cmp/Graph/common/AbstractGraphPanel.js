@@ -248,19 +248,19 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		// TODO: override in customization
 	},
 	
-	editNode: function(node) {
+	editElement: function(ele) {
 		var self = this;
 
-		if (!node || !node.isNode || !node.isNode()) {
-			console.error("Variable 'node' is not a cytoscape node object.");
+		if (typeof ele == "undefined") {
+			console.error("Element is not defined.  Can not edit it.");
 			return;
 		}
 
-		var x_pos = node.position().x;
-		var y_pos = node.position().y;
+		//var x_pos = node.position().x;
+		//var y_pos = node.position().y;
 
-		var window = Ext.create("DARPA.NodeEditor", {
-			nodeRef: node,
+		var window = Ext.create("DARPA.ElementEditor", {
+			eleRef: ele,
 			onComplete: function() {
 				var fields = window.getAttrs();
 				var newAttrs = [];
@@ -270,10 +270,10 @@ Ext.define("DARPA.AbstractGraphPanel", {
 						val: fields[i].value
 					});
 				}
-				node.data().attrs = newAttrs;
+				ele.data().attrs = newAttrs;
 				
-				node.data({
-					"name": window.getName(),
+				ele.data({
+					"label": window.getName(),
 					"idType": window.getIdType(),
 					"color": window.getColor(),
 					"EDITED_BY_USER": true
@@ -356,6 +356,8 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		if (!doContinue) return;
 		
 		var subNodeIds = [];
+		
+		superNode.addClass("super-node");
 		
 		selectedNodes.each(function(i, n) {
 			if (n.data("id") != superNode.data("id")) {
@@ -451,6 +453,8 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		}
 		
 		var _this = this;
+
+		superNode.removeClass("super-node");
 		
 		var subNodes = superNode.data("subNodes");
 		while (subNodes.length > 0) {

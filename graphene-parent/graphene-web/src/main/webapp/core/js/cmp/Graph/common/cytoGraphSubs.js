@@ -42,6 +42,9 @@ function CytoGraphVis(inId) {
 			incomingHoverColor: "#111111",
 			incomingHoverSize: 2,
 			//expandedDefEdge: '#BE26C4',
+
+			borderWidth: 3,
+			borderColor: "black",
 			
 			fillColor: "rgba(0, 0, 200, 0.75)",
 			activeFillColor: "rgba(92, 194, 237, 0.75)",
@@ -73,6 +76,7 @@ function CytoGraphVis(inId) {
 	
 	// extend this' API with the state manager's methods
 	this.deleteNodes = _stateManager.deleteNodes;
+	this.deleteEdges = _stateManager.deleteEdges;
 	this.exportGraph = _stateManager.exportGraph;
 	this.importGraph = _stateManager.importGraph;
 	this.hideNode = _stateManager.hideNode;
@@ -123,7 +127,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 				showOverlay: false,
 				style: cytoscape.stylesheet()
 					.selector("node").css({
-						'content': 'data(name)',
+						'content': 'data(label)',
 						'text-valign': 'bottom',
 						'color': _this.CONSTANTS("textColor"),
 						'background-color': 'data(color)',
@@ -168,8 +172,8 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'line-style': 'data(lineStyle)',
 						'font-size': _this.CONSTANTS("fontSize"),
 						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
-						'line-color': 'data(color)', //_this.CONSTANTS("defaultEdge"), 
-						'target-arrow-color': 'data(color)', //_this.CONSTANTS("defaultEdge"),
+						'line-color': 'data(color)',
+						'target-arrow-color': 'data(color)',
 						'target-arrow-shape': 'triangle',
 						'width': 'data(count)'
 					})
@@ -180,15 +184,14 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'target-arrow-color': _this.CONSTANTS("lineColor"),
 						'source-arrow-color': _this.CONSTANTS("lineColor"),
 						'border-color': _this.CONSTANTS("lineColor"),
-						'font-size': _this.CONSTANTS("fontSize"),
-						//'width': 'data(lineWidth)'
+						'font-size': _this.CONSTANTS("fontSize")
 					})
-					.selector(".toggled-show").css({
-						'content': "data(label)"
-					})
-					.selector(".toggled-hide").css({
-						'content': " "
-					})
+					//.selector(".toggled-show").css({
+					//	'content': "data(label)"
+					//})
+					//.selector(".toggled-hide").css({
+					//	'content': " "
+					//})
 					.selector(".on-path").css({
 						'line-color': _this.CONSTANTS("dijkstraPath"),
 						'target-arrow-color': _this.CONSTANTS("dijkstraPath"),
@@ -205,6 +208,11 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						'line-color': _this.CONSTANTS("incomingHoverColor"),
 						'target-arrow-color': _this.CONSTANTS("incomingHoverColor"),
 						'text-outline-color': _this.CONSTANTS("incomingHoverColor")
+					})
+					.selector("node.super-node").css({
+						'border-width': _this.CONSTANTS("borderWidth"),
+						'border-style': 'solid', // currently does not modify anything
+						'border-color': _this.CONSTANTS("borderColor")
 					})
 			});
 			
@@ -267,8 +275,8 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 						content: "Edit Node",
 						select: function() {
 							var node = this;
-							if (_this.owner.editNode) { _this.owner.editNode(node); } 
-							else { console.log("editNode() is undefined"); }
+							if (_this.owner.editElement) { _this.owner.editElement(node); } 
+							else { console.log("editElement() is undefined"); }
 						}
 					}, {
 						content: "Merge Selected Nodes",
@@ -284,7 +292,27 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 							}
 						}
 					}]
-				});
+				}); // END NODE CONTEXT MENU
+				
+				_this.gv.cxtmenu({
+					menuRadius: 75, selector: 'edge', activePadding: 0,
+					fillColor: _this.CONSTANTS("fillColor"), 
+					activeFillColor: _this.CONSTANTS("activeFillColor"), 
+					commands: [{
+						content: "Delete Edge",
+						select: function() {
+							var edge = this;
+							_this.deleteEdges([edge]);
+						}
+					}, {
+						content: "Edit Edge",
+						select: function() {
+							var edge = this;
+							if (_this.owner.editElement) { _this.owner.editElement(edge); } 
+							else { console.log("editElement() is undefined"); }
+						}
+					}]
+				}); // END EDGE CONTEXT MENU
 			} catch(e) {
 				console.log(e);
 				console.log("Context Menu on cytoscape graph " + _this.id + " will be unavailable.");
@@ -307,7 +335,6 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
  */
 CytoGraphVis.prototype.setHandlers = function() {
 	var _this = this;
-	//var timoutFn = null;
 
 	var _highlightElements = function(ele, dir, addCls) {
 		var accessProp = (dir == "incoming") ? "source" : "target";
@@ -366,10 +393,22 @@ CytoGraphVis.prototype.setHandlers = function() {
 			gg.clear();
 			gg.givePrompt();
 		} else {
-			if (!e.originalEvent.shiftKey && !e.originalEvent.ctrlKey) {
+			var node = e.cyTarget;
+			// if ctrl + shift, select all nodes of the clicked node's type
+			if (e.originalEvent.ctrlKey == true && e.originalEvent.shiftKey == true) {
+				e.cy.elements().unselect();
+				e.cy.nodes("[idType = '" + node.data("idType") + "']").select();
+			} 
+			// if alt + shift, select all neighbors of the clicked node
+			else if (e.originalEvent.altKey == true && e.originalEvent.shiftKey == true) {
+				e.cy.elements().unselect();
+				node.connectedEdges().connectedNodes().select();
+			} 
+			// if shift key is not held down, deselect everything else before selecting the clicked node
+			else if (e.originalEvent.shiftKey !== true) {
 				e.cy.elements().unselect();
 			}
-			// e.cyTarget.select();
+			node.select();
 		}
 	});
 	
@@ -423,40 +462,6 @@ CytoGraphVis.prototype.setHandlers = function() {
 			_highlightElements(ele, "incoming", false);
 		});
 	});
-	
-	/* OLD hover handlers: spawned a pop-up window with node attrs in it *//*
-	this.gv.on('mouseover', 'node', function(e) {
-		var x = e.originalEvent.layerX;
-		var y = e.originalEvent.layerY;
-		var distFromTop = e.originalEvent.clientY - e.originalEvent.layerY;
-		var node = e.cyTarget;   // the current selected node
-		
-		timeoutFn = setTimeout(function() {
-			if (!(_this.owner.nodeMouseOver == undefined)) {
-				_this.owner.nodeMouseOver(node);
-				
-				// if a popup window cannot be (re)created, _this.owner.mouseOverPopUp will be undefined
-				if (!(_this.owner.mouseOverPopUp == undefined)) {
-					
-					// prevent y coordinate from being out-of-bounds
-					y = y - _this.owner.mouseOverPopUp.height;
-					if (y < 0) 
-						y = 0;
-					y += distFromTop;
-					
-					_this.owner.mouseOverPopUp.showAt(x, y);
-				}
-			}
-		}, 1000); // hover for one second
-		
-	});
-
-	this.gv.on('mouseout', 'node', function(e) {
-		clearTimeout(timeoutFn);
-		if (_this.owner.mouseOverPopUp)
-			_this.owner.mouseOverPopUp.hide();
-	});
-	*/
 };
 
 CytoGraphVis.prototype.reset = function() {
@@ -1076,6 +1081,28 @@ function StateManager(graphRef) {
 		}
 	};
 	
+	this.deleteEdges = function(edges) {
+		for (var i = 0; i < edges.length; i++) {
+			var id = edges[i].data("id");
+			
+			// remove all edges with matching id
+			graphRef.gv.remove("edge[id='" + id + "']");
+			
+			// most graph implementations store a json representation of their cyto graphs;
+			// remove traces of edges involved with selected id
+			if (typeof graphRef.owner.json !== "undefined") {
+				var json = graphRef.owner.json;
+				for (var j = 0; j < json.edges.length; j++) {
+					var jsonEdge = graphRef.owner.json.edges[j];
+					if (jsonEdge.data.id == id) {
+						json.edges.splice(j, 1);
+						break; // there should only be one edge with this id;  stop iterating
+					}
+				}
+			}
+		}
+	};
+	
 	this.showNode = function(node) {
 		if (node.hidden()) {
 			node.show();
@@ -1227,6 +1254,7 @@ function GraphGenerator(graphRef) {
 				idVal: "GeneratedNode_" + _currentId,
 				idType: "GENERATED",
 				name: "New Node",
+				label: "New Node*",
 				color: "gray",
 				attrs: [/* Populated via NodeEditor */]
 			},

@@ -259,10 +259,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	public BeanModel getModel() {
-		BeanModel<Object> model = beanModelSource.createEditModel(Object.class,
-				messages);
+		BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
 		model.add("actions", null);
 		model.add("reportSummary", null);
+		model.add("amount", null);
 		model.add("nameList", null);
 		model.add("addressList", null);
 		model.add("communicationIdentifierList", null);
