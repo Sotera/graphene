@@ -5,32 +5,30 @@ Please see the road maps in the wiki for new features and their slated order.
  
 Using Graphene 
 ------
- The core of Graphene is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.
+ The core of the Graphene project is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.
 
  It is our goal that you should not have to modify this project in order to suit your individual needs (although we welcome ideas and suggestions).  The intent is that this project be used as an underlying framework, and that your individual implementations can be wired within your code using IOC.
  
 Building Graphene 
 ------ 
- Graphene is built using [Apache Maven](http://maven.apache.org) version 3.0.4 and a recent version of [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html). 
+ Graphene is built using [Apache Maven](http://maven.apache.org) version 3.0.4 or later and a recent version of [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html). 
  
  * A plain 'mvn clean install' will build all the jar files and a single war file (to be overlaid on your project)
  * Test execution is part of the build, but you can add -DskipTests=true to cut down on the build time.
  * A BuildAll.bat is supplied for windows users.  This will perform a few cleans to overcome some windows issues, and then compile and install to your local maven repo.
  
- Graphene overview
- ------
-* Graphene expects that you are familiar with some modern Java concepts:
+Graphene overview
+------
+Graphene expects that you are familiar with some modern Java concepts:
 <li>Interfaces and Implementations</li>
 <li>Knowledge of Maven, or a knowledge of how to search for answers to your questions</li>
 <li>Dependency Injection (aka Inversion of Control or IOC or DI)
 <ul><li>Graphene uses [Apache Tapestry](http://tapestry.apache.org/) to provide the IOC framework.  It is very similar to Guice, but also allows distributed configuration and can act as a light weight OSGI alternative.  We may use the term 'wiring' and 'binding' interchangeably.  Essentially a registry is created and lives throughout the life of your program, which defines which implementation services will get when they ask for the interface. The IOC 'wiring' is mostly done at the customer implementation level, although basic shared services are wired in modules within graphene-parent.  For consistency's sake, any class that performs IOC wiring we suffix with the word "Module", i.e. AppModule.java or DAOModule.java.</li>
 </ul></li>
-<li>Graphene currently requires you to implement an ExtJS UI, although the Kiva and Enron demos should be helpful in setting up the application for your own dataset.</li>
+<li>Graphene currently requires you to implement an ExtJS U. The Walker and Kiva demos should be helpful in setting up the application for your own dataset.</li>
 
 
- * Graphene is structured as a multi module maven project.
- 
- The modules are
+Graphene is structured as a multi module maven project. The modules are:
  <ul>
   <li> <h3>graphene-parent</h3>
     <ul>
@@ -124,8 +122,10 @@ Building Graphene
 
  
  Developing with Graphene
- ------
- We recommend that your application use the Maven module structure, as shown in the Kiva and Enron demos.  For example, if you have a company name or dataset name you are developing for, like IMDB, the structure would look as follows:
+------
+
+
+ We recommend that your application use the Maven module structure, as shown in the Walker and Kiva demos.  For example, if you have a company name or dataset name you are developing for, like IMDB, the structure would look as follows:
  
  * graphene-imdb
  ..*graphene-imdb-ingest (aka the ingest module)
@@ -135,7 +135,7 @@ Building Graphene
  
  We recommend that the ingest module depend on parts from the web module (and not the other way around), so that code relating to ingest doesn't get deployed with your war.
  
- ###The injest module
+###The injest module
  The ingest module has to do with ETL (Extract, Transform, Load) of your data into a more generic format.
  
 ###The web module
@@ -146,14 +146,9 @@ Building Graphene
  
 #### DAO Implementation
    Graphene expects you to create implementations for most of the DAOs, following the interfaces provided in the graphene-dao module.
-   This allows the storage mechanism you choose to be independent of the main services and UI.  In the DAO implementations, you will mostly be querying your datastore and then converting the results into one of the model or view objects in the graphene-model module. (try saying that 10 times fast!)
+   This allows the storage mechanism you choose to be independent of the main services and UI.  In the DAO implementations, you will mostly be querying your datastore and then converting the results into one of the model or view objects in the graphene-model module. 
  
- 
- 
- 
-#### DAO Implementation
-   Graphene expects you to create implementations for most of the DAOs, following the interfaces provided in the graphene-dao module.
- 
+  
 Running a Graphene application
 ------
 
