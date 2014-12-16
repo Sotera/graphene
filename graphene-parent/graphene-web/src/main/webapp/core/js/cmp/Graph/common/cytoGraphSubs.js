@@ -330,7 +330,6 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
  */
 CytoGraphVis.prototype.setHandlers = function() {
 	var _this = this;
-	//var timoutFn = null;
 
 	var _highlightElements = function(ele, dir, addCls) {
 		var accessProp = (dir == "incoming") ? "source" : "target";
@@ -389,10 +388,23 @@ CytoGraphVis.prototype.setHandlers = function() {
 			gg.clear();
 			gg.givePrompt();
 		} else {
-			if (!e.originalEvent.shiftKey && !e.originalEvent.ctrlKey) {
+			var node = e.cyTarget;
+			// if ctrl + shift, select all nodes of the clicked node's type
+			if (e.originalEvent.ctrlKey == true && e.originalEvent.shiftKey == true) {
+				e.cy.elements().unselect();
+				e.cy.nodes("[idType = '" + node.data("idType") + "']").select();
+				e.cy.nodes("[id = '"+node.data("id")+"']").unselect(); //GRRRR!  deselecting it here selects it afterwards.  WHYYYY!?	
+			} 
+			// if alt + shift, select all neighbors of the clicked node
+			else if (e.originalEvent.altKey == true && e.originalEvent.shiftKey == true) {
+				e.cy.elements().unselect();
+				node.connectedEdges().connectedNodes().select();
+				e.cy.nodes("[id = '"+node.data("id")+"']").unselect(); //GRRRR!  deselecting it here selects it afterwards.  WHYYYY!?	
+			} 
+			// if shift key is not held down, deselect everything else before selecting the clicked node
+			else if (e.originalEvent.shiftKey !== true) {
 				e.cy.elements().unselect();
 			}
-			// e.cyTarget.select();
 		}
 	});
 	
@@ -446,40 +458,6 @@ CytoGraphVis.prototype.setHandlers = function() {
 			_highlightElements(ele, "incoming", false);
 		});
 	});
-	
-	/* OLD hover handlers: spawned a pop-up window with node attrs in it *//*
-	this.gv.on('mouseover', 'node', function(e) {
-		var x = e.originalEvent.layerX;
-		var y = e.originalEvent.layerY;
-		var distFromTop = e.originalEvent.clientY - e.originalEvent.layerY;
-		var node = e.cyTarget;   // the current selected node
-		
-		timeoutFn = setTimeout(function() {
-			if (!(_this.owner.nodeMouseOver == undefined)) {
-				_this.owner.nodeMouseOver(node);
-				
-				// if a popup window cannot be (re)created, _this.owner.mouseOverPopUp will be undefined
-				if (!(_this.owner.mouseOverPopUp == undefined)) {
-					
-					// prevent y coordinate from being out-of-bounds
-					y = y - _this.owner.mouseOverPopUp.height;
-					if (y < 0) 
-						y = 0;
-					y += distFromTop;
-					
-					_this.owner.mouseOverPopUp.showAt(x, y);
-				}
-			}
-		}, 1000); // hover for one second
-		
-	});
-
-	this.gv.on('mouseout', 'node', function(e) {
-		clearTimeout(timeoutFn);
-		if (_this.owner.mouseOverPopUp)
-			_this.owner.mouseOverPopUp.hide();
-	});
-	*/
 };
 
 CytoGraphVis.prototype.reset = function() {
