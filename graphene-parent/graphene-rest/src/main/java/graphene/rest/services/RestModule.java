@@ -4,10 +4,10 @@ import graphene.dao.DAOModule;
 import graphene.rest.ws.EntitySearchRS;
 import graphene.rest.ws.EventServerRS;
 import graphene.rest.ws.GraphDemo;
-import graphene.rest.ws.GraphDemoImpl;
 import graphene.rest.ws.MetaSearchRS;
 import graphene.rest.ws.impl.EntitySearchRSImpl;
 import graphene.rest.ws.impl.EventServerRSImpl;
+import graphene.rest.ws.impl.GraphDemoImpl;
 import graphene.rest.ws.impl.MetaSearchRSImpl;
 
 import org.apache.tapestry5.ioc.Configuration;
