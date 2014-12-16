@@ -1,6 +1,7 @@
 package graphene.dao;
 
 import graphene.business.commons.exception.DataAccessException;
+import graphene.model.graph.G_PersistedGraph;
 import graphene.model.idl.G_Workspace;
 
 import java.util.List;
@@ -9,6 +10,7 @@ public interface WorkspaceDAO {
 
 	/**
 	 * Count of any workspaces that have the partial title
+	 * 
 	 * @param partialName
 	 * @return
 	 */
@@ -17,7 +19,6 @@ public interface WorkspaceDAO {
 	public long countWorkspaces(String id, String partialName);
 
 	public boolean delete(String id);
-
 
 	/**
 	 * Find workspaces by partial name of the title
@@ -62,4 +63,16 @@ public interface WorkspaceDAO {
 
 	public void initialize() throws DataAccessException;
 
+	/**
+	 * Used to persist a graph to a backend.
+	 * 
+	 * @param graphSeed
+	 * @param userName
+	 * @param timeStamp
+	 * @param graphJSONdata
+	 * @return 
+	 */
+	public G_PersistedGraph saveGraph(G_PersistedGraph pg);
+
+	public G_PersistedGraph getExistingGraph(String graphSeed, String userName, String timeStamp);
 }
