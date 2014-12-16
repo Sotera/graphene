@@ -9,6 +9,7 @@ import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.EntityQuery;
+import graphene.util.DataFormatConstants;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
@@ -26,6 +27,7 @@ import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_NodeList;
 import mil.darpa.vande.generic.V_LegendItem;
 
+import org.apache.avro.file.DataFileConstants;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
@@ -42,7 +44,7 @@ import org.slf4j.Logger;
  */
 @UsesConfiguration(DocumentGraphParser.class)
 public abstract class PropertyHyperGraphBuilder<T> extends
-		AbstractGraphBuilder<T,EntityQuery> implements HyperGraphBuilder<T> {
+		AbstractGraphBuilder<T, EntityQuery> implements HyperGraphBuilder<T> {
 
 	private static final boolean INHERIT_ATTRIBUTES = true;
 	@Inject
@@ -192,14 +194,15 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		}
 
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
+		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
+				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 
-		for (V_LegendItem li : legendItems)  {
+		for (V_LegendItem li : legendItems) {
 			g.addLegendItem(li.getColor(), li.getText());
 		}
-		
+
 		return g;
 	}
 
@@ -218,12 +221,20 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	public V_GenericNode createOrUpdateNode(String originalId, String idType,
 			String nodeType, V_GenericNode attachTo, String relationType,
 			String relationValue) {
+		return createOrUpdateNode(originalId, idType, nodeType, attachTo,
+				relationType, relationValue, 100.0d);
+	}
+
+	public V_GenericNode createOrUpdateNode(String originalId, String idType,
+			String nodeType, V_GenericNode attachTo, String relationType,
+			String relationValue, double certainty) {
 		V_GenericNode a = null;
 
 		if (ValidationUtils.isValid(originalId)) {
 			if (!stopwordService.isValid(originalId)) {
 				addError(new DocumentError("Bad Identifier", "The " + nodeType
-						+ " (" + originalId + ") contains a stopword", Severity.WARN));
+						+ " (" + originalId + ") contains a stopword",
+						Severity.WARN));
 			} else {
 				String id = generateNodeId(originalId);
 				a = nodeList.getNode(id);
@@ -235,11 +246,13 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					a.setIdVal(originalId);
 					a.setNodeType(nodeType);
 					a.setColor(style.getHexColorForNode(a.getNodeType()));
-					a.setLabel(originalId);
+					// Remove leading zeros from the label
+					a.setLabel(StringUtils.removeLeadingZeros(originalId));
 					a.addData(nodeType, getCombinedSearchLink(originalId));
 					nodeList.addNode(a);
-					
-					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
+
+					legendItems.add(new V_LegendItem(a.getColor(), a
+							.getNodeType()));
 				}
 				// now we have a valid node. Attach it to the other node
 				// provided.
@@ -251,6 +264,12 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 						v.setIdType(relationType);
 						v.setLabel(null);
 						v.setIdVal(relationType);
+						if (certainty < 100.0) {
+							v.addData("Certainty", DataFormatConstants
+									.formatPercent(certainty));
+							v.setLineStyle("dashed");
+							v.setColor("#787878");
+						}
 						v.addData("Value", StringUtils.coalesc(" ",
 								a.getLabel(), relationValue,
 								attachTo.getLabel()));
