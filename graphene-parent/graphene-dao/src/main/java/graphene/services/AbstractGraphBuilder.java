@@ -238,27 +238,40 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	public void addReportDetails(V_GenericNode reportNode,
 			Map<String, Object> properties) {
+		try {
+			reportNode.setSize(getLogSize(
+					(Long) properties.get(DocumentGraphParser.TOTALAMOUNTNBR),
+					MIN_NODE_SIZE, MAX_NODE_SIZE));
 
-		reportNode.setSize(getLogSize(
-				(Long) properties.get(DocumentGraphParser.TOTALAMOUNTNBR),
-				MIN_NODE_SIZE, MAX_NODE_SIZE));
+			reportNode
+					.addData("Amount involved", (String) properties
+							.get(DocumentGraphParser.TOTALAMOUNTSTR));
 
-		reportNode.addData("Amount involved",
-				(String) properties.get(DocumentGraphParser.TOTALAMOUNTSTR));
-		List<String> datesOfEvents = (List<String>) properties
-				.get(DocumentGraphParser.DATES_OF_EVENTS);
-		for (String d : datesOfEvents) {
-			reportNode.addData("Date of Event", d);
-		}
-		List<String> datesFiled = (List<String>) properties
-				.get(DocumentGraphParser.DATES_FILED);
-		for (String d : datesOfEvents) {
-			reportNode.addData("Date filed", d);
-		}
-		List<String> datesReceieved = (List<String>) properties
-				.get(DocumentGraphParser.DATES_FILED);
-		for (String d : datesOfEvents) {
-			reportNode.addData("Date received", d);
+			List<String> datesOfEvents = (List<String>) properties
+					.get(DocumentGraphParser.DATES_OF_EVENTS);
+			if (ValidationUtils.isValid(datesOfEvents)) {
+				for (String d : datesOfEvents) {
+					reportNode.addData("Date of Event", d);
+				}
+			}
+
+			List<String> datesFiled = (List<String>) properties
+					.get(DocumentGraphParser.DATES_FILED);
+			if (ValidationUtils.isValid(datesFiled)) {
+				for (String d : datesOfEvents) {
+					reportNode.addData("Date filed", d);
+				}
+			}
+			List<String> datesReceived = (List<String>) properties
+					.get(DocumentGraphParser.DATES_RECEIVED);
+			if (ValidationUtils.isValid(datesReceived)) {
+				for (String d : datesOfEvents) {
+					reportNode.addData("Date received", d);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 

@@ -17,10 +17,12 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.index.query.CommonTermsQueryBuilder;
+import org.elasticsearch.index.query.CommonTermsQueryBuilder.Operator;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.slf4j.Logger;
 
 public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
@@ -168,7 +170,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			if (q.getAttributeList().get(0).getValue().isEmpty()) {
 				retval = performIndexQuery(index, q);
 			} else {
-				retval = performMatchQuery(index, q);
+				// retval = performMatchQuery(index, q);
+				retval = performCommonTermsQuery(index, q);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,24 +210,25 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 		for (G_SearchTuple<String> qi : q.getAttributeList()) {
 			terms.append(qi.getValue() + " ");
 		}
-		if (ValidationUtils.isValid(terms)) {
-			logger.debug("Searching for terms: " + terms + " from query " + q);
+		String queryTerms = terms.toString().trim();
+		if (ValidationUtils.isValid(queryTerms)) {
+			logger.debug("Searching for terms: " + queryTerms + " from query "
+					+ q);
 			// Let's decide that at least half of the terms listed need to
 			// appear.
 			Integer halfTerms = q.getAttributeList().size() / 2;
 			if (halfTerms <= 1) {
 				halfTerms = 1;
 			}
-			CommonTermsQueryBuilder qbc = QueryBuilders
-					.commonTerms("_all", terms.toString())
-					.cutoffFrequency(0.1f)
-					.lowFreqMinimumShouldMatch(halfTerms.toString());
+			CommonTermsQueryBuilder qbc = QueryBuilders.commonTerms("_all",
+					queryTerms).lowFreqOperator(Operator.AND);
 
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(qbc);
+			HighlightBuilder h = new HighlightBuilder().field("narr.narr");
+			searchSourceBuilder.query(qbc).highlight(h).minScore(0.5f);
 			if (q.getMaxResult() == 0) {
-				logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to one.");
-				q.setMaxResult(1l);
+				logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to 200.");
+				q.setMaxResult(200l);
 			}
 			logger.debug("SSB: \n" + searchSourceBuilder.toString());
 			Search action = new Search.Builder(searchSourceBuilder.toString())
