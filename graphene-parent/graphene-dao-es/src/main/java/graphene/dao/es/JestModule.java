@@ -25,6 +25,8 @@ public class JestModule {
 	public static final String ES_USERGROUP_INDEX = "graphene.es-usergroup-index";
 	public static final String ES_USERWORKSPACE_INDEX = "graphene.es-userworkspace-index";
 	public static final String ES_LOGGING_INDEX = "graphene.es-logging-index";
+	public static final String ES_PERSISTED_GRAPH_INDEX = "graphene.es-persisted-graph-index";
+	public static final String ES_PERSISTED_GRAPH_TYPE = "graphene.es-persisted-graph-type";
 
 	/**
 	 * Tell Tapestry to look for an elastic search properties file in the
