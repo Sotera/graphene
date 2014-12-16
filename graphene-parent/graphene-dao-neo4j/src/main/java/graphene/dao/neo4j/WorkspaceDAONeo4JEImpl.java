@@ -3,6 +3,7 @@ package graphene.dao.neo4j;
 import graphene.dao.WorkspaceDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
 import graphene.dao.neo4j.funnel.G_UserSpaceRelationshipTypeFunnel;
+import graphene.model.graph.G_PersistedGraph;
 import graphene.model.idl.G_UserFields;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_Workspace;
@@ -321,6 +322,19 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			tx.success();
 		}
 		return g;
+	}
+
+	@Override
+	public G_PersistedGraph saveGraph(G_PersistedGraph pg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public G_PersistedGraph getExistingGraph(String graphSeed, String userName,
+			String timeStamp) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
