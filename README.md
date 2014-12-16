@@ -5,7 +5,7 @@ Please see the road maps in the wiki for new features and their slated order.
  
 Using Graphene 
 ------
- The core of Graphene (this project) is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.
+ The core of Graphene is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.
 
  It is our goal that you should not have to modify this project in order to suit your individual needs (although we welcome ideas and suggestions).  The intent is that this project be used as an underlying framework, and that your individual implementations can be wired within your code using IOC.
  
