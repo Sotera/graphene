@@ -292,34 +292,14 @@ Ext.define("DARPA.AbstractGraphPanel", {
 				// first, do the client-side merge of all the nodes and get subNodeIds
 				var subNodeIds = scope.mergeNodes(superNode, selectedNodes); 
 
-				var graph = {
-					nodes: scope.GraphVis.gv.nodes().jsons(),
-					edges: scope.GraphVis.gv.edges().jsons()
-				};
+				//var graph = {
+				//	nodes: scope.GraphVis.gv.nodes().jsons(),
+				//	edges: scope.GraphVis.gv.edges().jsons()
+				//};
 				
-				// ...then persist those unmerges to the back-end service via REST
-				/*
-				Ext.Ajax.request({
-					method: "POST",
-					url: "TODO",
-					//headers: {"Content-Type": "application/json"},
-					params: {
-						isMerge: true,
-						superNodeIds: [superNode.data("id")],
-						subNodeIds: subNodeIds,
-						userComment: reason,
-						graph: graph
-						//TODO: get user ID
-					},
-					scope: this,
-					success: function(resp) {
-						console.log("Persist POST success.");
-					},
-					failure: function(resp) {
-						console.error("Persist POST failed.");
-					}
+				superNode.data({
+					"reason" : reason
 				});
-				*/
 			},
 			cancelFn: function() {
 				// don't merge
@@ -402,40 +382,17 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		var window = Ext.create("DARPA.NodeMergeDialog", {
 			confirmFn: function(reason) {
 				// first, do the client-side merge of all the nodes
-				var superNodeIds = [];
+				//var superNodeIds = [];
 				superNodes.each(function(i, n) {
-					superNodeIds.push(n.data("id"));
+					n.removeData("reason");
+					//superNodeIds.push(n.data("id"));
 					scope.unmergeNode(n);
 				});
 
-				var graph = {
-					nodes: scope.GraphVis.gv.nodes().jsons(),
-					edges: scope.GraphVis.gv.edges().jsons()
-				};
-				
-				// ...then persist those unmerges to the back-end service via REST
-				/*
-				Ext.Ajax.request({
-					method: "POST",
-					url: "TODO",
-					//headers: {"Content-Type": "application/json"},
-					params: {
-						isMerge: false,
-						superNodeIds: superNodeIds
-						subNodeIds: [],
-						userComment: reason,
-						graph: graph
-						//TODO: get user ID
-					},
-					scope: this,
-					success: function(resp) {
-						console.log("Persist POST success.");
-					},
-					failure: function(resp) {
-						console.error("Persist POST failed.");
-					}
-				});
-				*/
+				//var graph = {
+				//	nodes: scope.GraphVis.gv.nodes().jsons(),
+				//	edges: scope.GraphVis.gv.edges().jsons()
+				//};
 			},
 			cancelFn: function() {
 				// don't merge

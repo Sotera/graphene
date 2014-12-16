@@ -11,6 +11,33 @@ Ext.define("DARPA.GraphToolbar", {
 		var myWidth = 30;
 		var myHeight = 30;
 		
+		var persist_graph = {
+			xtype: "button",
+			text: "Store", // FIXME: might need a new name
+			height: myHeight,
+			handler: 
+				function(item) {
+					var gr = item.up().up();
+					
+					var json = gr.GraphVis.exportGraph();
+					Ext.Ajax.request({
+						method: "POST",
+						url: "TODO",
+						params: {
+							"seed": gr.prevLoadParams.value,
+							"graph": json
+						},
+						scope: gr,
+						success: function(resp) {
+							console.log("Persist POST success.");
+						},
+						failure: function(resp) {
+							console.log("Persist POST failure.");
+						}
+					});
+				} 
+		};
+		
 		var save_graph = {
 			xtype: 'button',
 			text: "Save",
@@ -279,6 +306,7 @@ Ext.define("DARPA.GraphToolbar", {
 				function (item) {
 					Ext.Msg.alert(
 						"Toolbar Help",
+						"<b>Store</b> - Persist any changes you have made so that any future similar queries will have these changes by default." + "<br>" +
 						"<b>Save</b> - Save the state of your session to be loaded exactly as-is in a future session." + "<br>" + 
 						"<b>Load</b> - Load a saved session to replace all the queries and graph state of your current session." + "<br>" + 
 						"<b>Import</b> - Import a JSONized graph to replace the graph currently displayed." + "<br>" + 
@@ -324,7 +352,7 @@ Ext.define("DARPA.GraphToolbar", {
 		};
 		
 		this.items = [
-			save_graph, load_graph, import_graph, export_graph,
+			persist_graph, save_graph, load_graph, import_graph, export_graph,
 			"-",
 			grid_default, 
 			"-",
@@ -340,83 +368,70 @@ Ext.define("DARPA.GraphToolbar", {
 			help_btn
 		];
 		
-		/*
-		this.items = [
-			save_graph, load_graph, import_graph, export_graph,
-			"-",
-			inst_label,
-			"->",
-			grid_default,
-			{xtype: "tbspacer", width: 17},
-			hierarch_default, hierarch_circle,
-			{xtype: "tbspacer", width: 17},
-			cose_anim, cose_unanim,
-			{xtype: "tbspacer", width: 17},
-			arbor_anim, arbor_unanim, arbor_wheel_anim, arbor_wheel_unanim,
-			{xtype: "tbspacer", width: 17}
-		];
-		*/
-		
 		this.callParent(arguments);
 	},
 	
-	getSaveBtn: function() {
+	getPersistBtn: function() {
 		return this.items.items[0];
 	},
 	
-	getLoadBtn: function() {
+	getSaveBtn: function() {
 		return this.items.items[1];
 	},
 	
-	getImportBtn: function() {
+	getLoadBtn: function() {
 		return this.items.items[2];
 	},
 	
-	getExportBtn: function() {
+	getImportBtn: function() {
 		return this.items.items[3];
 	},
 	
+	getExportBtn: function() {
+		return this.items.items[4];
+	},
+	
 	getGridBtn: function() {
-		return this.items.items[5];
+		return this.items.items[6];
 	},
 	
 	getHierarchyBtn: function() {
-		return this.items.items[7];
-	},
-	
-	getHierarchyCircleBtn: function() {
 		return this.items.items[8];
 	},
 	
-	getCoseAnimBtn: function() {
-		return this.items.items[10];
+	getHierarchyCircleBtn: function() {
+		return this.items.items[9];
 	},
 	
-	getCoseBtn: function() {
+	getCoseAnimBtn: function() {
 		return this.items.items[11];
 	},
 	
-	getArborAnimBtn: function() {
-		return this.items.items[13];
+	getCoseBtn: function() {
+		return this.items.items[12];
 	},
 	
-	getArborBtn: function() {
+	getArborAnimBtn: function() {
 		return this.items.items[14];
 	},
 	
-	getArborWheelAnimBtn: function() {
+	getArborBtn: function() {
 		return this.items.items[15];
 	},
 	
-	getArborWheelBtn: function() {
+	getArborWheelAnimBtn: function() {
 		return this.items.items[16];
 	},
 	
+	getArborWheelBtn: function() {
+		return this.items.items[17];
+	},
+	
 	getLabel: function() {
-		return this.items.items[18];
+		return this.items.items[19];
 	},
 	
 	getHelpBtn: function() {
-		return this.items.items[20];
+		return this.items.items[21];
 	}
 });
