@@ -8,6 +8,7 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 
 import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
@@ -16,6 +17,9 @@ import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 public class SimpleBasePage {
+
+
+
 	@Property
 	@SessionState(create = false)
 	private List<G_Workspace> workspaces;
