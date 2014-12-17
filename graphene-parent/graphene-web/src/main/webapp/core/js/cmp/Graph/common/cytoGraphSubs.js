@@ -509,6 +509,34 @@ CytoGraphVis.prototype.clear = function() {
  */
 CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	var pos = innode.position();
+	var removedNodeIDs = [];
+	var superNodes = this.gv.$("node.super-node");
+	
+	// breadthfirst recursion
+	var _recurse = function(superNode, id) {
+		// BASE CASE: if this node matches id, return true
+		var thisId = (typeof superNode.data == "function") ? superNode.data("id") : superNode.data.id;
+		if (thisId == id) { return true; }
+		
+		// BASE CASE: if there are no subnodes in this node, return false
+		var subNodes = (typeof superNode.data == "function") ? superNode.data("subNodes") : superNode.data.subNodes;
+		if (typeof subNodes == "undefined" || subNodes.length == 0) { return false; }
+		
+		// BASE CASE: check all subnodes of this node
+		for (var i = 0; i < subNodes.length; i++) {
+			if (subNodes[i].data.id == id) { return true; }
+		}
+		
+		// RECURSIVE CASE: none of the subnodes at this level match; check one level down for each subnode
+		for (i = 0; i < subNodes.length; i++) {
+			if ( _recurse(subNodes[i], id) ) { return true; }
+		}
+		
+		// we checked, re-checked, and double-checked;  the id just isn't here
+		return false;
+	};
+	
+	// randomly select an edge attached to this node and use it to push it away from the rest of the graph
 	try {
 		var connectedNodes = innode.connectedEdges().connectedNodes();
 		var neighbor = null;
@@ -530,11 +558,20 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	}
 	
 	var nodes = json.nodes;
-	var l = nodes.length;
-	for (var i = 0; i < l; i++) {
+	for (var i = 0; i < nodes.length; i++) {
 		var node = nodes[i];
+		var l = nodes.length;
 		var rad = 2 * Math.PI * i / l;
 		var radius = this.CONSTANTS("minLeafDistance") + l + l;
+		
+		// check all supernodes and make sure this node json does not match a subnode
+		superNodes.each(function(index, n) {
+			if ( _recurse(n, node.data.id) ) {
+				console.log("while searching recursively, found duplicate node name='" + node.data.name + "'");
+				removedNodeIDs.push(node.data.id);
+				nodes.splice(i--, 1);
+			}
+		});
 		
 		if (node.data.id != innode.data().id) {
 			// node.data.color = this.CONSTANTS("expandedDefNode");
@@ -556,7 +593,11 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		var s = edge.data.source;
 		var t = edge.data.target;
 		
-		//edge.data.color = this.CONSTANTS("expandedDefNode");
+		// if this edge was attached to a node that was removed, splice it out of the json and continue to the next edge
+		if (removedNodeIDs.indexOf(t) != -1 || removedNodeIDs.indexOf(s) != -1) {
+			edges.splice(i--, 1);
+			continue;
+		}
 		
 		var amountCondition = (typeof a == "string" && a.length > 0) ? "[amount = '"+a+"']" : "";
 		var labelCondition = (typeof l == "string" && l.lenght > 0) ? "[label = '"+l+"']" : "";
@@ -568,8 +609,7 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		
 		// if edge already exists on the graph, splice it out of the json before it's loaded
 		if (matchedEdges.length > 0) {
-			edges.splice(i, 1);
-			i--;
+			edges.splice(i--, 1);
 			
 			matchedEdges.each(function(index, e){
 				console.log("Pruned edge with id='" + e.data("id") + "'");
