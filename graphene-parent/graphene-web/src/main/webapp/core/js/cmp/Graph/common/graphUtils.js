@@ -468,7 +468,7 @@ function numberInList(number, numbers) {
         // this allows several partial matches
         var numList = numbers.split(",");
         for (var i = 0; i < numList.length; i++) {
-            if (number.indexOf(numList[i].trim()) >= 0)
+            if (number.toUpperCase().indexOf(numList[i].trim().toUpperCase()) >= 0)
                 return true;
         }
         return false;
