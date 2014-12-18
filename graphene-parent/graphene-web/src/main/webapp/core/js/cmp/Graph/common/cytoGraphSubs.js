@@ -398,22 +398,32 @@ CytoGraphVis.prototype.setHandlers = function() {
 			if (e.originalEvent.ctrlKey == true && e.originalEvent.shiftKey == true) {
 				e.cy.elements().unselect();
 				e.cy.nodes("[idType = '" + node.data("idType") + "']").select();
+				e.cy.nodes("[id = '" + node.data("id") + "']").unselect();
 			} 
 			// if alt + shift, select all neighbors of the clicked node
 			else if (e.originalEvent.altKey == true && e.originalEvent.shiftKey == true) {
 				e.cy.elements().unselect();
 				node.connectedEdges().connectedNodes().select();
+				e.cy.nodes("[id = '" + node.data("id") + "']").unselect();
 			} 
 			// if shift key is not held down, deselect everything else before selecting the clicked node
 			else if (e.originalEvent.shiftKey !== true) {
 				e.cy.elements().unselect();
+				e.cy.nodes("[id = '" + node.data("id") + "']").unselect();
 			}
-			node.select();
+			//node.select();
 		}
 	});
 	
 	this.gv.on("select", "node", function(e) {
 		var node = e.cyTarget;
+		
+		// cytoscape is funky in that it will still select hidden elements
+		if (node.hidden()) {
+			node.unselect();
+			return;
+		}
+		
 		if (typeof _this.owner.nodeClick !== "undefined") {
 			_this.owner.nodeClick(node);
 		}
@@ -421,6 +431,13 @@ CytoGraphVis.prototype.setHandlers = function() {
 	
 	this.gv.on("select", "edge", function(e) {
 		var edge = e.cyTarget;
+		
+		// cytoscape is funky in that it will still select hidden elements
+		if (edge.hidden()) {
+			edge.unselect();
+			return;
+		}
+		
 		if (typeof _this.owner.edgeClick !== "undefined") {
 			_this.owner.edgeClick(edge);
 		}
