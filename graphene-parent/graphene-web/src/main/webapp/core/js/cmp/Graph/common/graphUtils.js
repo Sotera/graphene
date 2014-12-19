@@ -514,7 +514,7 @@ function applyAdditionalFieldsFilter(context, filterItems, compareType) {
     
     if (gv) {
         // iterate over the nodes and edges only once
-        gv.nodes().each(function(indx, node) {
+        gv.nodes().not(".toggled-hide").each(function(indx, node) {
             if (node) {
                 var allMatch = true;
                 for (i = 0; i < nonEmptyFilterItems.length; i++) {
@@ -575,12 +575,12 @@ function applyAdditionalFieldsFilter(context, filterItems, compareType) {
                     }
                 }
                 if (allMatch) {
-                    self.GraphVis.showNode(node);
+                    self.GraphVis.showNode(node, true);
                 }
             }
         });  // end for each node
         
-        gv.edges().each(function(indx, edge) {
+        gv.edges().not(".toggled-hide").each(function(indx, edge) {
             if (edge) {
                 var allMatch = true;
                 for (i = 0; i < nonEmptyFilterItems.length; i++) {
@@ -641,18 +641,20 @@ function applyAdditionalFieldsFilter(context, filterItems, compareType) {
                     }
                 }
                 if (allMatch) {
-                    self.GraphVis.showNode(edge);
+                    self.GraphVis.showNode(edge, true); // FIXME: showEdge() maybe?
                 }
             }
         });  // end for each edge
         
         // now the hides (if any)
         for (var h = 0; h < nodes2Hide.length; h++) {
-           self.GraphVis.hideNode(nodes2Hide[h]); 
+           self.GraphVis.hideNode(nodes2Hide[h], true); 
         }
         for (h = 0; h < edges2Hide.length; h++) {
-           self.GraphVis.hideEdge(edges2Hide[h]); 
+           self.GraphVis.hideEdge(edges2Hide[h], true); 
         }
+        
+        self.GraphVis.gv.fit();
     }
 }
         
@@ -672,7 +674,7 @@ function applyFilter(context, searchItems, amount, fromDate, toDate) {
          var nodes2Hide = []; 
          var edges2Hide = [];
          if (gv) {
-             gv.nodes().each(function(indx, node) {
+             gv.nodes().not(".toggled-hide").each(function(indx, node) {
                 if (node) {
                     var numMatch = false;
                     var dateMatch = false;
@@ -697,14 +699,14 @@ function applyFilter(context, searchItems, amount, fromDate, toDate) {
                         nodes2Hide.push(node);
                     }
                     else {
-                        self.GraphVis.showNode(node);
+                        self.GraphVis.showNode(node, true);
                     }
                 }
              }); // end each node
 
              // Only check edges if an amount is specified
              if (checkAmount) {
-                 gv.edges().each(function(indx, edge) {
+                 gv.edges().not(".toggled-hide").each(function(indx, edge) {
                     if (edge) {
                         var amountMatch = false;
 
@@ -719,7 +721,7 @@ function applyFilter(context, searchItems, amount, fromDate, toDate) {
                             edges2Hide.push(edge);
                         }
                         else {
-                            self.GraphVis.showEdge(edge);
+                            self.GraphVis.showEdge(edge, true);
                         }
                     }
                  }); // end each edge
@@ -727,11 +729,13 @@ function applyFilter(context, searchItems, amount, fromDate, toDate) {
 
              // now the hides (if any)
              for (var h = 0; h < nodes2Hide.length; h++) {
-                self.GraphVis.hideNode(nodes2Hide[h]); 
+                self.GraphVis.hideNode(nodes2Hide[h], true); 
              }
              for (h = 0; h < edges2Hide.length; h++) {
-                self.GraphVis.hideEdge(edges2Hide[h]); 
+                self.GraphVis.hideEdge(edges2Hide[h], true); 
              }
+             
+             self.GraphVis.gv.fit();
          }
      }
      else {
@@ -744,8 +748,10 @@ function clearFilter(context) {
     // iterate over all the nodes in the graph and show them (unhide)
     var self = context;
     if (self && self.GraphVis) {
-        self.GraphVis.showAll();
+        self.GraphVis.showAll(true);
     }
+    
+    self.GraphVis.gv.fit();
 }
 
 function getNodeIdType(node)

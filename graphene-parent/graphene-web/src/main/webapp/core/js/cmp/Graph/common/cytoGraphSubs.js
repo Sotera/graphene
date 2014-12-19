@@ -489,10 +489,12 @@ CytoGraphVis.prototype.reset = function() {
 /*
  *	Show all elements on this graph and toggle their class appropriately
  */
-CytoGraphVis.prototype.showAll = function() {
-	this.gv.elements().show();
-	this.gv.elements().removeClass("toggled-hide");
-	this.gv.elements().addClass("toggled-show");
+CytoGraphVis.prototype.showAll = function(isFilter) {
+	var selector = "";
+	if (typeof isFilter !== "undefined") {
+		selector = (isFilter == true) ? ".toggled-filter" : ".toggled-hide";
+	}
+	this.gv.elements(selector).show();
 };
 
 /*
@@ -1160,47 +1162,51 @@ function StateManager(graphRef) {
 		}
 	};
 	
-	this.showNode = function(node) {
+	this.showNode = function(node, isFilter) {
 		if (node.hidden()) {
 			node.show();
 			node.data().visible = true;
 			var edges = node.connectedEdges();
 			if (edges) {
 				edges.each(function(i, e) {
-					_this.showEdge(e);
+					_this.showEdge(e, isFilter);
 				});
 			}
+			var cls = isFilter ? "toggled-filter" : "toggled-hide";
+			node.removeClass(cls);
 		}
 	};
 	
-	this.hideNode = function(node) { 
+	this.hideNode = function(node, isFilter) { 
 		if (node.visible()) {
 			var edges = node.connectedEdges();
 			if (edges) {
 				edges.each(function(i, e) {
-					_this.hideEdge(e);
+					_this.hideEdge(e, isFilter);
 				});
 			}
 			node.hide();
 			node.data().visible = false;
+			var cls = isFilter ? "toggled-filter" : "toggled-hide";
+			node.addClass(cls);
 		}
 	};
 	
-	this.showEdge = function(edge) {
+	this.showEdge = function(edge, isFilter) {
 		if (edge.hidden()) {
 			edge.show();
 			edge.data().visible = true;
-			edge.removeClass("toggled-hide");
-			edge.addClass("toggled-show");
+			var cls = isFilter ? "toggled-filter" : "toggled-hide";
+			edge.removeClass(cls);
 		}
 	};
 	
-	this.hideEdge = function(edge) {
+	this.hideEdge = function(edge, isFilter) {
 		if (edge.visible()) {
 			edge.hide();
 			edge.data().visible = false;
-			edge.removeClass("toggled-show");
-			edge.addClass("toggled-hide");
+			var cls = isFilter ? "toggled-filter" : "toggled-hide";
+			edge.addClass(cls);
 		}
 	};
 }
@@ -1311,6 +1317,7 @@ function GraphGenerator(graphRef) {
 				idVal: "GeneratedNode_" + _currentId,
 				idType: "GENERATED",
 				name: "New Node",
+				size: graphRef.CONSTANTS("nodeSize"),
 				label: "New Node*",
 				color: "gray",
 				attrs: [/* Populated via NodeEditor */]

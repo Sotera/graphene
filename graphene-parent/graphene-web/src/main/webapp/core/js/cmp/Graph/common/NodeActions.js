@@ -57,21 +57,14 @@ Ext.define("DARPA.Node_Actions", {
 				var graph = Ext.getCmp(graphId);
 				var nodes = graph.GraphVis.gv.$("node:selected");
 				if (nodes.length > 0) {
-					if (!(graph.hideNode == undefined)) {
-						for (var i = 0; i < nodes.length; i++) {
-							graph.hideNode(nodes[i]);
-						}
-					} else {
-					
-						for (var i = 0; i < nodes.length; i++) {
-							graph.GraphVis.hideNode(nodes[i]);
-						}
-						
-						var unhide = graph.getUnHideButton();
-						if (unhide) {
-							unhide.setDisabled(false);
-						};
+					for (var i = 0; i < nodes.length; i++) {
+						graph.GraphVis.hideNode(nodes[i], false);
 					}
+					
+					var unhide = graph.getUnHideButton();
+					if (unhide) {
+						unhide.setDisabled(false);
+					};
 				};
 			} // handler
 		}); // hide
@@ -118,7 +111,7 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					graph.GraphVis.showAll();
+					graph.GraphVis.showAll(false);
 					but.setDisabled(true);
 				} // if graph
 			} // handler
