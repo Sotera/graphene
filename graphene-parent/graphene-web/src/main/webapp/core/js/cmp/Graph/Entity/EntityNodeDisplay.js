@@ -14,10 +14,12 @@ Ext.define("DARPA.EntityNodeDisplay", {
 			items:[{
 				xtype: 'textfield',			
 				fieldLabel: 'Identifier Type',
+				readOnly: true,
 				labelLength: 80
 			}, {
 				xtype: 'textfield',						
 				fieldLabel: 'Identifier',
+				readOnly: true,
 				labelLength: 80				
 			}, {
 				xtype: 'panel',
