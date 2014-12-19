@@ -273,7 +273,8 @@ Ext.define("DARPA.AbstractGraphPanel", {
 				ele.data().attrs = newAttrs;
 				
 				ele.data({
-					"label": window.getName(),
+					"name": window.getName(false),
+					"label": window.getName(true),
 					"idType": window.getIdType(),
 					"color": window.getColor(),
 					"EDITED_BY_USER": true
