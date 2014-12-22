@@ -142,14 +142,15 @@ Ext.define("DARPA.ElementEditor", {
 		_this.autoPopulate(config.eleRef);
 	},
 	
-	getName: function() {
+	getName: function(postfix) {
 		var panel = Ext.getCmp("ele_values");
 		var name = panel.getName();
 		
-		// postfix '*' to the end of the element's label to show it has been edited
-		if (name[name.length - 1] !== "*") 
-			name += "*";
-		
+		if (postfix === true) {
+			// postfix '*' to the end of the element's label to show it has been edited
+			if (name[name.length - 1] !== "*") 
+				name += "*";
+			}
 		return name;
 	},
 	
