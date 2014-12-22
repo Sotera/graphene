@@ -7,7 +7,7 @@
 			<div class="col-sm-12 col-md-6 ${propertyClass}">${propertyModel.label}</div>
 			<div t:type="any" t:mixins="NotEmpty"
 				class="col-sm-12 col-md-6 ${propertyClass}">
-				<a class="${propertyLinkClass}" t:type="pagelink"
+				<a class="${propertyLinkClass}" style="white-space: normal;" t:type="pagelink"
 					page="graphene/CombinedEntitySearchPage" context="${propertyValue}">
 					<t:propertydisplay model="propertyModel" overrides="overrides"
 						object="object" />
