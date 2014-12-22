@@ -3,9 +3,7 @@ package org.graphene.augment.mitie.dao;
 import graphene.business.commons.exception.DataAccessException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.graphene.augment.mitie.MITIERestAPIConnection;
 import org.graphene.augment.mitie.model.MitieResponse;

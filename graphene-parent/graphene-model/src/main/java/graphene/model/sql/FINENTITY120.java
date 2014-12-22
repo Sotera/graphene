@@ -1,6 +1,7 @@
 package graphene.model.sql;
 
 import java.io.Serializable;
+
 import javax.annotation.Generated;
 
 /**

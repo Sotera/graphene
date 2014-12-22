@@ -1,7 +1,5 @@
 package graphene.util.net;
 
-import graphene.util.net.NetworkUtils;
-
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 

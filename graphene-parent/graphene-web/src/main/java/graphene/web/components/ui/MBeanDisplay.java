@@ -4,7 +4,6 @@ import graphene.util.validator.ValidationUtils;
 
 import java.util.List;
 
-import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.annotations.Component;
@@ -16,7 +15,6 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.corelib.components.BeanDisplay;
 import org.apache.tapestry5.corelib.components.PropertyDisplay;
-import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 

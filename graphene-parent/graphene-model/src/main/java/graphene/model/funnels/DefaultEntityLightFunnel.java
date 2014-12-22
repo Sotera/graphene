@@ -1,7 +1,5 @@
 package graphene.model.funnels;
 
-import java.util.List;
-
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
@@ -9,6 +7,8 @@ import graphene.model.idlhelper.EntityHelper;
 import graphene.model.idlhelper.PropertyHelper;
 import graphene.model.view.entities.EntityAttribute;
 import graphene.model.view.entities.EntityLight;
+
+import java.util.List;
 
 public class DefaultEntityLightFunnel implements Funnel<EntityLight, G_Entity> {
 

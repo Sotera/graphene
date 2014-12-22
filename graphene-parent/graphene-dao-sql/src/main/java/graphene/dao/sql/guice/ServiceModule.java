@@ -1,13 +1,10 @@
 package graphene.dao.sql.guice;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.sql.DataSource;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

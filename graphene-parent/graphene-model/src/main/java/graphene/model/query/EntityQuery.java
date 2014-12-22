@@ -44,6 +44,14 @@ public class EntityQuery extends BasicQuery {
 		return true;
 	}
 
+	public final String[] getAttributeValues() {
+		List<String> list = new ArrayList<String>(1);
+		for (G_SearchTuple<String> a : attributeList) {
+			list.add(a.getValue());
+		}
+		return list.toArray(new String[list.size()]);
+	}
+
 	/**
 	 * @return the attributeList
 	 */

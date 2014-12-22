@@ -19,46 +19,6 @@ import org.apache.tapestry5.annotations.Log;
 @Produces("application/json")
 public interface CSGraphServerRS {
 
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/save")
-	@Produces("text/plain")
-	Response saveGraph(
-			@QueryParam("graphSeed") @DefaultValue(value = "unknown") String graphSeed,
-			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
-			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
-			String graphJSONdata);
-
-	/**
-	 * REST service to return a property-type graph.
-	 * 
-	 * @param type
-	 * @param value
-	 * @param degree
-	 * @param maxNodes
-	 * @param maxEdgesPerNode
-	 * @param bipartite
-	 * @param leafNodes
-	 * @param showNameNodes
-	 * @param showIcons
-	 * @return
-	 */
-	@Log
-	@GET
-	@Path("/{type}/{value}")
-	@Produces("application/json")
-	public abstract V_CSGraph getProperties(
-			@PathParam("type") String type,
-			@PathParam("value") String[] value,
-			@QueryParam("degree") @DefaultValue(value = "3") String degree,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-			@QueryParam("bipartite") boolean bipartite,
-			@QueryParam("showLeafNodes") boolean leafNodes,
-			@QueryParam("showNameNodes") boolean showNameNodes,
-			@QueryParam("showIcons") boolean showIcons,
-			@QueryParam("useSaved") @DefaultValue(value = "true") boolean useSaved);
-
 	/**
 	 * REST service to return a interaction-type graph. TODO: Rename this method
 	 * 
@@ -89,6 +49,36 @@ public interface CSGraphServerRS {
 			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
 			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
 			@QueryParam("minWeight") String minimumWeight,
+			@QueryParam("useSaved") @DefaultValue(value = "true") boolean useSaved);
+
+	/**
+	 * REST service to return a property-type graph.
+	 * 
+	 * @param type
+	 * @param value
+	 * @param degree
+	 * @param maxNodes
+	 * @param maxEdgesPerNode
+	 * @param bipartite
+	 * @param leafNodes
+	 * @param showNameNodes
+	 * @param showIcons
+	 * @return
+	 */
+	@Log
+	@GET
+	@Path("/{type}/{value}")
+	@Produces("application/json")
+	public abstract V_CSGraph getProperties(
+			@PathParam("type") String type,
+			@PathParam("value") String[] value,
+			@QueryParam("degree") @DefaultValue(value = "3") String degree,
+			@QueryParam("maxNodes") String maxNodes,
+			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
+			@QueryParam("bipartite") boolean bipartite,
+			@QueryParam("showLeafNodes") boolean leafNodes,
+			@QueryParam("showNameNodes") boolean showNameNodes,
+			@QueryParam("showIcons") boolean showIcons,
 			@QueryParam("useSaved") @DefaultValue(value = "true") boolean useSaved);
 
 	/**
@@ -140,4 +130,14 @@ public interface CSGraphServerRS {
 			@QueryParam("directed") @DefaultValue(value = "true") boolean directed
 
 	);
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/save")
+	@Produces("text/plain")
+	Response saveGraph(
+			@QueryParam("seed") @DefaultValue(value = "unknown") String graphSeed,
+			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
+			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
+			String graph);
 }

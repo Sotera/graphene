@@ -1,11 +1,11 @@
 package graphene.augment.snlp.web.services;
 
-import org.apache.tapestry5.ioc.ServiceBinder;
-
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
 import graphene.augment.snlp.services.NERService;
 import graphene.augment.snlp.services.NERServiceImpl;
+
+import org.apache.tapestry5.ioc.ServiceBinder;
 
 public class AugmentSNLPModule {
 

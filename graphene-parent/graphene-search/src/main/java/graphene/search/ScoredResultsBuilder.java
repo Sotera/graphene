@@ -1,7 +1,5 @@
 package graphene.search;
 
-import graphene.search.SearchMatcher;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

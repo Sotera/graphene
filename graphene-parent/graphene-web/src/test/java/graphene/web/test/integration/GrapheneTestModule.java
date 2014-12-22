@@ -1,9 +1,9 @@
 package graphene.web.test.integration;
 
-import java.text.ParseException;
-
 import graphene.web.data.IDataSource;
 import graphene.web.data.MockDataSource;
+
+import java.text.ParseException;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;

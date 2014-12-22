@@ -1,7 +1,7 @@
 package graphene.rest.ws;
 
-import graphene.model.view.events.EventStatistics;
 import graphene.model.view.events.DirectedEvents;
+import graphene.model.view.events.EventStatistics;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;

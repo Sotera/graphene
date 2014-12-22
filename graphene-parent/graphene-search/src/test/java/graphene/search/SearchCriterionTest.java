@@ -1,6 +1,5 @@
 package graphene.search;
 
-import graphene.search.SearchCriterion;
 import junit.framework.Assert;
 
 import org.testng.AssertJUnit;

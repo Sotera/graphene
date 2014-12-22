@@ -3,15 +3,15 @@
  */
 package graphene.services;
 
+import graphene.dao.StyleService;
+import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.util.ColorUtil;
+
 import java.awt.Color;
 import java.util.HashMap;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-
-import graphene.dao.StyleService;
-import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.util.ColorUtil;
 
 /**
  * @author djue

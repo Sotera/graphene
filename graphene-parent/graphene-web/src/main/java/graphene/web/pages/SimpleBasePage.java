@@ -1,14 +1,12 @@
 package graphene.web.pages;
 
-import java.util.List;
-
 import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_User;
-import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 
+import java.util.List;
+
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;

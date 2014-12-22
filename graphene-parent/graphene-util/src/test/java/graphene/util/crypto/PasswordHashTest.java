@@ -1,10 +1,7 @@
 package graphene.util.crypto;
 
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-
-import graphene.util.crypto.PasswordHash;
 
 import org.apache.commons.codec.binary.Base64;
 import org.testng.annotations.Test;

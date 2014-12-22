@@ -1,10 +1,10 @@
 package graphene.dao;
 
-import java.util.List;
-
 import graphene.model.idl.G_Link;
 import graphene.model.query.BasicQuery;
 import graphene.model.query.DirectedEventQuery;
+
+import java.util.List;
 
 /**
  * Put anything here that you'd want this DAO to do differently than the generic

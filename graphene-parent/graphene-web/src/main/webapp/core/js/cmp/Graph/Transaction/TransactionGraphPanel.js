@@ -93,8 +93,10 @@ Ext.define("DARPA.TransactionGraphPanel", {
 		return settingsPanel.items.items[0];
 	},
 	
-	load: function(custno) {
+	load: function(custno, useSaved) {
 		var self = this;
+		
+		// TODO write catch to make sure variable useSaved is a boolean
 		
 		self.setStatus("LOADING DATA FOR GRAPH");
 		self.json = null;
@@ -115,6 +117,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
         });
 		
 		graphStore.proxy.extraParams.degree = degree;
+		graphStore.proxy.extraParams.useSaved = useSaved;
 		graphStore.proxy.url = Config.transferGraphCSUrl + custno;
 		graphStore.proxy.extraParams.Type = 'account';
         
@@ -134,9 +137,9 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				self.setStatus("LOADED DATA", 1);
 				self.json=records[0].raw;
 				
-				var serverLegend = records[0].raw.legend;
-				if (typeof serverLegend == "string") {
-					serverLegend = Ext.decode(serverLegend);
+				self.legendJSON = records[0].raw.legend;
+				if (typeof self.legendJSON == "string") {
+					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
 				if (self.json && self.json.nodes.length == 0) {
@@ -150,7 +153,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				
 				var nodeCount = self.json.nodes.length;
 				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				self.getNodeDisplay().updateLegend(serverLegend, "TransactionGraph");
+				self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 			}
 		});
 	},
@@ -203,9 +206,9 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				self.json = records[0].raw;
 				self.setStatus("LOADED DATA", 1);
 
-				var serverLegend = records[0].raw.legend;
-				if (typeof serverLegend == "string") {
-					serverLegend = Ext.decode(serverLegend);
+				self.legendJSON = records[0].raw.legend;
+				if (typeof self.legendJSON == "string") {
+					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
 				// results could be empty, check for this here
@@ -223,13 +226,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 							function(ans) {
 								if (ans == 'yes') {
 									self.GraphVis.showGraph1Hop(self.json, node);
-									self.getNodeDisplay().updateLegend(serverLegend, "TransactionGraph");
+									self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 								}
 							}
 						);
 					} else {
 						self.GraphVis.showGraph1Hop(self.json, node);
-						self.getNodeDisplay().updateLegend(serverLegend, "TransactionGraph");
+						self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 					}
 				}
 				// Update title to display the communication id and number of nodes found 

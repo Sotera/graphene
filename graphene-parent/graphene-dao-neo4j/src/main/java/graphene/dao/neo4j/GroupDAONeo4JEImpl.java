@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
@@ -78,7 +77,7 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	
 
 
-	@PostInjection
+	//@PostInjection
 	public void initialize() {
 		if (n4jService.connectToGraph()) {
 			logger.debug("Constructing GroupDAONeo4jImpl hooked up to "

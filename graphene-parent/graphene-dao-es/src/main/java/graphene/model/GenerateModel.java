@@ -34,7 +34,8 @@ public class GenerateModel {
 		JCodeModel codeModel = new JCodeModel();
 		System.out.println("Attempting to build POJOs for type " + className
 				+ " from source " + source.getPath());
-		JType generate = new SchemaMapper().generate(codeModel, className, packageName, source);
+		JType generate = new SchemaMapper().generate(codeModel, className,
+				packageName, source);
 		File f = new File(outputDirectory);
 		if (f.isDirectory()) {
 			File existingFile = new File(getExistingFileURL(
@@ -70,7 +71,8 @@ public class GenerateModel {
 		JCodeModel codeModel = new JCodeModel();
 		System.out.println("Attempting to build POJOs for type " + className
 				+ " from source string");
-		JType generate = new SchemaMapper().generate(codeModel, className, packageName, source);
+		JType generate = new SchemaMapper().generate(codeModel, className,
+				packageName, source);
 		File f = new File(outputDirectory);
 		if (f.isDirectory()) {
 			File existingFile = new File(getExistingFileURL(

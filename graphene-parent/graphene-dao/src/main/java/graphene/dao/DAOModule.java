@@ -1,8 +1,5 @@
 package graphene.dao;
 
-import graphene.dao.annotations.EntityLightFunnelMarker;
-import graphene.model.funnels.DefaultEntityLightFunnel;
-import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_EdgeType;

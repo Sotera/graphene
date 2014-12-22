@@ -3,13 +3,12 @@
 // license that can be found in the LICENSE file.
 package graphene.util.ooab;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
-import graphene.util.ooab.ByteArrayFilter;
 
-import org.testng.annotations.Test;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class ByteArrayFilterTest {
 

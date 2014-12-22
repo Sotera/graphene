@@ -16,8 +16,6 @@
 
 package graphene.web.test.pages;
 
-import graphene.model.idl.G_VisualType;
-import graphene.web.annotations.PluginPage;
 import graphene.web.data.Celebrity;
 import graphene.web.data.CelebritySource;
 import graphene.web.data.IDataSource;

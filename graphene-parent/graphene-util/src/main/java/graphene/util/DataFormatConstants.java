@@ -16,7 +16,7 @@ public class DataFormatConstants {
 	 */
 	public static final String MONEY_FORMAT_STRING = "###,###,##0.00";
 	public static final String WHOLE_NUMBER_FORMAT_STRING = "###########";
-
+	public static final String SCORE_FORMAT_STRING = "0.000";
 	public static final String PERCENT_FORMAT_STRING = "##0.0";
 	private static Logger logger = LoggerFactory
 			.getLogger(DataFormatConstants.class);
@@ -37,5 +37,10 @@ public class DataFormatConstants {
 					+ " with format " + formatYouThinkItIsIn);
 			return toFormat;
 		}
+	}
+
+	public static String formatScore(Double d) {
+		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING)
+		.format(d);
 	}
 }

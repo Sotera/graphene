@@ -1,7 +1,5 @@
 package graphene.hts.me;
 
-import graphene.hts.me.FamilyReferenceExtractor;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

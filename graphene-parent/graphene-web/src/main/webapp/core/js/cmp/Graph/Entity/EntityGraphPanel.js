@@ -93,8 +93,10 @@ Ext.define("DARPA.EntityGraphPanel", {
 		return settingsPanel.items.items[0];
 	},
 	
-	load: function(custno) {
+	load: function(custno, useSaved) {
 		var self = this;
+
+		// TODO write catch to make sure variable useSaved is a boolean
 		
 		var graphStore = self.graphStore;
 		var hops = self.getSettings().getMaxHops();
@@ -111,6 +113,7 @@ Ext.define("DARPA.EntityGraphPanel", {
         });
 
 		graphStore.proxy.extraParams.degree = degree;
+		graphStore.proxy.extraParams.useSaved = useSaved;
 		graphStore.proxy.url = Config.entityGraphCSUrl + 'customer/' + custno;
 		
 		graphStore.load({
@@ -130,9 +133,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;
 				
-				var serverLegend = records[0].raw.legend;
-				if (typeof serverLegend == "string") {
-					serverLegend = Ext.decode(serverLegend);
+				self.legendJSON = records[0].raw.legend;
+				if (typeof self.legendJSON == "string") {
+					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
 				if (self.json && self.json.nodes.length == 0) {
@@ -147,7 +150,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 
 				var nodeCount = self.json.nodes.length;
 				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				self.getNodeDisplay().updateLegend(serverLegend, "EntityGraph");
+				self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 			}
 		});
 	},
@@ -204,9 +207,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;;
 
-				var serverLegend = records[0].raw.legend;
-				if (typeof serverLegend == "string") {
-					serverLegend = Ext.decode(serverLegend);
+				self.legendJSON = records[0].raw.legend;
+				if (typeof self.legendJSON == "string") {
+					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
 				// results could be empty, check for this here
@@ -223,13 +226,13 @@ Ext.define("DARPA.EntityGraphPanel", {
 							function(ans) {
 								if (ans == 'yes') {
 									self.GraphVis.showGraph1Hop(self.json, node);
-									self.getNodeDisplay().updateLegend(serverLegend, "EntityGraph");
+									self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 								}
 							}
 						);
 					} else {
 						self.GraphVis.showGraph1Hop(self.json, node);
-						self.getNodeDisplay().updateLegend(serverLegend, "EntityGraph");
+						self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 					}
 				}
 

@@ -2,7 +2,6 @@ package graphene.dao;
 
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
-import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityQuery;
 import graphene.model.view.entities.BasicEntityRef;
 

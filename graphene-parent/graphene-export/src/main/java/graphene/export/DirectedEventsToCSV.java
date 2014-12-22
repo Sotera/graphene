@@ -1,7 +1,7 @@
 package graphene.export;
 
-import graphene.model.view.events.DirectedEvents;
 import graphene.model.view.events.DirectedEventRow;
+import graphene.model.view.events.DirectedEvents;
 
 public class DirectedEventsToCSV {
 	public String toCSV(DirectedEvents lt) {

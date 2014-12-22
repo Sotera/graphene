@@ -14,6 +14,7 @@ import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,10 +25,9 @@ import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
-import mil.darpa.vande.generic.V_NodeList;
 import mil.darpa.vande.generic.V_LegendItem;
+import mil.darpa.vande.generic.V_NodeList;
 
-import org.apache.avro.file.DataFileConstants;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 @UsesConfiguration(DocumentGraphParser.class)
 public abstract class PropertyHyperGraphBuilder<T> extends
 		AbstractGraphBuilder<T, EntityQuery> implements HyperGraphBuilder<T> {
-
+	protected Collection<DocumentGraphParser> singletons;
 	private static final boolean INHERIT_ATTRIBUTES = true;
 	@Inject
 	protected StopWordService stopwordService;
@@ -56,6 +56,103 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 
 	protected ArrayList<String> skipInheritanceTypes;
 
+	/**
+	 * Note that the concrete implmentation of this class will usually provide
+	 * the DAOs needed through its constructor (which may take advantage of
+	 * dependency injection)
+	 */
+	public PropertyHyperGraphBuilder() {
+		super();
+	}
+
+	@Override
+	public V_GenericNode createOrUpdateNode(final String originalId,
+			final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType,
+			final String relationValue) {
+		return createOrUpdateNode(originalId, idType, nodeType, attachTo,
+				relationType, relationValue, 100.0d);
+	}
+
+	public V_GenericNode createOrUpdateNode(final String originalId,
+			final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType,
+			final String relationValue, final double certainty) {
+		V_GenericNode a = null;
+
+		if (ValidationUtils.isValid(originalId)) {
+			if (!stopwordService.isValid(originalId)) {
+				addError(new DocumentError("Bad Identifier", "The " + nodeType
+						+ " (" + originalId + ") contains a stopword",
+						Severity.WARN));
+			} else {
+				final String id = generateNodeId(originalId);
+				a = nodeList.getNode(id);
+				if (a == null) {
+					a = new V_GenericNode(id);
+					a.setIdType(idType);
+					// This is important because we use it to search on the next
+					// traversal.
+					a.setIdVal(originalId);
+					a.setNodeType(nodeType);
+					a.setColor(style.getHexColorForNode(a.getNodeType()));
+					// Remove leading zeros from the label
+					a.setLabel(StringUtils.removeLeadingZeros(originalId));
+					a.addData(nodeType, getCombinedSearchLink(originalId));
+					nodeList.addNode(a);
+
+					legendItems.add(new V_LegendItem(a.getColor(), a
+							.getNodeType()));
+				}
+				// now we have a valid node. Attach it to the other node
+				// provided.
+				if (ValidationUtils.isValid(attachTo)) {
+					final String key = generateEdgeId(attachTo.getId(),
+							relationType, a.getId());
+					if ((key != null) && !edgeMap.containsKey(key)) {
+						final V_GenericEdge v = new V_GenericEdge(a, attachTo);
+						v.setIdType(relationType);
+						v.setLabel(null);
+						v.setIdVal(relationType);
+						if (certainty < 100.0) {
+							v.addData("Certainty", DataFormatConstants
+									.formatPercent(certainty));
+							v.setLineStyle("dashed");
+							v.setColor("#787878");
+						}
+						v.addData("Value", StringUtils.coalesc(" ",
+								a.getLabel(), relationValue,
+								attachTo.getLabel()));
+						edgeMap.put(key, v);
+					}
+
+					// if this flag is set, we'll add the attributes to the
+					// attached
+					// node.
+					if (INHERIT_ATTRIBUTES) {
+						// attachTo.addData(a.getNodeType(), a.getIdVal());
+						attachTo.inheritPropertiesOfExcept(a,
+								skipInheritanceTypes);
+					}
+				}
+			}
+		} else {
+			logger.error("Invalid id for " + nodeType + " of node " + attachTo);
+		}
+		return a;
+	}
+
+	@Override
+	public V_GenericNode createOrUpdateNode(final String id,
+			final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType,
+			final String relationValue, final String forceColor) {
+		final V_GenericNode a = createOrUpdateNode(id, idType, nodeType,
+				attachTo, relationType, relationValue);
+		a.setColor(forceColor);
+		return a;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,13 +161,14 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	@Override
 	public abstract GenericDAO<T, EntityQuery> getDAO();
 
-	/**
-	 * Note that the concrete implmentation of this class will usually provide
-	 * the DAOs needed through its constructor (which may take advantage of
-	 * dependency injection)
-	 */
-	public PropertyHyperGraphBuilder() {
-		super();
+	public void inheritLabelIfNeeded(final V_GenericNode a,
+			final V_GenericNode... nodes) {
+		for (final V_GenericNode n : nodes) {
+			if ((n != null) && ValidationUtils.isValid(n.getLabel())) {
+				a.setLabel(n.getLabel());
+				return;
+			}
+		}
 	}
 
 	/*
@@ -83,12 +181,12 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	@Override
 	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery)
 			throws Exception {
-		this.nodeList = new V_NodeList();
-		this.edgeMap = new HashMap<String, V_GenericEdge>();
-		this.edgeList = new V_EdgeList(graphQuery);
-		this.scannedQueries = new HashSet<String>();
+		nodeList = new V_NodeList();
+		edgeMap = new HashMap<String, V_GenericEdge>();
+		edgeList = new V_EdgeList(graphQuery);
+		scannedQueries = new HashSet<String>();
 		// this.scannedResults = new HashSet<String>();
-		this.queriesToRun = new Stack<EntityQuery>();
+		queriesToRun = new Stack<EntityQuery>();
 		V_NodeList savNodeList = new V_NodeList();
 
 		if (graphQuery.getMaxHops() <= 0) {
@@ -105,9 +203,9 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
-		G_IdType nodeType = nodeTypeAccess
+		final G_IdType nodeType = nodeTypeAccess
 				.getCommonNodeType(G_CanonicalPropertyType.ANY);
-		for (String id : graphQuery.getSearchIds()) {
+		for (final String id : graphQuery.getSearchIds()) {
 			eq.addAttribute(new G_SearchTuple<String>(
 					G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
@@ -116,16 +214,17 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
 		int currentDegree = 0;
-		for (currentDegree = 0; currentDegree < graphQuery.getMaxHops()
-				&& nodeList.getNodes().size() < graphQuery.getMaxNodes(); currentDegree++) {
+		for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
+				&& (nodeList.getNodes().size() < graphQuery.getMaxNodes()); currentDegree++) {
 			eq = null;
 			logger.debug("$$$$There are " + queriesToRun.size()
 					+ " queries to run in the current degree.");
-			while (queriesToRun.size() > 0 && (eq = queriesToRun.pop()) != null
-					&& nodeList.getNodes().size() < graphQuery.getMaxNodes()) {
+			while ((queriesToRun.size() > 0)
+					&& ((eq = queriesToRun.pop()) != null)
+					&& (nodeList.getNodes().size() < graphQuery.getMaxNodes())) {
 
-				if (eq.getAttributeList() != null
-						&& eq.getAttributeList().size() > 0) {
+				if ((eq.getAttributeList() != null)
+						&& (eq.getAttributeList().size() > 0)) {
 
 					savNodeList = nodeList.clone();
 					logger.debug("Processing degree " + currentDegree);
@@ -156,7 +255,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 						// .getNodeType(node.getNodeType()),
 						// valueToSearchOn));
 						// }
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 					// we're done scanning this id.
@@ -189,18 +288,18 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 
 		// NOW finally add in all those unique edges.
 
-		for (V_GenericEdge e : edgeMap.values()) {
+		for (final V_GenericEdge e : edgeMap.values()) {
 			edgeList.addEdge(e);
 		}
 
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
+		final V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
 				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 
-		for (V_LegendItem li : legendItems) {
-			g.addLegendItem(li.getColor(), li.getText());
+		for (final V_LegendItem li : legendItems) {
+			g.addLegendItem(li);
 		}
 
 		return g;
@@ -214,99 +313,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	 * .generic.V_GraphQuery)
 	 */
 	@Override
-	public void performPostProcess(V_GraphQuery graphQuery) {
+	public void performPostProcess(final V_GraphQuery graphQuery) {
 		// default blank
-	}
-
-	public V_GenericNode createOrUpdateNode(String originalId, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue) {
-		return createOrUpdateNode(originalId, idType, nodeType, attachTo,
-				relationType, relationValue, 100.0d);
-	}
-
-	public V_GenericNode createOrUpdateNode(String originalId, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue, double certainty) {
-		V_GenericNode a = null;
-
-		if (ValidationUtils.isValid(originalId)) {
-			if (!stopwordService.isValid(originalId)) {
-				addError(new DocumentError("Bad Identifier", "The " + nodeType
-						+ " (" + originalId + ") contains a stopword",
-						Severity.WARN));
-			} else {
-				String id = generateNodeId(originalId);
-				a = nodeList.getNode(id);
-				if (a == null) {
-					a = new V_GenericNode(id);
-					a.setIdType(idType);
-					// This is important because we use it to search on the next
-					// traversal.
-					a.setIdVal(originalId);
-					a.setNodeType(nodeType);
-					a.setColor(style.getHexColorForNode(a.getNodeType()));
-					// Remove leading zeros from the label
-					a.setLabel(StringUtils.removeLeadingZeros(originalId));
-					a.addData(nodeType, getCombinedSearchLink(originalId));
-					nodeList.addNode(a);
-
-					legendItems.add(new V_LegendItem(a.getColor(), a
-							.getNodeType()));
-				}
-				// now we have a valid node. Attach it to the other node
-				// provided.
-				if (ValidationUtils.isValid(attachTo)) {
-					String key = generateEdgeId(attachTo.getId(), relationType,
-							a.getId());
-					if (key != null && !edgeMap.containsKey(key)) {
-						V_GenericEdge v = new V_GenericEdge(a, attachTo);
-						v.setIdType(relationType);
-						v.setLabel(null);
-						v.setIdVal(relationType);
-						if (certainty < 100.0) {
-							v.addData("Certainty", DataFormatConstants
-									.formatPercent(certainty));
-							v.setLineStyle("dashed");
-							v.setColor("#787878");
-						}
-						v.addData("Value", StringUtils.coalesc(" ",
-								a.getLabel(), relationValue,
-								attachTo.getLabel()));
-						edgeMap.put(key, v);
-					}
-
-					// if this flag is set, we'll add the attributes to the
-					// attached
-					// node.
-					if (INHERIT_ATTRIBUTES) {
-						// attachTo.addData(a.getNodeType(), a.getIdVal());
-						attachTo.inheritPropertiesOfExcept(a,
-								skipInheritanceTypes);
-					}
-				}
-			}
-		} else {
-			logger.error("Invalid id for " + nodeType + " of node " + attachTo);
-		}
-		return a;
-	}
-
-	public V_GenericNode createOrUpdateNode(String id, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue, String forceColor) {
-		V_GenericNode a = createOrUpdateNode(id, idType, nodeType, attachTo,
-				relationType, relationValue);
-		a.setColor(forceColor);
-		return a;
-	}
-
-	public void inheritLabelIfNeeded(V_GenericNode a, V_GenericNode... nodes) {
-		for (V_GenericNode n : nodes) {
-			if (n != null && ValidationUtils.isValid(n.getLabel())) {
-				a.setLabel(n.getLabel());
-				return;
-			}
-		}
 	}
 }

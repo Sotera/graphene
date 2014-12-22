@@ -1,13 +1,13 @@
 package graphene.hts.keywords;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
 import graphene.hts.entityextraction.AbstractExtractor;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class KeywordExtractorImpl extends AbstractExtractor {
 	/*

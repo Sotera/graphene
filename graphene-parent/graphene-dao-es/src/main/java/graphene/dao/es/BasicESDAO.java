@@ -54,7 +54,6 @@ public class BasicESDAO {
 		this.index = index;
 	}
 
-
 	public void initialize() {
 		if (!indexExists()) {
 			try {
@@ -77,9 +76,8 @@ public class BasicESDAO {
 	public boolean delete(String id) {
 		boolean success = false;
 		try {
-			JestResult result = jestClient
-					.execute((new Delete.Builder(id)).index(index)
-							.type(type).build());
+			JestResult result = jestClient.execute((new Delete.Builder(id))
+					.index(index).type(type).build());
 			success = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,8 +116,8 @@ public class BasicESDAO {
 				.settingsBuilder();
 		settings.put("number_of_shards", 3);
 		settings.put("number_of_replicas", 0);
-		JestResult execute = jestClient.execute(new CreateIndex.Builder(indexName).settings(
-				settings.build().getAsMap()).build());
+		JestResult execute = jestClient.execute(new CreateIndex.Builder(
+				indexName).settings(settings.build().getAsMap()).build());
 		logger.debug(execute.toString());
 	}
 }

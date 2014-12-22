@@ -3,14 +3,14 @@
  */
 package graphene.services;
 
+import graphene.dao.RoleDAO;
+import graphene.model.idl.G_Role;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
-
-import graphene.dao.RoleDAO;
-import graphene.model.idl.G_Role;
 
 /**
  * @author djue

@@ -1,7 +1,6 @@
 package graphene.web.model;
 
 import graphene.dao.EntityDAO;
-import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SortCriterion;
@@ -10,7 +9,6 @@ import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EventQuery;
 import graphene.model.query.SearchFilter;
 import graphene.model.view.entities.Entity;
-import graphene.model.view.events.DirectedEventRow;
 
 import java.util.ArrayList;
 import java.util.List;

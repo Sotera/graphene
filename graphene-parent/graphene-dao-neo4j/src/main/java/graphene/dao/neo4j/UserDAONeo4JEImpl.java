@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.neo4j.graphdb.Node;
@@ -205,7 +204,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return hash;
 	}
 
-	@PostInjection
+	//@PostInjection
 	public void initialize() throws DataAccessException {
 		if (n4jService.connectToGraph()) {
 			logger.debug("Constructing UserDAONeo4JImpl hooked up to "

@@ -2,13 +2,11 @@ package graphene.dao.neo4j;
 
 import graphene.dao.WorkspaceDAO;
 import graphene.dao.neo4j.annotations.UserGraph;
-import graphene.dao.neo4j.funnel.G_UserSpaceRelationshipTypeFunnel;
 import graphene.model.graph.G_PersistedGraph;
 import graphene.model.idl.G_UserFields;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.G_WorkspaceFields;
-import graphene.util.ExceptionUtil;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
@@ -16,16 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.joda.time.DateTime;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-
-import scala.Array;
 
 public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		WorkspaceDAO {
@@ -286,7 +278,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		return (n == null ? null : workspaceFunnel.from(n));
 	}
 
-	@PostInjection
+	//@PostInjection
 	public void initialize() {
 		if (n4jService.connectToGraph()) {
 			logger.debug("Constructing WorkspaceDAO hooked up to "

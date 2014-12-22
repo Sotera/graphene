@@ -1,16 +1,9 @@
 package graphene.dao.sql;
 
-import graphene.util.UtilModule;
 import graphene.util.db.DBConnectionPoolService;
 
-import java.sql.Connection;
-import java.util.Properties;
-
 import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.slf4j.Logger;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
 public class QueryDSLTest {
 

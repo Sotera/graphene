@@ -57,9 +57,14 @@ Ext.define("DARPA.AbstractNodeDisplay", {
     	
     	if (typeof legendPanel !== "undefined") {
     		// create a legend item for each object present in jsonArray
-    		while (jsonArray.length > 0) {
-    			var i = jsonArray.shift();
-    			GLegend.addLegendItem(groupName, i.text, i.iconPath, i.color);
+    		//while (jsonArray.length > 0) {
+    		//	var i = jsonArray.shift();
+    		//	GLegend.addLegendItem(groupName, i.text, i.iconPath, i.color);
+    		//}
+    		
+    		for (var i = 0; i < jsonArray.length; i++) {
+    			var li = jsonArray[i];
+    			GLegend.addLegendItem(groupName, li.text, li.iconPath, li.color);
     		}
     		
     		// legend objects based on jsonArray

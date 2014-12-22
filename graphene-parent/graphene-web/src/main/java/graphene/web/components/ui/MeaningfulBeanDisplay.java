@@ -3,7 +3,6 @@ package graphene.web.components.ui;
 import graphene.dao.StyleService;
 import graphene.util.validator.ValidationUtils;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,8 +17,6 @@ import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
-
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @SupportsInformalParameters
 public class MeaningfulBeanDisplay {

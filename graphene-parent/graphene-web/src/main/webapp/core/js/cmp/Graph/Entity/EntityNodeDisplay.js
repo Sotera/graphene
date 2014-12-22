@@ -69,7 +69,7 @@ Ext.define("DARPA.EntityNodeDisplay", {
     getLegendPanel: function() {
     	return this.items.items[2]; //.items.items[0];
     },
-	
+	//Called when node(s) are selected, so that the attributes are shown in the panel.
     showNodeAttrs: function(node) {
 		var self = this;
 		var html = "<table rules='rows'>";

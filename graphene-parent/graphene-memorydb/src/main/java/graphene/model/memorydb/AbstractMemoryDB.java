@@ -8,7 +8,6 @@ import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchType;
 import graphene.model.query.AdvancedSearch;
-import graphene.model.query.EntityQuery;
 import graphene.model.query.SearchFilter;
 import graphene.model.view.entities.CustomerDetails;
 import graphene.model.view.entities.IdType;

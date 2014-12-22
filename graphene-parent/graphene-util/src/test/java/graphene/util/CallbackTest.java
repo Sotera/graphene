@@ -1,7 +1,5 @@
 package graphene.util;
 
-import graphene.util.G_CallBack;
-
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 

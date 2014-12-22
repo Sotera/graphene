@@ -2,7 +2,7 @@ package graphene.web.pages;
 
 import graphene.dao.CombinedDAO;
 import graphene.dao.DataSourceListDAO;
-import graphene.dao.ReportPopulator;
+import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
@@ -10,16 +10,20 @@ import graphene.model.idl.G_VisualType;
 import graphene.model.query.EntityQuery;
 import graphene.model.query.SearchCriteria;
 import graphene.model.view.GrapheneResults;
+import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
 import graphene.util.ExceptionUtil;
+import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.SymbolConstants;
@@ -77,15 +81,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Property
 	private String currentAddress;
 	@Property
-	private String currentIcon;
+	private String currentCommunicationId;
 	@Property
 	private String currentDate;
+	@Property
+	private Map<String, Object> currentEntity;
 
 	@Property
-	private String currentCommunicationId;
-
-	@Property
-	private Object currentEntity;
+	private String currentIcon;
 
 	@Property
 	private String currentIdentifier;
@@ -95,7 +98,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Inject
 	private CombinedDAO dao;
-
 	@Inject
 	private DataSourceListDAO dataSourceListDAO;
 
@@ -104,15 +106,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	private String drillDownId;
 
+	@Inject
+	@Symbol(G_SymbolConstants.EXT_PATH)
+	private String extPath;
+
 	// /////////////////////////////////////////////////////////////////////
 	// FILTER
 	// /////////////////////////////////////////////////////////////////////
 
 	@Property
-	private GrapheneResults<Object> results;
-
-	@Property
-	private GridDataSource gds = new CombinedEntityDataSource(dao);
+	private final GridDataSource gds = new CombinedEntityDataSource(dao);
 
 	@Property
 	@Persist
@@ -127,82 +130,48 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Inject
 	private Messages messages;
 
-	private String previousSearchValue;
-
-	@Inject
-	private Request request;
-
-	@Property
-	private String searchType;
-
-	@Property
-	private int resultShowingCount;
-	@Property
-	private int resultTotalCount;
-
-	/**
-	 * @return the searchValue
-	 */
-	public final String getSearchValue() {
-		return searchValue;
-	}
-
-	/**
-	 * @param searchValue
-	 *            the searchValue to set
-	 */
-	public final void setSearchValue(String searchValue) {
-		this.searchValue = searchValue;
-	}
-
-	private String searchValue;
-
-	@Property
-	private Object selectedEvent;
-
-	@Inject
-	private ReportPopulator<Object, String> reportPopulator;
-
 	@Inject
 	@Symbol(SymbolConstants.APPLICATION_FOLDER)
 	private String path;
 
 	@Inject
-	@Symbol(G_SymbolConstants.EXT_PATH)
-	private String extPath;
+	private HyperGraphBuilder<Object> phgb;
 
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	public String getExtLink() {
-		return extPath + getReportId();
-	}
+	@Property
+	private List<Map<String, Object>> populatedTableResults;
 
-	public Set<String> getReportDates() {
-		return reportPopulator.getDates(currentEntity);
-	}
+	private String previousSearchValue;
 
-	public String getReportAmount() {
-		return reportPopulator.getAmount(currentEntity);
-	}
+	@Inject
+	private Request request;
+	@Property
+	private GrapheneResults<Object> results;
 
-	/**
-	 * Get a list of icons that apply to this report.
-	 * 
-	 * @return
-	 */
-	public Collection<String> getIconList() {
-		return reportPopulator.getIcons(currentEntity, searchValue);
-	}
+	@Property
+	private int resultShowingCount;
+
+	@Property
+	private int resultTotalCount;
+
+	@Property
+	private String searchType;
+
+	private String searchValue;
+
+	// @Inject
+	// private ReportPopulator<Object, String> reportPopulator;
+
+	@Property
+	private Object selectedEvent;
 
 	public Collection<String> getAddressList() {
-		return reportPopulator.getAddresses(currentEntity);
+		return (Collection<String>) currentEntity
+				.get(DocumentGraphParser.SUBJECTADDRESSLIST);
 	}
 
 	public Collection<String> getCIdentifierList() {
-		return reportPopulator.getCIdentifiers(currentEntity);
+		return (Collection<String>) currentEntity
+				.get(DocumentGraphParser.SUBJECTCIDLIST);
 	}
 
 	public Format getDateFormat() {
@@ -213,33 +182,42 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return DataFormatConstants.DATE_FORMAT_STRING;
 	}
 
-
-
-	private GrapheneResults<Object> getEntities(String type, String value) {
+	private GrapheneResults<Object> getEntities(final String type,
+			final String value) {
 		GrapheneResults<Object> metaresults = null;
 		if (ValidationUtils.isValid(value)) {
-			EntityQuery sq = new EntityQuery();
+			final EntityQuery sq = new EntityQuery();
 			sq.addAttribute(new G_SearchTuple<String>(value,
 					G_SearchType.COMPARE_CONTAINS));
 			sq.setMaxResult(200);
 			sq.setSchema(type);
-			if(isUserExists()){
+			if (isUserExists()) {
 				sq.setUserId(getUser().getId());
 				sq.setUserName(getUser().getUsername());
 			}
-			
+
 			try {
 				loggingDao.recordQuery(sq);
 				metaresults = dao.findByQueryWithMeta(sq);
-
-			} catch (Exception e) {
+				final TimeReporter tr = new TimeReporter(
+						"parsing details of results", logger);
+				populatedTableResults = new ArrayList<Map<String, Object>>();
+				for (final Object m : metaresults.getResults()) {
+					final DocumentGraphParser parserForObject = phgb
+							.getParserForObject(m);
+					parserForObject.populateExtraFields(m, sq);
+					populatedTableResults.add(parserForObject
+							.getAdditionalProperties(m));
+				}
+				tr.logAsCompleted();
+			} catch (final Exception e) {
 				alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
 						e.getMessage());
 				e.printStackTrace();
 			}
 		}
-		if (metaresults == null
-				|| metaresults.getNumberOfResultsReturned() == 0) {
+		if ((metaresults == null)
+				|| (metaresults.getNumberOfResultsReturned() == 0)) {
 			alertManager.alert(Duration.TRANSIENT, Severity.INFO,
 					"No results found for " + value + ".");
 			resultShowingCount = 0;
@@ -254,13 +232,36 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return metaresults;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public String getExtLink() {
+		return extPath + getReportId();
+	}
+
+	/**
+	 * Get a list of icons that apply to this report.
+	 * 
+	 * @return
+	 */
+	public Collection<String> getIconList() {
+
+		return (Collection<String>) currentEntity
+				.get(DocumentGraphParser.ICONLIST);
+	}
+
 	public Collection<String> getIdentifierList() {
-		return reportPopulator.getIdentifiers(currentEntity);
+		return (Collection<String>) currentEntity
+				.get(DocumentGraphParser.SUBJECTIDLIST);
 	}
 
 	public BeanModel getModel() {
-		BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
+		final BeanModel<Object> model = beanModelSource.createEditModel(
+				Object.class, messages);
 		model.add("actions", null);
+		model.add("score", null);
 		model.add("reportSummary", null);
 		model.add("amount", null);
 		model.add("nameList", null);
@@ -271,19 +272,37 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	public Collection<String> getNameList() {
-		return reportPopulator.getNames(currentEntity);
+		return (Collection<String>) currentEntity
+				.get(DocumentGraphParser.SUBJECTNAMELIST);
+
+	}
+
+	public String getReportAmount() {
+		return (String) currentEntity.get(DocumentGraphParser.TOTALAMOUNTSTR);
 	}
 
 	public String getReportId() {
-		return reportPopulator.getReportId(currentEntity);
+		return (String) currentEntity.get(DocumentGraphParser.REPORT_ID);
 	}
 
 	public String getReportPageLink() {
-		return reportPopulator.getPageLink(currentEntity);
+		return (String) currentEntity.get(DocumentGraphParser.REPORT_LINK);
 	}
 
 	public String getReportType() {
-		return reportPopulator.getReportType(currentEntity);
+		return (String) currentEntity.get(DocumentGraphParser.REPORT_TYPE);
+	}
+
+	public String getScore() {
+		final Double d = (Double) currentEntity.get(DocumentGraphParser.SCORE);
+		return DataFormatConstants.formatScore(d);
+	}
+
+	/**
+	 * @return the searchValue
+	 */
+	public final String getSearchValue() {
+		return searchValue;
 	}
 
 	public String getStyleForAddress() {
@@ -315,7 +334,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	@Log
-	void onActivate(String searchValue) {
+	void onActivate(final String searchValue) {
 		this.searchValue = searchValue;
 	}
 
@@ -331,14 +350,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	void onSuccessFromFilterForm() {
 		if (ValidationUtils.isValid(searchValue)) {
-			if (results == null || results.getNumberOfResultsReturned() == 0
+			if ((results == null)
+					|| (results.getNumberOfResultsReturned() == 0)
 					|| !previousSearchValue.equalsIgnoreCase(searchValue)) {
 				// don't use cached version.
 				try {
 					results = getEntities(searchType, searchValue);
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					// record error to screen!
-					String message = ExceptionUtil.getRootCauseMessage(ex);
+					final String message = ExceptionUtil
+							.getRootCauseMessage(ex);
 					alertManager.alert(Duration.SINGLE, Severity.ERROR,
 							"ERROR: " + message);
 					logger.error(message);
@@ -353,6 +374,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	/**
+	 * @param searchValue
+	 *            the searchValue to set
+	 */
+	public final void setSearchValue(final String searchValue) {
+		this.searchValue = searchValue;
+	}
+
+	/**
 	 * This should help with persisted values.
 	 */
 	void setupRender() {
@@ -360,7 +389,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 			try {
 				results = getEntities(searchType, searchValue);
 
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		} else {

@@ -68,8 +68,8 @@
 
 							<t:if test="results">
 								<div id="entityList">
-									<table t:type="grid" source="results.results" model="model"
-										t:row="currentEntity" width="100%"
+									<table t:type="grid" source="populatedTableResults"
+										model="model" t:row="currentEntity" width="100%"
 										class="table table-bordered">
 										[Grid here]
 										<p:actionsCell>
@@ -84,12 +84,13 @@
 												<i class="fa fa-code-fork"> </i> Graph
 											</a>
 										</p:actionsCell>
+										<p:scoreCell>
+											${score}
+										</p:scoreCell>
 										<p:reportSummaryCell>
-											<t:loop source="reportDates" value="currentDate">
-												<span class="fa fa-calendar label label-success">&nbsp;${currentDate}
-												</span>
-												<br />
-											</t:loop>
+											<span class="fa fa-calendar label label-success">&nbsp;${currentEntity.get('firstDate')}
+											</span>
+											<br />
 											<t:loop source="iconList" value="currentIcon">
 												<span class="${currentIcon} label label-danger"
 													rel="popover-hover" data-placement="top">&nbsp; </span>

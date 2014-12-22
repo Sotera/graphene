@@ -4,6 +4,15 @@ import java.util.List;
 
 public class GrapheneResults<T> {
 	private int numberOfResultsReturned = 0;
+	private double maxScore = 0.0d;
+
+	public double getMaxScore() {
+		return maxScore;
+	}
+
+	public void setMaxScore(double maxScore) {
+		this.maxScore = maxScore;
+	}
 
 	private int numberOtResultsTotal = 0;
 

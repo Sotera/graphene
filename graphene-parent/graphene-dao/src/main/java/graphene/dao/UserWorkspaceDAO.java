@@ -1,12 +1,12 @@
 package graphene.dao;
 
-import java.util.List;
-
 import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_UserWorkspace;
 import graphene.model.idl.G_Workspace;
+
+import java.util.List;
 
 public interface UserWorkspaceDAO {
 	/**

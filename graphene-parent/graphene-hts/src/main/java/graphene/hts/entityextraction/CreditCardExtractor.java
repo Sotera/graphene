@@ -79,6 +79,11 @@ public class CreditCardExtractor extends AbstractExtractor {
 
 	@Override
 	public String postProcessMatch(String match) {
-		return match.replaceAll("-", "");
+		if (ValidationUtils.isValid(match)) {
+			return match.replaceAll("-", "");
+		} else {
+			return match;
+		}
+
 	}
 }

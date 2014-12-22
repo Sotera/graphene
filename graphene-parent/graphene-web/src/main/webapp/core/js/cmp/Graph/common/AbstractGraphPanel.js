@@ -18,6 +18,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	
 	json: null,
 	json1Hop: null,
+	legendJSON: null,
 	
 	serviceURL: "",
 	previousPivotIds: [],
