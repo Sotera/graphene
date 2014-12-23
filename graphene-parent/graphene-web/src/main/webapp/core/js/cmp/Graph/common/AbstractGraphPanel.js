@@ -74,6 +74,10 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		this.callParent(arguments);
 	}, 
 	
+	getToolbar: function() {
+		return Ext.getCmp(this.id + "-GraphToolbar");
+	},
+	
 	getNodeDisplay : function() {
 		return undefined;
 	},
@@ -372,7 +376,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 				}
 				
 				superNode.data().subNodes.push(n.json());
-				_this.GraphVis.deleteNodes([n]);
+				_this.GraphVis.deleteNodes([n], true);
 			}
 		});
 		
