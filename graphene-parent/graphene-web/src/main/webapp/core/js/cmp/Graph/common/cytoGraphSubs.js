@@ -657,8 +657,8 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 		var possibleNeighbors = node.connectedEdges().connectedNodes();
 		var confirmedNeighbors = [];
 		possibleNeighbors.each(function(index, n) {
-			if (n.data().id != node.data().id) {
-				confirmedNeighbors.push(n.data().id);
+			if (n.data("id") != node.data("id")) {
+				confirmedNeighbors.push(n.data("id"));
 			}
 		});
 		return confirmedNeighbors.length == 1;
@@ -666,14 +666,14 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	
 	var neighbors = innode.connectedEdges().connectedNodes();
 	neighbors.each(function(i, n) {
-		if (_isLeaf(n) && n.data().id !== innode.data().id) {
+		if (_isLeaf(n) && n.data("id") !== innode.data("id") && n.data("expanded") === true) {
 			nodesToDelete.push(n);
 		}
 	});
 	if (nodesToDelete.length > 0) {
-		this.deleteNodes(nodesToDelete);
+		this.deleteNodes(nodesToDelete, true);
 	} else {
-		alert("This node has no leaves.");
+		alert("This node has no leaves (that can be deleted).");
 	}
 };
 
@@ -1102,9 +1102,16 @@ function StateManager(graphRef) {
 	 *	stored by most parent containers of a graph.
 	 *		nodes:Array - cytosape nodes to be deleted
 	 */
-	this.deleteNodes = function(nodes) {
+	this.deleteNodes = function(nodes, bypass) {
+		var errorMsg = null;
 		for (var i = 0; i < nodes.length; i++) {
 			var id = nodes[i].data().id;
+			
+			// if node is not user-generated && bypass is not true, continue;
+			if (nodes[i].data("generated") !== true && bypass !== true) {
+				errorMsg = "You can only delete user-generated nodes.";
+				continue;
+			}
 			
 			// remove all edges whose source == id
 			graphRef.gv.remove("edge[source='" + id + "']");
@@ -1138,12 +1145,22 @@ function StateManager(graphRef) {
 				}
 			}
 		}
+		
+		if (errorMsg != null) {
+			Ext.Msg.alert("Warning", errorMsg);
+		}
 	};
 	
-	this.deleteEdges = function(edges) {
+	this.deleteEdges = function(edges, bypass) {
+		var errorMsg = null;
 		for (var i = 0; i < edges.length; i++) {
 			var id = edges[i].data("id");
 			
+			// if edge is not user-generated && bypass is not true, continue;
+			if (edges[i].data("generated") !== true && bypass !== true) {
+				errorMsg = "You can only delete user-generated edges.";
+				continue;
+			}
 			// remove all edges with matching id
 			graphRef.gv.remove("edge[id='" + id + "']");
 			
@@ -1159,6 +1176,10 @@ function StateManager(graphRef) {
 					}
 				}
 			}
+		}
+		
+		if (errorMsg != null) {
+			Ext.Msg.alert("Warning", errorMsg);
 		}
 	};
 	
@@ -1320,6 +1341,7 @@ function GraphGenerator(graphRef) {
 				size: graphRef.CONSTANTS("nodeSize"),
 				label: "New Node*",
 				color: "gray",
+				generated: true,
 				attrs: [/* Populated via NodeEditor */]
 			},
 			group: "nodes",
@@ -1336,6 +1358,7 @@ function GraphGenerator(graphRef) {
 				source: _parentNode.data("id"),
 				target: "generatedNode_" + _currentId,
 				lineStyle: "dashed",
+				generated: true,
 				attrs: [/* Populated via NodeEditor */]
 			},
 			group: "edges"
@@ -1360,6 +1383,7 @@ function GraphGenerator(graphRef) {
 					source: _parentNode.data("id"),
 					target: targetNode.data("id"),
 					lineStyle: "dashed",
+					generated: true,
 					attrs: [/* Populated via NodeEditor */]
 				},
 				group: "edges"
