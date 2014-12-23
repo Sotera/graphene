@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Stack;
+import java.util.PriorityQueue;
 
 import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
@@ -66,18 +66,11 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	}
 
 	@Override
-	public V_GenericNode createOrUpdateNode(final String originalId,
+	public V_GenericNode createOrUpdateNode(final double minimumScore,
+			final double priority, final String originalId,
 			final String idType, final String nodeType,
 			final V_GenericNode attachTo, final String relationType,
-			final String relationValue) {
-		return createOrUpdateNode(originalId, idType, nodeType, attachTo,
-				relationType, relationValue, 100.0d);
-	}
-
-	public V_GenericNode createOrUpdateNode(final String originalId,
-			final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType,
-			final String relationValue, final double certainty) {
+			final String relationValue, final double nodeCertainty) {
 		V_GenericNode a = null;
 
 		if (ValidationUtils.isValid(originalId)) {
@@ -96,11 +89,12 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					a.setIdVal(originalId);
 					a.setNodeType(nodeType);
 					a.setColor(style.getHexColorForNode(a.getNodeType()));
+					a.setMinScore(minimumScore);
+					a.setPriority(priority);
 					// Remove leading zeros from the label
 					a.setLabel(StringUtils.removeLeadingZeros(originalId));
 					a.addData(nodeType, getCombinedSearchLink(originalId));
 					nodeList.addNode(a);
-
 					legendItems.add(new V_LegendItem(a.getColor(), a
 							.getNodeType()));
 				}
@@ -114,12 +108,14 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 						v.setIdType(relationType);
 						v.setLabel(null);
 						v.setIdVal(relationType);
-						if (certainty < 100.0) {
+						if (nodeCertainty < 100.0) {
 							v.addData("Certainty", DataFormatConstants
-									.formatPercent(certainty));
+									.formatPercent(nodeCertainty));
 							v.setLineStyle("dashed");
 							v.setColor("#787878");
 						}
+						v.addData("Priority", "" + priority);
+						v.addData("MinScore", "" + minimumScore);
 						v.addData("Value", StringUtils.coalesc(" ",
 								a.getLabel(), relationValue,
 								attachTo.getLabel()));
@@ -143,14 +139,20 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	}
 
 	@Override
-	public V_GenericNode createOrUpdateNode(final String id,
+	public V_GenericNode createOrUpdateNode(final String originalId,
 			final String idType, final String nodeType,
 			final V_GenericNode attachTo, final String relationType,
-			final String relationValue, final String forceColor) {
-		final V_GenericNode a = createOrUpdateNode(id, idType, nodeType,
-				attachTo, relationType, relationValue);
-		a.setColor(forceColor);
-		return a;
+			final String relationValue) {
+		return createOrUpdateNode(originalId, idType, nodeType, attachTo,
+				relationType, relationValue, 100.0d);
+	}
+
+	public V_GenericNode createOrUpdateNode(final String originalId,
+			final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType,
+			final String relationValue, final double certainty) {
+		return createOrUpdateNode(0.5d, 1.0d, originalId, idType, nodeType,
+				attachTo, relationType, relationValue, 100.0d);
 	}
 
 	/*
@@ -185,8 +187,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		edgeMap = new HashMap<String, V_GenericEdge>();
 		edgeList = new V_EdgeList(graphQuery);
 		scannedQueries = new HashSet<String>();
-		// this.scannedResults = new HashSet<String>();
-		queriesToRun = new Stack<EntityQuery>();
+		queriesToRun = new PriorityQueue<EntityQuery>(10, new ScoreComparator());
 		V_NodeList savNodeList = new V_NodeList();
 
 		if (graphQuery.getMaxHops() <= 0) {
@@ -209,7 +210,6 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			eq.addAttribute(new G_SearchTuple<String>(
 					G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
-		eq.setCustomerQueryFlag(true);
 		queriesToRun.add(eq);
 
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
@@ -220,7 +220,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			logger.debug("$$$$There are " + queriesToRun.size()
 					+ " queries to run in the current degree.");
 			while ((queriesToRun.size() > 0)
-					&& ((eq = queriesToRun.pop()) != null)
+					&& ((eq = queriesToRun.poll()) != null)
 					&& (nodeList.getNodes().size() < graphQuery.getMaxNodes())) {
 
 				if ((eq.getAttributeList() != null)

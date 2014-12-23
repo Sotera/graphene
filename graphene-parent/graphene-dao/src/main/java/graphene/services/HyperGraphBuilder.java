@@ -9,37 +9,12 @@ import mil.darpa.vande.generic.V_GraphQuery;
 
 public interface HyperGraphBuilder<T> {
 
-	/**
-	 * This object will be supplied by the concrete implementation
-	 */
-	public abstract GenericDAO<T, EntityQuery> getDAO();
-	public abstract DocumentGraphParser getParserForObject(Object obj);
-
-	/**
-	 * Unrolled version.
-	 * 
-	 * Start with a list of ids baked into a graph query. perform callbacks on
-	 * those initial ids. (call those idList1) we now have an expanded nodeList.
-	 * look through the nodelist to see which ones were in idList1. For those
-	 * not in idList1, perform callbacks on those.
-	 * 
-	 * @param graphQuery
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
-			throws Exception;
-
-	/**
-	 * Individual implementations can override this method to perform
-	 * modifications on the graph (or graph analysis) after the complete graph
-	 * has been built.
-	 * 
-	 * @param graphQuery
-	 */
-	public abstract void performPostProcess(V_GraphQuery graphQuery);
-
 	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
+
+	public abstract V_GenericNode createOrUpdateNode(double inheritedScore,
+			double priority, String id, String idType, String nodeType,
+			V_GenericNode attachTo, String relationType, String relationValue,
+			double nodeCertainty);
 
 	/**
 	 * Create a node or update an existing one. Also, use the color based on the
@@ -71,9 +46,10 @@ public interface HyperGraphBuilder<T> {
 	 * @param forceColor
 	 * @return
 	 */
-	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue, String forceColor);
+	// public abstract V_GenericNode createOrUpdateNode(String id, String
+	// idType,
+	// String nodeType, V_GenericNode attachTo, String relationType,
+	// String relationValue, String forceColor);
 
 	/**
 	 * Determine whether or not you want to traverse deeper on this node.
@@ -82,4 +58,35 @@ public interface HyperGraphBuilder<T> {
 	 * @return
 	 */
 	boolean determineTraversability(V_GenericNode n);
+
+	/**
+	 * This object will be supplied by the concrete implementation
+	 */
+	public abstract GenericDAO<T, EntityQuery> getDAO();
+
+	public abstract DocumentGraphParser getParserForObject(Object obj);
+
+	/**
+	 * Unrolled version.
+	 * 
+	 * Start with a list of ids baked into a graph query. perform callbacks on
+	 * those initial ids. (call those idList1) we now have an expanded nodeList.
+	 * look through the nodelist to see which ones were in idList1. For those
+	 * not in idList1, perform callbacks on those.
+	 * 
+	 * @param graphQuery
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
+			throws Exception;
+
+	/**
+	 * Individual implementations can override this method to perform
+	 * modifications on the graph (or graph analysis) after the complete graph
+	 * has been built.
+	 * 
+	 * @param graphQuery
+	 */
+	public abstract void performPostProcess(V_GraphQuery graphQuery);
 }

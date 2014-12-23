@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -68,7 +69,8 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	protected Set<String> scannedResults = new HashSet<String>();
 
-	protected Stack<EntityQuery> queriesToRun = new Stack<EntityQuery>();
+	protected PriorityQueue<EntityQuery> queriesToRun = new PriorityQueue<EntityQuery>(
+			10, new ScoreComparator());
 
 	protected Stack<EntityQuery> queriesToRunNextDegree = new Stack<EntityQuery>();
 	protected V_NodeList nodeList = new V_NodeList();
