@@ -47,7 +47,6 @@ Ext.define("DARPA.Node_Actions", {
 		var hide = Ext.create("Ext.Button", {
 			text:'HIDE',
 			id: config.id + '-HIDE',
-			disabled:true,
 			margin:4,   
 			height:24,
 			width: "25%",
@@ -56,15 +55,15 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				var nodes = graph.GraphVis.gv.$("node:selected");
-				if (nodes.length > 0) {
+				var edges = graph.GraphVis.gv.$("edge:selected");
+				if (nodes.length > 0 || edges.length > 0) {
 					for (var i = 0; i < nodes.length; i++) {
 						graph.GraphVis.hideNode(nodes[i], false);
 					}
 					
-					var unhide = graph.getUnHideButton();
-					if (unhide) {
-						unhide.setDisabled(false);
-					};
+					for (var i = 0; i < edges.length; i++) {
+						graph.GraphVis.hideEdge(edges[i], false);
+					}
 				};
 			} // handler
 		}); // hide
@@ -100,7 +99,6 @@ Ext.define("DARPA.Node_Actions", {
 
 		var unhide = Ext.create("Ext.Button", {
 			text:'UNHIDE', 
-			disabled:true, 
 			id: config.id + '-UNHIDE',
 			margin:4,   
 			height:24,
@@ -112,7 +110,6 @@ Ext.define("DARPA.Node_Actions", {
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
 					graph.GraphVis.showAll(false);
-					but.setDisabled(true);
 				} // if graph
 			} // handler
 		}); // unhide
