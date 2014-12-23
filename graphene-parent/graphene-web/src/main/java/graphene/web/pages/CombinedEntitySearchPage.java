@@ -8,7 +8,6 @@ import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_VisualType;
 import graphene.model.query.EntityQuery;
-import graphene.model.query.SearchCriteria;
 import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
@@ -27,23 +26,25 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.slf4j.Logger;
 
 /**
@@ -64,19 +65,17 @@ import org.slf4j.Logger;
  * 
  */
 @PluginPage(visualType = G_VisualType.SEARCH, menuName = "Combined Search", icon = "fa fa-lg fa-fw fa-search")
+@Import(stylesheet = {
+		"context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
+		"context:core/js/plugin/datatables/media/css/TableTools.css" })
+@ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Inject
 	private AjaxResponseRenderer ajaxResponseRenderer;
-	@Inject
-	private AlertManager alertManager;
 
 	@Inject
 	private BeanModelSource beanModelSource;
-
-	@SessionState
-	@Property
-	private SearchCriteria criteria;
 
 	@Property
 	private String currentAddress;
@@ -101,19 +100,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Inject
 	private DataSourceListDAO dataSourceListDAO;
 
-	@Property
-	private Object drillDownevent;
-
-	private String drillDownId;
-
+	@Inject
+	private JavaScriptSupport javaScriptSupport;
 	@Inject
 	@Symbol(G_SymbolConstants.EXT_PATH)
 	private String extPath;
-
-	// /////////////////////////////////////////////////////////////////////
-	// FILTER
-	// /////////////////////////////////////////////////////////////////////
-
 	@Property
 	private final GridDataSource gds = new CombinedEntityDataSource(dao);
 
@@ -144,9 +135,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Inject
 	private Request request;
+
 	@Property
 	private GrapheneResults<Object> results;
-
 	@Property
 	private int resultShowingCount;
 
@@ -158,15 +149,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	private String searchValue;
 
-	// @Inject
-	// private ReportPopulator<Object, String> reportPopulator;
-
 	@Property
 	private Object selectedEvent;
 
 	public Collection<String> getAddressList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTADDRESSLIST);
+	}
+
+	public Long getAmount() {
+		return (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
 	public Collection<String> getCIdentifierList() {
@@ -191,6 +183,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 					G_SearchType.COMPARE_CONTAINS));
 			sq.setMaxResult(200);
 			sq.setSchema(type);
+			sq.setMinimumScore(0.50);
 			if (isUserExists()) {
 				sq.setUserId(getUser().getId());
 				sq.setUserName(getUser().getUsername());
@@ -202,6 +195,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				final TimeReporter tr = new TimeReporter(
 						"parsing details of results", logger);
 				populatedTableResults = new ArrayList<Map<String, Object>>();
+				// Populate all the results!
 				for (final Object m : metaresults.getResults()) {
 					final DocumentGraphParser parserForObject = phgb
 							.getParserForObject(m);
@@ -260,14 +254,22 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	public BeanModel getModel() {
 		final BeanModel<Object> model = beanModelSource.createEditModel(
 				Object.class, messages);
-		model.add("actions", null);
+		model.addEmpty("actions");
 		model.add("score", null);
-		model.add("reportSummary", null);
+		model.add("informationIcons", null);
+		model.add("date", null);
 		model.add("amount", null);
 		model.add("nameList", null);
 		model.add("addressList", null);
 		model.add("communicationIdentifierList", null);
 		model.add("identifierList", null);
+
+		model.getById("score").sortable(true);
+		model.getById("amount").sortable(true);
+		model.getById("date").sortable(true);
+		model.getById("actions").sortable(true);
+		model.getById("nameList").sortable(true);
+		model.getById("informationIcons").sortable(true);
 		return model;
 	}
 
@@ -277,8 +279,18 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	}
 
-	public String getReportAmount() {
-		return (String) currentEntity.get(DocumentGraphParser.TOTALAMOUNTSTR);
+	// /////////////////////////////////////////////////////////////////////
+	// FILTER
+	// /////////////////////////////////////////////////////////////////////
+
+	public JSONObject getOptions() {
+
+		final JSONObject json = new JSONObject(
+				"bJQueryUI",
+				"true",
+				"sDom",
+				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
+		return json;
 	}
 
 	public String getReportId() {

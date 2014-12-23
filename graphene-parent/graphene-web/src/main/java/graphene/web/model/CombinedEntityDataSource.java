@@ -17,18 +17,18 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
 
 public class CombinedEntityDataSource implements GridDataSource {
-	private CombinedDAO dao;
+	private final CombinedDAO dao;
 
-	private String partialName = null;
-	private String schema = null;
+	private final String partialName = null;
+	private final String schema = null;
 	private List<Object> preparedResults;
 
-	private G_SearchType searchType = G_SearchType.COMPARE_CONTAINS;
+	private final G_SearchType searchType = G_SearchType.COMPARE_CONTAINS;
 
 	private int startIndex;
 
-	public CombinedEntityDataSource(CombinedDAO dao2) {
-		this.dao = dao2;
+	public CombinedEntityDataSource(final CombinedDAO dao2) {
+		dao = dao2;
 		// this.partialName = partialName;
 	}
 
@@ -36,16 +36,17 @@ public class CombinedEntityDataSource implements GridDataSource {
 	// REVIEW
 	// /////////////////////////////////////////////////////////////////////
 
+	@Override
 	public int getAvailableRows() {
 		if (partialName == null) {
 			return 0;
 		}
-		EntityQuery q = new EntityQuery();
+		final EntityQuery q = new EntityQuery();
 		q.addAttribute(new G_SearchTuple(partialName,
 				G_SearchType.COMPARE_EQUALS));
 		try {
 			return (int) dao.count(q);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -68,20 +69,19 @@ public class CombinedEntityDataSource implements GridDataSource {
 		if (partialName == null) {
 			preparedResults = new ArrayList<Object>();
 		} else {
-			AdvancedSearch srch = new AdvancedSearch();
-			List<SearchFilter> filters = new ArrayList<SearchFilter>();
-			SearchFilter sf = new SearchFilter();
+			final AdvancedSearch srch = new AdvancedSearch();
+			final List<SearchFilter> filters = new ArrayList<SearchFilter>();
+			final SearchFilter sf = new SearchFilter();
 			sf.setValue(partialName);
 			filters.add(sf);
 			srch.setFilters(filters);
 
-			EntityQuery q = new EntityQuery();
+			final EntityQuery q = new EntityQuery();
 			q.addAttribute(new G_SearchTuple(partialName,
 					G_SearchType.COMPARE_EQUALS));
 			try {
 				preparedResults = dao.findByQuery(q);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -99,12 +99,12 @@ public class CombinedEntityDataSource implements GridDataSource {
 	 * because that would create a dependency on Tapestry.
 	 */
 	private List<G_SortCriterion> toSortCriteria(
-			List<SortConstraint> sortConstraints) {
-		List<G_SortCriterion> sortCriteria = new ArrayList<G_SortCriterion>();
+			final List<SortConstraint> sortConstraints) {
+		final List<G_SortCriterion> sortCriteria = new ArrayList<G_SortCriterion>();
 
-		for (SortConstraint sortConstraint : sortConstraints) {
+		for (final SortConstraint sortConstraint : sortConstraints) {
 
-			String propertyName = sortConstraint.getPropertyModel()
+			final String propertyName = sortConstraint.getPropertyModel()
 					.getPropertyName();
 			G_SortOrder sortDirection = G_SortOrder.UNSORTED;
 
@@ -118,8 +118,8 @@ public class CombinedEntityDataSource implements GridDataSource {
 			default:
 			}
 
-			G_SortCriterion sortCriterion = new G_SortCriterion(sortDirection,
-					propertyName);
+			final G_SortCriterion sortCriterion = new G_SortCriterion(
+					sortDirection, propertyName);
 			sortCriteria.add(sortCriterion);
 		}
 
