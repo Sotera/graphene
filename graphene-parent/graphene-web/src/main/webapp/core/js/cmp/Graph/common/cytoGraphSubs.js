@@ -673,7 +673,11 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	if (nodesToDelete.length > 0) {
 		this.deleteNodes(nodesToDelete, true);
 	} else {
-		alert("This node has no leaves (that can be deleted).");
+		if (errorMsg != null && this.getOwner().getProgressBar) {
+			var pb = this.getOwner().getProgressBar();
+			if (pb) pb.updateProgress(1, errorMsg);
+			else alert(errorMsg);
+		}
 	}
 };
 
@@ -1146,8 +1150,10 @@ function StateManager(graphRef) {
 			}
 		}
 		
-		if (errorMsg != null) {
-			Ext.Msg.alert("Warning", errorMsg);
+		if (errorMsg != null && graphRef.getOwner().getProgressBar) {
+			var pb = graphRef.getOwner().getProgressBar();
+			if (pb) pb.updateProgress(1, errorMsg);
+			else alert(errorMsg);
 		}
 	};
 	
@@ -1178,8 +1184,10 @@ function StateManager(graphRef) {
 			}
 		}
 		
-		if (errorMsg != null) {
-			Ext.Msg.alert("Warning", errorMsg);
+		if (errorMsg != null && graphRef.getOwner().getProgressBar) {
+			var pb = graphRef.getOwner().getProgressBar();
+			if (pb) pb.updateProgress(1, errorMsg);
+			else alert(errorMsg);
 		}
 	};
 	
