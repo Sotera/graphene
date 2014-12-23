@@ -64,54 +64,74 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		BasicQuery other = (BasicQuery) obj;
+		}
+		final BasicQuery other = (BasicQuery) obj;
 		if (dataSource == null) {
-			if (other.dataSource != null)
+			if (other.dataSource != null) {
 				return false;
-		} else if (!dataSource.equals(other.dataSource))
+			}
+		} else if (!dataSource.equals(other.dataSource)) {
 			return false;
-		if (firstResult != other.firstResult)
+		}
+		if (firstResult != other.firstResult) {
 			return false;
-		if (maxResult != other.maxResult)
+		}
+		if (maxResult != other.maxResult) {
 			return false;
-		if (maxSecs != other.maxSecs)
+		}
+		if (maxSecs != other.maxSecs) {
 			return false;
-		if (minSecs != other.minSecs)
+		}
+		if (minSecs != other.minSecs) {
 			return false;
+		}
 		if (schema == null) {
-			if (other.schema != null)
+			if (other.schema != null) {
 				return false;
-		} else if (!schema.equals(other.schema))
+			}
+		} else if (!schema.equals(other.schema)) {
 			return false;
-		if (sortAscending != other.sortAscending)
+		}
+		if (sortAscending != other.sortAscending) {
 			return false;
+		}
 		if (sortColumn == null) {
-			if (other.sortColumn != null)
+			if (other.sortColumn != null) {
 				return false;
-		} else if (!sortColumn.equals(other.sortColumn))
+			}
+		} else if (!sortColumn.equals(other.sortColumn)) {
 			return false;
+		}
 		if (sortField == null) {
-			if (other.sortField != null)
+			if (other.sortField != null) {
 				return false;
-		} else if (!sortField.equals(other.sortField))
+			}
+		} else if (!sortField.equals(other.sortField)) {
 			return false;
+		}
 		if (userId == null) {
-			if (other.userId != null)
+			if (other.userId != null) {
 				return false;
-		} else if (!userId.equals(other.userId))
+			}
+		} else if (!userId.equals(other.userId)) {
 			return false;
+		}
 		if (userName == null) {
-			if (other.userName != null)
+			if (other.userName != null) {
 				return false;
-		} else if (!userName.equals(other.userName))
+			}
+		} else if (!userName.equals(other.userName)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -196,20 +216,20 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
+		result = (prime * result)
 				+ ((dataSource == null) ? 0 : dataSource.hashCode());
-		result = prime * result + (int) (firstResult ^ (firstResult >>> 32));
-		result = prime * result + (int) (maxResult ^ (maxResult >>> 32));
-		result = prime * result + (int) (maxSecs ^ (maxSecs >>> 32));
-		result = prime * result + (int) (minSecs ^ (minSecs >>> 32));
-		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
-		result = prime * result + (sortAscending ? 1231 : 1237);
-		result = prime * result
+		result = (prime * result) + (int) (firstResult ^ (firstResult >>> 32));
+		result = (prime * result) + (int) (maxResult ^ (maxResult >>> 32));
+		result = (prime * result) + (int) (maxSecs ^ (maxSecs >>> 32));
+		result = (prime * result) + (int) (minSecs ^ (minSecs >>> 32));
+		result = (prime * result) + ((schema == null) ? 0 : schema.hashCode());
+		result = (prime * result) + (sortAscending ? 1231 : 1237);
+		result = (prime * result)
 				+ ((sortColumn == null) ? 0 : sortColumn.hashCode());
-		result = prime * result
+		result = (prime * result)
 				+ ((sortField == null) ? 0 : sortField.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		result = prime * result
+		result = (prime * result) + ((userId == null) ? 0 : userId.hashCode());
+		result = (prime * result)
 				+ ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
@@ -225,7 +245,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 		return sortAscending;
 	}
 
-	public void setDataSource(String dataSource) {
+	public void setDataSource(final String dataSource) {
 		this.dataSource = dataSource;
 	}
 
@@ -235,11 +255,11 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.PageableQuery#setFirstResult(int)
 	 */
 	@Override
-	public void setFirstResult(long firstResult) {
+	public void setFirstResult(final long firstResult) {
 		this.firstResult = firstResult;
 	}
 
-	public void setId(String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
@@ -249,7 +269,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.PageableQuery#setMaxResult(int)
 	 */
 	@Override
-	public void setMaxResult(long maxResult) {
+	public void setMaxResult(final long maxResult) {
 		this.maxResult = maxResult;
 	}
 
@@ -257,7 +277,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @param maxSecs
 	 *            the maxSecs to set
 	 */
-	public final void setMaxSecs(long maxSecs) {
+	public final void setMaxSecs(final long maxSecs) {
 		this.maxSecs = maxSecs;
 	}
 
@@ -265,19 +285,19 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @param minSecs
 	 *            the minSecs to set
 	 */
-	public final void setMinSecs(long minSecs) {
+	public final void setMinSecs(final long minSecs) {
 		this.minSecs = minSecs;
 	}
 
-	public void setSchema(String schema) {
+	public void setSchema(final String schema) {
 		this.schema = schema;
 	}
 
-	public void setSortAndDirection(String sortColumnWithDirection) {
+	public void setSortAndDirection(final String sortColumnWithDirection) {
 		if (sortColumnWithDirection.contains(DisplayUtil.DESCENDING_FLAG)) {
-			this.sortAscending = false;
+			sortAscending = false;
 		} else {
-			this.sortAscending = true; // MFM
+			sortAscending = true; // MFM
 		}
 		sortColumn = sortColumnWithDirection.replace(
 				DisplayUtil.DESCENDING_FLAG, "");
@@ -289,8 +309,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @see grapheneweb.services.common.SortableQuery#setSortAscending(boolean)
 	 */
 	@Override
-	public void setSortAscending(boolean sortAscending) {
-		// TODO Auto-generated method stub
+	public void setSortAscending(final boolean sortAscending) {
 		this.sortAscending = sortAscending;
 	}
 
@@ -305,8 +324,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 */
 	@Override
 	@Deprecated
-	public void setSortColumn(String sortColumn) {
-		// TODO Auto-generated method stub
+	public void setSortColumn(final String sortColumn) {
 		this.sortColumn = sortColumn;
 	}
 
@@ -314,19 +332,19 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	 * @param sortField
 	 *            the sortField to set
 	 */
-	public final void setSortField(String sortField) {
+	public final void setSortField(final String sortField) {
 		this.sortField = sortField;
 	}
 
-	public void setTimeInitiated(long timeInitiated) {
+	public void setTimeInitiated(final long timeInitiated) {
 		this.timeInitiated = timeInitiated;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(final String userId) {
 		this.userId = userId;
 	}
 
-	public void setUserName(String userName) {
+	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 
