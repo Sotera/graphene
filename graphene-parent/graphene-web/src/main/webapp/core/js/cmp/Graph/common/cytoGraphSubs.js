@@ -291,12 +291,6 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 								console.log("Capability to merge nodes is undefined"); 
 							}
 						}
-					}, {
-						content: "Hide Edge",
-						select: function() {
-							var edge = this;
-							_this.hideEdge(edge, false);
-						}
 					}]
 				}); // END NODE CONTEXT MENU
 				
@@ -316,6 +310,12 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 							var edge = this;
 							if (_this.owner.editElement) { _this.owner.editElement(edge); } 
 							else { console.log("editElement() is undefined"); }
+						}
+					}, {
+						content: "Hide Edge",
+						select: function() {
+							var edge = this;
+							_this.hideEdge(edge, false);
 						}
 					}]
 				}); // END EDGE CONTEXT MENU
