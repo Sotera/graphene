@@ -11,45 +11,61 @@ public class EntityQuery extends BasicQuery {
 			1);
 
 	private boolean caseSensitive = false;
-	private boolean customerQueryFlag = true;
+	/**
+	 * For backend which allow a minimum relevance score for finding related
+	 * results, use this field
+	 */
+	private double minimumScore = 0.25d;
 
 	private String initiatorId;
 
-	public void addAttribute(Collection<G_SearchTuple<String>> attr) {
+	public void addAttribute(final Collection<G_SearchTuple<String>> attr) {
 		attributeList.addAll(attr);
 	}
 
-	public void addAttribute(G_SearchTuple<String> attr) {
+	public void addAttribute(final G_SearchTuple<String> attr) {
 		attributeList.add(attr);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EntityQuery other = (EntityQuery) obj;
-		if (attributeList == null) {
-			if (other.attributeList != null)
-				return false;
-		} else if (!attributeList.equals(other.attributeList))
-			return false;
-		if (caseSensitive != other.caseSensitive)
-			return false;
-		if (customerQueryFlag != other.customerQueryFlag)
-			return false;
-		return true;
-	}
-
-	public final String[] getAttributeValues() {
-		List<String> list = new ArrayList<String>(1);
-		for (G_SearchTuple<String> a : attributeList) {
-			list.add(a.getValue());
 		}
-		return list.toArray(new String[list.size()]);
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final EntityQuery other = (EntityQuery) obj;
+		if (attributeList == null) {
+			if (other.attributeList != null) {
+				return false;
+			}
+		} else if (!attributeList.equals(other.attributeList)) {
+			return false;
+		}
+		if (caseSensitive != other.caseSensitive) {
+			return false;
+		}
+		if (initiatorId == null) {
+			if (other.initiatorId != null) {
+				return false;
+			}
+		} else if (!initiatorId.equals(other.initiatorId)) {
+			return false;
+		}
+		if (Double.doubleToLongBits(minimumScore) != Double
+				.doubleToLongBits(other.minimumScore)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -59,18 +75,42 @@ public class EntityQuery extends BasicQuery {
 		return attributeList;
 	}
 
+	public final String[] getAttributeValues() {
+		final List<String> list = new ArrayList<String>(1);
+		for (final G_SearchTuple<String> a : attributeList) {
+			list.add(a.getValue());
+		}
+		return list.toArray(new String[list.size()]);
+	}
+
 	public String getInitiatorId() {
 		return initiatorId;
 	}
 
+	/**
+	 * @return the minimumScore
+	 */
+	public double getMinimumScore() {
+		return minimumScore;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
+		result = (prime * result)
 				+ ((attributeList == null) ? 0 : attributeList.hashCode());
-		result = prime * result + (caseSensitive ? 1231 : 1237);
-		result = prime * result + (customerQueryFlag ? 1231 : 1237);
+		result = (prime * result) + (caseSensitive ? 1231 : 1237);
+		result = (prime * result)
+				+ ((initiatorId == null) ? 0 : initiatorId.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(minimumScore);
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -81,14 +121,7 @@ public class EntityQuery extends BasicQuery {
 		return caseSensitive;
 	}
 
-	/**
-	 * @return the customerQueryFlag
-	 */
-	public boolean isCustomerQueryFlag() {
-		return customerQueryFlag;
-	}
-
-	public void setAttributeList(List<G_SearchTuple<String>> attributeList) {
+	public void setAttributeList(final List<G_SearchTuple<String>> attributeList) {
 		this.attributeList = attributeList;
 	}
 
@@ -96,20 +129,20 @@ public class EntityQuery extends BasicQuery {
 	 * @param caseSensitive
 	 *            the caseSensitive to set
 	 */
-	public void setCaseSensitive(boolean caseSensitive) {
+	public void setCaseSensitive(final boolean caseSensitive) {
 		this.caseSensitive = caseSensitive;
 	}
 
-	/**
-	 * @param customerQueryFlag
-	 *            the customerQueryFlag to set
-	 */
-	public void setCustomerQueryFlag(boolean customerQueryFlag) {
-		this.customerQueryFlag = customerQueryFlag;
+	public void setInitiatorId(final String id) {
+		initiatorId = id;
 	}
 
-	public void setInitiatorId(String id) {
-		this.initiatorId = id;
+	/**
+	 * @param minimumScore
+	 *            the minimumScore to set
+	 */
+	public void setMinimumScore(final double minimumScore) {
+		this.minimumScore = minimumScore;
 	}
 
 	/*
@@ -119,14 +152,9 @@ public class EntityQuery extends BasicQuery {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EntityQuery [");
-		if (attributeList != null)
-			builder.append("attributeList=").append(attributeList).append(", ");
-		builder.append("caseSensitive=").append(caseSensitive)
-				.append(", customerQueryFlag=").append(customerQueryFlag)
-				.append("]");
-		return builder.toString();
+		return "EntityQuery [attributeList=" + attributeList
+				+ ", caseSensitive=" + caseSensitive + ", minimumScore="
+				+ minimumScore + ", initiatorId=" + initiatorId + "]";
 	}
 
 }
