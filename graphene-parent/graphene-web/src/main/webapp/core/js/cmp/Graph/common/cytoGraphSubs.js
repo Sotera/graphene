@@ -505,6 +505,12 @@ CytoGraphVis.prototype.showAll = function(isFilter) {
 CytoGraphVis.prototype.showGraph = function(json, name) {
 	this.searchName = name;
 	this.gv.load(json);
+	this.changeLayout(this.CONSTANTS("defaultLayout"), {});
+	try {
+		this.getOwner().getToolbar().getHierarchyBtn().toggle(true); 
+	} catch (e) {
+		console.error(e.message);
+	}
 };
 
 CytoGraphVis.prototype.resize = function(w, h) {
