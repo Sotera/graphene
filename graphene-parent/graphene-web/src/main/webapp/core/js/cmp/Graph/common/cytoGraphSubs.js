@@ -673,7 +673,8 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	if (nodesToDelete.length > 0) {
 		this.deleteNodes(nodesToDelete, true);
 	} else {
-		if (errorMsg != null && this.getOwner().getProgressBar) {
+		var errorMsg = "This node has no leaves (that can be deleted).";
+		if (this.getOwner().getProgressBar) {
 			var pb = this.getOwner().getProgressBar();
 			if (pb) pb.updateProgress(1, errorMsg);
 			else alert(errorMsg);
