@@ -14,7 +14,7 @@ Ext
 						var myWidth = 30;
 						var myHeight = 30;
 
-						var persist_graph = {
+						var saveToServer = {
 							xtype : "button",
 							text : "Store", // FIXME: might need a new name
 							height : myHeight,
@@ -300,6 +300,26 @@ Ext
 										gr.GraphVis.gv.fit();
 									}
 						};
+						
+						var regenerateFromServer = {
+							xtype: "button",
+							height: myHeight,
+							text: "Regenerate Graph",
+							tooltip: "Undoes any persisted changes to this graph and returns what is in the data store",
+							handler: function(item) {
+								var gr = item.up().up();
+								var id = gr.prevLoadParams.searchValue;
+								Ext.Msg
+										.confirm(
+												'Confirm',
+												'Regenerating will discard any changes you have made to the graph. Are you sure you want to Regenerate?',
+												function(ans) {
+													if (ans == 'yes') {
+														gr.load(id, false);
+													}
+												});
+							}
+						};
 
 						var help_btn = {
 							xtype : 'button',
@@ -391,12 +411,12 @@ Ext
 									}
 						};
 
-						this.items = [ persist_graph, save_graph, load_graph,
+						this.items = [ saveToServer, save_graph, load_graph,
 								import_graph, export_graph, "-", grid_default,
 								"-", hierarch_default, hierarch_circle, "-",
 								cose_anim, cose_unanim, "-", arbor_anim,
 								arbor_unanim, arbor_wheel_anim,
-								arbor_wheel_unanim, "-", snap_btn, inst_label,
+								arbor_wheel_unanim, "-", snap_btn, regenerateFromServer, inst_label,
 								"->", help_btn ];
 
 						this.callParent(arguments);
@@ -458,11 +478,15 @@ Ext
 						return this.items.items[17];
 					},
 
-					getLabel : function() {
+					getRefreshBtn: function() {
 						return this.items.items[19];
+					},
+					
+					getLabel : function() {
+						return this.items.items[20];
 					},
 
 					getHelpBtn : function() {
-						return this.items.items[21];
+						return this.items.items[22];
 					}
 				});
