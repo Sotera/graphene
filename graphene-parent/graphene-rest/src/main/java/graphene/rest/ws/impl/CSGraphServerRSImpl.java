@@ -150,6 +150,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					logger.debug(existingGraph.toString());
 					m = mapper.readValue(existingGraph.getGraphJSONdata(),
 							V_CSGraph.class);
+					if (m == null) {
+						logger.error("Could not parse existing graph from a previous save, will regenerate.");
+					}
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
