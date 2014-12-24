@@ -11,8 +11,23 @@ public interface HyperGraphBuilder<T> {
 
 	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
 
-	public abstract V_GenericNode createOrUpdateNode(double inheritedScore,
-			double priority, String id, String idType, String nodeType,
+	/**
+	 * 
+	 * @param minimumScoreRequired
+	 * @param inheritedScore
+	 * @param localPriority
+	 * @param id
+	 * @param idType
+	 * @param nodeType
+	 * @param attachTo
+	 * @param relationType
+	 * @param relationValue
+	 * @param nodeCertainty
+	 * @return
+	 */
+	public abstract V_GenericNode createOrUpdateNode(
+			double minimumScoreRequired, double inheritedScore,
+			double localPriority, String id, String idType, String nodeType,
 			V_GenericNode attachTo, String relationType, String relationValue,
 			double nodeCertainty);
 

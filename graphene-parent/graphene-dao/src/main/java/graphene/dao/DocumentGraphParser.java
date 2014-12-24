@@ -23,6 +23,7 @@ public interface DocumentGraphParser<T> {
 	public static final String SUBJECTNAMELIST = "subjectnamelist";
 	public static final String REPORT_LINK = "reportlink";
 	public static final String REPORT_TYPE = "reporttype";
+	public static final String REPORT_LABEL = "reportlabel";
 	public static final String REPORT_ID = "reportid";
 	public static final String HIGHLIGHT = "highlight";
 	public static final String SCORE = "score";

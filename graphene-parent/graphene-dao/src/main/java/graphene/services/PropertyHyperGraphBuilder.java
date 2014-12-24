@@ -66,11 +66,12 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	}
 
 	@Override
-	public V_GenericNode createOrUpdateNode(final double minimumScore,
-			final double priority, final String originalId,
-			final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType,
-			final String relationValue, final double nodeCertainty) {
+	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired,
+			final double inheritedScore, final double localPriority,
+			final String originalId, final String idType,
+			final String nodeType, final V_GenericNode attachTo,
+			final String relationType, final String relationValue,
+			final double nodeCertainty) {
 		V_GenericNode a = null;
 
 		if (ValidationUtils.isValid(originalId)) {
@@ -81,6 +82,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			} else {
 				final String id = generateNodeId(originalId);
 				a = nodeList.getNode(id);
+				final double calculatedPriority = inheritedScore
+						* localPriority;
 				if (a == null) {
 					a = new V_GenericNode(id);
 					a.setIdType(idType);
@@ -89,8 +92,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					a.setIdVal(originalId);
 					a.setNodeType(nodeType);
 					a.setColor(style.getHexColorForNode(a.getNodeType()));
-					a.setMinScore(minimumScore);
-					a.setPriority(priority);
+					a.setMinScore(minimumScoreRequired);
+					a.setPriority(calculatedPriority);
 					// Remove leading zeros from the label
 					a.setLabel(StringUtils.removeLeadingZeros(originalId));
 					a.addData(nodeType, getCombinedSearchLink(originalId));
@@ -104,22 +107,25 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					final String key = generateEdgeId(attachTo.getId(),
 							relationType, a.getId());
 					if ((key != null) && !edgeMap.containsKey(key)) {
-						final V_GenericEdge v = new V_GenericEdge(a, attachTo);
-						v.setIdType(relationType);
-						v.setLabel(null);
-						v.setIdVal(relationType);
+						final V_GenericEdge edge = new V_GenericEdge(a,
+								attachTo);
+						edge.setIdType(relationType);
+						edge.setLabel(null);
+						edge.setIdVal(relationType);
 						if (nodeCertainty < 100.0) {
-							v.addData("Certainty", DataFormatConstants
+							edge.addData("Certainty", DataFormatConstants
 									.formatPercent(nodeCertainty));
-							v.setLineStyle("dashed");
-							v.setColor("#787878");
+							edge.setLineStyle("dashed");
+							edge.setColor("#787878");
 						}
-						v.addData("Priority", "" + priority);
-						v.addData("MinScore", "" + minimumScore);
-						v.addData("Value", StringUtils.coalesc(" ",
+						edge.addData("Local_Priority", "" + localPriority);
+						edge.addData("Min_Score_Required", ""
+								+ minimumScoreRequired);
+						edge.addData("Parent_Score", "" + inheritedScore);
+						edge.addData("Value", StringUtils.coalesc(" ",
 								a.getLabel(), relationValue,
 								attachTo.getLabel()));
-						edgeMap.put(key, v);
+						edgeMap.put(key, edge);
 					}
 
 					// if this flag is set, we'll add the attributes to the
@@ -151,8 +157,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			final String idType, final String nodeType,
 			final V_GenericNode attachTo, final String relationType,
 			final String relationValue, final double certainty) {
-		return createOrUpdateNode(0.5d, 1.0d, originalId, idType, nodeType,
-				attachTo, relationType, relationValue, 100.0d);
+		return createOrUpdateNode(0.5d, 1.0d, 0.7d, originalId, idType,
+				nodeType, attachTo, relationType, relationValue, 100.0d);
 	}
 
 	/*
