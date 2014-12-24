@@ -428,7 +428,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			_this.GraphVis.gv.edges().each(function(i, e) {
 				var edge_clone;
 				
-				if (typeof e.data().old_sources !== "undefined" && e.data().old_sources.length > 0) {
+				if (e.data().old_sources!==null && typeof e.data().old_sources !== "undefined" && e.data().old_sources.length > 0) {
 					var old_source = e.data().old_sources.pop();
 					if (old_source == subNodeJSON.data.id) {
 						edge_clone = e.json();
@@ -442,7 +442,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 					}
 				}
 				
-				if (typeof e.data().old_targets !== "undefined" && e.data().old_targets.length > 0) {
+				if (e.data().old_targets!==null && typeof e.data().old_targets !== "undefined" && e.data().old_targets.length > 0) {
 					var old_target = e.data().old_targets.pop();
 					if (old_target == subNodeJSON.data.id) {
 						edge_clone = e.json();
