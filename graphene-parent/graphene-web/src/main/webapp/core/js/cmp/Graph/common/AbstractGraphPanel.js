@@ -119,7 +119,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	},
 
 	setStatus: function(msg, progress) {
-		var prog = (typeof progress == "undefined") ? 1 : progress;
+		var prog = (progress == null || typeof progress == "undefined") ? 1 : progress;
 		this.getProgressBar().updateProgress(prog, msg);
 	},
 	
@@ -256,7 +256,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	editElement: function(ele) {
 		var self = this;
 
-		if (typeof ele == "undefined") {
+		if (ele == null || typeof ele == "undefined") {
 			console.error("Element is not defined.  Can not edit it.");
 			return;
 		}
@@ -354,14 +354,14 @@ Ext.define("DARPA.AbstractGraphPanel", {
 					var edge_clone = e.json();
 					if (e.data("target") == n.data("id")) {
 						// selectedNode n is target node
-						if (typeof edge_clone.data.old_targets == "undefined") {
+						if (edge_clone.data.old_targets == null || typeof edge_clone.data.old_targets == "undefined") {
 							edge_clone.data.old_targets = [];
 						}
 						edge_clone.data.old_targets.push(n.data("id"));
 						edge_clone.data.target = superNode.data("id");
 					} else if (e.data("source") == n.data("id")) {
 						// selectedNode n is source node
-						if (typeof edge_clone.data.old_sources == "undefined") {
+						if (edge_clone.data.old_sources == null || typeof edge_clone.data.old_sources == "undefined") {
 							edge_clone.data.old_sources = [];
 						}
 						edge_clone.data.old_sources.push(n.data("id"));
@@ -471,7 +471,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	unpivot: function() {
 		var self = this;
 		var prevId = self.previousPivotIds.pop();
-		if (typeof prevId !== "undefined") {
+		if (prevId != null && typeof prevId !== "undefined") {
 			this.load(prevId);
 		}
 	},
