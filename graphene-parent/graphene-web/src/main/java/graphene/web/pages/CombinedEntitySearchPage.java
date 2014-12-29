@@ -39,6 +39,7 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Request;
@@ -254,15 +255,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	public BeanModel getModel() {
 		final BeanModel<Object> model = beanModelSource.createEditModel(
 				Object.class, messages);
+
 		model.addEmpty("actions");
-		model.add("score", null);
-		model.add("informationIcons", null);
-		model.add("date", null);
-		model.add("amount", null);
-		model.add("nameList", null);
-		model.add("addressList", null);
-		model.add("communicationIdentifierList", null);
-		model.add("identifierList", null);
+		model.addEmpty("score");
+		model.addEmpty("informationIcons");
+		model.addEmpty("date");
+		model.addEmpty("amount");
+		model.addEmpty("nameList");
+		model.addEmpty("addressList");
+		model.addEmpty("communicationIdentifierList");
+		model.addEmpty("identifierList");
 
 		model.getById("score").sortable(true);
 		model.getById("amount").sortable(true);
@@ -270,6 +272,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.getById("actions").sortable(true);
 		model.getById("nameList").sortable(true);
 		model.getById("informationIcons").sortable(true);
+
 		return model;
 	}
 
@@ -290,6 +293,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				"true",
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
+		// Sort by score then by date.
+		json.put(
+				"aaSorting",
+				new JSONArray().put(new JSONArray().put(1).put("desc")).put(
+						new JSONArray().put(3).put("desc")));
+
 		return json;
 	}
 
