@@ -551,7 +551,7 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		
 		// BASE CASE: if there are no subnodes in this node, return false
 		var subNodes = (typeof superNode.data == "function") ? superNode.data("subNodes") : superNode.data.subNodes;
-		if (typeof subNodes == "undefined" || subNodes.length == 0) { return false; }
+		if (subNodes == null || typeof subNodes == "undefined" || subNodes.length == 0) { return false; }
 		
 		// BASE CASE: check all subnodes of this node
 		for (var i = 0; i < subNodes.length; i++) {

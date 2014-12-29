@@ -98,7 +98,7 @@ Ext.define("DARPA.TransactionNodeDisplay", {
 			runningHTML += _showAttrs(attrs);
 			
 			// base case -- no subnodes
-			if (typeof subNodes == "undefined" || subNodes.length <= 0) {
+			if (subNodes === null || typeof subNodes == "undefined" || subNodes.length <= 0) {
 				return runningHTML;
 			} else {
 				for (var i = 0; i < subNodes.length; ++i) {

@@ -371,7 +371,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 					_this.GraphVis.gv.add(edge_clone);
 				});
 				
-				if (typeof superNode.data().subNodes == "undefined") {
+				if (superNode.data().subNodes == null || typeof superNode.data().subNodes == "undefined") {
 					superNode.data().subNodes = [];
 				}
 				
