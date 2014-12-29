@@ -1,5 +1,7 @@
 package graphene.util;
 
+import graphene.util.time.JodaTimeUtil;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,26 +23,46 @@ public class DataFormatConstants {
 	private static Logger logger = LoggerFactory
 			.getLogger(DataFormatConstants.class);
 
-	public static String formatPercent(double d) {
+	/**
+	 * Given milliseconds since epoch, return a standard ISO formatted date
+	 * string.
+	 * 
+	 * @param milliseconds
+	 * @return
+	 */
+	public static String formatDate(final long milliseconds) {
+		final SimpleDateFormat sdf = new SimpleDateFormat(
+				DataFormatConstants.ISO_DATE_FORMAT);
+		return sdf.format(JodaTimeUtil.toDateTime(milliseconds).toDate());
+	}
+
+	/**
+	 * Expects a double from 0 to 100, and will format it with
+	 * PERCENT_FORMAT_STRING
+	 * 
+	 * @param d
+	 * @return
+	 */
+	public static String formatPercent(final double d) {
 		return new DecimalFormat(DataFormatConstants.PERCENT_FORMAT_STRING)
 				.format(d);
 	}
 
-	public static String reformatDate(String formatYouThinkItIsIn,
-			String toFormat) {
+	public static String formatScore(final Double d) {
+		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING)
+				.format(d);
+	}
+
+	public static String reformatDate(final String formatYouThinkItIsIn,
+			final String toFormat) {
 		try {
 			return new SimpleDateFormat(DataFormatConstants.DATE_FORMAT_STRING)
 					.format(new SimpleDateFormat(formatYouThinkItIsIn)
 							.parse(toFormat));
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			logger.error("Could not reformate the date identifier " + toFormat
 					+ " with format " + formatYouThinkItIsIn);
 			return toFormat;
 		}
-	}
-
-	public static String formatScore(Double d) {
-		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING)
-		.format(d);
 	}
 }
