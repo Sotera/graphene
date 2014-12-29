@@ -604,9 +604,10 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 			}
 		});
 		
-		if (node.data.id != innode.data().id) {
+		if (node.data.id != innode.data("id")) {
 			// node.data.color = this.CONSTANTS("expandedDefNode");
 			node.data.expanded = true;
+			node.data.parentId = innode.data("id");
 			node.position = {
 				x: pos.x + (radius * Math.cos(rad)),
 				y: pos.y + (radius * Math.sin(rad))
@@ -623,6 +624,8 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		var l = edge.data.label;
 		var s = edge.data.source;
 		var t = edge.data.target;
+		
+		edge.data.expanded = true;
 		
 		// if this edge was attached to a node that was removed, splice it out of the json and continue to the next edge
 		if (removedNodeIDs.indexOf(t) != -1 || removedNodeIDs.indexOf(s) != -1) {
@@ -662,7 +665,9 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
  *  	innode:Cytoscape Node - "Origin Node" from which to retract all leaf nodes
  */
 CytoGraphVis.prototype.unexpand1Hop = function(innode) {
+	var _this = this;
 	var nodesToDelete = [];
+	var edgesToDelete = [];
 	
 	// TODO: make a public function somewhere
 	var _isLeaf = function(node) {
@@ -676,20 +681,40 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 		return confirmedNeighbors.length == 1;
 	};
 	
-	var neighbors = innode.connectedEdges().connectedNodes();
+	// "[?expanded]" filters for all elements which element.data("expanded") == true
+	var expandedEdges = innode.connectedEdges("[?expanded]");
+	var neighbors = expandedEdges.connectedNodes("[?expanded]");
+	
+	// get all expanded nodes that are leaves and are not the innode
 	neighbors.each(function(i, n) {
-		if (_isLeaf(n) && n.data("id") !== innode.data("id") && n.data("expanded") === true) {
+		if (_isLeaf(n) && n.data("id") !== innode.data("id")) {
 			nodesToDelete.push(n);
 		}
 	});
-	if (nodesToDelete.length > 0) {
-		this.deleteNodes(nodesToDelete, true);
-	} else {
+	
+	// get all expanded edges that are not attached to the innode's parent
+	// i.e. the one that was expanded upon to get this innode
+	expandedEdges.each(function(i, e) {
+		var parentId = innode.data("parentId");
+		if (/*_isLeaf(_this.gv.$("node[id = '" + parentId + "']")) && */e.data("source") != parentId && e.data("target") != parentId) {
+			edgesToDelete.push(e);
+		}
+	});
+	
+	// if nothing can be deleted, notify the user.  else delete available nodes/edges
+	if (nodesToDelete.length <= 0 && edgesToDelete.length <= 0) {
 		var errorMsg = "This node has no leaves (that can be deleted).";
 		if (this.getOwner().getProgressBar) {
 			var pb = this.getOwner().getProgressBar();
 			if (pb) pb.updateProgress(1, errorMsg);
 			else alert(errorMsg);
+		}
+	} else {
+		this.deleteNodes(nodesToDelete, true);
+		this.deleteEdges(edgesToDelete, true);
+		
+		if (innode.connectedEdges().length <= 0) {
+			this.deleteNodes([innode], true);
 		}
 	}
 };
