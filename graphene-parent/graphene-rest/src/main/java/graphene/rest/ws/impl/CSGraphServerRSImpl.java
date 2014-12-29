@@ -7,6 +7,7 @@ import graphene.model.graph.G_PersistedGraph;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
+import graphene.util.DataFormatConstants;
 import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
@@ -147,12 +148,17 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 						value[0], null, null);
 				final ObjectMapper mapper = new ObjectMapper();
 				if (existingGraph != null) {
-					logger.debug(existingGraph.toString());
 					m = mapper.readValue(existingGraph.getGraphJSONdata(),
 							V_CSGraph.class);
 					if (m == null) {
 						logger.error("Could not parse existing graph from a previous save, will regenerate.");
+					} else {
+						m.setStrStatus("This graph was previously saved on "
+								+ DataFormatConstants.formatDate(existingGraph
+										.getModified()));
 					}
+				} else {
+					logger.info("Could not find previously saved graph, will regenerate");
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
