@@ -545,9 +545,9 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	
 	// breadthfirst recursion
 	var _recurse = function(superNode, id) {
-		// BASE CASE: if this node matches id, return true
+		// BASE CASE: if this node matches id, return false
 		var thisId = (typeof superNode.data == "function") ? superNode.data("id") : superNode.data.id;
-		if (thisId == id) { return true; }
+		if (thisId == id) { return false; }
 		
 		// BASE CASE: if there are no subnodes in this node, return false
 		var subNodes = (typeof superNode.data == "function") ? superNode.data("subNodes") : superNode.data.subNodes;
@@ -668,6 +668,7 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	var _this = this;
 	var nodesToDelete = [];
 	var edgesToDelete = [];
+	var nonLeafNodeIDs = [];
 	
 	// TODO: make a public function somewhere
 	var _isLeaf = function(node) {
@@ -682,21 +683,21 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	};
 	
 	// "[?expanded]" filters for all elements which element.data("expanded") == true
-	var expandedEdges = innode.connectedEdges("[?expanded]");
-	var neighbors = expandedEdges.connectedNodes("[?expanded]");
-	
-	// get all expanded nodes that are leaves and are not the innode
-	neighbors.each(function(i, n) {
-		if (_isLeaf(n) && n.data("id") !== innode.data("id")) {
-			nodesToDelete.push(n);
+	innode.connectedEdges("[?expanded]").connectedNodes().each(function(i, n) {
+		if ( _isLeaf(n) ) { 
+			if (n.data("id") !== innode.data("id")) {
+				nodesToDelete.push(n);
+			}
+		} else {
+			// TODO: handle non-leaf expanded nodes differently, if at all
+			nonLeafNodeIDs.push(n.data("id"));
 		}
 	});
 	
-	// get all expanded edges that are not attached to the innode's parent
-	// i.e. the one that was expanded upon to get this innode
-	expandedEdges.each(function(i, e) {
-		var parentId = innode.data("parentId");
-		if (/*_isLeaf(_this.gv.$("node[id = '" + parentId + "']")) && */e.data("source") != parentId && e.data("target") != parentId) {
+	innode.connectedEdges("[?expanded]").each(function(i, e) {
+		var s = e.data("source");
+		var t = e.data("target");
+		if (s !== t /*&& nonLeafNodeIDs.indexOf(t) == -1 && nonLeafNodeIDs.indexOf(s) == -1*/) {
 			edgesToDelete.push(e);
 		}
 	});
@@ -704,17 +705,17 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	// if nothing can be deleted, notify the user.  else delete available nodes/edges
 	if (nodesToDelete.length <= 0 && edgesToDelete.length <= 0) {
 		var errorMsg = "This node has no leaves (that can be deleted).";
-		if (this.getOwner().getProgressBar) {
+		if (_this.getOwner().getProgressBar) {
 			var pb = this.getOwner().getProgressBar();
 			if (pb) pb.updateProgress(1, errorMsg);
 			else alert(errorMsg);
 		}
 	} else {
-		this.deleteNodes(nodesToDelete, true);
-		this.deleteEdges(edgesToDelete, true);
+		_this.deleteNodes(nodesToDelete, true);
+		_this.deleteEdges(edgesToDelete, true);
 		
 		if (innode.connectedEdges().length <= 0) {
-			this.deleteNodes([innode], true);
+			_this.deleteNodes([innode], true);
 		}
 	}
 };
