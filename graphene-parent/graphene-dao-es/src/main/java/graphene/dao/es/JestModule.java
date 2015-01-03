@@ -13,11 +13,8 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 
 public class JestModule {
-	public static void bind(ServiceBinder binder) {
-
-	}
-
 	public final static String ES_SERVER = "graphene.es-server";
+
 	public final static String ES_SEARCH_INDEX = "graphene.es-search-index";
 	public static final String ES_USER_INDEX = "graphene.es-user-index";
 	public static final String ES_GROUP_INDEX = "graphene.es-group-index";
@@ -28,18 +25,8 @@ public class JestModule {
 	public static final String ES_PERSISTED_GRAPH_INDEX = "graphene.es-persisted-graph-index";
 	public static final String ES_PERSISTED_GRAPH_TYPE = "graphene.es-persisted-graph-type";
 
-	/**
-	 * Tell Tapestry to look for an elastic search properties file in the
-	 * WEB-INF/classes folder of the war.
-	 * 
-	 * @param configuration
-	 */
-	@Contribute(SymbolSource.class)
-	public void contributePropertiesFileAsSymbols(
-			OrderedConfiguration<SymbolProvider> configuration) {
-		configuration.add("DatabaseConfiguration",
-				new ClasspathResourceSymbolProvider("es.properties"),
-				"after:SystemProperties", "before:ApplicationDefaults");
+	public static void bind(final ServiceBinder binder) {
+
 	}
 
 	/**
@@ -51,14 +38,29 @@ public class JestModule {
 			@Symbol(ES_SERVER) final String server) {
 
 		// Construct a new Jest client according to configuration via factory
-		JestClientFactory factory = new JestClientFactory();
-		HttpClientConfig clientConfig = new HttpClientConfig.Builder(server)
-				.build();
+		final JestClientFactory factory = new JestClientFactory();
+		final HttpClientConfig clientConfig = new HttpClientConfig.Builder(
+				server).discoveryEnabled(true).multiThreaded(true).build();
+
 		factory.setHttpClientConfig(clientConfig);
 
-		JestClient c = factory.getObject();
+		final JestClient c = factory.getObject();
 
 		return c;
+	}
+
+	/**
+	 * Tell Tapestry to look for an elastic search properties file in the
+	 * WEB-INF/classes folder of the war.
+	 * 
+	 * @param configuration
+	 */
+	@Contribute(SymbolSource.class)
+	public void contributePropertiesFileAsSymbols(
+			final OrderedConfiguration<SymbolProvider> configuration) {
+		configuration.add("DatabaseConfiguration",
+				new ClasspathResourceSymbolProvider("es.properties"),
+				"after:SystemProperties", "before:ApplicationDefaults");
 	}
 
 }
