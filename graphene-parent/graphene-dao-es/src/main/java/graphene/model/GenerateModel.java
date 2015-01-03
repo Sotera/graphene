@@ -6,7 +6,6 @@ import java.net.URL;
 import org.jsonschema2pojo.SchemaMapper;
 
 import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JType;
 
 /**
  * Class to generate POJOs from Elastic search schema mappings, as provided
@@ -29,16 +28,43 @@ import com.sun.codemodel.JType;
  */
 public class GenerateModel {
 
-	public void buildModel(URL source, String className, String packageName,
-			String outputDirectory) throws Exception {
-		JCodeModel codeModel = new JCodeModel();
+	public void buildModel(final String source, final String className,
+			final String packageName, final String outputDirectory)
+			throws Exception {
+		final JCodeModel codeModel = new JCodeModel();
+		System.out.println("Attempting to build POJOs for type " + className
+				+ " from source string");
+		new SchemaMapper().generate(codeModel, className, packageName, source);
+		final File f = new File(outputDirectory);
+		if (f.isDirectory()) {
+			final File existingFile = new File(getExistingFileURL(
+					f.getAbsolutePath(), packageName, className));
+			if (existingFile.exists()) {
+				System.out.println("Skipping " + existingFile.getAbsolutePath()
+						+ " because it already exists.");
+			} else {
+				System.out.println("No existing file found at "
+						+ existingFile.getAbsolutePath());
+				System.out.println("Building model at " + f.getAbsolutePath());
+				codeModel.build(f);
+			}
+			System.out.println("done");
+		} else {
+			System.out.println("ERROR: Path must be an existing directory");
+		}
+	}
+
+	public void buildModel(final URL source, final String className,
+			final String packageName, final String outputDirectory)
+			throws Exception {
+		final JCodeModel codeModel = new JCodeModel();
 		System.out.println("Attempting to build POJOs for type " + className
 				+ " from source " + source.getPath());
-		JType generate = new SchemaMapper().generate(codeModel, className,
-				packageName, source);
-		File f = new File(outputDirectory);
+
+		new SchemaMapper().generate(codeModel, className, packageName, source);
+		final File f = new File(outputDirectory);
 		if (f.isDirectory()) {
-			File existingFile = new File(getExistingFileURL(
+			final File existingFile = new File(getExistingFileURL(
 					f.getAbsolutePath(), packageName, className));
 			if (existingFile.exists()) {
 				System.out.println("Skipping " + existingFile.getAbsolutePath()
@@ -56,39 +82,13 @@ public class GenerateModel {
 
 	}
 
-	private String getExistingFileURL(String outputDirectory,
-			String packageName, String className) {
-		String packagePath = packageName.replaceAll("[.]", "//");
-		String existingFile = outputDirectory + "//" + packagePath + "//"
+	private String getExistingFileURL(final String outputDirectory,
+			final String packageName, final String className) {
+		final String packagePath = packageName.replaceAll("[.]", "//");
+		final String existingFile = outputDirectory + "//" + packagePath + "//"
 				+ className + ".java";
 		System.out
 				.println("Potentially existing file would be " + existingFile);
 		return existingFile;
-	}
-
-	public void buildModel(String source, String className, String packageName,
-			String outputDirectory) throws Exception {
-		JCodeModel codeModel = new JCodeModel();
-		System.out.println("Attempting to build POJOs for type " + className
-				+ " from source string");
-		JType generate = new SchemaMapper().generate(codeModel, className,
-				packageName, source);
-		File f = new File(outputDirectory);
-		if (f.isDirectory()) {
-			File existingFile = new File(getExistingFileURL(
-					f.getAbsolutePath(), packageName, className));
-			if (existingFile.exists()) {
-				System.out.println("Skipping " + existingFile.getAbsolutePath()
-						+ " because it already exists.");
-			} else {
-				System.out.println("No existing file found at "
-						+ existingFile.getAbsolutePath());
-				System.out.println("Building model at " + f.getAbsolutePath());
-				codeModel.build(f);
-			}
-			System.out.println("done");
-		} else {
-			System.out.println("ERROR: Path must be an existing directory");
-		}
 	}
 }
