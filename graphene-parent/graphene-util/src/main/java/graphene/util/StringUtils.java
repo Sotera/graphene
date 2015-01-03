@@ -187,6 +187,15 @@ public class StringUtils {
 		}
 	}
 
+	public static String firstNonNullToString(final Object... obs) {
+		for (final Object o : obs) {
+			if (ValidationUtils.isValid(o)) {
+				return o.toString();
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Check that the given String is neither <code>null</code> nor of length 0.
 	 * Note: Will return <code>true</code> for a String that purely consists of
