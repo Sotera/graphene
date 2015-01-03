@@ -158,8 +158,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				.get(DocumentGraphParser.SUBJECTADDRESSLIST);
 	}
 
-	public Long getAmount() {
-		return (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
+	public Double getAmount() {
+		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
 	public Collection<String> getCIdentifierList() {
@@ -200,9 +200,13 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				for (final Object m : metaresults.getResults()) {
 					final DocumentGraphParser parserForObject = phgb
 							.getParserForObject(m);
-					parserForObject.populateExtraFields(m, sq);
-					populatedTableResults.add(parserForObject
-							.getAdditionalProperties(m));
+					if (parserForObject != null) {
+						parserForObject.populateExtraFields(m, sq);
+						populatedTableResults.add(parserForObject
+								.getAdditionalProperties(m));
+					} else {
+						logger.error("Could not find parser for " + m);
+					}
 				}
 				tr.logAsCompleted();
 			} catch (final Exception e) {

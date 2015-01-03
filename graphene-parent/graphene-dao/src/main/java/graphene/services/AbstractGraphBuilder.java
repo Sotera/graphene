@@ -91,8 +91,8 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 	public void addReportDetails(final V_GenericNode reportNode,
 			final Map<String, Object> properties) {
 		try {
-			reportNode.setSize(getLogSize(
-					(Long) properties.get(DocumentGraphParser.TOTALAMOUNTNBR),
+			reportNode.setSize(getLogSize(((Double) properties
+					.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
 					MIN_NODE_SIZE, MAX_NODE_SIZE));
 
 			reportNode
