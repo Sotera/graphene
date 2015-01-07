@@ -134,6 +134,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("Bipartite " + bipartite);
 		logger.debug("showNameNodes " + showNameNodes);
 		logger.debug("useSaved " + useSaved);
+
 		final int maxDegreeInt = FastNumberUtils
 				.parseIntWithCheck(maxDegree, 6);
 		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes,
@@ -143,22 +144,29 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		V_CSGraph m = null;
 		if (useSaved) {
 			try {
-				// TODO: fix which key is going to be used as the seed
-				final G_PersistedGraph existingGraph = wdao.getExistingGraph(
-						value[0], null, null);
-				final ObjectMapper mapper = new ObjectMapper();
-				if (existingGraph != null) {
-					m = mapper.readValue(existingGraph.getGraphJSONdata(),
-							V_CSGraph.class);
-					if (m == null) {
-						logger.error("Could not parse existing graph from a previous save, will regenerate.");
+				if (ValidationUtils.isValid(value)) {
+
+					// TODO: fix which key is going to be used as the seed
+					final G_PersistedGraph existingGraph = wdao
+							.getExistingGraph(value[0], null, null);
+					final ObjectMapper mapper = new ObjectMapper();
+					if (existingGraph != null) {
+						m = mapper.readValue(existingGraph.getGraphJSONdata(),
+								V_CSGraph.class);
+						if (m == null) {
+							logger.error("Could not parse existing graph from a previous save, will regenerate.");
+						} else {
+							m.setStrStatus("This graph was previously saved on "
+									+ DataFormatConstants
+											.formatDate(existingGraph
+													.getModified()));
+						}
 					} else {
-						m.setStrStatus("This graph was previously saved on "
-								+ DataFormatConstants.formatDate(existingGraph
-										.getModified()));
+						logger.info("Could not find previously saved graph, will regenerate");
 					}
 				} else {
-					logger.info("Could not find previously saved graph, will regenerate");
+					logger.error("Tried to recover an existing graph, but no valid id was provided: "
+							+ value);
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();

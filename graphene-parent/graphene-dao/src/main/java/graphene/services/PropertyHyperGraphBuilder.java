@@ -229,8 +229,9 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					&& ((eq = queriesToRun.poll()) != null)
 					&& (nodeList.getNodes().size() < graphQuery.getMaxNodes())) {
 
-				if ((eq.getAttributeList() != null)
-						&& (eq.getAttributeList().size() > 0)) {
+				if (ValidationUtils.isValid(eq.getAttributeList())
+						&& ValidationUtils.isValid(eq.getAttributeList().get(0)
+								.getValue())) {
 
 					savNodeList = nodeList.clone();
 					logger.debug("Processing degree " + currentDegree);

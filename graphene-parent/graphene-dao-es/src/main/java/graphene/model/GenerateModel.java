@@ -27,11 +27,17 @@ import com.sun.codemodel.JCodeModel;
  * 
  */
 public class GenerateModel {
+	private boolean overwrite = false;
+
+	public GenerateModel(final boolean overwrite) {
+		this.overwrite = overwrite;
+	}
 
 	public void buildModel(final String source, final String className,
 			final String packageName, final String outputDirectory)
 			throws Exception {
 		final JCodeModel codeModel = new JCodeModel();
+
 		System.out.println("Attempting to build POJOs for type " + className
 				+ " from source string");
 		new SchemaMapper().generate(codeModel, className, packageName, source);
@@ -39,7 +45,7 @@ public class GenerateModel {
 		if (f.isDirectory()) {
 			final File existingFile = new File(getExistingFileURL(
 					f.getAbsolutePath(), packageName, className));
-			if (existingFile.exists()) {
+			if (!overwrite && existingFile.exists()) {
 				System.out.println("Skipping " + existingFile.getAbsolutePath()
 						+ " because it already exists.");
 			} else {
