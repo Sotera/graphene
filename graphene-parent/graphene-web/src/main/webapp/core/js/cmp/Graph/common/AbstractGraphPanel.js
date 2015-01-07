@@ -154,21 +154,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	},
 	
 	afterLayout: function() {
-		var self = this;
-		if (self.GraphVis.getGv() == null) {
-			var config = {
-				//width: self.getWidth(),
-				//height: self.getHeight(),
-				rightBorder: 320,
-				leftBorder: 5,
-				topBorder: 5,
-				botBorder: 80
-			};
-			self.GraphVis.initGraph(config, self, function() {
-				self.showjson(self.prevLoadParams.value);
-			});
-		}
-		this.callParent(arguments); // ?
+		// TODO implement in extended class
 	},
 	
 	afterRender: function() {
@@ -297,11 +283,6 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			confirmFn: function(reason) {
 				// first, do the client-side merge of all the nodes and get subNodeIds
 				var subNodeIds = scope.mergeNodes(superNode, selectedNodes); 
-
-				//var graph = {
-				//	nodes: scope.GraphVis.gv.nodes().jsons(),
-				//	edges: scope.GraphVis.gv.edges().jsons()
-				//};
 				
 				superNode.data({
 					"reason" : reason
@@ -385,20 +366,28 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	
 	givePromptToUnmerge: function(superNodes) {
 		var scope = this;
+		
+		if (superNodes == null || superNodes == undefined || superNodes.length == undefined) {
+			return;
+		}
+		
+		var noSuperNodes = true;
+		for (var i = 0; i < superNodes.length; i++) {
+			if (superNodes[i].hasClass("super-node")) {
+				noSuperNodes = false;
+				break;
+			}
+		}
+		
+		if (noSuperNodes) return;
+		
 		var window = Ext.create("DARPA.NodeMergeDialog", {
 			confirmFn: function(reason) {
 				// first, do the client-side merge of all the nodes
-				//var superNodeIds = [];
 				superNodes.each(function(i, n) {
 					n.removeData("reason");
-					//superNodeIds.push(n.data("id"));
-					scope.unmergeNode(n);
+					if (n.hasClass("super-node")) scope.unmergeNode(n);
 				});
-
-				//var graph = {
-				//	nodes: scope.GraphVis.gv.nodes().jsons(),
-				//	edges: scope.GraphVis.gv.edges().jsons()
-				//};
 			},
 			cancelFn: function() {
 				// don't merge
