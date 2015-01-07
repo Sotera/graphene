@@ -13,36 +13,36 @@ public class ValidationUtils {
 			.getLogger(ValidationUtils.class);
 
 	/**
-	 * A convenience method for testing property (or other) maps. Makes sure the
-	 * map has meaningful data inside.
-	 * 
-	 * @param properties
-	 *            the map to test for validity
-	 * @return true if the map is not null and has at least one key/value pair.
-	 */
-	public static boolean isValid(Map<String, Object> properties) {
-		boolean isvalid = true;
-		if (properties == null) {
-			isvalid = false;
-		} else if (properties.isEmpty()) {
-			isvalid = false;
-		}
-		return isvalid;
-	}
-
-	/**
 	 * Returns the first valid object in the list.
 	 * 
 	 * @param obs
 	 * @return
 	 */
-	public static Object firstNonNull(Object... obs) {
-		for (Object o : obs) {
+	public static Object firstNonNull(final Object... obs) {
+		for (final Object o : obs) {
 			if (isValid(o)) {
 				return o;
 			}
 		}
 		return null;
+	}
+
+	public static Double getSafeDouble(final Number d, final double i) {
+		return d == null ? i : d.doubleValue();
+	}
+
+	public static double getSafeDouble(final String s, final double i) {
+		double d = i;
+		try {
+			d = (Double.parseDouble(s));
+		} catch (final Exception e) {
+			logger.debug("Error converting string to double :" + s);
+		}
+		return d;
+	}
+
+	public static long getSafeLong(final Timestamp d, final long i) {
+		return d == null ? i : d.getTime();
 	}
 
 	/**
@@ -58,14 +58,14 @@ public class ValidationUtils {
 	 * @return
 	 */
 	public static Map<String, Object> getSafeProperties(
-			Map<String, Object> unsafeProps) {
+			final Map<String, Object> unsafeProps) {
 		if (unsafeProps == null) {
 			return null;
 		} else {
-			Map<String, Object> safeProps = new HashMap<String, Object>(4);
-			for (String key : unsafeProps.keySet()) {
+			final Map<String, Object> safeProps = new HashMap<String, Object>(4);
+			for (final String key : unsafeProps.keySet()) {
 				if (isValid(key)) {
-					Object obj = unsafeProps.get(key);
+					final Object obj = unsafeProps.get(key);
 					if (obj != null) {
 						if (obj instanceof Timestamp) {
 							// store it as a long, or else we get unknown
@@ -82,20 +82,13 @@ public class ValidationUtils {
 	}
 
 	/**
-	 * A convenience method for testing strings. Makes sure the string has
-	 * meaningful data inside.
 	 * 
-	 * @param s
-	 *            the string to test for validity
-	 * @return true if s is not null and also has characters other than
-	 *         whitespace.
+	 * @param t
+	 * @return false if the collection was null or empty.
 	 */
-	public static boolean isValid(String s) {
-		// We assume true unless proven false
+	public static boolean isValid(final Collection t) {
 		boolean isvalid = true;
-		if (s == null) {
-			isvalid = false;
-		} else if (s.trim().isEmpty()) {
+		if ((t == null) || (t.size() == 0)) {
 			isvalid = false;
 		}
 		return isvalid;
@@ -109,7 +102,7 @@ public class ValidationUtils {
 	 * @param t
 	 * @return false if the number is less than or equal to 0
 	 */
-	public static boolean isValid(int t) {
+	public static boolean isValid(final double t) {
 		boolean isvalid = true;
 		if (t <= 0) {
 			isvalid = false;
@@ -125,9 +118,17 @@ public class ValidationUtils {
 	 * @param t
 	 * @return false if the number is less than or equal to 0
 	 */
-	public static boolean isValid(long t) {
+	public static boolean isValid(final int t) {
 		boolean isvalid = true;
 		if (t <= 0) {
+			isvalid = false;
+		}
+		return isvalid;
+	}
+
+	public static boolean isValid(final Iterable t) {
+		boolean isvalid = true;
+		if ((t == null) || (t.iterator() == null) || !t.iterator().hasNext()) {
 			isvalid = false;
 		}
 		return isvalid;
@@ -141,9 +142,27 @@ public class ValidationUtils {
 	 * @param t
 	 * @return false if the number is less than or equal to 0
 	 */
-	public static boolean isValid(double t) {
+	public static boolean isValid(final long t) {
 		boolean isvalid = true;
 		if (t <= 0) {
+			isvalid = false;
+		}
+		return isvalid;
+	}
+
+	/**
+	 * A convenience method for testing property (or other) maps. Makes sure the
+	 * map has meaningful data inside.
+	 * 
+	 * @param properties
+	 *            the map to test for validity
+	 * @return true if the map is not null and has at least one key/value pair.
+	 */
+	public static boolean isValid(final Map<String, Object> properties) {
+		boolean isvalid = true;
+		if (properties == null) {
+			isvalid = false;
+		} else if (properties.isEmpty()) {
 			isvalid = false;
 		}
 		return isvalid;
@@ -157,15 +176,15 @@ public class ValidationUtils {
 	 * @param t
 	 * @return false if the number is less than or equal to 0
 	 */
-	public static boolean isValid(Number t) {
+	public static boolean isValid(final Number t) {
 		boolean isvalid = true;
-		if (t == null || t.doubleValue() <= 0 || t.intValue() <= 0) {
+		if ((t == null) || (t.doubleValue() <= 0) || (t.intValue() <= 0)) {
 			isvalid = false;
 		}
 		return isvalid;
 	}
 
-	public static boolean isValid(Object t) {
+	public static boolean isValid(final Object t) {
 		boolean isvalid = true;
 		if (t == null) {
 			isvalid = false;
@@ -174,38 +193,9 @@ public class ValidationUtils {
 		} else if (Number.class.isAssignableFrom(t.getClass())) {
 			isvalid = isValid((Number) t);
 		} else if (Boolean.class.isAssignableFrom(t.getClass())) {
-			isvalid = isValid((Boolean) t);
+			isvalid = isValid(t);
 		} else {
 			isvalid = isValid(t.toString());
-		}
-		return isvalid;
-	}
-
-	/**
-	 * 
-	 * @param t
-	 * @return false if the collection was null or empty.
-	 */
-	public static boolean isValid(Collection t) {
-		boolean isvalid = true;
-		if (t == null || t.size() == 0) {
-			isvalid = false;
-		}
-		return isvalid;
-	}
-
-	public static boolean isValid(Iterable t) {
-		boolean isvalid = true;
-		if (t == null || t.iterator() == null || !t.iterator().hasNext()) {
-			isvalid = false;
-		}
-		return isvalid;
-	}
-
-	public static boolean isValid(Timestamp t) {
-		boolean isvalid = true;
-		if (t == null) {
-			isvalid = false;
 		}
 		return isvalid;
 	}
@@ -217,12 +207,12 @@ public class ValidationUtils {
 	 * @param objects
 	 * @return
 	 */
-	public static boolean isValid(Object... objects) {
+	public static boolean isValid(final Object... objects) {
 		boolean isvalid = true;
 		if (objects == null) {
 			isvalid = false;
 		} else {
-			for (Object o : objects) {
+			for (final Object o : objects) {
 				if (!isValid(o)) {
 					isvalid = false;
 					break;
@@ -232,21 +222,31 @@ public class ValidationUtils {
 		return isvalid;
 	}
 
-	public static Double getSafeDouble(Number d, double i) {
-		return d == null ? i : d.doubleValue();
-	}
-
-	public static long getSafeLong(Timestamp d, long i) {
-		return d == null ? i : d.getTime();
-	}
-
-	public static double getSafeDouble(String s, double i) {
-		double d = i;
-		try {
-			d = (Double.parseDouble(s));
-		} catch (Exception e) {
-			logger.debug("Error converting string to double :" + s);
+	/**
+	 * A convenience method for testing strings. Makes sure the string has
+	 * meaningful data inside.
+	 * 
+	 * @param s
+	 *            the string to test for validity
+	 * @return true if s is not null and also has characters other than
+	 *         whitespace.
+	 */
+	public static boolean isValid(final String s) {
+		// We assume true unless proven false
+		boolean isvalid = true;
+		if (s == null) {
+			isvalid = false;
+		} else if (s.trim().isEmpty()) {
+			isvalid = false;
 		}
-		return d;
+		return isvalid;
+	}
+
+	public static boolean isValid(final Timestamp t) {
+		boolean isvalid = true;
+		if (t == null) {
+			isvalid = false;
+		}
+		return isvalid;
 	}
 }
