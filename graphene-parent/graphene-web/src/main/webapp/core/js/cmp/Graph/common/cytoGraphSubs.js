@@ -915,7 +915,7 @@ function LayoutManager(graphRef) {
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
 				var pb = graphRef.owner.getProgressBar();
-				if (pb) pb.updateProgress(1, "100%");
+				//if (pb) pb.updateProgress(1, "100%");
 			}
 		}
 	); // END GRID
@@ -926,7 +926,7 @@ function LayoutManager(graphRef) {
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
 				var pb = graphRef.owner.getProgressBar();
-				if (pb) pb.updateProgress(1, "100%");
+				//if (pb) pb.updateProgress(1, "100%");
 			}
 		}
 	); // END CIRCLE
@@ -938,7 +938,7 @@ function LayoutManager(graphRef) {
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
 				var pb = graphRef.owner.getProgressBar();
-				if (pb) pb.updateProgress(1, "100%");
+				//if (pb) pb.updateProgress(1, "100%");
 			}
 		}
 	); // END BREADTHFIRST
