@@ -160,7 +160,9 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 				'width': _this.CONSTANTS("selectedNodeSize"),  
 				'height': _this.CONSTANTS("selectedNodeSize")
 			});
-			if (isEntityGraph) {
+			// disable until Cytoscape 2.3.7 works.
+			// haystack edges look weird in 2.2.12
+			if (/*isEntityGraph*/ false) {
 				style.selector("edge").css({
 					'curve-style': 'haystack',	// !
 					'haystack-radius': 0,		// !
