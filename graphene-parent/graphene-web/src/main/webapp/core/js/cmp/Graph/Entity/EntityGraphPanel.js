@@ -93,6 +93,24 @@ Ext.define("DARPA.EntityGraphPanel", {
 		return settingsPanel.items.items[0];
 	},
 	
+	afterLayout: function() {
+		var self = this;
+		if (self.GraphVis.getGv() == null) {
+			var config = {
+				//width: self.getWidth(),
+				//height: self.getHeight(),
+				rightBorder: 320,
+				leftBorder: 5,
+				topBorder: 5,
+				botBorder: 80
+			};
+			self.GraphVis.initGraph(config, self, function() {
+				self.showjson(self.prevLoadParams.value);
+			}, true);
+		}
+		this.callParent(arguments); // ?
+	},
+	
 	load: function(custno, useSaved) {
 		var self = this;
 

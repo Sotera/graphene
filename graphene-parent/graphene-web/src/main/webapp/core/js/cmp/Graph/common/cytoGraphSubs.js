@@ -100,6 +100,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 	var config = args.shift();
 	var owner = args.shift();
 	var onLoadCallback = args.shift();
+	var isEntityGraph = args.shift();
 	// at this point, args is an array of whatever other arguments were passed to this function
 	
 	if (typeof config.width !== "undefined") _this.dispWidth = config.width;
@@ -123,97 +124,118 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 			overrideCOSE();
 			overrideARBOR();
 			
+			var style = cytoscape.stylesheet();
+			style.selector("node").css({
+				'content': 'data(label)',
+				'text-valign': 'bottom',
+				'color': _this.CONSTANTS("textColor"),
+				'background-color': 'data(color)',
+				'font-size': _this.CONSTANTS("fontSize"),
+				'text-outline-width': 1,
+				'text-outline-color': _this.CONSTANTS("textOutlineColor"),
+				'width': 'data(size)',
+				'height': 'data(size)'
+			});
+			style.selector("$node > node").css({
+				'padding-top': '10px',
+				'padding-left': '10px',
+				'padding-bottom': '10px',
+				'padding-right': '10px',
+				'text-valign': 'top',
+				'text-halign': 'center',
+				'color': _this.CONSTANTS("textColor"),
+				'background-color': 'data(color)',
+				'font-size': _this.CONSTANTS("fontSize"),
+				'text-outline-width': 1,
+				'text-outline-color': _this.CONSTANTS("textOutlineColor")   
+			});
+			style.selector("node:selected").css({
+				'background-color': _this.CONSTANTS("selectedNode"),
+				'line-color': 'black',
+				'text-outline-color': _this.CONSTANTS("selectedTextColor"),
+				'target-arrow-color': _this.CONSTANTS("selectedEdge"),
+				'source-arrow-color': _this.CONSTANTS("selectedEdge"),
+				'border-color': _this.CONSTANTS("lineColor"),
+				'font-size': _this.CONSTANTS("selectedFontSize"),
+				'width': _this.CONSTANTS("selectedNodeSize"),  
+				'height': _this.CONSTANTS("selectedNodeSize")
+			});
+			if (isEntityGraph) {
+				style.selector("edge").css({
+					'curve-style': 'haystack',	// !
+					'haystack-radius': 0,		// !
+					'content':'data(label)',   
+					'text-valign': 'center',
+					'color': _this.CONSTANTS("textColor"),
+					'text-outline-width': 1,
+					'line-style': 'data(lineStyle)',
+					'font-size': _this.CONSTANTS("fontSize"),
+					'text-outline-color': _this.CONSTANTS("textOutlineColor"),
+					'line-color': 'data(color)',
+					'width': 'data(count)'
+				});
+			} else {
+				style.selector("edge").css({
+					'content':'data(label)',   
+					'text-valign': 'center',
+					'color': _this.CONSTANTS("textColor"),
+					'text-outline-width': 1,
+					'line-style': 'data(lineStyle)',
+					'font-size': _this.CONSTANTS("fontSize"),
+					'text-outline-color': _this.CONSTANTS("textOutlineColor"),
+					'line-color': 'data(color)',
+					'target-arrow-color': 'data(color)',
+					'target-arrow-shape': 'triangle',
+					'width': 'data(count)'
+				});
+			}
+			style.selector("edge:selected").css({
+				'background-color': _this.CONSTANTS("selectedEdge"),
+				'line-color': _this.CONSTANTS("lineColor"),
+				'text-outline-color': _this.CONSTANTS("selectedTextColor"),
+				'target-arrow-color': _this.CONSTANTS("lineColor"),
+				'source-arrow-color': _this.CONSTANTS("lineColor"),
+				'border-color': _this.CONSTANTS("lineColor"),
+				'font-size': _this.CONSTANTS("fontSize")
+			});
+			style.selector(".on-path").css({
+				'line-color': _this.CONSTANTS("dijkstraPath"),
+				'target-arrow-color': _this.CONSTANTS("dijkstraPath"),
+				'width': _this.CONSTANTS("dijkstraSize")
+			});
+			style.selector(".parent-of").css({
+				'color': _this.CONSTANTS("outgoingHoverTextColor"),
+				'line-color': _this.CONSTANTS("outgoingHoverColor"),
+				'target-arrow-color': _this.CONSTANTS("outgoingHoverColor"),
+				'text-outline-color': _this.CONSTANTS("outgoingHoverColor")
+			});
+			style.selector(".child-of").css({
+				'color': _this.CONSTANTS("incomingHoverTextColor"),
+				'line-color': _this.CONSTANTS("incomingHoverColor"),
+				'target-arrow-color': _this.CONSTANTS("incomingHoverColor"),
+				'text-outline-color': _this.CONSTANTS("incomingHoverColor")
+			});
+			style.selector("node.super-node").css({
+				'border-width': _this.CONSTANTS("borderWidth"),
+				'border-style': 'solid', // currently does not modify anything
+				'border-color': _this.CONSTANTS("borderColor")
+			});
+			
 			$("#" + _this.id).cytoscape({
+				zoomingEnabled: true,
+				userZoomingEnabled: true,
+				panningEnabled: true,
+				userPanningEnabled: true,
+				boxSelectionEnabled: true,
+				touchTapThreshold: 8,
+				desktopTapThreshold: 4,
+				autolock: false,
+				autoungrabify: false,
+				autounselectify: false,
 				showOverlay: false,
-				style: cytoscape.stylesheet()
-					.selector("node").css({
-						'content': 'data(label)',
-						'text-valign': 'bottom',
-						'color': _this.CONSTANTS("textColor"),
-						'background-color': 'data(color)',
-						'font-size': _this.CONSTANTS("fontSize"),
-						'text-outline-width': 1,
-						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
-						//'width': _this.CONSTANTS("nodeSize"),
-						//'height': _this.CONSTANTS("nodeSize")
-						'width': 'data(size)',
-						'height': 'data(size)'
-					})
-					.selector("$node > node").css({
-						'padding-top': '10px',
-						'padding-left': '10px',
-						'padding-bottom': '10px',
-						'padding-right': '10px',
-						'text-valign': 'top',
-						'text-halign': 'center',
-						'color': _this.CONSTANTS("textColor"),
-						'background-color': 'data(color)',
-						'font-size': _this.CONSTANTS("fontSize"),
-						'text-outline-width': 1,
-						'text-outline-color': _this.CONSTANTS("textOutlineColor")   
-					})
-					.selector("node:selected").css({
-						'background-color': _this.CONSTANTS("selectedNode"),
-						'line-color': 'black',
-						'text-outline-color': _this.CONSTANTS("selectedTextColor"),
-						'target-arrow-color': _this.CONSTANTS("selectedEdge"),
-						'source-arrow-color': _this.CONSTANTS("selectedEdge"),
-						'border-color': _this.CONSTANTS("lineColor"),
-						//'shape': 'data(type)',  // added
-						'font-size': _this.CONSTANTS("selectedFontSize"),
-						'width': _this.CONSTANTS("selectedNodeSize"),  
-						'height': _this.CONSTANTS("selectedNodeSize")
-					})
-					.selector("edge").css({
-						'content':'data(label)',   
-						'text-valign': 'center',
-						'color': _this.CONSTANTS("textColor"),
-						'text-outline-width': 1,
-						'line-style': 'data(lineStyle)',
-						'font-size': _this.CONSTANTS("fontSize"),
-						'text-outline-color': _this.CONSTANTS("textOutlineColor"),
-						'line-color': 'data(color)',
-						'target-arrow-color': 'data(color)',
-						'target-arrow-shape': 'triangle',
-						'width': 'data(count)'
-					})
-					.selector("edge:selected").css({
-						'background-color': _this.CONSTANTS("selectedEdge"),
-						'line-color': _this.CONSTANTS("lineColor"),
-						'text-outline-color': _this.CONSTANTS("selectedTextColor"),
-						'target-arrow-color': _this.CONSTANTS("lineColor"),
-						'source-arrow-color': _this.CONSTANTS("lineColor"),
-						'border-color': _this.CONSTANTS("lineColor"),
-						'font-size': _this.CONSTANTS("fontSize")
-					})
-					//.selector(".toggled-show").css({
-					//	'content': "data(label)"
-					//})
-					//.selector(".toggled-hide").css({
-					//	'content': " "
-					//})
-					.selector(".on-path").css({
-						'line-color': _this.CONSTANTS("dijkstraPath"),
-						'target-arrow-color': _this.CONSTANTS("dijkstraPath"),
-						'width': _this.CONSTANTS("dijkstraSize")
-					})
-					.selector(".parent-of").css({
-						'color': _this.CONSTANTS("outgoingHoverTextColor"),
-						'line-color': _this.CONSTANTS("outgoingHoverColor"),
-						'target-arrow-color': _this.CONSTANTS("outgoingHoverColor"),
-						'text-outline-color': _this.CONSTANTS("outgoingHoverColor")
-					})
-					.selector(".child-of").css({
-						'color': _this.CONSTANTS("incomingHoverTextColor"),
-						'line-color': _this.CONSTANTS("incomingHoverColor"),
-						'target-arrow-color': _this.CONSTANTS("incomingHoverColor"),
-						'text-outline-color': _this.CONSTANTS("incomingHoverColor")
-					})
-					.selector("node.super-node").css({
-						'border-width': _this.CONSTANTS("borderWidth"),
-						'border-style': 'solid', // currently does not modify anything
-						'border-color': _this.CONSTANTS("borderColor")
-					})
+				motionBlur: false,
+				layout: _this.getLayoutManager().getRegisteredLayouts(_this.CONSTANTS("defaultLayout"))[0].config,
+				style: style
 			});
 			
 			// declare a reference to the completed cytoscape graph object as this.gv
@@ -331,7 +353,6 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 			
 			_this.initialized = true;
 			_this.setHandlers();
-			_this.changeLayout(_this.CONSTANTS("defaultLayout"), {});
 		}
 	});
 };
@@ -545,9 +566,9 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	
 	// breadthfirst recursion
 	var _recurse = function(superNode, id) {
-		// BASE CASE: if this node matches id, return true
+		// BASE CASE: if this node matches id, return false
 		var thisId = (typeof superNode.data == "function") ? superNode.data("id") : superNode.data.id;
-		if (thisId == id) { return true; }
+		if (thisId == id) { return false; }
 		
 		// BASE CASE: if there are no subnodes in this node, return false
 		var subNodes = (typeof superNode.data == "function") ? superNode.data("subNodes") : superNode.data.subNodes;
@@ -668,6 +689,7 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	var _this = this;
 	var nodesToDelete = [];
 	var edgesToDelete = [];
+	var nonLeafNodeIDs = [];
 	
 	// TODO: make a public function somewhere
 	var _isLeaf = function(node) {
@@ -682,21 +704,21 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	};
 	
 	// "[?expanded]" filters for all elements which element.data("expanded") == true
-	var expandedEdges = innode.connectedEdges("[?expanded]");
-	var neighbors = expandedEdges.connectedNodes("[?expanded]");
-	
-	// get all expanded nodes that are leaves and are not the innode
-	neighbors.each(function(i, n) {
-		if (_isLeaf(n) && n.data("id") !== innode.data("id")) {
-			nodesToDelete.push(n);
+	innode.connectedEdges("[?expanded]").connectedNodes().each(function(i, n) {
+		if ( _isLeaf(n) ) { 
+			if (n.data("id") !== innode.data("id")) {
+				nodesToDelete.push(n);
+			}
+		} else {
+			// TODO: handle non-leaf expanded nodes differently, if at all
+			nonLeafNodeIDs.push(n.data("id"));
 		}
 	});
 	
-	// get all expanded edges that are not attached to the innode's parent
-	// i.e. the one that was expanded upon to get this innode
-	expandedEdges.each(function(i, e) {
-		var parentId = innode.data("parentId");
-		if (/*_isLeaf(_this.gv.$("node[id = '" + parentId + "']")) && */e.data("source") != parentId && e.data("target") != parentId) {
+	innode.connectedEdges("[?expanded]").each(function(i, e) {
+		var s = e.data("source");
+		var t = e.data("target");
+		if (s !== t /*&& nonLeafNodeIDs.indexOf(t) == -1 && nonLeafNodeIDs.indexOf(s) == -1*/) {
 			edgesToDelete.push(e);
 		}
 	});
@@ -704,17 +726,17 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	// if nothing can be deleted, notify the user.  else delete available nodes/edges
 	if (nodesToDelete.length <= 0 && edgesToDelete.length <= 0) {
 		var errorMsg = "This node has no leaves (that can be deleted).";
-		if (this.getOwner().getProgressBar) {
+		if (_this.getOwner().getProgressBar) {
 			var pb = this.getOwner().getProgressBar();
 			if (pb) pb.updateProgress(1, errorMsg);
 			else alert(errorMsg);
 		}
 	} else {
-		this.deleteNodes(nodesToDelete, true);
-		this.deleteEdges(edgesToDelete, true);
+		_this.deleteNodes(nodesToDelete, true);
+		_this.deleteEdges(edgesToDelete, true);
 		
 		if (innode.connectedEdges().length <= 0) {
-			this.deleteNodes([innode], true);
+			_this.deleteNodes([innode], true);
 		}
 	}
 };
@@ -908,7 +930,8 @@ function LayoutManager(graphRef) {
 	); // END CIRCLE
 	
 	this.registerLayout("breadthfirst", graphRef, {
-			name: "breadthfirst", fit: true, directed: true, padding: 15, circle: false, roots: undefined
+			name: "breadthfirst", fit: true, directed: true, padding: 15, circle: false, roots: undefined,
+			//maximalAdjustments: 20
 		},
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
@@ -1405,6 +1428,8 @@ function GraphGenerator(graphRef) {
 				target: "generatedNode_" + _currentId,
 				lineStyle: "dashed",
 				generated: true,
+				count: 1,
+				label: "",
 				attrs: [/* Populated via NodeEditor */]
 			},
 			group: "edges"
@@ -1430,6 +1455,8 @@ function GraphGenerator(graphRef) {
 					target: targetNode.data("id"),
 					lineStyle: "dashed",
 					generated: true,
+					count: 1,
+					label: "",
 					attrs: [/* Populated via NodeEditor */]
 				},
 				group: "edges"

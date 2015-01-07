@@ -1069,7 +1069,17 @@ var overrideARBOR = function() {
 	var ArborLayout = cytoscape.extensions.layout.arbor;
 		
 	ArborLayout.prototype.run = function(){
-		var options = this.options;
+		
+		var options;
+		try {
+			// Cytoscape 2.3.7
+			options = this._private.options;
+		} catch (exception) {
+			// Cytoscape 2.2.12
+			console.log(exception.message);
+			options = this.options;
+		}
+		
 		var cy = options.cy;
 		var nodes = cy.nodes();
 		var edges = cy.edges();
