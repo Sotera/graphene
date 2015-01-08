@@ -198,6 +198,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				populatedTableResults = new ArrayList<Map<String, Object>>();
 				// Populate all the results!
 				for (final Object m : metaresults.getResults()) {
+
 					final DocumentGraphParser parserForObject = phgb
 							.getParserForObject(m);
 					if (parserForObject != null) {

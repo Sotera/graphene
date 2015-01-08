@@ -102,11 +102,13 @@
 								t:rowsPerPage="20" t:empty="block:emptyResults">
 
 								<p:actionsCell>
-									<t:pagelink class="btn btn-default" page="prop:reportPageLink"
-										context="reportId" target="reportId">
-										<i class="fa fa-folder-open-o" /> ${reportType} ${reportId}
+									<t:if test="reportPageLink">
+										<t:pagelink class="btn btn-default" page="prop:reportPageLink"
+											context="reportId" target="reportId">
+											<i class="fa fa-folder-open-o" /> ${reportType} ${reportId}
 												</t:pagelink>
-									<br />
+										<br /><p:else>Report View Unavailable</p:else>
+									</t:if>
 
 									<a class="btn btn-default" href="${extLink}" target="extjs">
 										<i class="fa fa-code-fork"> </i> Graph

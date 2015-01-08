@@ -110,13 +110,16 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Override
 	public G_Workspace createFirstWorkspaceForUser(final String userId) {
 		G_Workspace w = createTempWorkspaceForUser(userId);
-		w.setTitle("First Workspace");
-		w = wDao.save(w);
+
 		if (ValidationUtils.isValid(w)) {
-			uwDao.addRelationToWorkspace(userId,
-					G_UserSpaceRelationshipType.CREATOR_OF, w.getId());
-			uwDao.addRelationToWorkspace(userId,
-					G_UserSpaceRelationshipType.EDITOR_OF, w.getId());
+			w.setTitle("First Workspace");
+			w = wDao.save(w);
+			if (ValidationUtils.isValid(w)) {
+				uwDao.addRelationToWorkspace(userId,
+						G_UserSpaceRelationshipType.CREATOR_OF, w.getId());
+				uwDao.addRelationToWorkspace(userId,
+						G_UserSpaceRelationshipType.EDITOR_OF, w.getId());
+			}
 		}
 		return w;
 	}
@@ -125,18 +128,21 @@ public class UserServiceImpl implements G_UserDataAccess {
 	public G_Workspace createTempWorkspaceForUser(final String userId) {
 
 		final G_User user = getUser(userId);
-		final DateTime time = DateTime.now();
-		final G_Workspace w = new G_Workspace();
-		w.setActive(true);
-		w.setCreated(time.getMillis());
-		w.setModified(time.getMillis());
-		w.setDescription("New Workspace");
-		w.setTitle(user.getUsername() + "-Workspace"
-				+ time.toString("YYYYmmDD-HHMMSS"));
-		w.setDatamap("");
-		w.setJson("");
-		w.setQueries("");
-
+		G_Workspace w = null;
+		if (ValidationUtils.isValid(user)) {
+			// we need a valid user in order to create the workspace.
+			final DateTime time = DateTime.now();
+			w = new G_Workspace();
+			w.setActive(true);
+			w.setCreated(time.getMillis());
+			w.setModified(time.getMillis());
+			w.setDescription("New Workspace");
+			w.setTitle(user.getUsername() + "-Workspace"
+					+ time.toString("YYYYmmDD-HHMMSS"));
+			w.setDatamap("");
+			w.setJson("");
+			w.setQueries("");
+		}
 		return w;
 	}
 
@@ -256,7 +262,9 @@ public class UserServiceImpl implements G_UserDataAccess {
 			logger.debug("No workspaces found for userId " + userId
 					+ ". Creating a new one.");
 			final G_Workspace g = createFirstWorkspaceForUser(userId);
-			workspaces.add(g);
+			if (g != null) {
+				workspaces.add(g);
+			}
 		}
 		return workspaces;
 	}

@@ -1,0 +1,23 @@
+
+<div class="col-md-12 well"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+	<t:loop t:source="model.propertyNames" formState="ITERATION"
+		t:value="propertyName">
+		<div class="row">
+			<div class="col-sm-12 col-md-6 ${propertyClass}">${propertyModel.label}</div>
+			<div t:type="any" t:mixins="NotEmpty"
+				class="col-sm-12 col-md-6 ${propertyClass}">
+				<a class="${propertyLinkClass}" style="white-space: normal;"
+					t:type="pagelink" page="graphene/CombinedEntitySearchPage"
+					context="${propertyValue}"> <t:propertydisplay
+						model="propertyModel" overrides="overrides" object="object" />
+				</a>
+			</div>
+		</div>
+	</t:loop>
+	<t:loop t:source="listOfCollections" t:value="currentCollection">
+		<t:loop t:source="currentCollection" t:value="currentSubObject">
+			<div t:type="graphene/ui/treebeandisplay" object="currentSubObject" />
+		</t:loop>
+	</t:loop>
+</div>

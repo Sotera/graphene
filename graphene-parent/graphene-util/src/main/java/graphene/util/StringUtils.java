@@ -119,6 +119,27 @@ public class StringUtils {
 	}
 
 	/**
+	 * Opposite of tokenizing, we are combining Object.toString() into one
+	 * string.
+	 * 
+	 * @param delimiter
+	 * @param values
+	 * @return
+	 */
+	public static String coalesc(final String delimiter, final Object... values) {
+		final StringBuffer buf = new StringBuffer();
+		for (final Object v : values) {
+			if (ValidationUtils.isValid(v)) {
+				if (buf.length() > 0) {
+					buf.append(delimiter);
+				}
+				buf.append(v.toString());
+			}
+		}
+		return buf.toString();
+	}
+
+	/**
 	 * Opposite of tokenizing, we are combining strings into one string.
 	 * 
 	 * @param delimiter
