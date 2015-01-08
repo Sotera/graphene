@@ -74,7 +74,8 @@ Ext.define("DARPA.AbstractNodeDisplay", {
 			var defaultLegend = GLegend.getLegendByGroup(GLegend.getDefaultGroupName());
 			
 			// mash the two legend arrays together to make one big legendary family
-			var finalLegend = newLegend.concat(defaultLegend);
+			/*var finalLegend = newLegend.concat(defaultLegend);*/
+			var finalLegend = defaultLegend.concat(newLegend);
 			
 			// remove existing legend ( otherwise, the legend would grow with each call of this.updateLegend() )
 			legendPanel.items.each(function(child) { this.remove(child); }, legendPanel);

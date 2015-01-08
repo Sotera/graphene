@@ -42,6 +42,7 @@ Ext.define("DARPA.TransactionNodeDisplay", {
 				maxHeight: 300,
 				autoScroll: true,
 				collapsible: true,
+				collapsed: true,
 				collapseDirection: "bottom"
 				//items: GLegend.getLegendByGroup(GLegend.getDefaultGroupName())
 			})
