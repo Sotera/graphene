@@ -99,7 +99,7 @@ Ext.define("DARPA.ElementEditor", {
 		
 		var dataForm = new Ext.Panel({
 			layout: "border",
-			title: "eleent Attributes",
+			title: "Element Attributes",
 			border: false,
 			frame: false,
 			region: "center",
