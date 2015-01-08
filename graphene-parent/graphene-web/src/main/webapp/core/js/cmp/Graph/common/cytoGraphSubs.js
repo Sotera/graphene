@@ -531,12 +531,23 @@ CytoGraphVis.prototype.showAll = function(isFilter) {
  *		json:Object - json representation of the graph
  *		name:String - identifier of the root node/entity 
  */
-CytoGraphVis.prototype.showGraph = function(json, name) {
+CytoGraphVis.prototype.showGraph = function(json, name, useSaved) {
 	this.searchName = name;
 	this.gv.load(json);
-	this.changeLayout(this.CONSTANTS("defaultLayout"), {});
+	if (useSaved === true) {
+		this.changeLayout("preset", {});
+	} else { 
+		this.changeLayout(this.CONSTANTS("defaultLayout"), {});
+	}
+	
 	try {
-		this.getOwner().getToolbar().getHierarchyBtn().toggle(true); 
+		if (useSaved === true) {
+			var btn = this.getOwner().getToolbar().getEnabledLayoutBtn();
+			if (btn) btn.toggle(false);
+		} else {
+			var btn = this.getOwner().getToolbar().getHierarchyBtn();
+			if (btn) btn.toggle(true); 
+		}
 	} catch (e) {
 		console.error(e.message);
 	}
@@ -908,6 +919,17 @@ function LayoutManager(graphRef) {
     };
 	
 	// ========================================= REGISTER DEFAULT LAYOUTS ========================================= /
+	
+	this.registerLayout("preset", graphRef, {
+			name: "preset", fit: true, animate: false
+		},
+		function stop() {
+			if (graphRef.owner.getProgressBar) {
+				var pb = graphRef.owner.getProgressBar();
+				// if (pb) pb.updateProgress(1, "100%");
+			}
+		}
+	);
 	
 	this.registerLayout("grid", graphRef, { 
 			name: "grid", fit: true, rows: undefined, column: undefined 
