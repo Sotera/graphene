@@ -7,22 +7,28 @@
 		<div class="hero">
 
 			<div class="pull-left login-desc-box-l">
-				<h4 class="paragraph-header">Experience the
-					power and simplicity of ${appName}
+				<h4 class="paragraph-header">
+					${appName} is a multi-faceted enterprise platform that provides: 
+					<ul>
+						<li>a powerful search interface</li>
+						<li> structured report views</li>
+						<li>interactive shared-attribute network graphs</li>
+					</ul>
 				</h4>
 				<div class="login-app-icons">
-					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Shared Attribute Graphs</a>
-					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Event Graphs</a>
-					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Geo-Temporal Events</a>
-					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Drill Down Behavior</a>
+					<!-- TODO: link to actual videos and docs -->
+					<a href="javascript:void(0);" class="btn btn-danger btn-sm">Video: Getting Started*</a>
+					<a href="javascript:void(0);" class="btn btn-danger btn-sm">User Guide*</a>
 				</div>
+				*Note: coming soon
 			</div>
 
-			<img src="${imgSample}" class="pull-right display-image"
-				width="210px" />
+			<img src="${imgSample}" class="pull-right display-image" width="210px" />
 
 		</div>
 
+		<!-- remove "markety stuff" from the bottom -->
+		<!-- 
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 				<h5 class="about-heading">About ${appName} - Are you up to date?</h5>
@@ -37,5 +43,6 @@
 				</p>
 			</div>
 		</div>
+		-->
 	</t:content>
 </html>
