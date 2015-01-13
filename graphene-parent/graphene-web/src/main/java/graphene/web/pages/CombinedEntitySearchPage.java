@@ -243,25 +243,22 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	 */
 	public Collection<String> getIconList() {
 
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.ICONLIST);
+		return (Collection<String>) currentEntity.get(DocumentGraphParser.ICONLIST);
 	}
 
 	public Collection<String> getIdentifierList() {
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.SUBJECTIDLIST);
+		return (Collection<String>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
 	}
 
 	public BeanModel getModel() {
-		final BeanModel<Object> model = beanModelSource.createEditModel(
-				Object.class, messages);
+		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
 
 		model.addEmpty("actions");
 		model.addEmpty("score");
 		model.addEmpty("informationIcons");
 		model.addEmpty("date");
 		model.addEmpty("amount");
-		model.addEmpty("nameList");
+		model.addEmpty("subjects");
 		model.addEmpty("addressList");
 		model.addEmpty("communicationIdentifierList");
 		model.addEmpty("identifierList");
@@ -270,15 +267,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.getById("amount").sortable(true);
 		model.getById("date").sortable(true);
 		model.getById("actions").sortable(true);
-		model.getById("nameList").sortable(true);
+		model.getById("subjects").sortable(true);
 		model.getById("informationIcons").sortable(true);
 
 		return model;
 	}
 
 	public Collection<String> getNameList() {
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.SUBJECTNAMELIST);
+		return (Collection<String>) currentEntity.get(DocumentGraphParser.SUBJECTNAMELIST);
 
 	}
 

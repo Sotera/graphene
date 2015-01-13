@@ -130,16 +130,16 @@
 									</span>
 								</p:dateCell>
 								<p:amountCell>
-					${amount}
-				</p:amountCell>
-								<p:nameListCell>
+									${amount}
+								</p:amountCell>
+								<p:subjectsCell>
 									<t:loop source="nameList" value="currentName">
 										<a class="btn btn-xs ${styleForName}" t:type="pagelink"
 											page="graphene/CombinedEntitySearchPage"
 											context="currentName"> ${currentName}</a>
 										<br />
 									</t:loop>
-								</p:nameListCell>
+								</p:subjectsCell>
 								<p:addressListCell>
 									<t:loop source="addressList" value="currentAddress">
 										<a class="btn btn-xs ${styleForAddress}" t:type="pagelink"
