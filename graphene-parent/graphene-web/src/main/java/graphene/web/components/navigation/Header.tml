@@ -9,7 +9,7 @@
 
 				<!-- PLACE YOUR LOGO HERE -->
 				<span id="logo">
-					<img src="${imgLogoWideDark}" alt="${appName}" />
+					<img src="${imgLogoWideDark}" title="${appName} - ${appVersion}" />
 				</span>
 				<!-- END LOGO PLACEHOLDER -->
 
