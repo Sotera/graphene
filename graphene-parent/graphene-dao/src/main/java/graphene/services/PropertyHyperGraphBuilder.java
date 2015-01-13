@@ -115,8 +115,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 						if (nodeCertainty < 100.0) {
 							edge.addData("Certainty", DataFormatConstants
 									.formatPercent(nodeCertainty));
-							edge.setLineStyle("dashed");
-							edge.setColor("#787878");
+							edge.setLineStyle("dotted");
+							//edge.setColor("#787878");
 						}
 						edge.addData("Local_Priority", "" + localPriority);
 						edge.addData("Min_Score_Required", ""

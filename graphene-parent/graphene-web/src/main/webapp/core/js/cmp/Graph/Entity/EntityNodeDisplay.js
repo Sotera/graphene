@@ -95,10 +95,13 @@ Ext.define("DARPA.EntityNodeDisplay", {
 			var subNodes = (!isNodeJSON) ? node.data("subNodes") : node.data.subNodes;
 			var attrs = (!isNodeJSON) ? node.data("attrs") : node.data.attrs;
 			var name = (!isNodeJSON) ? node.data("name") : node.data.name;
+			var reason = (!isNodeJSON) ? node.data("reason") : node.data.reason;
 			var runningHTML = "<tr><th colspan='3'><b>" + index + "_" + name + "</b></th></tr>";
 			
 			runningHTML += _showAttrs(attrs);
-			
+			if (reason !== null && reason !== undefined) {
+				runningHTML += "<tr><td>Reason for Merge</td> <td>&nbsp;:&nbsp;</td> <td>" + reason + "</td></tr>";
+			}
 			// base case -- no subnodes
 			if (subNodes === null || typeof subNodes == "undefined" || subNodes.length <= 0) {
 				return runningHTML;

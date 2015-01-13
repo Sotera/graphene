@@ -162,7 +162,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 				} else {
 					if (self.GraphVis.getGv() != null) {
 						self.clear();
-						self.showjson(self.prevLoadParams.value);
+						self.showjson(self.prevLoadParams.value, useSaved);
 					}
 				}
 

@@ -8,7 +8,7 @@
 
 	<div class="span9">
 		<h1>
-			Use the search bar in the upper right to initiate a search across all records in the datastore(s).
+			Use the search bar in the upper right to initiate a search across all reports
 		</h1>
 		<t:if test="workspaces">
 			<p>Available Workspaces:</p>

@@ -165,7 +165,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				} else { 
 					if (self.GraphVis.getGv() != null) {
 						self.clear();
-						self.showjson(self.prevLoadParams.number);
+						self.showjson(self.prevLoadParams.number, useSaved);
 					}
 				}
 				

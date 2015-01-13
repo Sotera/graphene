@@ -43,12 +43,15 @@
 					</div>
 				</section>
 
+				<!-- remove "stay signed in" checkbox -->
+				<!--
 				<section>
 					<label class="checkbox">
 						<t:checkbox t:id="grapheneRememberMe" />
 						Stay signed in
 					</label>
 				</section>
+				-->
 			</fieldset>
 			<footer>
 <!-- 				<input type="submit" id="grapheneEnter" value="${message:loginSubmit}"

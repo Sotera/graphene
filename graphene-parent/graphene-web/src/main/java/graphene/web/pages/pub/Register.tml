@@ -36,7 +36,10 @@
 					<div class="well no-padding">
 						<form id="smart-form-register" t:id="registerForm"
 							class="smart-form client-form">
+							<!-- remove "registration is free" header -->
+							<!--
 							<header> Registration is FREE* </header>
+							-->
 							<t:errors />
 							<fieldset>
 								<section>
@@ -94,7 +97,9 @@
 										</label>
 									</section>
 								</div>
-
+								
+								<!-- remove "I am an analyst" and "EULA" checkboxes -->
+								<!--
 								<section>
 									<label class="checkbox"> <input type="checkbox"
 										name="analyst" id="analyst"> <i></i> I am an analyst </input>
@@ -104,6 +109,7 @@
 											and Conditions </a> </input>
 									</label>
 								</section>
+								-->
 							</fieldset>
 							<footer>
 								<button type="submit" class="btn btn-primary">Register</button>
@@ -522,7 +528,8 @@
 			required : true
 			},
 			terms : {
-			required : true
+			/* set to false so that a user can register without clicking the removed EULA checkbox*/
+			required : false
 			}
 			},
 

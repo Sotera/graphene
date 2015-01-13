@@ -142,9 +142,9 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		// TODO: implement in extended class
 	},
 	
-	showjson: function(searchValue) {
+	showjson: function(searchValue, useSaved) {
 		if (this.json != null && this.GraphVis.getGv() != null) {
-			this.GraphVis.showGraph(this.json, searchValue);
+			this.GraphVis.showGraph(this.json, searchValue, useSaved);
 		}
 	},
 	

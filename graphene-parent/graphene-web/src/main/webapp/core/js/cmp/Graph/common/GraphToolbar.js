@@ -37,9 +37,15 @@ Ext.define("DARPA.GraphToolbar", {
 					scope : gr,
 					success : function(resp) {
 						console.log("Persist POST success. " + resp.responseText);
+						
+						var pb = scope.up().getProgressBar();
+						if (pb) pb.updateProgress(1, "Graph state persisted");
 					},
 					failure : function(resp) {
 						console.log("Persist POST failure.");
+						
+						var pb = scope.up().getProgressBar();
+						if (pb) pb.updateProgress(0, "Error in persisting graph state");
 					}
 				});
 			}
@@ -484,5 +490,21 @@ Ext.define("DARPA.GraphToolbar", {
 
 	getHelpBtn : function() {
 		return Ext.getCmp(this.id + "-HELP");
+	},
+	
+	getEnabledLayoutBtn: function() {
+		var btns = [
+			this.getGridBtn(), this.getHierarchyBtn(), this.getHierarchyCircleBtn(), 
+			this.getCoseAnimBtn(), this.getCoseBtn(), this.getArborAnimBtn(), 
+			this.getArborBtn(), this.getArborWheelAnimBtn(), this.getArborWheelBtn()
+		];
+		
+		for (var i = 0; i < btns.length; i++) {
+			var btn = btns[i];
+			if (btn.pressed) {
+				return btn;
+			}
+		}
+		return null;
 	}
 });
