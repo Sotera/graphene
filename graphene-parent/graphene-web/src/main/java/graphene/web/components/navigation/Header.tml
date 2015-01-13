@@ -13,15 +13,17 @@
 				</span>
 				<!-- END LOGO PLACEHOLDER -->
 
-				<!-- Note: The activity badge color changes when clicked and resets the 
-					number to 0 Suggestion: You may want to set a flag when this happens to tick 
-					off all checked messages / notifications -->
+				<!-- Note: The activity badge color changes when clicked and resets the number to 0 Suggestion: You may want to set a 
+					flag when this happens to tick off all checked messages / notifications -->
+				<!-- remove user notification icon thing -->
+				<!--
 				<span id="activity" class="activity-dropdown">
 					<i class="fa fa-user"></i>
 					<b class="badge">
 						21
 					</b>
 				</span>
+				-->
 
 				<!-- AJAX-DROPDOWN : control this dropdown height, look and feel from 
 					the LESS variable file -->
@@ -115,8 +117,7 @@
 
 				<!-- input: search field -->
 				<form t:type="form" t:id="globalsearchform" class="header-search pull-right">
-					<input t:id="searchValue" t:type="TextField" type="text"
-						placeholder="Search" id="search-fld" />
+					<input t:id="searchValue" t:type="TextField" type="text" placeholder="Search" id="search-fld" />
 					<button type="submit">
 						<i class="fa fa-search"></i>
 					</button>
@@ -127,6 +128,8 @@
 				<!-- end input: search field -->
 
 				<!-- multiple lang dropdown : find all flags in the image folder -->
+				<!-- remove locality dropdown -->
+				<!-- 
 				<ul class="header-dropdown-list hidden-xs">
 					<li>
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -158,6 +161,7 @@
 						</ul>
 					</li>
 				</ul>
+				-->
 				<!-- end multiple lang -->
 
 			</div>
