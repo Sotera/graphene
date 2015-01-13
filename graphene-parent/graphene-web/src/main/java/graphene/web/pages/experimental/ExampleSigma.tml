@@ -1,0 +1,368 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" 
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"
+	lang="en">
+	<body>
+
+		<!-- row -->
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="sigma-parent">
+					<div class="sigma-expand" id="sigma-canvas"></div>
+				</div>
+			</div>
+			<!-- NEW WIDGET START -->
+			<div class="col-sm-3">
+
+				<!-- widget content -->
+				<div class="well well-sm">
+					<h3 class="text-primary">List</h3>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="bs-example">
+								<div class="b1">
+									<form>
+										<div id="search" class="cf">
+											<h2>Search:</h2>
+											<input type="text" name="search" value="Search by name"
+												class="empty" />
+											<div class="state"></div>
+											<div class="results"></div>
+										</div>
+										<div class="cf" id="attributeselect" style="display: none;">
+											<h2>Group Selector:</h2>
+											<div class="select">Select Group</div>
+											<div class="list cf">
+												<div style="line-height:12px">
+													<a href="#rgb(26,67,92)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(26,67,92);display:inline-block"></div>
+														Group 1 (1 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(245, 234, 190)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(245, 234, 190);display:inline-block"></div>
+														Group 2 (4 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(212, 168, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(212, 168, 0);display:inline-block"></div>
+														Group 3 (6 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(221, 145, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(221, 145, 0);display:inline-block"></div>
+														Group 4 (9 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(63, 100, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(63, 100, 0);display:inline-block"></div>
+														Group 5 (10 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(255,255,255)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(255,255,255);display:inline-block"></div>
+														Group 6 (90 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(53, 103, 139)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(53, 103, 139);display:inline-block"></div>
+														Group 7 (14 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(232, 116, 45)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(232, 116, 45);display:inline-block"></div>
+														Group 8 (9 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(70, 166, 154)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(70, 166, 154);display:inline-block"></div>
+														Group 9 (15 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(214, 189, 185)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(214, 189, 185);display:inline-block"></div>
+														Group 10 (11 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(101, 86, 72)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(101, 86, 72);display:inline-block"></div>
+														Group 11 (13 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(109, 26, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(109, 26, 0);display:inline-block"></div>
+														Group 12 (8 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(134, 152, 149)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(134, 152, 149);display:inline-block"></div>
+														Group 13 (1 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(186, 39, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(186, 39, 0);display:inline-block"></div>
+														Group 14 (1 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(128, 150, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(128, 150, 0);display:inline-block"></div>
+														Group 15 (4 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(106,108,0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(106,108,0);display:inline-block"></div>
+														Group 16 (4 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(138,159,144)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(138,159,144);display:inline-block"></div>
+														Group 17 (6 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(225, 200, 130)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(225, 200, 130);display:inline-block"></div>
+														Group 18 (5 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(107, 54, 85)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(107, 54, 85);display:inline-block"></div>
+														Group 19 (4 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(148, 113, 121)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(148, 113, 121);display:inline-block"></div>
+														Group 20 (7 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(144,150,233)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(144,150,233);display:inline-block"></div>
+														Group 21 (3 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(171, 195, 195)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(171, 195, 195);display:inline-block"></div>
+														Group 22 (4 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(186, 175, 152)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(186, 175, 152);display:inline-block"></div>
+														Group 23 (6 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(100, 137, 166)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(100, 137, 166);display:inline-block"></div>
+														Group 24 (2 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(95, 116, 107)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(95, 116, 107);display:inline-block"></div>
+														Group 25 (5 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(126, 112, 90)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(126, 112, 90);display:inline-block"></div>
+														Group 26 (7 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(63, 77, 68)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(63, 77, 68);display:inline-block"></div>
+														Group 27 (5 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(159, 186, 212)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(159, 186, 212);display:inline-block"></div>
+														Group 28 (2 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(170, 93, 11)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(170, 93, 11);display:inline-block"></div>
+														Group 29 (9 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(198,183,0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(198,183,0);display:inline-block"></div>
+														Group 30 (6 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(176,203,181)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(176,203,181);display:inline-block"></div>
+														Group 31 (1 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(67, 83, 84)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(67, 83, 84);display:inline-block"></div>
+														Group 32 (2 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(246, 218, 123)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(246, 218, 123);display:inline-block"></div>
+														Group 33 (2 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(123, 45, 64)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(123, 45, 64);display:inline-block"></div>
+														Group 34 (3 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(133, 101, 122)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(133, 101, 122);display:inline-block"></div>
+														Group 35 (3 members)
+													</a>
+												</div>
+												<div style="line-height:12px">
+													<a href="#rgb(162, 58, 0)">
+														<div
+															style="width:40px;height:12px;border:1px solid #fff;background:rgb(162, 58, 0);display:inline-block"></div>
+														Group 36 (3 members)
+													</a>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+
+
+				<!-- end widget content -->
+
+			</div>
+			<!-- WIDGET END -->
+
+		</div>
+
+		<!-- end row -->
+
+
+
+
+		<row class="row">
+			<div class="col-sm-9">
+				<div id="zoom">
+					<div class="z" rel="in"></div>
+					<div class="z" rel="out"></div>
+					<div class="z" rel="center"></div>
+				</div>
+
+				<div id="attributepane">
+					<div class="text">
+						<div title="Close" class="left-close returntext">
+							<div class="c cf">
+								<span>Return to the full network</span>
+							</div>
+						</div>
+						<div class="nodeattributes">
+							<div class="name"></div>
+							<div class="data"></div>
+							<div class="p">Connections:</div>
+							<div class="link">
+								<ul>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<script src="${jsjqLib1}" />
+		<script src="${jsjqLib2}" />
+		<script src="${jsApp1}" />
+		<script src="${jsApp2}" />
+		<script src="${jsApp3}" />
+		<script src="${jsApp4}" />
+		<script src="${jsApp5}" />
+		<script src="${jsApp6}" />
+	</body>
+</html>
