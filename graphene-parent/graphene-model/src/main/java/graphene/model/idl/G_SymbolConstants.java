@@ -9,25 +9,21 @@ package graphene.model.idl;
  * 
  */
 public class G_SymbolConstants {
-	private G_SymbolConstants() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public static final String APPLICATION_NAME = "graphene.application-name";
+
 	// The string for who to contact about this application
 	public static final String APPLICATION_CONTACT = "graphene.application-contact";
 	public static final String APPLICATION_VERSION = "graphene.application-version";
 	public static final String THEME_PATH = "graphene.theme-path";
 	public static final String DATABASE_PROPERTIES_LOCATION = "graphene.database-properties-location";
-
 	public static final String MIDTIER_SERVER_URL = "graphene.midtier-database-url";
+
 	public static final String MIDTIER_SERVER_USERNAME = "graphene.midtier-database-username";
 	public static final String MIDTIER_SERVER_PASSWORD = "graphene.midtier-database-password";
-
 	public static final String MIDTIER_SERVER2_URL = "graphene.midtier2-database-url";
+
 	public static final String MIDTIER_SERVER2_USERNAME = "graphene.midtier2-database-username";
 	public static final String MIDTIER_SERVER2_PASSWORD = "graphene.midtier2-database-password";
-
 	/**
 	 * Should not be overriden by runtime properties. The value of this key is
 	 * supplied by the core's app module, and it is hard coded into all the
@@ -35,13 +31,25 @@ public class G_SymbolConstants {
 	 */
 	public static final String GRAPHENE_WEB_CORE_PREFIX = "graphene.core-web-prefix";
 
-	
+	/**
+	 * Menu view settings
+	 */
 	public static final String ENABLE_EXPERIMENTAL = "graphene.enable-experimental";
+
 	public static final String ENABLE_MISC = "graphene.enable-misc";
 	public static final String ENABLE_ADMIN = "graphene.admin-misc";
 	public static final String ENABLE_SETTINGS = "graphene.settings-misc";
 	/**
-	 * Something like "/graphene-customer-web/index.html?&entity="
+	 * Report View Settings
+	 */
+	public static final String ENABLE_TAG_CLOUDS = "graphene.enable-tag-clouds";
+
+	/**
+	 * Something like "/graphene-customer-web/graph.html?&entity="
 	 */
 	public static final String EXT_PATH = "graphene.ext-path";
+
+	private G_SymbolConstants() {
+		// TODO Auto-generated constructor stub
+	}
 }

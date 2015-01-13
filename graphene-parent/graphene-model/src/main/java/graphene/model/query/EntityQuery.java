@@ -9,8 +9,9 @@ import java.util.List;
 public class EntityQuery extends BasicQuery {
 	private List<G_SearchTuple<String>> attributeList = new ArrayList<G_SearchTuple<String>>(
 			1);
-
+	private List<String> filters = new ArrayList<String>(1);
 	private boolean caseSensitive = false;
+	private boolean searchFreeText = false;
 	/**
 	 * For backend which allow a minimum relevance score for finding related
 	 * results, use this field
@@ -54,6 +55,13 @@ public class EntityQuery extends BasicQuery {
 		if (caseSensitive != other.caseSensitive) {
 			return false;
 		}
+		if (filters == null) {
+			if (other.filters != null) {
+				return false;
+			}
+		} else if (!filters.equals(other.filters)) {
+			return false;
+		}
 		if (initiatorId == null) {
 			if (other.initiatorId != null) {
 				return false;
@@ -63,6 +71,9 @@ public class EntityQuery extends BasicQuery {
 		}
 		if (Double.doubleToLongBits(minimumScore) != Double
 				.doubleToLongBits(other.minimumScore)) {
+			return false;
+		}
+		if (searchFreeText != other.searchFreeText) {
 			return false;
 		}
 		return true;
@@ -81,6 +92,13 @@ public class EntityQuery extends BasicQuery {
 			list.add(a.getValue());
 		}
 		return list.toArray(new String[list.size()]);
+	}
+
+	/**
+	 * @return the filters
+	 */
+	public List<String> getFilters() {
+		return filters;
 	}
 
 	public String getInitiatorId() {
@@ -107,10 +125,13 @@ public class EntityQuery extends BasicQuery {
 				+ ((attributeList == null) ? 0 : attributeList.hashCode());
 		result = (prime * result) + (caseSensitive ? 1231 : 1237);
 		result = (prime * result)
+				+ ((filters == null) ? 0 : filters.hashCode());
+		result = (prime * result)
 				+ ((initiatorId == null) ? 0 : initiatorId.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(minimumScore);
 		result = (prime * result) + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + (searchFreeText ? 1231 : 1237);
 		return result;
 	}
 
@@ -119,6 +140,13 @@ public class EntityQuery extends BasicQuery {
 	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
+	}
+
+	/**
+	 * @return the searchFreeText
+	 */
+	public boolean isSearchFreeText() {
+		return searchFreeText;
 	}
 
 	public void setAttributeList(final List<G_SearchTuple<String>> attributeList) {
@@ -133,6 +161,14 @@ public class EntityQuery extends BasicQuery {
 		this.caseSensitive = caseSensitive;
 	}
 
+	/**
+	 * @param filters
+	 *            the filters to set
+	 */
+	public void setFilters(final List<String> filters) {
+		this.filters = filters;
+	}
+
 	public void setInitiatorId(final String id) {
 		initiatorId = id;
 	}
@@ -145,6 +181,14 @@ public class EntityQuery extends BasicQuery {
 		this.minimumScore = minimumScore;
 	}
 
+	/**
+	 * @param searchFreeText
+	 *            the searchFreeText to set
+	 */
+	public void setSearchFreeText(final boolean searchFreeText) {
+		this.searchFreeText = searchFreeText;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -152,8 +196,9 @@ public class EntityQuery extends BasicQuery {
 	 */
 	@Override
 	public String toString() {
-		return "EntityQuery [attributeList=" + attributeList
-				+ ", caseSensitive=" + caseSensitive + ", minimumScore="
+		return "EntityQuery [attributeList=" + attributeList + ", filters="
+				+ filters + ", caseSensitive=" + caseSensitive
+				+ ", searchFreeText=" + searchFreeText + ", minimumScore="
 				+ minimumScore + ", initiatorId=" + initiatorId + "]";
 	}
 

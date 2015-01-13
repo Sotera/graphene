@@ -1,19 +1,32 @@
 
-<div class="col-md-12 well"
+<t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
-	<t:loop t:source="model.propertyNames" formState="ITERATION"
-		t:value="propertyName">
-		<div class="row">
-			<div class="col-sm-12 col-md-6 ${propertyClass}">${propertyModel.label}</div>
-			<div t:type="any" t:mixins="NotEmpty"
-				class="col-sm-12 col-md-6 ${propertyClass}">
-				<a class="${propertyLinkClass}" style="white-space: normal;" t:type="pagelink"
-					page="graphene/CombinedEntitySearchPage" context="${propertyValue}">
-					<t:propertydisplay model="propertyModel" overrides="overrides"
-						object="object" />
-				</a>
-			</div>
-		</div>
+	<t:if test="model">
+		<div class="col-md-12 well">
+			<t:if test="title">
+				<div class="row">
+					<div class="col-sm-12 col-md-12">
+						<h3>${title}</h3>
+					</div>
+				</div>
+			</t:if>
+			<t:loop t:source="model.propertyNames" formState="ITERATION"
+				t:value="propertyName">
+				<div class="row">
+					<div class="col-sm-12 col-md-6 ${propertyClass}"
+						style="white-space: normal;">${propertyModel.label}</div>
+					<div t:type="any" t:mixins="NotEmpty"
+						class="col-sm-12 col-md-6 ${propertyClass}">
+						<a class="${propertyLinkClass}" style="${propertyStyle}" t:type="pagelink"
+							page="graphene/CombinedEntitySearchPage"
+							context="${propertyValue}"> <t:propertydisplay
+								model="propertyModel" overrides="overrides" object="object" />
+						</a>
+					</div>
+				</div>
 
-	</t:loop>
-</div>
+			</t:loop>
+		</div>
+	</t:if>
+	<!-- End if model -->
+</t:container>

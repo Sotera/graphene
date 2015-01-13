@@ -62,31 +62,6 @@ import org.slf4j.Logger;
  */
 @SubModule({ DAOModule.class, AtmosphereModule.class })
 public class GrapheneModule {
-	public static void bind(ServiceBinder binder) {
-		binder.bind(ChatManager.class, ChatManagerImpl.class);
-	}
-
-	@Contribute(MarkupRenderer.class)
-	public static void deactivateDefaultCSS(
-			OrderedConfiguration<MarkupRendererFilter> config) {
-		config.override("InjectDefaultStylesheet", null);
-	}
-
-	@Contribute(AtmosphereHttpServletRequestFilter.class)
-	public static void contributeAtmosphere(
-			MappedConfiguration<String, String> config) {
-		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
-	}
-
-	public static void contributeTopicAuthorizer(
-			OrderedConfiguration<TopicAuthorizer> config) {
-		config.addInstance("chat", ChatTopicAuthorizer.class);
-	}
-
-	public static void contributeTopicListener(
-			OrderedConfiguration<TopicListener> config) {
-		config.addInstance("chat", ChatTopicListener.class);
-	}
 
 	/**
 	 * This is not working yet. We want to get the version number from a value
@@ -99,13 +74,17 @@ public class GrapheneModule {
 	 */
 	@Contribute(JavaScriptStackSource.class)
 	public static void addGrapheneJSStacks(
-			MappedConfiguration<String, JavaScriptStack> configuration) {
+			final MappedConfiguration<String, JavaScriptStack> configuration) {
 		configuration.addInstance("CytoscapeStack", CytoscapeStack.class);
 		configuration.addInstance("NeoCytoscapeStack", NeoCytoscapeStack.class);
 	}
 
+	public static void bind(final ServiceBinder binder) {
+		binder.bind(ChatManager.class, ChatManagerImpl.class);
+	}
+
 	public static void contributeApplicationDefaults(
-			MappedConfiguration<String, Object> configuration) {
+			final MappedConfiguration<String, Object> configuration) {
 		/*
 		 * The application version number is incorporated into URLs for some
 		 * assets. Web browsers will cache assets because of the far future
@@ -121,6 +100,7 @@ public class GrapheneModule {
 		 * configuration.add() to override this default and use the values you
 		 * want.
 		 */
+
 		configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene");
 		configuration.add(SymbolConstants.APPLICATION_VERSION,
 				"${graphene.application-version}");
@@ -142,12 +122,191 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.ENABLE_MISC, false);
 		configuration.add(G_SymbolConstants.ENABLE_SETTINGS, true);
 		configuration.add(G_SymbolConstants.ENABLE_ADMIN, true);
+		configuration.add(G_SymbolConstants.ENABLE_TAG_CLOUDS, false);
+	}
+
+	@Contribute(AtmosphereHttpServletRequestFilter.class)
+	public static void contributeAtmosphere(
+			final MappedConfiguration<String, String> config) {
+		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
+	}
+
+	public static void contributeBeanBlockSource(
+			final Configuration<BeanBlockContribution> configuration) {
+
+		// Display blocks
+		configuration.add(new DisplayBlockContribution("dateTime",
+				"infrastructure/AppPropertyDisplayBlocks", "dateTime"));
+		configuration.add(new DisplayBlockContribution("localDateTime",
+				"infrastructure/AppPropertyDisplayBlocks", "localDateTime"));
+		configuration.add(new DisplayBlockContribution("localDate",
+				"infrastructure/AppPropertyDisplayBlocks", "localDate"));
+		configuration.add(new DisplayBlockContribution("localTime",
+				"infrastructure/AppPropertyDisplayBlocks", "localTime"));
+
+		// Edit blocks
+		configuration.add(new EditBlockContribution("localDate",
+				"infrastructure/AppPropertyEditBlocks", "localDate"));
+		configuration.add(new EditBlockContribution("dateTime",
+				"infrastructure/AppPropertyEditBlocks", "dateTime"));
 	}
 
 	public static void contributeComponentClassResolver(
-			Configuration<LibraryMapping> configuration,
-			@Inject @Symbol(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX) String pathPrefix) {
+			final Configuration<LibraryMapping> configuration,
+			@Inject @Symbol(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX) final String pathPrefix) {
 		configuration.add(new LibraryMapping(pathPrefix, "graphene.web"));
+	}
+
+	/**
+	 * Tell Tapestry how its BeanDisplay and BeanEditor can handle the JodaTime
+	 * types.
+	 * 
+	 * We do this by contributing configuration to Tapestry's
+	 * DefaultDataTypeAnalyzer and BeanBlockSource services.
+	 * 
+	 * Based on http://tapestry.apache.org/beaneditform-guide.html
+	 * 
+	 * @param configuration
+	 */
+	public static void contributeDefaultDataTypeAnalyzer(
+			@SuppressWarnings("rawtypes") final MappedConfiguration<Class, String> configuration) {
+		configuration.add(DateTime.class, "dateTime");
+		configuration.add(LocalDateTime.class, "localDateTime");
+		configuration.add(LocalDate.class, "localDate");
+		configuration.add(LocalTime.class, "localTime");
+	}
+
+	public static void contributeSymbolSource(
+			final OrderedConfiguration<SymbolProvider> configuration,
+			@InjectService("VersionSymbolProvider") final SymbolProvider c) {
+		configuration.add("VersionPropertiesFile", c, "after:SystemProperties",
+				"before:ApplicationDefaults");
+	}
+
+	public static void contributeTopicAuthorizer(
+			final OrderedConfiguration<TopicAuthorizer> config) {
+		config.addInstance("chat", ChatTopicAuthorizer.class);
+	}
+
+	public static void contributeTopicListener(
+			final OrderedConfiguration<TopicListener> config) {
+		config.addInstance("chat", ChatTopicListener.class);
+	}
+
+	/**
+	 * Tell Tapestry how to coerce Joda Time types to and from Java Date types
+	 * for the TypeCoercers example.
+	 * 
+	 * We do this by contributing configuration to Tapestry's TypeCoercer
+	 * service.
+	 * 
+	 * Based on http://tapestry.apache.org/typecoercer-service.html
+	 * 
+	 * @param configuration
+	 */
+
+	@SuppressWarnings("rawtypes")
+	public static void contributeTypeCoercer(
+			final Configuration<CoercionTuple> configuration) {
+		// LocalDate ///////////////////////////
+		// From java.util.Date to LocalDate
+
+		final Coercion<java.util.Date, LocalDate> toLocalDate = new Coercion<java.util.Date, LocalDate>() {
+			@Override
+			public LocalDate coerce(final java.util.Date input) {
+				return JodaTimeUtil.toLocalDate(input);
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(java.util.Date.class,
+				LocalDate.class, toLocalDate));
+
+		// From LocalDate to java.util.Date
+
+		final Coercion<LocalDate, java.util.Date> fromLocalDate = new Coercion<LocalDate, java.util.Date>() {
+			@Override
+			public java.util.Date coerce(final LocalDate input) {
+				return JodaTimeUtil.toJavaDate(input);
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(LocalDate.class,
+				java.util.Date.class, fromLocalDate));
+		// End LocalDate ///////////////////////////
+
+		// /////////////////////////////////////
+		// DateTime ///////////////////////////
+		// From java.util.Date to DateTime
+
+		final Coercion<java.util.Date, DateTime> toDateTime = new Coercion<java.util.Date, DateTime>() {
+			@Override
+			public DateTime coerce(final java.util.Date input) {
+				return JodaTimeUtil.toDateTime(input);
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(java.util.Date.class,
+				DateTime.class, toDateTime));
+
+		// From DateTime to java.util.Date
+
+		final Coercion<DateTime, java.util.Date> fromDateTime = new Coercion<DateTime, java.util.Date>() {
+			@Override
+			public java.util.Date coerce(final DateTime input) {
+				return JodaTimeUtil.toJavaDate(input);
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(DateTime.class,
+				java.util.Date.class, fromDateTime));
+		// End DateTime ///////////////////////////
+
+		// /////////////////////////////////////
+		// DateTime ///////////////////////////
+		// From java.lang.Long to DateTime
+
+		final Coercion<java.lang.Long, DateTime> longToDateTime = new Coercion<java.lang.Long, DateTime>() {
+			@Override
+			public DateTime coerce(final java.lang.Long input) {
+				return JodaTimeUtil.toDateTime(input);
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(java.lang.Long.class,
+				DateTime.class, longToDateTime));
+
+		// From DateTime to java.util.Date
+
+		final Coercion<DateTime, java.lang.Long> fromDateTimetoLong = new Coercion<DateTime, java.lang.Long>() {
+			@Override
+			public java.lang.Long coerce(final DateTime input) {
+				return JodaTimeUtil.toJavaDate(input).getTime();
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(DateTime.class,
+				java.lang.Long.class, fromDateTimetoLong));
+		// End DateTime ///////////////////////////
+	}
+
+	@Contribute(MarkupRenderer.class)
+	public static void deactivateDefaultCSS(
+			final OrderedConfiguration<MarkupRendererFilter> config) {
+		config.override("InjectDefaultStylesheet", null);
+	}
+
+	@Contribute(ValueEncoderSource.class)
+	public static void provideEncoders(
+			final MappedConfiguration<Class, ValueEncoderFactory> configuration,
+			@InjectService("Primary") final TransactionDAO transactionService) {
+		final ValueEncoderFactory<DirectedEventRow> factory = new ValueEncoderFactory<DirectedEventRow>() {
+			@Override
+			public ValueEncoder<DirectedEventRow> create(
+					final Class<DirectedEventRow> clazz) {
+				return new EventEncoder(transactionService);
+			}
+		};
+		configuration.add(DirectedEventRow.class, factory);
 	}
 
 	/**
@@ -171,9 +330,11 @@ public class GrapheneModule {
 	 */
 	public RequestFilter buildTimingFilter(final Logger log) {
 		return new RequestFilter() {
-			public boolean service(Request request, Response response,
-					RequestHandler handler) throws IOException {
-				long startTime = System.currentTimeMillis();
+			@Override
+			public boolean service(final Request request,
+					final Response response, final RequestHandler handler)
+					throws IOException {
+				final long startTime = System.currentTimeMillis();
 
 				try {
 					// The responsibility of a filter is to invoke the
@@ -184,7 +345,7 @@ public class GrapheneModule {
 
 					return handler.service(request, response);
 				} finally {
-					long elapsed = System.currentTimeMillis() - startTime;
+					final long elapsed = System.currentTimeMillis() - startTime;
 
 					log.info(String.format("Request time: %d ms", elapsed));
 				}
@@ -192,156 +353,8 @@ public class GrapheneModule {
 		};
 	}
 
-	public PropertiesFileSymbolProvider buildVersionSymbolProvider(Logger logger) {
+	public PropertiesFileSymbolProvider buildVersionSymbolProvider(
+			final Logger logger) {
 		return new PropertiesFileSymbolProvider(logger, "version.prop", true);
-	}
-
-	public static void contributeSymbolSource(
-			OrderedConfiguration<SymbolProvider> configuration,
-			@InjectService("VersionSymbolProvider") SymbolProvider c) {
-		configuration.add("VersionPropertiesFile", c, "after:SystemProperties",
-				"before:ApplicationDefaults");
-	}
-
-	/**
-	 * Tell Tapestry how to coerce Joda Time types to and from Java Date types
-	 * for the TypeCoercers example.
-	 * 
-	 * We do this by contributing configuration to Tapestry's TypeCoercer
-	 * service.
-	 * 
-	 * Based on http://tapestry.apache.org/typecoercer-service.html
-	 * 
-	 * @param configuration
-	 */
-
-	@SuppressWarnings("rawtypes")
-	public static void contributeTypeCoercer(
-			Configuration<CoercionTuple> configuration) {
-		// LocalDate ///////////////////////////
-		// From java.util.Date to LocalDate
-
-		Coercion<java.util.Date, LocalDate> toLocalDate = new Coercion<java.util.Date, LocalDate>() {
-			public LocalDate coerce(java.util.Date input) {
-				return JodaTimeUtil.toLocalDate(input);
-			}
-		};
-
-		configuration.add(new CoercionTuple<>(java.util.Date.class,
-				LocalDate.class, toLocalDate));
-
-		// From LocalDate to java.util.Date
-
-		Coercion<LocalDate, java.util.Date> fromLocalDate = new Coercion<LocalDate, java.util.Date>() {
-			public java.util.Date coerce(LocalDate input) {
-				return JodaTimeUtil.toJavaDate(input);
-			}
-		};
-
-		configuration.add(new CoercionTuple<>(LocalDate.class,
-				java.util.Date.class, fromLocalDate));
-		// End LocalDate ///////////////////////////
-
-		// /////////////////////////////////////
-		// DateTime ///////////////////////////
-		// From java.util.Date to DateTime
-
-		Coercion<java.util.Date, DateTime> toDateTime = new Coercion<java.util.Date, DateTime>() {
-			public DateTime coerce(java.util.Date input) {
-				return JodaTimeUtil.toDateTime(input);
-			}
-		};
-
-		configuration.add(new CoercionTuple<>(java.util.Date.class,
-				DateTime.class, toDateTime));
-
-		// From DateTime to java.util.Date
-
-		Coercion<DateTime, java.util.Date> fromDateTime = new Coercion<DateTime, java.util.Date>() {
-			public java.util.Date coerce(DateTime input) {
-				return JodaTimeUtil.toJavaDate(input);
-			}
-		};
-
-		configuration.add(new CoercionTuple<>(DateTime.class,
-				java.util.Date.class, fromDateTime));
-		// End DateTime ///////////////////////////
-
-		// /////////////////////////////////////
-		// DateTime ///////////////////////////
-		// From java.lang.Long to DateTime
-
-		Coercion<java.lang.Long, DateTime> longToDateTime = new Coercion<java.lang.Long, DateTime>() {
-			public DateTime coerce(java.lang.Long input) {
-				return JodaTimeUtil.toDateTime(input);
-			}
-		};
-
-		configuration.add(new CoercionTuple<>(java.lang.Long.class,
-				DateTime.class, longToDateTime));
-
-		// From DateTime to java.util.Date
-
-		Coercion<DateTime, java.lang.Long> fromDateTimetoLong = new Coercion<DateTime, java.lang.Long>() {
-			public java.lang.Long coerce(DateTime input) {
-				return JodaTimeUtil.toJavaDate(input).getTime();
-			}
-		};
-
-		configuration.add(new CoercionTuple<>(DateTime.class,
-				java.lang.Long.class, fromDateTimetoLong));
-		// End DateTime ///////////////////////////
-	}
-
-	/**
-	 * Tell Tapestry how its BeanDisplay and BeanEditor can handle the JodaTime
-	 * types.
-	 * 
-	 * We do this by contributing configuration to Tapestry's
-	 * DefaultDataTypeAnalyzer and BeanBlockSource services.
-	 * 
-	 * Based on http://tapestry.apache.org/beaneditform-guide.html
-	 * 
-	 * @param configuration
-	 */
-	public static void contributeDefaultDataTypeAnalyzer(
-			@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) {
-		configuration.add(DateTime.class, "dateTime");
-		configuration.add(LocalDateTime.class, "localDateTime");
-		configuration.add(LocalDate.class, "localDate");
-		configuration.add(LocalTime.class, "localTime");
-	}
-
-	public static void contributeBeanBlockSource(
-			Configuration<BeanBlockContribution> configuration) {
-
-		// Display blocks
-		configuration.add(new DisplayBlockContribution("dateTime",
-				"infrastructure/AppPropertyDisplayBlocks", "dateTime"));
-		configuration.add(new DisplayBlockContribution("localDateTime",
-				"infrastructure/AppPropertyDisplayBlocks", "localDateTime"));
-		configuration.add(new DisplayBlockContribution("localDate",
-				"infrastructure/AppPropertyDisplayBlocks", "localDate"));
-		configuration.add(new DisplayBlockContribution("localTime",
-				"infrastructure/AppPropertyDisplayBlocks", "localTime"));
-
-		// Edit blocks
-		configuration.add(new EditBlockContribution("localDate",
-				"infrastructure/AppPropertyEditBlocks", "localDate"));
-		configuration.add(new EditBlockContribution("dateTime",
-				"infrastructure/AppPropertyEditBlocks", "dateTime"));
-	}
-
-	@Contribute(ValueEncoderSource.class)
-	public static void provideEncoders(
-			MappedConfiguration<Class, ValueEncoderFactory> configuration,
-			@InjectService("Primary") final TransactionDAO transactionService) {
-		ValueEncoderFactory<DirectedEventRow> factory = new ValueEncoderFactory<DirectedEventRow>() {
-			public ValueEncoder<DirectedEventRow> create(
-					Class<DirectedEventRow> clazz) {
-				return new EventEncoder(transactionService);
-			}
-		};
-		configuration.add(DirectedEventRow.class, factory);
 	}
 }

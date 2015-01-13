@@ -115,7 +115,7 @@
 	<script
 		src="${context:/core/js/plugin/msie-fix/jquery.mb.browser.min.js}" />
 
-	<script src="${context:/core/js/demo.js}" />
+	<!-- <script src="${context:/core/js/demo.js}" /> -->
 	<script src="${context:/core/js/app.js}" />
 
 	<script type="text/javascript">

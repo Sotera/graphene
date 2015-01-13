@@ -3,6 +3,7 @@ package graphene.web.components.ui;
 import graphene.dao.StyleService;
 import graphene.util.validator.ValidationUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.slf4j.Logger;
 
 @SupportsInformalParameters
 public class MeaningfulBeanDisplay {
@@ -28,6 +30,9 @@ public class MeaningfulBeanDisplay {
 	@Property(write = false)
 	private Object object;
 
+	@Parameter(required = false, allowNull = true, autoconnect = true)
+	@Property(write = false)
+	private String title;
 	/**
 	 * If true, then the CSS class attribute on the &lt;dt&gt; and &lt;dd&gt;
 	 * elements will be ommitted.
@@ -103,46 +108,21 @@ public class MeaningfulBeanDisplay {
 	@Property
 	private String propertyName;
 
-	private boolean modified = false;
+	private final boolean modified = false;
 
 	private String className;
 
-	void setupRender() {
-		className = object.getClass().getName();
-		if (model == null) {
-			model = modelSource.createDisplayModel(object.getClass(),
-					overrides.getContainerMessages());
-			List<String> names = model.getPropertyNames();
-			for (String p : names) {
-				PropertyModel pm = model.get(p);
-				PropertyConduit conduit = pm.getConduit();
-				Object propertyValue = conduit.get(object);
-				if (!ValidationUtils.isValid(propertyValue)) {
-					model.exclude(p);
-				}
-			}
-			BeanModelUtils.modify(model, add, include, exclude, reorder);
-		}
-	}
+	@Inject
+	private Logger logger;
 
-	/**
-	 * Returns the property model for the current property.
-	 */
-	public PropertyModel getPropertyModel() {
-		return model.get(propertyName);
-	}
-
-	public Object getPropertyValue() {
-		return model.get(propertyName).getConduit().get(object);
-	}
+	boolean foundOneProperty = false;
 
 	public String getPropertyClass() {
 		return lean ? null : getPropertyModel().getId();
 	}
 
 	public String getPropertyLinkClass() {
-		String textColor = "txt-color-white";
-		String hexColorForNode = style.getHexColorForNode(className);
+		style.getHexColorForNode(className);
 		if (StringUtils.containsIgnoreCase(className, "Location")) {
 			return "btn btn-xs bg-color-blueLight txt-color-white";
 		} else if (StringUtils.containsIgnoreCase(className, "Address")) {
@@ -159,11 +139,67 @@ public class MeaningfulBeanDisplay {
 
 	}
 
-	public boolean isMeaningful(Object obj) {
+	/**
+	 * Returns the property model for the current property.
+	 */
+	public PropertyModel getPropertyModel() {
+		return model.get(propertyName);
+	}
 
-		if (obj == null || !ValidationUtils.isValid(obj.toString())) {
+	public String getPropertyStyle() {
+		style.getHexColorForNode(className);
+		if (StringUtils.containsIgnoreCase(className, "Location")) {
+			return "white-space: normal; ";
+		} else if (StringUtils.containsIgnoreCase(className, "Address")) {
+			return "white-space: normal;  background-color: #b09b5b";
+		} else if (StringUtils.containsIgnoreCase(className, "Account")) {
+			return "white-space: normal; ";
+		} else if (StringUtils.containsIgnoreCase(className, "Subject")) {
+			return "white-space: normal; ";
+		} else if (StringUtils.containsIgnoreCase(className, "Name")) {
+			return "white-space: normal;  background-color: #c79121";
+		} else {
+			return "white-space: normal;";
+		}
+
+	}
+
+	public Object getPropertyValue() {
+		return model.get(propertyName).getConduit().get(object);
+	}
+
+	public boolean isMeaningful(final Object obj) {
+
+		if ((obj == null)
+				|| (!ValidationUtils.isValid(obj.toString()) && !foundOneProperty)) {
 			return false;
 		}
 		return true;
+	}
+
+	void setupRender() {
+		className = object.getClass().getName();
+		if (model == null) {
+			model = modelSource.createDisplayModel(object.getClass(),
+					overrides.getContainerMessages());
+			final List<String> names = model.getPropertyNames();
+			for (final String p : names) {
+				final PropertyModel pm = model.get(p);
+				final PropertyConduit conduit = pm.getConduit();
+				final Object propertyValue = conduit.get(object);
+				if (!ValidationUtils.isValid(propertyValue)) {
+					model.exclude(p);
+				} else {
+					if (propertyValue.getClass().isAssignableFrom(
+							Collection.class)) {
+						logger.debug("Autoexcluding collection");
+						model.exclude(p);
+					} else {
+						foundOneProperty = true;
+					}
+				}
+			}
+			BeanModelUtils.modify(model, add, include, exclude, reorder);
+		}
 	}
 }

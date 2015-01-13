@@ -21,7 +21,7 @@ import org.tynamo.security.services.SecurityService;
  * 
  * @author djue
  */
-@PluginPage(visualType = G_VisualType.SETTINGS, menuName = "Profile", icon = "fa fa-lg fa-fw fa-list-alt")
+@PluginPage(visualType = G_VisualType.SETTINGS, menuName = "Change Password", icon = "fa fa-lg fa-fw fa-list-alt")
 public class Settings {
 	@Inject
 	private G_UserDataAccess userDataAccess;
@@ -61,7 +61,7 @@ public class Settings {
 		try {
 			success = userDataAccess.setUserPassword(user.getId(), password);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// if the DAO didn't update successfully, tell them so.
 			logger.error("Unable to update password for user "
 					+ user.getUsername() + " Error: " + e.getMessage());

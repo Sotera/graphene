@@ -1,7 +1,6 @@
 package graphene.web.pages;
 
 import graphene.dao.CombinedDAO;
-import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
@@ -12,6 +11,7 @@ import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
 import graphene.util.ExceptionUtil;
+import graphene.util.Tuple;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
@@ -25,16 +25,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
+import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -42,6 +41,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -88,7 +88,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	private Map<String, Object> currentEntity;
 
 	@Property
-	private String currentIcon;
+	private Tuple<String, String> currentIcon;
 
 	@Property
 	private String currentIdentifier;
@@ -98,8 +98,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Inject
 	private CombinedDAO dao;
-	@Inject
-	private DataSourceListDAO dataSourceListDAO;
 
 	@Inject
 	private JavaScriptSupport javaScriptSupport;
@@ -108,13 +106,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	private String extPath;
 	@Property
 	private final GridDataSource gds = new CombinedEntityDataSource(dao);
-
-	@Property
-	@Persist
-	private boolean highlightZoneUpdates;
-
-	@InjectComponent
-	private Zone listZone;
 
 	@Inject
 	private Logger logger;
@@ -144,14 +135,41 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Property
 	private int resultTotalCount;
-
+	/**
+	 * The overall schema, such as an ES index
+	 */
+	@ActivationRequestParameter(value = "schema")
+	@Property
+	private String searchSchema;
+	/**
+	 * Aka subschema aka the type a user would usually select between, such as
+	 * an ES type
+	 */
+	@ActivationRequestParameter(value = "type")
 	@Property
 	private String searchType;
-
+	@ActivationRequestParameter(value = "maxResults")
+	@Property
+	private int maxResults;
+	/**
+	 * The value the user types in
+	 */
+	@ActivationRequestParameter(value = "term")
 	private String searchValue;
+
+	/**
+	 * The type of query to run
+	 */
+	@ActivationRequestParameter(value = "match")
+	private String searchMatch;
 
 	@Property
 	private Object selectedEvent;
+
+	private Map<String, String> reasonMap;
+
+	@Inject
+	private PageRenderLinkSource pageRenderLinkSource;
 
 	public Collection<String> getAddressList() {
 		return (Collection<String>) currentEntity
@@ -175,15 +193,37 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return DataFormatConstants.DATE_FORMAT_STRING;
 	}
 
-	private GrapheneResults<Object> getEntities(final String type,
-			final String value) {
+	/**
+	 * 
+	 * @param type
+	 * @param value
+	 * @param searchValue2
+	 * @return
+	 */
+	private GrapheneResults<Object> getEntities(final String schema,
+			final String subType, final String matchType, final String value,
+			final int maxResults) {
 		GrapheneResults<Object> metaresults = null;
 		if (ValidationUtils.isValid(value)) {
 			final EntityQuery sq = new EntityQuery();
-			sq.addAttribute(new G_SearchTuple<String>(value,
-					G_SearchType.COMPARE_CONTAINS));
-			sq.setMaxResult(200);
-			sq.setSchema(type);
+			G_SearchType g_SearchType = null;
+			if (ValidationUtils.isValid(matchType)) {
+				try {
+					g_SearchType = G_SearchType.valueOf(matchType);
+				} catch (final Exception e) {
+					g_SearchType = G_SearchType.COMPARE_CONTAINS;
+				}
+			}
+			final G_SearchTuple<String> gs = new G_SearchTuple<String>(value,
+					g_SearchType);
+			if (ValidationUtils.isValid(subType)) {
+				sq.getFilters().addAll(
+						graphene.util.StringUtils.tokenizeToStringCollection(
+								subType, ","));
+			}
+			sq.addAttribute(gs);
+			sq.setMaxResult(maxResults);
+			sq.setSchema(schema);
 			sq.setMinimumScore(0.50);
 			if (isUserExists()) {
 				sq.setUserId(getUser().getId());
@@ -198,7 +238,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				populatedTableResults = new ArrayList<Map<String, Object>>();
 				// Populate all the results!
 				for (final Object m : metaresults.getResults()) {
-
 					final DocumentGraphParser parserForObject = phgb
 							.getParserForObject(m);
 					if (parserForObject != null) {
@@ -246,9 +285,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	 * 
 	 * @return
 	 */
-	public Collection<String> getIconList() {
-
-		return (Collection<String>) currentEntity
+	public Collection<Tuple<String, String>> getIconList() {
+		return (Collection<Tuple<String, String>>) currentEntity
 				.get(DocumentGraphParser.ICONLIST);
 	}
 
@@ -260,9 +298,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	public BeanModel getModel() {
 		final BeanModel<Object> model = beanModelSource.createEditModel(
 				Object.class, messages);
-
+		model.addEmpty("rank");
 		model.addEmpty("actions");
-		model.addEmpty("score");
+
 		model.addEmpty("informationIcons");
 		model.addEmpty("date");
 		model.addEmpty("amount");
@@ -271,25 +309,32 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.addEmpty("communicationIdentifierList");
 		model.addEmpty("identifierList");
 
-		model.getById("score").sortable(true);
+		model.getById("informationIcons").sortable(true);
+		model.getById("rank").sortable(true);
 		model.getById("amount").sortable(true);
 		model.getById("date").sortable(true);
 		model.getById("actions").sortable(true);
 		model.getById("nameList").sortable(true);
-		model.getById("informationIcons").sortable(true);
+		model.getById("addressList").sortable(true);
+		model.getById("communicationIdentifierList").sortable(true);
+		model.getById("identifierList").sortable(true);
 
 		return model;
 	}
+
+	public Format getMoneyFormat() {
+		return DataFormatConstants.getMoneyFormat();
+	}
+
+	// /////////////////////////////////////////////////////////////////////
+	// FILTER
+	// /////////////////////////////////////////////////////////////////////
 
 	public Collection<String> getNameList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTNAMELIST);
 
 	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// FILTER
-	// /////////////////////////////////////////////////////////////////////
 
 	public JSONObject getOptions() {
 
@@ -301,10 +346,19 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		// Sort by score then by date.
 		json.put(
 				"aaSorting",
-				new JSONArray().put(new JSONArray().put(1).put("desc")).put(
+				new JSONArray().put(new JSONArray().put(0).put("asc")).put(
 						new JSONArray().put(3).put("desc")));
+		new JSONObject().put("aTargets", new JSONArray().put(0, 4));
+		final JSONObject sortType = new JSONObject("sType", "formatted-num");
+		final JSONArray columnArray = new JSONArray();
+		columnArray.put(4, sortType);
 
+		// json.put("aoColumns", columnArray);
 		return json;
+	}
+
+	public int getRank() {
+		return (int) currentEntity.get(DocumentGraphParser.CARDINAL_ORDER);
 	}
 
 	public String getReportId() {
@@ -347,30 +401,24 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		}
 	}
 
+	// public String getZoneUpdateFunction() {
+	// return highlightZoneUpdates ? "highlight" : "show";
+	// }
+	//
+	// @Log
+	// void onActivate(final String searchValue) {
+	// this.searchValue = searchValue;
+	// }
+	//
+	// String onPassivate() {
+	// return searchValue;
+	// }
+
 	public String getStyleForName() {
 		if (StringUtils.containsIgnoreCase(currentName, searchValue)) {
 			return "bg-color-red txt-color-white";
 		} else {
 			return "bg-color-orange txt-color-white";
-		}
-	}
-
-	public String getZoneUpdateFunction() {
-		return highlightZoneUpdates ? "highlight" : "show";
-	}
-
-	@Log
-	void onActivate(final String searchValue) {
-		this.searchValue = searchValue;
-	}
-
-	@Log
-	String onPassivate() {
-		if (ValidationUtils.isValid(searchValue)) {
-			return searchValue;
-		} else {
-			logger.debug("Passivating with no values");
-			return null;
 		}
 	}
 
@@ -381,7 +429,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 					|| !previousSearchValue.equalsIgnoreCase(searchValue)) {
 				// don't use cached version.
 				try {
-					results = getEntities(searchType, searchValue);
+					results = getEntities(searchSchema, searchType,
+							searchMatch, searchValue, maxResults);
 				} catch (final Exception ex) {
 					// record error to screen!
 					final String message = ExceptionUtil
@@ -394,9 +443,19 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 			}
 			if (request.isXHR()) {
 				logger.debug("Rendering AJAX response");
-				ajaxResponseRenderer.addRender(listZone);
+				// ajaxResponseRenderer.addRender(listZone);
 			}
 		}
+	}
+
+	public Link set(final String schema, final String type, final String match,
+			final String value, final int maxResults) {
+		searchSchema = schema;
+		searchType = type;
+		searchValue = value;
+		searchMatch = match;
+		this.maxResults = maxResults;
+		return pageRenderLinkSource.createPageRenderLink(this.getClass());
 	}
 
 	/**
@@ -410,18 +469,20 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	/**
 	 * This should help with persisted values.
 	 */
+	@Log
 	void setupRender() {
+
 		if (ValidationUtils.isValid(searchValue)) {
 			try {
-				results = getEntities(searchType, searchValue);
+				results = getEntities(searchSchema, searchType, searchMatch,
+						searchValue, maxResults);
 
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			results = new GrapheneResults<Object>();
+			results = null;
 		}
 
 	}
-
 }

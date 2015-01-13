@@ -3,6 +3,7 @@ package graphene.util;
 import graphene.util.time.JodaTimeUtil;
 
 import java.text.DecimalFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -51,6 +52,10 @@ public class DataFormatConstants {
 	public static String formatScore(final Double d) {
 		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING)
 				.format(d);
+	}
+
+	public static Format getMoneyFormat() {
+		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING);
 	}
 
 	public static String reformatDate(final String formatYouThinkItIsIn,

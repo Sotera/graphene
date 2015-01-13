@@ -2,6 +2,8 @@ package graphene.dao;
 
 import graphene.model.datasourcedescriptors.DataSourceList;
 
+import java.util.List;
+
 /**
  * While this is a very simple DAO, if we intend to always pre-load this it may
  * be more readable to have an initialize() method as part of the interface.
@@ -15,5 +17,9 @@ import graphene.model.datasourcedescriptors.DataSourceList;
  * 
  */
 public interface DataSourceListDAO {
+	public List<String> getAvailableTypes();
+
+	public String getDefaultSchema();
+
 	public DataSourceList getList();
 }

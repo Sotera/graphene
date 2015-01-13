@@ -15,34 +15,31 @@
 }
 </style>
 <section id="widget-grid" class="">
-	<t:zone t:id="listZone" id="listZone"
-		t:update="prop:zoneUpdateFunction">
-		<div class="row">
-			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+	<div class="row">
+		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
 
-				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-0"
-					data-widget-editbutton="false">
-					<!-- We can't use the form's id in the css because the Zone messes 
+			<div class="jarviswidget jarviswidget-color-darken" id="wid-id-0"
+				data-widget-editbutton="false">
+				<!-- We can't use the form's id in the css because the Zone messes 
 									with it, so we add a div with its own id. -->
-					<div id="entityFilter" class="well">
-						<form t:type="form" t:id="filterForm" t:zone="listZone">
-							<legend>Search for Documents containing Entity</legend>
-
-							<input class="input-block-level" t:id="searchValue"
-								t:type="TextField" size="50" t:validate="maxLength=255"
-								value="searchValue" /> <input class="btn btn-primary btn-sm"
-								type="submit" value="Search" title="Search" />
-						</form>
-						<t:if test="results">
+				<div id="entityFilter" class="well">
+					<form t:type="form" t:id="filterForm">
+						<input class="input-block-level" t:id="searchValue"
+							t:type="TextField" size="50" value="searchValue" /> <input
+							class="btn btn-primary btn-sm" type="submit" value="Search"
+							title="Search for Documents" />
+					</form>
+					<t:if test="populatedTableResults">
 										Showing ${results.numberOfResultsReturned} hits
 										out of ${results.numberOtResultsTotal}
 									</t:if>
-					</div>
 				</div>
+			</div>
 
-
-
+			<!-- Start results area -->
+			<t:if test="populatedTableResults">
 				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1"
 					data-widget-editbutton="false">
 					<header>
@@ -100,27 +97,29 @@
 								t:row="currentEntity" t:options="options"
 								class="table table-striped table-bordered table-hover"
 								t:rowsPerPage="20" t:empty="block:emptyResults">
-
+								<p:rankCell >
+									 ${rank}
+								</p:rankCell>
 								<p:actionsCell>
 									<t:if test="reportPageLink">
 										<t:pagelink class="btn btn-default" page="prop:reportPageLink"
 											context="reportId" target="reportId">
 											<i class="fa fa-folder-open-o" /> ${reportType} ${reportId}
 												</t:pagelink>
-										<br /><p:else>Report View Unavailable</p:else>
+										<br />
+										<p:else>Report View Unavailable</p:else>
 									</t:if>
 
 									<a class="btn btn-default" href="${extLink}" target="extjs">
 										<i class="fa fa-code-fork"> </i> Graph
 									</a>
 								</p:actionsCell>
-								<p:scoreCell>
-											${score}
-								</p:scoreCell>
+
 								<p:informationIconsCell>
 									<t:loop source="iconList" value="currentIcon">
-										<span class="${currentIcon} label label-danger"
-											rel="popover-hover" data-placement="top">&nbsp; </span>
+										<span class="${currentIcon.first} label alert-info"
+											title="${currentIcon.second}">&nbsp;
+										</span>
 									</t:loop>
 								</p:informationIconsCell>
 								<p:dateCell>
@@ -128,8 +127,8 @@
 									</span>
 								</p:dateCell>
 								<p:amountCell>
-					${amount}
-				</p:amountCell>
+									<t:output value="amount" format="moneyFormat" />
+								</p:amountCell>
 								<p:nameListCell>
 									<t:loop source="nameList" value="currentName">
 										<a class="btn btn-xs ${styleForName}" t:type="pagelink"
@@ -174,10 +173,11 @@
 					</div>
 					<!-- end widget div -->
 				</div>
-				<!-- end widget -->
-			</article>
-		</div>
-		<script src="${context:core/js/SearchTips.js}" />
-	</t:zone>
+			</t:if>
+			<!-- end results area -->
+		</article>
+	</div>
+
+
 </section>
 </html>

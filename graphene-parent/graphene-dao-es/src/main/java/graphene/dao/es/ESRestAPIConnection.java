@@ -20,8 +20,7 @@ public interface ESRestAPIConnection {
 			throws DataAccessException;
 
 	public abstract String performQuery(String basicAuth, String baseurl,
-			String index, String type, EntityQuery q)
-			throws DataAccessException;
+			EntityQuery q) throws DataAccessException;
 
 	public abstract String performQuery(final String basicAuth,
 			final String baseurl, final String index, final String type,

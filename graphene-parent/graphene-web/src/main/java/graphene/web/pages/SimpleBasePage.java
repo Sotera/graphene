@@ -1,6 +1,7 @@
 package graphene.web.pages;
 
 import graphene.dao.LoggingDAO;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_Workspace;
 
@@ -11,13 +12,21 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 public class SimpleBasePage {
 
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_NAME)
+	private String appName;
 
-
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
+	private String appVersion;
 	@Property
 	@SessionState(create = false)
 	private List<G_Workspace> workspaces;
@@ -38,19 +47,12 @@ public class SimpleBasePage {
 	@Inject
 	private Messages messages;
 
+	@Inject
+	private Request request;
+
 	protected Messages getMessages() {
 		return messages;
 	}
-
-	/**
-	 * @return the userExists
-	 */
-	public final boolean isUserExists() {
-		return userExists;
-	}
-
-	@Inject
-	private Request request;
 
 	/**
 	 * @return the user
@@ -60,10 +62,17 @@ public class SimpleBasePage {
 	}
 
 	/**
+	 * @return the userExists
+	 */
+	public final boolean isUserExists() {
+		return userExists;
+	}
+
+	/**
 	 * @param user
 	 *            the user to set
 	 */
-	public final void setUser(G_User user) {
+	public final void setUser(final G_User user) {
 		this.user = user;
 	}
 

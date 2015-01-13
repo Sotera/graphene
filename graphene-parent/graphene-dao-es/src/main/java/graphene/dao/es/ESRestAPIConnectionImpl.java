@@ -8,6 +8,7 @@ import io.searchbox.client.JestClient;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
+import io.searchbox.core.Search.Builder;
 import io.searchbox.core.SearchResult;
 import io.searchbox.indices.CreateIndex;
 
@@ -114,8 +115,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	 * @param q
 	 * @throws Exception
 	 */
-	private String performCommonTermsQuery(final String index,
-			final EntityQuery q) throws Exception {
+	private String performCommonTermsQuery(final EntityQuery q)
+			throws Exception {
 		final StringBuffer terms = new StringBuffer();
 		// Dead simple, just coalesces the values as one long phrase
 		for (final G_SearchTuple<String> qi : q.getAttributeList()) {
@@ -129,8 +130,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 					"_all", queryTerms).lowFreqOperator(Operator.AND);
 
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			final HighlightBuilder h = new HighlightBuilder()
-					.field("narr.narr");
+
+			final HighlightBuilder h = new HighlightBuilder().field("NARR");
 			searchSourceBuilder.query(qbc).highlight(h)
 					.minScore(DEFAULT_MIN_SCORE).sort(SortBuilders.scoreSort());
 			if (q.getMaxResult() == 0) {
@@ -138,10 +139,19 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				q.setMaxResult(200l);
 			}
 			logger.debug("SSB: \n" + searchSourceBuilder.toString());
-			final Search action = new Search.Builder(
-					searchSourceBuilder.toString()).addIndex(index)
+			String schema = q.getSchema();
+			if (!ValidationUtils.isValid(schema)) {
+				schema = indexName;
+			}
+			final Builder sb = new Search.Builder(
+					searchSourceBuilder.toString()).addIndex(schema)
 					.setParameter("from", q.getFirstResult())
-					.setParameter("size", q.getMaxResult()).build();
+					.setParameter("size", q.getMaxResult());
+			if (ValidationUtils.isValid(q.getFilters())) {
+				sb.addType(q.getFilters());
+			}
+			final Search action = sb.build();
+
 			logger.debug("Action:\n" + action.toString());
 			final SearchResult result = client.execute(action);
 			final String resultString = result.getJsonString();
@@ -173,16 +183,23 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 		}
 	}
 
-	private String performIndexQuery(final String index, final EntityQuery q)
-			throws Exception {
+	private String performIndexQuery(final EntityQuery q) throws Exception {
 
 		if (q.getMaxResult() == 0) {
 			logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to one.");
 			q.setMaxResult(1l);
 		}
-		final Search action = new Search.Builder("").addIndex(index)
+		String schema = q.getSchema();
+		if (!ValidationUtils.isValid(schema)) {
+			schema = indexName;
+		}
+		final Builder sb = new Search.Builder("").addIndex(schema)
 				.setParameter("from", q.getFirstResult())
-				.setParameter("size", q.getMaxResult()).build();
+				.setParameter("size", q.getMaxResult());
+		if (ValidationUtils.isValid(q.getFilters())) {
+			sb.addType(q.getFilters());
+		}
+		final Search action = sb.build();
 		logger.debug("Action:\n" + action.toString());
 
 		final SearchResult result = client.execute(action);
@@ -230,14 +247,14 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 	@Override
 	public String performQuery(final String basicAuth, final String baseurl,
-			final String index, final String type, final EntityQuery q)
-			throws DataAccessException {
+			final EntityQuery q) throws DataAccessException {
+
 		String retval = null;
 		try {
 			if (q.getAttributeList().get(0).getValue().isEmpty()) {
-				retval = performIndexQuery(index, q);
+				retval = performIndexQuery(q);
 			} else {
-				retval = performCommonTermsQuery(index, q);
+				retval = performCommonTermsQuery(q);
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();

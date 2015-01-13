@@ -6,6 +6,7 @@ package graphene.services;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.util.ColorUtil;
+import graphene.util.validator.ValidationUtils;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -26,6 +27,66 @@ public class StyleServiceImpl implements StyleService {
 
 	public StyleServiceImpl() {
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getContrastingColor(final String hexColor) {
+		final Color c = Color.decode(hexColor);
+		return getDarkOrLight(c.getRed(), c.getBlue(), c.getGreen());
+	}
+
+	@Override
+	public String getDarkOrLight(final int red, final int green, final int blue) {
+		double brightness = (red * 299) + (green * 587) + (blue * 114);
+		brightness /= 255000;
+
+		if (brightness >= 0.5) {
+			return "#000000";
+		} else {
+			return "#ffffff";
+		}
+	}
+
+	@Override
+	public String getHexColorForEdge(final String key) {
+		return "#000000";
+	}
+
+	@Override
+	public String getHexColorForNode(final String key) {
+		if (!ValidationUtils.isValid(key)) {
+			return "#808080";
+		}
+		// Use presets if available
+		if (colorMap.containsKey(key)) {
+			return colorMap.get(key);
+		} else {
+			// otherwise generate a color based on the key
+			return randomColorForKey(key);
+		}
+	}
+
+	@Override
+	public String getStyleForEdge(final String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getStyleForNode(final String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Color hex2Rgb(final String hexColor) {
+		return Color.decode(hexColor);
+	}
+
+	private String randomColorForKey(final String key) {
+		final int hashInt = key.hashCode();
+		// int r = hashInt % 16777216;
+		return String.format("#%06X", (0xFFFFFF & hashInt));
 	}
 
 	@PostInjection
@@ -73,60 +134,5 @@ public class StyleServiceImpl implements StyleService {
 				colorUtil.getS1shade4());
 
 		numberOfDefinedColors = colorMap.size();
-	}
-
-	@Override
-	public String getHexColorForNode(String key) {
-		if (colorMap.containsKey(key)) {
-			return colorMap.get(key);
-		} else {
-			return randomColorForKey(key);
-		}
-	}
-
-	private String randomColorForKey(String key) {
-		int hashInt = key.hashCode();
-		// int r = hashInt % 16777216;
-		return String.format("#%06X", (0xFFFFFF & hashInt));
-	}
-
-	@Override
-	public String getHexColorForEdge(String key) {
-		return "#000000";
-	}
-
-	@Override
-	public String getStyleForNode(String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getStyleForEdge(String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Color hex2Rgb(String hexColor) {
-		return Color.decode(hexColor);
-	}
-
-	@Override
-	public String getContrastingColor(String hexColor) {
-		Color c = Color.decode(hexColor);
-		return getDarkOrLight(c.getRed(),c.getBlue(),c.getGreen());
-	}
-
-	@Override
-	public String getDarkOrLight(int red, int green, int blue) {
-		double brightness = (red*299)+(green*587)+(blue*114);
-		brightness /= 255000;
-		
-		if(brightness>=0.5){
-			return "#000000";
-		}else{
-			return "#ffffff";
-		}
 	}
 }

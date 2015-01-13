@@ -17534,7 +17534,28 @@ aside {
 .header-search.pull-right {
 	margin-left: 6px
 }
-
+.header-search>select {
+	float:left;
+	display: block;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	min-width: 120px;
+	width: 10%;
+	height: 30px;
+	outline: 0;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 0;
+	border-color: #C6C6C6;
+	background: #fff;
+	color: #404040;
+	appearance: normal;
+	-moz-appearance: none;
+	margin-top: 10px;
+	line-height: normal;
+	right: 200px;
+}
 .header-search>input[type=text] {
 	display: block;
 	-webkit-box-sizing: border-box;

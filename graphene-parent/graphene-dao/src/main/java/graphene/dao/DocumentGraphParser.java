@@ -80,6 +80,7 @@ public interface DocumentGraphParser<T> {
 	 * stored at the top level of the report and is pre-formatted.
 	 */
 	public static final String TOTALAMOUNTSTR = "totalamountinvolved";
+	public static final String CARDINAL_ORDER = "cardinalOrder";
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 
