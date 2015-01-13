@@ -8,7 +8,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
-@PluginPage(visualType = G_VisualType.TOP, menuName = "About Graphene", icon = "fa fa-lg fa-fw fa-question")
+@PluginPage(visualType = G_VisualType.HELP, menuName = "Help", icon = "fa fa-lg fa-fw fa-question")
 public class Help {
 	@Property
 	@Inject

@@ -29,24 +29,10 @@
 										Because each cell may contain multiple fields pulled from each
 										result, sorting may not always be possible. In these cases,
 										use the filter box to narrow down your results.</p>
-									<table class="table table-bordered">
-										<tbody>
-											<tr>
-												<td>
-													<p class="txt-color-greenLight">
-														Geo information <span
-															class="label bg-color-greenLight pull-right">.bg-color-greenLight</span>
-													</p>
-												</td>
 
-												<td>Some examples are <code class="pull-right">
-														addresses</code>, <code class="pull-right"> lat/lon
-														coordinates</code>, <code class="pull-right"> mgrs</code>, <code
-														class="pull-right"> place names</code></td>
-											</tr>
-										</tbody>
-									</table>
-									<p>Once you find a result you would like to see, click an option from the report actions cell of the result you are interested in.</p>
+									<p>Once you find a result you would like to see, click an
+										option from the report actions cell of the result you are
+										interested in.</p>
 								</td>
 
 							</tr>
@@ -57,28 +43,8 @@
 										An abbreviation of the word attribute is <abbr
 											title="attribute">attr</abbr>.
 									</p>
-									<p></p> <pre>
-										<code class="html">
-											<span class="nt">&lt;abbr</span> <span class="na">title=</span><span
-												class="s">"attribute"</span><span class="nt">&gt;</span>attr<span
-												class="nt">&lt;/abbr&gt;</span>
-</code>
-									</pre>
-									<p></p>
+
 								</td>
-								<td class="info">'Open Sans' 18px Light</td>
-							</tr>
-							<tr>
-								<td><h4>h4. SmartAdmin heading</h4></td>
-								<td class="info">'Open Sans' 17px Light</td>
-							</tr>
-							<tr>
-								<td><h5>h5. SmartAdmin heading</h5></td>
-								<td class="info">'Open Sans' 16px Light</td>
-							</tr>
-							<tr>
-								<td><h6>h6. SmartAdmin heading</h6></td>
-								<td class="info">'Open Sans' 14px Bold</td>
 							</tr>
 						</tbody>
 					</table>
@@ -90,14 +56,7 @@
 		<p>Create a workspace, or choose from a previous one</p>
 		<p>Make changes to your workspace. Changes are saved
 			automatically.</p>
-		<p></p>
-		Coming soon!
-		<p>Share your workspace with others</p>
-		<p>Explore other analysts' workspaces in your group. You can ask
-			them for permission to join their workspace as a collaborator!</p>
-		<p>Create scenarios in your workspace</p>
-		<p>See other workspaces that your targets are in</p>
-		<p>Export your workspace to popular formats!</p>
+
 	</div>
 </div>
 </html>
