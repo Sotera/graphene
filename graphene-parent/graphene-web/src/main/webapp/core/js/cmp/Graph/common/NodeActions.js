@@ -340,7 +340,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype:'fieldcontainer',
 				height:'auto',
 				width: '100%',
-				items:[expand, unexpand, show, stop]
+				items:[expand, unexpand, stop, deleteBtn]
 			}]
 			
 		});
@@ -354,7 +354,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype: 'fieldcontainer',
 				height: 'auto',
 				width: '100%',
-				items: [deleteBtn, unmerge, help]
+				items: [unmerge, help]
 			}]
 		});
 
