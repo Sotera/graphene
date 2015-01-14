@@ -51,7 +51,6 @@ table td {
 
 						<!-- widget content -->
 						<div class="widget-body no-padding">
-
 							<div class="widget-body-toolbar"></div>
 							<t:jquery.datatable t:id="resultsdt"
 								t:source="populatedTableResults" t:model="model"
@@ -85,10 +84,11 @@ table td {
 								</p:informationIconsCell>
 								<p:dateCell>
 									${currentEntity.get('firstDate')}
-									
 								</p:dateCell>
 								<p:amountCell>
-									<t:output value="amount" format="moneyFormat" />
+									<span class="label label-info">
+										<t:output value="amount" format="moneyFormat" />
+									</span>
 								</p:amountCell>
 								<p:nameListCell>
 									<t:loop source="nameList" value="currentName">

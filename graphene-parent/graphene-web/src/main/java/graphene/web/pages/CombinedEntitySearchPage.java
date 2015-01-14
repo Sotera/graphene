@@ -17,10 +17,12 @@ import graphene.web.annotations.PluginPage;
 import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -185,6 +187,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
+	public Format getMoneyFormat() {
+	    Locale locale = new Locale("en", "US"); 
+		return NumberFormat.getCurrencyInstance(locale);
+	}
+	
+	//public String getAmount() {
+	//	Long l = (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
+	//	return DataFormatConstants.formatMoney(l);
+	//}
+	
 	public Collection<String> getCIdentifierList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTCIDLIST);
