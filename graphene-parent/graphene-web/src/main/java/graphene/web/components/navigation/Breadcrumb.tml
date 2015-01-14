@@ -1,0 +1,14 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+<t:content>
+	<!-- breadcrumb -->
+	<ol class="breadcrumb">
+		<!-- This is auto generated -->
+	</ol>
+	<!-- end breadcrumb -->
+</t:content>
+</html>

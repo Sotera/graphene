@@ -110,7 +110,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 	@Override
 	public List<EntityQuery> getQueries(final String userId,
-			final String partialTerm, final int limit) {
+			final String partialTerm, final int offset, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
@@ -135,10 +135,12 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			}
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated")
-				.order(SortOrder.DESC).ignoreUnmapped(true);
+				.order(SortOrder.DESC).ignoreUnmapped(false);
 
 		final Search search = new Search.Builder(searchSourceBuilder.sort(
-				byDate).toString()).addIndex(indexName).addType(type).build();
+				byDate).toString()).addIndex(indexName).addType(type)
+				.setParameter("from", offset).setParameter("size", limit)
+				.build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
 		List<EntityQuery> returnValue = new ArrayList<EntityQuery>(0);

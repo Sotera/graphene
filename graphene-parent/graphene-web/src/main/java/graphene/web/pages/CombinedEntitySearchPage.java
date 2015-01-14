@@ -10,7 +10,6 @@ import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
-import graphene.util.ExceptionUtil;
 import graphene.util.Tuple;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
@@ -31,6 +30,7 @@ import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.BeanModel;
@@ -42,8 +42,6 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.slf4j.Logger;
@@ -73,9 +71,6 @@ import org.slf4j.Logger;
 public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Inject
-	private AjaxResponseRenderer ajaxResponseRenderer;
-
-	@Inject
 	private BeanModelSource beanModelSource;
 
 	@Property
@@ -101,9 +96,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Inject
 	private JavaScriptSupport javaScriptSupport;
-	@Inject
-	@Symbol(G_SymbolConstants.EXT_PATH)
-	private String extPath;
+
 	@Property
 	private final GridDataSource gds = new CombinedEntityDataSource(dao);
 
@@ -124,9 +117,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	private List<Map<String, Object>> populatedTableResults;
 
 	private String previousSearchValue;
-
-	@Inject
-	private Request request;
 
 	@Property
 	private GrapheneResults<Object> results;
@@ -157,6 +147,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@ActivationRequestParameter(value = "term")
 	private String searchValue;
 
+	@InjectPage
+	private CombinedEntitySearchPage searchPage;
+
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+	private Integer defaultMaxResults;
 	/**
 	 * The type of query to run
 	 */
@@ -166,14 +162,23 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Property
 	private Object selectedEvent;
 
-	private Map<String, String> reasonMap;
-
 	@Inject
 	private PageRenderLinkSource pageRenderLinkSource;
+
+	@Inject
+	@Symbol(G_SymbolConstants.EXT_PATH)
+	private String extPath;
 
 	public Collection<String> getAddressList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTADDRESSLIST);
+	}
+
+	public Link getAddressPivotLink() {
+		final Link l = searchPage.set(null, null,
+				G_SearchType.COMPARE_EQUALS.name(), currentAddress,
+				defaultMaxResults);
+		return l;
 	}
 
 	public Double getAmount() {
@@ -326,20 +331,22 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return DataFormatConstants.getMoneyFormat();
 	}
 
-	// /////////////////////////////////////////////////////////////////////
-	// FILTER
-	// /////////////////////////////////////////////////////////////////////
-
 	public Collection<String> getNameList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTNAMELIST);
 
 	}
 
+	// /////////////////////////////////////////////////////////////////////
+	// FILTER
+	// /////////////////////////////////////////////////////////////////////
+
 	public JSONObject getOptions() {
 
 		final JSONObject json = new JSONObject(
 				"bJQueryUI",
+				"true",
+				"bAutoWidth",
 				"true",
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
@@ -355,6 +362,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 		// json.put("aoColumns", columnArray);
 		return json;
+	}
+
+	public Link getPivotLink(final String term) {
+		final Link l = searchPage.set(null, null,
+				G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+		return l;
 	}
 
 	public int getRank() {
@@ -393,6 +406,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		}
 	}
 
+	public String getStyleForCommunicationIdentifier() {
+		if (StringUtils.containsIgnoreCase(currentCommunicationId, searchValue)) {
+			return "bg-color-red txt-color-white";
+		} else {
+			return "bg-color-magenta txt-color-white";
+		}
+	}
+
 	public String getStyleForIdentifier() {
 		if (StringUtils.containsIgnoreCase(currentIdentifier, searchValue)) {
 			return "bg-color-red txt-color-white";
@@ -401,50 +422,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		}
 	}
 
-	// public String getZoneUpdateFunction() {
-	// return highlightZoneUpdates ? "highlight" : "show";
-	// }
-	//
-	// @Log
-	// void onActivate(final String searchValue) {
-	// this.searchValue = searchValue;
-	// }
-	//
-	// String onPassivate() {
-	// return searchValue;
-	// }
-
 	public String getStyleForName() {
 		if (StringUtils.containsIgnoreCase(currentName, searchValue)) {
 			return "bg-color-red txt-color-white";
 		} else {
 			return "bg-color-orange txt-color-white";
-		}
-	}
-
-	void onSuccessFromFilterForm() {
-		if (ValidationUtils.isValid(searchValue)) {
-			if ((results == null)
-					|| (results.getNumberOfResultsReturned() == 0)
-					|| !previousSearchValue.equalsIgnoreCase(searchValue)) {
-				// don't use cached version.
-				try {
-					results = getEntities(searchSchema, searchType,
-							searchMatch, searchValue, maxResults);
-				} catch (final Exception ex) {
-					// record error to screen!
-					final String message = ExceptionUtil
-							.getRootCauseMessage(ex);
-					alertManager.alert(Duration.SINGLE, Severity.ERROR,
-							"ERROR: " + message);
-					logger.error(message);
-				}
-				previousSearchValue = searchValue;
-			}
-			if (request.isXHR()) {
-				logger.debug("Rendering AJAX response");
-				// ajaxResponseRenderer.addRender(listZone);
-			}
 		}
 	}
 
@@ -471,7 +453,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	 */
 	@Log
 	void setupRender() {
-
 		if (ValidationUtils.isValid(searchValue)) {
 			try {
 				results = getEntities(searchSchema, searchType, searchMatch,

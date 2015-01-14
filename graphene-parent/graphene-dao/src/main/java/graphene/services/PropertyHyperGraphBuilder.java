@@ -116,7 +116,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 							edge.addData("Certainty", DataFormatConstants
 									.formatPercent(nodeCertainty));
 							edge.setLineStyle("dotted");
-							//edge.setColor("#787878");
+							// edge.setColor("#787878");
 						}
 						edge.addData("Local_Priority", "" + localPriority);
 						edge.addData("Min_Score_Required", ""
@@ -291,6 +291,10 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			intStatus = 1; // will trigger the message.
 			strStatus = "Returning only " + currentDegree
 					+ " hops, as maximum nodes you requested would be exceeded";
+		} else {
+			intStatus = 1; // will trigger the message.
+			strStatus = "Returning " + nodeList.getNodes().size()
+					+ " nodes and " + edgeMap.size() + " edges.";
 		}
 
 		// NOW finally add in all those unique edges.
@@ -304,7 +308,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 				edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
-
+		logger.debug("Graph status: " + g.getStrStatus());
 		for (final V_LegendItem li : legendItems) {
 			g.addLegendItem(li);
 		}

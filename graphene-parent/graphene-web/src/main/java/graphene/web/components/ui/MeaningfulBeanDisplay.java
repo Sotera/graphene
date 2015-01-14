@@ -1,7 +1,11 @@
 package graphene.web.components.ui;
 
+import graphene.dao.DataSourceListDAO;
 import graphene.dao.StyleService;
+import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.util.validator.ValidationUtils;
+import graphene.web.pages.CombinedEntitySearchPage;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,7 +13,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -17,7 +23,9 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.slf4j.Logger;
 
 @SupportsInformalParameters
@@ -117,6 +125,25 @@ public class MeaningfulBeanDisplay {
 
 	boolean foundOneProperty = false;
 
+	@Inject
+	private PageRenderLinkSource prls;
+
+	@InjectPage
+	private CombinedEntitySearchPage searchPage;
+
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+	private Integer defaultMaxResults;
+
+	@Inject
+	private DataSourceListDAO dao;
+
+	public Link getPivotLink() {
+		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS
+				.name(), getPropertyValue().toString(), defaultMaxResults);
+		return l;
+	}
+
 	public String getPropertyClass() {
 		return lean ? null : getPropertyModel().getId();
 	}
@@ -178,6 +205,7 @@ public class MeaningfulBeanDisplay {
 	}
 
 	void setupRender() {
+
 		className = object.getClass().getName();
 		if (model == null) {
 			model = modelSource.createDisplayModel(object.getClass(),

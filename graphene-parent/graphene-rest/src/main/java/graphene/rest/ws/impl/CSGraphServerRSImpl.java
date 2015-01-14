@@ -142,13 +142,13 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(
 				maxEdgesPerNode, 100);
 		V_CSGraph m = null;
-		if (useSaved) {
-			try {
-				if (ValidationUtils.isValid(value)) {
-
+		if (ValidationUtils.isValid(value) && !"null".equals(value[0])) {
+			if (useSaved) {
+				final String firstValue = value[0];
+				try {
 					// TODO: fix which key is going to be used as the seed
 					final G_PersistedGraph existingGraph = wdao
-							.getExistingGraph(value[0], null, null);
+							.getExistingGraph(firstValue, null, null);
 					final ObjectMapper mapper = new ObjectMapper();
 					if (existingGraph != null) {
 						m = mapper.readValue(existingGraph.getGraphJSONdata(),
@@ -156,6 +156,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 						if (m == null) {
 							logger.error("Could not parse existing graph from a previous save, will regenerate.");
 						} else {
+							loggingDao.recordQuery("Opened existing graph for "
+									+ firstValue);
 							m.setStrStatus("This graph was previously saved on "
 									+ DataFormatConstants
 											.formatDate(existingGraph
@@ -164,32 +166,44 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					} else {
 						logger.info("Could not find previously saved graph, will regenerate");
 					}
-				} else {
-					logger.error("Tried to recover an existing graph, but no valid id was provided: "
-							+ value);
+
+				} catch (final Exception e) {
+					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
-			} catch (final Exception e) {
-				e.printStackTrace();
-				logger.error(e.getMessage());
 			}
-		}
-		// If pulling from cache didn't work, get a new graph
-		if (m == null) {
-			V_GenericGraph g = null;
-			try {
-				final V_GraphQuery q = new V_GraphQuery();
-				q.addSearchIds(value);
-				q.setDirected(false);
-				q.setMaxNodes(maxNodesInt);
-				q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
-				q.setMaxHops(maxDegreeInt);
-				loggingDao.recordQuery(q);
-				g = propertyGraphBuilder.makeGraphResponse(q);
-				m = new V_CSGraph(g, true);
-			} catch (final Exception e) {
-				logger.error(ExceptionUtil.getRootCauseMessage(e));
-				e.printStackTrace();
+			// If pulling from cache didn't work, get a new graph
+			if (m == null) {
+				V_GenericGraph g = null;
+				try {
+					final V_GraphQuery q = new V_GraphQuery();
+					q.addSearchIds(value);
+					q.setDirected(false);
+					q.setMaxNodes(maxNodesInt);
+					q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
+					q.setMaxHops(maxDegreeInt);
+					loggingDao.recordQuery(q);
+					g = propertyGraphBuilder.makeGraphResponse(q);
+					m = new V_CSGraph(g, true);
+				} catch (final Exception e) {
+					logger.error(ExceptionUtil.getRootCauseMessage(e));
+					e.printStackTrace();
+				}
 			}
+
+		} else {
+			m = new V_CSGraph();
+			String errorMessage;
+			if (useSaved) {
+				errorMessage = "Tried to recover an existing graph, but no valid id was provided to the server: ["
+						+ StringUtils.toString(value) + "]";
+			} else {
+				errorMessage = "Tried to generate a new graph, but no valid id was provided to the server: ["
+						+ StringUtils.toString(value) + "]";
+			}
+			logger.error(errorMessage);
+			m.setIntStatus(1);
+			m.setStrStatus(errorMessage);
 		}
 		return m;
 

@@ -1,0 +1,16 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<t:content>
+			<span class="ribbon-button-alignment">
+				<span id="refresh" class="btn btn-ribbon" data-title="refresh"
+					rel="tooltip" data-placement="bottom"
+					data-original-title="&lt;i class='text-warning fa fa-warning'&gt;&lt;/i&gt; Warning! This will reset all your widget settings."
+					data-html="true">
+					<i class="fa fa-refresh"></i>
+				</span>
+			</span>
+	</t:content>
+</html>

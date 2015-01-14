@@ -123,6 +123,7 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.ENABLE_SETTINGS, true);
 		configuration.add(G_SymbolConstants.ENABLE_ADMIN, true);
 		configuration.add(G_SymbolConstants.ENABLE_TAG_CLOUDS, false);
+		configuration.add(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS, 200);
 	}
 
 	@Contribute(AtmosphereHttpServletRequestFilter.class)

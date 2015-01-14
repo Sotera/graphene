@@ -18,88 +18,100 @@ import org.joda.time.DateTime;
  * An empty implementation of the logging interface.
  * 
  * @author djue
- *
+ * 
  */
 public class LoggingDAONullImpl implements LoggingDAO {
 
-	/* (non-Javadoc)
-	 * @see graphene.dao.LoggingDAO#recordQuery(java.lang.String)
-	 */
 	@Override
-	public boolean recordQuery(String queryString) {
+	public List<Object> getAllEvents(final String userId,
+			final String partialTerm, final int limit) {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see graphene.dao.LoggingDAO#recordLogin(java.lang.String, org.joda.time.DateTime)
-	 */
 	@Override
-	public boolean recordLogin(String userName, DateTime date) {
+	public List<TemporalGraphQuery> getGraphQueries(final String userId,
+			final String partialTerm, final int limit) {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graphene.dao.LoggingDAO#getQueries(java.lang.String,
+	 * java.lang.String, int)
+	 */
+	@Override
+	public List<EntityQuery> getQueries(final String userId,
+			final String partialTerm, final int offset, final int limit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ReportViewEvent> getReportViewEvents(final String userId,
+			final int limit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see graphene.dao.LoggingDAO#recordExport(java.lang.String)
 	 */
 	@Override
-	public boolean recordExport(String queryString) {
+	public boolean recordExport(final String queryString) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see graphene.dao.LoggingDAO#recordQuery(graphene.model.query.EntityQuery)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graphene.dao.LoggingDAO#recordLogin(java.lang.String,
+	 * org.joda.time.DateTime)
 	 */
 	@Override
-	public void recordQuery(BasicQuery sq) {
+	public boolean recordLogin(final String userName, final DateTime date) {
 		// TODO Auto-generated method stub
-
+		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see graphene.dao.LoggingDAO#getQueries(java.lang.String, java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * graphene.dao.LoggingDAO#recordQuery(graphene.model.query.EntityQuery)
 	 */
 	@Override
-	public List<EntityQuery> getQueries(String userId, String partialTerm,
-			int limit) {
+	public void recordQuery(final BasicQuery sq) {
 		// TODO Auto-generated method stub
-		return null;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graphene.dao.LoggingDAO#recordQuery(java.lang.String)
+	 */
+	@Override
+	public boolean recordQuery(final String queryString) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public void recordQuery(V_GraphQuery q) {
+	public void recordQuery(final V_GraphQuery q) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public List<TemporalGraphQuery> getGraphQueries(String userId,
-			String partialTerm, int limit) {
+	public void recordReportViewEvent(final ReportViewEvent q) {
 		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public List<ReportViewEvent> getReportViewEvents(String userId, int limit) {
-		// TODO Auto-generated method stub
-		return null;
 	}
-
-	@Override
-	public List<Object> getAllEvents(String userId, String partialTerm,
-			int limit) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void recordReportViewEvent(ReportViewEvent q) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
 
 }

@@ -39,6 +39,9 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	@Inject
 	@Symbol(JestModule.ES_SEARCH_INDEX)
 	private String indexName;
+	@Inject
+	@Symbol(JestModule.ES_DEFAULT_TIMEOUT)
+	private String defaultESTimeout;
 
 	private String createCleanUrl(@Nullable final String basicAuth,
 			final String baseUrl) {
@@ -146,13 +149,15 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final Builder sb = new Search.Builder(
 					searchSourceBuilder.toString()).addIndex(schema)
 					.setParameter("from", q.getFirstResult())
-					.setParameter("size", q.getMaxResult());
+					.setParameter("size", q.getMaxResult())
+					.setParameter("timeout", defaultESTimeout);
 			if (ValidationUtils.isValid(q.getFilters())) {
 				sb.addType(q.getFilters());
 			}
 			final Search action = sb.build();
 
 			logger.debug("Action:\n" + action.toString());
+
 			final SearchResult result = client.execute(action);
 			final String resultString = result.getJsonString();
 			return resultString;

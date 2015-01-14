@@ -49,6 +49,8 @@ public class G_SymbolConstants {
 	 */
 	public static final String EXT_PATH = "graphene.ext-path";
 
+	public static final String DEFAULT_MAX_SEARCH_RESULTS = "graphene.default-max-search-results";
+
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}

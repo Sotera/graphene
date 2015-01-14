@@ -25,6 +25,8 @@ public class JestModule {
 	public static final String ES_PERSISTED_GRAPH_INDEX = "graphene.es-persisted-graph-index";
 	public static final String ES_PERSISTED_GRAPH_TYPE = "graphene.es-persisted-graph-type";
 
+	public static final String ES_DEFAULT_TIMEOUT = "graphene.es-default-timeout";
+
 	public static void bind(final ServiceBinder binder) {
 
 	}

@@ -2,10 +2,12 @@ package graphene.web.components.navigation;
 
 import graphene.dao.DataSourceListDAO;
 import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.pages.CombinedEntitySearchPage;
-import graphene.web.services.SearchBrokerService;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.Link;
@@ -18,7 +20,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.PageRenderLinkSource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.slf4j.Logger;
 
@@ -28,6 +30,8 @@ public class GlobalSearch {
 
 	@Inject
 	SelectModelFactory smf;
+
+	@Persist
 	@Property
 	private String selectedType;
 	@Inject
@@ -35,17 +39,21 @@ public class GlobalSearch {
 	@Property
 	private List<String> availableTypes;
 
-	@Inject
-	private AlertManager alertManager;
-	@Inject
-	private PageRenderLinkSource prls;
+	@Property
+	private List<Integer> maxResultsList;
 
 	@Inject
-	private SearchBrokerService broker;
+	private AlertManager alertManager;
+
 	@Persist
 	@Property
 	private String searchValue;
-
+	@Persist
+	@Property
+	private Integer maxResults;
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+	private Integer defaultMaxResults;
 	@Inject
 	private Logger logger;
 	@InjectPage
@@ -54,13 +62,14 @@ public class GlobalSearch {
 	Object onSuccessFromGlobalSearchForm() {
 		logger.debug("Searching with " + searchValue + " type: " + selectedType);
 		Object retval = null;
+		if (!ValidationUtils.isValid(maxResults)) {
+			maxResults = defaultMaxResults;
+		}
 		if (ValidationUtils.isValid(searchValue)) {
 			final Link link2 = searchPage.set(dao.getDefaultSchema(),
 					selectedType, G_SearchType.COMPARE_CONTAINS.name(),
-					searchValue, 100);
-			// final Link link = prls.createPageRenderLinkWithContext(
-			// broker.getSearchPage(searchValue), searchValue,
-			// selectedType);
+					searchValue, maxResults);
+
 			retval = link2;
 		} else {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
@@ -76,9 +85,19 @@ public class GlobalSearch {
 
 	@SetupRender
 	private void setupRender() {
-		availableTypes = dao.getAvailableTypes();
+		maxResultsList = new ArrayList<Integer>(4);
+		maxResultsList.add(new Integer(200));
+		maxResultsList.add(new Integer(500));
+		maxResultsList.add(new Integer(1000));
+		maxResultsList.add(new Integer(5000));
+		maxResults = defaultMaxResults;
 		if (!ValidationUtils.isValid(availableTypes)) {
-			logger.error("Could not get a list of types from the server.");
+			availableTypes = dao.getAvailableTypes();
+			if (!ValidationUtils.isValid(availableTypes)) {
+				logger.error("Could not get a list of types from the server.");
+			} else {
+				Collections.sort(availableTypes);
+			}
 		}
 	}
 }
