@@ -187,14 +187,18 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
+	//public String getAmount() {
+	//	Long l = (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
+	//	return DataFormatConstants.formatMoney(l);
+	//}
+	
 	public Format getMoneyFormat() {
 	    Locale locale = new Locale("en", "US"); 
 		return NumberFormat.getCurrencyInstance(locale);
 	}
-	
-	//public String getAmount() {
-	//	Long l = (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
-	//	return DataFormatConstants.formatMoney(l);
+
+	//public Format getMoneyFormat() {
+	//	return DataFormatConstants.getMoneyFormat();
 	//}
 	
 	public Collection<String> getCIdentifierList() {
@@ -337,10 +341,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.getById("identifierList").sortable(true);
 
 		return model;
-	}
-
-	public Format getMoneyFormat() {
-		return DataFormatConstants.getMoneyFormat();
 	}
 
 	public Collection<String> getNameList() {
