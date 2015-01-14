@@ -65,4 +65,8 @@ public class DataFormatConstants {
 			return toFormat;
 		}
 	}
+	
+	public static String formatMoney(final Long l) {
+		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(l);
+	}
 }

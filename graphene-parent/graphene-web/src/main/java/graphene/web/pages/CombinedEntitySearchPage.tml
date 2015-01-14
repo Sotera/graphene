@@ -84,14 +84,11 @@ table td {
 										rel="popover-hover"
 										data-content="Example: date the report was filed on or the date it was received.">
 										Dates Relevant to Report </span> 
-											<!-- remove the blue "Amount" legend item -->
-											<!--
-											<span class="label label-info"
-											style="margin-right: 3px" data-placement="top"
-											rel="popover-hover"
-											data-content="The amount of money involved with a report.">
-											Amount Involved </span>
-											-->
+										<span class="label label-info"
+										style="margin-right: 3px" data-placement="top"
+										rel="popover-hover"
+										data-content="The amount of money involved with a report.">
+										Amount Involved </span>
 										<span class="label bg-color-orange txt-color-white"
 										style="margin-right: 3px" data-placement="top"
 										rel="popover-hover"
@@ -142,7 +139,9 @@ table td {
 									</span>
 								</p:dateCell>
 								<p:amountCell>
-									${amount}
+									<span class="label label-info">
+										<t:output value="amount" format="moneyFormat" />
+									</span>
 								</p:amountCell>
 								<p:subjectsCell>
 									<t:loop source="nameList" value="currentName">
