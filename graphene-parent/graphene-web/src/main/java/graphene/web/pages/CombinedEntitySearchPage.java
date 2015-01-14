@@ -325,7 +325,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.addEmpty("informationIcons");
 		model.addEmpty("date");
 		model.addEmpty("amount");
-		model.addEmpty("nameList");
+		model.addEmpty("subjects");
 		model.addEmpty("addressList");
 		model.addEmpty("communicationIdentifierList");
 		model.addEmpty("identifierList");
@@ -335,7 +335,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.getById("amount").sortable(true);
 		model.getById("date").sortable(true);
 		model.getById("actions").sortable(true);
-		model.getById("nameList").sortable(true);
+		model.getById("subjects").sortable(true);
 		model.getById("addressList").sortable(true);
 		model.getById("communicationIdentifierList").sortable(true);
 		model.getById("identifierList").sortable(true);
