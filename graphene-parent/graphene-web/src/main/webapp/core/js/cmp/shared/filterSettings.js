@@ -53,11 +53,12 @@ Ext.define("DARPA.FilterSettings",
 	extend:"Ext.form.FieldSet",
         // id:    CAN be set in the calling code but NOT here as this is a reusable component.
 	items:[
-            Ext.create('DARPA.dategroup', {itemId: 'graphfilterFromDate', margins: '2,20,0,1', label:'From:', align:'left'}), // bottom left right top, from date
-            Ext.create('DARPA.dategroup', {itemId: 'graphfilterToDate', margins: '2,0,20,1', label:'To:' , align:'left'}),   // to date
+            Ext.create('DARPA.dategroup', {hidden: true, itemId: 'graphfilterFromDate', margins: '2,20,0,1', label:'From:', align:'left'}), // bottom left right top, from date
+            Ext.create('DARPA.dategroup', {hidden: true, itemId: 'graphfilterToDate', margins: '2,0,20,1', label:'To:' , align:'left'}),   // to date
 
             // Slider with multiple controls for changing the start and end dates
             Ext.create('Ext.slider.Multi', {    // items[2]
+				hidden: true, 
                 itemId: 'graphfilterDateSlider',
                 width: 280,
                 height: 34,
@@ -115,6 +116,7 @@ Ext.define("DARPA.FilterSettings",
             },
             // Added 11/07/13
             {    // This field is for filtering by the link amount or number of calls. items[4]
+					hidden: true, 
                     xtype:'textfield',		
                     fieldLabel:'Amount (Min,Max)', 
                     itemId: 'graphfilterAmount',
@@ -128,6 +130,7 @@ Ext.define("DARPA.FilterSettings",
             {
                     xtype:'button',
                     text:'ADDITIONAL ATTRIBUTES',
+					hidden: true, 
                     disabled:false,
                     itemId: 'btnAdditionalFilterSettings',
                     margin:4,   
@@ -339,16 +342,11 @@ Ext.define("DARPA.FilterSettings",
                                 
                                 Ext.Msg.alert(
                                    'Help',
-                                   '<b>From and To</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; From and To Dates can be manually entered or you can use the date picker on the right to select the dates. ' +
-                                       'Once the dates have been selected, you can adjust them using the sliders below the date fields.<br><br>' +
                                    '<b>' + srchFieldLabel + '</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This can be a single ' + singularLabel + ' or a comma separated list of ' + srchFieldLabel + '.<br>' +
                                        'Each ' + singularLabel + ' can be a partial ' + singularLabel + '. For example: 863091,950. This would match all ' + srchFieldLabel + ' containing *863091* or *950*.<br><br>' +
-                                   '<b>Amount</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This can be a single number or a Minimum and Maximum amount range. For example: 10,200. This would match all transactions or connections with amounts between 10 and 200 inclusive.<br><br>' +
                                    '<b>CLEAR</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This will clear the filter settings and redisplay the graph. ' +
                                    'This will also redisplay any nodes that have been manually hidden.<br><br>' +
-                                   '<b>APPLY TO GRAPH</b>: This will display the graph with the filter settings.<br><br>' +
-                                   '<b>Animate / Step</b>: This will increment or decrement the specified From and To dates and will auto update the graph display. ' +
-                                   'Move the slider to change the speed of the animation. If the slider is all the way to the left (at 0) this will stop animation.<br><br>'  
+                                   '<b>APPLY TO GRAPH</b>: This will display the graph with the filter settings.<br><br>' 
                                 );
                             }
                         } // listeners
@@ -356,12 +354,14 @@ Ext.define("DARPA.FilterSettings",
                 {   // items[9]
                     xtype: 'label',
                     margin: 0,
+					hidden: true, 
                     html: "<hr>",
                     width: 240
                 },
             // Animate Temporal controls
             Ext.create('Ext.form.FieldContainer', { // items[10]
                 width: 290,
+				hidden: true, 
                 maxHeight: 28,
                 margin: 1,
                 layout: 'hbox',
@@ -500,7 +500,7 @@ Ext.define("DARPA.FilterSettings",
         additionalFields: [],   // This is a config attribute to the filter settings object. 
                                 // It defines the additional attributes in the graph that can be filtered
         
-        searchFieldLabelText: "Identifiers(s)",  // can be changed using setSearchFieldLabel()
+        searchFieldLabelText: "Identifier(s)",  // can be changed using setSearchFieldLabel()
         
         // This sets the Graph Frame context for the Filter
         setGraph: function(gf) {            
