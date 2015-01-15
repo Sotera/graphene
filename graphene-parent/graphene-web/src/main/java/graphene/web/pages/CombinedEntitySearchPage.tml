@@ -26,7 +26,7 @@ table td {
 }
 
 .pivotlink {
-	max-width: 200px;
+	max-width: 400px;
 	white-space: normal;
 }
 </style>

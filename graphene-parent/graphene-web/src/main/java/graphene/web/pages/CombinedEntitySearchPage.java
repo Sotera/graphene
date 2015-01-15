@@ -364,70 +364,86 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
 		json.put(
-				"aaSorting",
-				new JSONArray().put(new JSONArray().put(0).put("asc")).put(
-						new JSONArray().put(3).put("desc")));
-		new JSONObject().put("aTargets", new JSONArray().put(0, 4));
-		final JSONObject sortType = new JSONObject("sType", "formatted-num");
-		final JSONArray columnArray = new JSONArray();
-		/*
-		JSONObject obj = new JSONObject();
-		obj.put("mDataProp", "rank");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "numeric"); //TODO sort as int
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "actions");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "string");
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "informationIcons");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "string");
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "date");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "date"); //TODO sort as date
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "amount");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "numeric");
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "subjects");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "string");
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "addressList");
-		obj.put("bSortable", true);
-		obj.put("width", "20%");
-		obj.put("sType", "string");
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "communicationIdentifierList");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "string");
-		columnArray.put(obj);
-		obj = new JSONObject();
-		obj.put("mDataProp", "identifierList");
-		obj.put("bSortable", true);
-		obj.put("width", "10%");
-		obj.put("sType", "string");
-		columnArray.put(obj);
+			"aaSorting",
+			new JSONArray()
+				.put(new JSONArray().put(0).put("asc"))
+				.put(new JSONArray().put(3).put("desc"))
+		);
+		
+		JSONArray columnArray = new JSONArray();
+		
+		// a two-dimensional array that acts as a definition and mapping between column headers and their widths (in %)
+		final String[][] properties = {
+			{"rank", "1%"}, {"actions", "10%"}, {"informationIcons", "8%"}, 
+			{"date", "7%"}, {"amount", "7%"}, {"subjects", "12%"}, {"addressList", "25%"},
+			{"communicationIdentifierList", "15%"}, {"identifierList", "15%"}
+		};
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "numeric"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "date"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "numeric" // TODO fixme
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"	
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"	
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
 
 		json.put("aoColumns", columnArray);
-		*/
+		
 		return json;
 	}
 
