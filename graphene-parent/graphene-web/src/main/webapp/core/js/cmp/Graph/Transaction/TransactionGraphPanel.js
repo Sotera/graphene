@@ -163,6 +163,8 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				if (self.json && self.json.nodes.length == 0) {
 					self.setStatus("NO DATA FOUND TO PLOT");
 				} else { 
+					// hack to determine if graph comes back with saved positions
+					if (self.json.nodes[0].position == null) useSaved = false;
 					if (self.GraphVis.getGv() != null) {
 						self.clear();
 						self.showjson(self.prevLoadParams.number, useSaved);
