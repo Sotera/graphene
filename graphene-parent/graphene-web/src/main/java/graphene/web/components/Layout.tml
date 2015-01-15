@@ -110,6 +110,9 @@
 	<!-- JQUERY UI + Bootstrap Slider -->
 	<script
 		src="${context:/core/js/plugin/bootstrap-slider/bootstrap-slider.min.js}" />
+		
+	<!-- JQUERY COLUMNIZER -->
+	<script src="${context:/core/js/plugin/jquery-columnizer/jquery.columnizer.min.js}" />
 
 	<!-- browser msie issue fix -->
 	<script
