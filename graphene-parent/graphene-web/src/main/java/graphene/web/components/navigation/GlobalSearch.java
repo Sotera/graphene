@@ -34,11 +34,13 @@ public class GlobalSearch {
 	@Persist
 	@Property
 	private String selectedType;
+
 	@Inject
 	private DataSourceListDAO dao;
 	@Property
 	private List<String> availableTypes;
 
+	@Persist
 	@Property
 	private List<Integer> maxResultsList;
 
@@ -48,9 +50,10 @@ public class GlobalSearch {
 	@Persist
 	@Property
 	private String searchValue;
+
 	@Persist
 	@Property
-	private Integer maxResults;
+	private Integer selectedMaxResults;
 	@Inject
 	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
 	private Integer defaultMaxResults;
@@ -62,13 +65,13 @@ public class GlobalSearch {
 	Object onSuccessFromGlobalSearchForm() {
 		logger.debug("Searching with " + searchValue + " type: " + selectedType);
 		Object retval = null;
-		if (!ValidationUtils.isValid(maxResults)) {
-			maxResults = defaultMaxResults;
+		if (!ValidationUtils.isValid(selectedMaxResults)) {
+			selectedMaxResults = defaultMaxResults;
 		}
 		if (ValidationUtils.isValid(searchValue)) {
 			final Link link2 = searchPage.set(dao.getDefaultSchema(),
 					selectedType, G_SearchType.COMPARE_CONTAINS.name(),
-					searchValue, maxResults);
+					searchValue, selectedMaxResults);
 
 			retval = link2;
 		} else {
@@ -85,12 +88,11 @@ public class GlobalSearch {
 
 	@SetupRender
 	private void setupRender() {
-		maxResultsList = new ArrayList<Integer>(4);
+		maxResultsList = new ArrayList<Integer>(3);
 		maxResultsList.add(new Integer(200));
 		maxResultsList.add(new Integer(500));
 		maxResultsList.add(new Integer(1000));
-		maxResultsList.add(new Integer(5000));
-		maxResults = defaultMaxResults;
+		selectedMaxResults = defaultMaxResults;
 		if (!ValidationUtils.isValid(availableTypes)) {
 			availableTypes = dao.getAvailableTypes();
 			if (!ValidationUtils.isValid(availableTypes)) {

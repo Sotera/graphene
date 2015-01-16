@@ -17,7 +17,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.Request;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -48,9 +47,6 @@ public class QueryAudit {
 	private BeanModel<EntityQuery> model;
 	@Inject
 	private ComponentResources resources;
-
-	@Inject
-	private Request request;
 
 	// Generally useful bits and pieces
 	public BeanModel<EntityQuery> getModel() {
@@ -85,10 +81,6 @@ public class QueryAudit {
 
 		// json.put("aoColumns", columnArray);
 		return json;
-	}
-
-	public boolean isAjax() {
-		return request.isXHR();
 	}
 
 	@SetupRender
