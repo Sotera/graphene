@@ -160,6 +160,8 @@ Ext.define("DARPA.EntityGraphPanel", {
 					self.setStatus("NO DATA FOUND TO PLOT");
 					// self.clear(); // don't clear what is already shown
 				} else {
+					// hack to determine if graph comes back with saved positions
+					if (self.json.nodes[0].position == null) useSaved = false;
 					if (self.GraphVis.getGv() != null) {
 						self.clear();
 						self.showjson(self.prevLoadParams.value, useSaved);

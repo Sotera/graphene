@@ -325,7 +325,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.addEmpty("informationIcons");
 		model.addEmpty("date");
 		model.addEmpty("amount");
-		model.addEmpty("nameList");
+		model.addEmpty("subjects");
 		model.addEmpty("addressList");
 		model.addEmpty("communicationIdentifierList");
 		model.addEmpty("identifierList");
@@ -335,7 +335,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		model.getById("amount").sortable(true);
 		model.getById("date").sortable(true);
 		model.getById("actions").sortable(true);
-		model.getById("nameList").sortable(true);
+		model.getById("subjects").sortable(true);
 		model.getById("addressList").sortable(true);
 		model.getById("communicationIdentifierList").sortable(true);
 		model.getById("identifierList").sortable(true);
@@ -364,15 +364,86 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
 		json.put(
-				"aaSorting",
-				new JSONArray().put(new JSONArray().put(0).put("asc")).put(
-						new JSONArray().put(3).put("desc")));
-		new JSONObject().put("aTargets", new JSONArray().put(0, 4));
-		final JSONObject sortType = new JSONObject("sType", "formatted-num");
-		final JSONArray columnArray = new JSONArray();
-		columnArray.put(4, sortType);
+			"aaSorting",
+			new JSONArray()
+				.put(new JSONArray().put(0).put("asc"))
+				.put(new JSONArray().put(3).put("desc"))
+		);
+		
+		JSONArray columnArray = new JSONArray();
+		
+		// a two-dimensional array that acts as a definition and mapping between column headers and their widths (in %)
+		final String[][] properties = {
+			{"rank", "1%"}, {"actions", "10%"}, {"informationIcons", "8%"}, 
+			{"date", "7%"}, {"amount", "7%"}, {"subjects", "12%"}, {"addressList", "25%"},
+			{"communicationIdentifierList", "15%"}, {"identifierList", "15%"}
+		};
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "numeric"
+		));
 
-		// json.put("aoColumns", columnArray);
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "date"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "numeric" // TODO fixme
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"	
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"	
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+		
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0],
+			"bSortable", "true",
+			"sWidth", properties[columnArray.length()][1],
+			"sType", "string"
+		));
+
+		json.put("aoColumns", columnArray);
+		
 		return json;
 	}
 

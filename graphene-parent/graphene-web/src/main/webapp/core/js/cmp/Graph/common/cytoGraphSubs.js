@@ -157,8 +157,8 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 				'source-arrow-color': _this.CONSTANTS("selectedEdge"),
 				'border-color': _this.CONSTANTS("lineColor"),
 				'font-size': _this.CONSTANTS("selectedFontSize"),
-				'width': _this.CONSTANTS("selectedNodeSize"),  
-				'height': _this.CONSTANTS("selectedNodeSize")
+				'width': 'data(size)' + 5,//_this.CONSTANTS("selectedNodeSize"),  
+				'height': 'data(size)' + 5//_this.CONSTANTS("selectedNodeSize")
 			});
 			// disable until Cytoscape 2.3.7 works.
 			// haystack edges look weird in 2.2.12

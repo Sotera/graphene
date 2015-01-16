@@ -311,9 +311,9 @@ Ext.define("DARPA.Node_Actions", {
 				   "<p><b>Pivot</b>: Designate the selected node as the new root and display its graph with PIVOT. UNPIVOT will reset this action.</p>" +
 				   "<p><b>Hide</b>: Remove the selected nodes and their connected edges from view with HIDE. UNHIDE resets this action, making everything visible.</p>" +
 				   "<p><b>Expanding</b>: Add the neighbors, if any, of the selected node(s) to the graph with EXPAND.  UNEXPAND deletes the newly discovered neighbors.</p>" +
-				   "<p><b>Show</b>: Creates a new tab for any of the selected entities.</p>" +
 				   "<p><b>Halt</b>: Stop a procedurally-generated layout in process.</p>" +
-				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>"
+				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>" + 
+				   "<p><b>Unmerge</b>: Retrieves any second-class subnodes from inside a 'super node' and puts them back on the graph as first-class nodes.</p>"
 			    );
 			}
 		});
@@ -340,7 +340,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype:'fieldcontainer',
 				height:'auto',
 				width: '100%',
-				items:[expand, unexpand, show, stop]
+				items:[expand, unexpand, stop, deleteBtn]
 			}]
 			
 		});
@@ -354,7 +354,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype: 'fieldcontainer',
 				height: 'auto',
 				width: '100%',
-				items: [deleteBtn, unmerge, help]
+				items: [unmerge, help]
 			}]
 		});
 
