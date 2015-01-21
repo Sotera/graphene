@@ -123,7 +123,10 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.ENABLE_SETTINGS, true);
 		configuration.add(G_SymbolConstants.ENABLE_ADMIN, true);
 		configuration.add(G_SymbolConstants.ENABLE_TAG_CLOUDS, false);
+		configuration.add(G_SymbolConstants.ENABLE_FEDERATED_LOGIN, false);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS, 200);
+		configuration.add(G_SymbolConstants.ENABLE_FREE_TEXT_EXTRACTION, true);
+		configuration.add(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH, true);
 	}
 
 	@Contribute(AtmosphereHttpServletRequestFilter.class)
