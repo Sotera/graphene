@@ -17,7 +17,7 @@ public class DataFormatConstants {
 	 * String amountString = new DecimalFormat(
 	 * DataFormatConstants.MONEY_FORMAT_STRING).format(sum.toString());
 	 */
-	public static final String MONEY_FORMAT_STRING = "###,###,##0.00";
+	public static final String MONEY_FORMAT_STRING = "###,###,##0";
 	public static final String WHOLE_NUMBER_FORMAT_STRING = "###########";
 	public static final String SCORE_FORMAT_STRING = "0.000";
 	public static final String PERCENT_FORMAT_STRING = "##0.0";
@@ -35,6 +35,11 @@ public class DataFormatConstants {
 		final SimpleDateFormat sdf = new SimpleDateFormat(
 				DataFormatConstants.ISO_DATE_FORMAT);
 		return sdf.format(JodaTimeUtil.toDateTime(milliseconds).toDate());
+	}
+
+	public static String formatMoney(final Long l) {
+		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
+				.format(l);
 	}
 
 	/**
@@ -69,9 +74,5 @@ public class DataFormatConstants {
 					+ " with format " + formatYouThinkItIsIn);
 			return toFormat;
 		}
-	}
-	
-	public static String formatMoney(final Long l) {
-		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(l);
 	}
 }
