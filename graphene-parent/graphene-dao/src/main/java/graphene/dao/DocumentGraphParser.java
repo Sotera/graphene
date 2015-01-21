@@ -91,6 +91,22 @@ public interface DocumentGraphParser<T> {
 
 	public List<String> getSupportedObjects();
 
+	/**
+	 * We try cast the object into a particular class, and pull out the
+	 * information we want. The Query object q is provided so that we know which
+	 * query allowed us to arrive at this object. This can be useful for
+	 * highlighting fields that were in the original query. The Query object
+	 * also holds a key value for a potential node that was assosicated with the
+	 * query. In this way, we can tie the resulting object back to a node id
+	 * that initiated the query.
+	 * 
+	 * @param obj
+	 *            a result of a query specified by q.
+	 * @param q
+	 *            the query object that generated this result, along with an
+	 *            associated node id.
+	 * @return
+	 */
 	public boolean parse(Object obj, EntityQuery q);
 
 	public abstract T populateExtraFields(T theEvent, EntityQuery q);
