@@ -5,9 +5,11 @@ import graphene.dao.DocumentGraphParser;
 import graphene.dao.GenericDAO;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.query.EntityQuery;
 import graphene.util.DataFormatConstants;
 import graphene.util.StringUtils;
@@ -30,6 +32,7 @@ import mil.darpa.vande.generic.V_NodeList;
 
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.slf4j.Logger;
 
@@ -56,6 +59,10 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 
 	protected ArrayList<String> skipInheritanceTypes;
 
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH)
+	private boolean enableGraphQueryPath;
+
 	/**
 	 * Note that the concrete implmentation of this class will usually provide
 	 * the DAOs needed through its constructor (which may take advantage of
@@ -63,6 +70,16 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	 */
 	public PropertyHyperGraphBuilder() {
 		super();
+	}
+
+	public void addGraphQueryPath(final V_GenericNode reportNode,
+			final EntityQuery q) {
+		if (enableGraphQueryPath && ValidationUtils.isValid(reportNode, q)) {
+			createEdge(q.getInitiatorId(),
+					G_CanonicalRelationshipType.CONTAINED_IN.name(),
+					reportNode.getId(),
+					G_CanonicalRelationshipType.CONTAINED_IN.name());
+		}
 	}
 
 	@Override
