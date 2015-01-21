@@ -81,11 +81,10 @@ protocol G_UserSpaceDataTypes {
 	record G_Workspace {
 		boolean active =true;
 		union {string, null} description=null;
-		union {string, null} json=null;
-		union {string, null} queries=null;
-		union {string, null} datamap=null;
+		union {string, null} reports=null;
 		string title="untitled";
-		
+		array<string> queries;
+		array<union {string, int, float, double, long, boolean}> queryObjects;
 		union {string, null} id =null;
 			
 		 /** workspace's modified datetime */
