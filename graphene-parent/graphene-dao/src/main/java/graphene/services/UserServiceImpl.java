@@ -21,6 +21,7 @@ import graphene.util.validator.ValidationUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
@@ -139,9 +140,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			w.setDescription("New Workspace");
 			w.setTitle(user.getUsername() + "-Workspace"
 					+ time.toString("YYYYmmDD-HHMMSS"));
-			w.setDatamap("");
-			w.setJson("");
-			w.setQueries("");
+			w.setQueries(new ArrayList<String>());
 		}
 		return w;
 	}
