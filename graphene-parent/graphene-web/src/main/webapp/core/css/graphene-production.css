@@ -14809,7 +14809,7 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text {
 .chat-body {
 	background: #FAFAFA;
 	background:
-		url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…EiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+		url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod���EiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fafafa),
 		color-stop(100%, #fff));
 	background: -webkit-linear-gradient(top, #fafafa 0, #fff 100%);
@@ -18738,7 +18738,7 @@ img.away {
 }
 
 .degree-sign:after {
-	content: " °F"
+	content: " ��F"
 }
 
 .hidden-menu #left-panel {
@@ -23450,4 +23450,8 @@ transform
 
 .cursor-pointer {
 	cursor: pointer
+}
+
+.dontsplit { 
+	padding: 5px; 
 }

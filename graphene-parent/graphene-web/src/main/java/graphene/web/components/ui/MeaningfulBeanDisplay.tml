@@ -2,7 +2,7 @@
 <t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 	<t:if test="model">
-		<div class="col-md-12 well">
+		<div class="well">
 			<t:if test="title">
 				<div class="row">
 					<div class="col-sm-12 col-md-12">
