@@ -51,6 +51,12 @@ public class G_SymbolConstants {
 
 	public static final String DEFAULT_MAX_SEARCH_RESULTS = "graphene.default-max-search-results";
 
+	public static final String ENABLE_FEDERATED_LOGIN = "graphene.enable-federated-login";
+
+	public static final String ENABLE_FREE_TEXT_EXTRACTION = "graphene.enable-free-text-extraction";
+
+	public static final String ENABLE_GRAPH_QUERY_PATH = "graphene.enable-graph-query-path";
+
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}
