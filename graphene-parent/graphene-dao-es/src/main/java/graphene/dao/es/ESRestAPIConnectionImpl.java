@@ -136,7 +136,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 			final HighlightBuilder h = new HighlightBuilder().field("NARR");
 			searchSourceBuilder.query(qbc).highlight(h)
-					.minScore(DEFAULT_MIN_SCORE).sort(SortBuilders.scoreSort());
+					.minScore((float) q.getMinimumScore())
+					.sort(SortBuilders.scoreSort());
 			if (q.getMaxResult() == 0) {
 				logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to 200.");
 				q.setMaxResult(200l);
