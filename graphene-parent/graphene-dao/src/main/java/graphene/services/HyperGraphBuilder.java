@@ -25,11 +25,9 @@ public interface HyperGraphBuilder<T> {
 	 * @param nodeCertainty
 	 * @return
 	 */
-	public abstract V_GenericNode createOrUpdateNode(
-			double minimumScoreRequired, double inheritedScore,
-			double localPriority, String id, String idType, String nodeType,
-			V_GenericNode attachTo, String relationType, String relationValue,
-			double nodeCertainty);
+	public abstract V_GenericNode createOrUpdateNode(double minimumScoreRequired, double inheritedScore,
+			double localPriority, String id, String idType, String nodeType, V_GenericNode attachTo,
+			String relationType, String relationValue, double nodeCertainty);
 
 	/**
 	 * Create a node or update an existing one. Also, use the color based on the
@@ -37,16 +35,26 @@ public interface HyperGraphBuilder<T> {
 	 * the attachTo node act as the parent of the node you wish to add.
 	 * 
 	 * @param id
+	 *            the unique id of this node.
 	 * @param idType
+	 *            This is used for the Identifier Type text box for the node in
+	 *            the GraphUI
 	 * @param nodeType
+	 *            This is used for determining node color and search query
+	 *            types, and more.
 	 * @param attachTo
+	 *            the id of a node this node should attach to with the following
+	 *            relationship
 	 * @param relationType
+	 *            This is used for the Identifier Type text box for the edge in
+	 *            the GraphUI
 	 * @param relationValue
+	 *            This is used for determining edge color and search query
+	 *            types, and more.
 	 * @return
 	 */
-	public abstract V_GenericNode createOrUpdateNode(String id, String idType,
-			String nodeType, V_GenericNode attachTo, String relationType,
-			String relationValue);
+	public abstract V_GenericNode createOrUpdateNode(String id, String idType, String nodeType, V_GenericNode attachTo,
+			String relationType, String relationValue);
 
 	/**
 	 * Create a node or update an existing one. Also, force the color to the one
@@ -93,8 +101,7 @@ public interface HyperGraphBuilder<T> {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
-			throws Exception;
+	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery) throws Exception;
 
 	/**
 	 * Individual implementations can override this method to perform

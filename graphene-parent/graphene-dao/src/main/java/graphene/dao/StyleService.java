@@ -11,6 +11,8 @@ import java.awt.Color;
 public interface StyleService {
 	public abstract String getContrastingColor(String hexColor);
 
+	public abstract String getCSSClass(String nodeType, boolean highlighted);
+
 	public abstract String getDarkOrLight(int red, int green, int blue);
 
 	/**
@@ -29,9 +31,40 @@ public interface StyleService {
 	 */
 	public String getHexColorForNode(String key);
 
-	public String getStyleForEdge(String key);
+	/**
+	 * This is the background color for a highlight
+	 * 
+	 * @return This returns a CSS style.
+	 */
+	public String getHighlightBackgroundColor();
 
-	public String getStyleForNode(String key);
+	/**
+	 * This is the text color for a highlight
+	 * 
+	 * @return This returns a CSS style.
+	 */
+	public abstract String getHighlightColor();
+
+	/**
+	 * This is a combination of the highlight text and background color
+	 * 
+	 * @return This returns a CSS style.
+	 */
+	public abstract String getHighlightStyle();
+
+	/**
+	 * This is a combination of get HighlightStyle (if the bool is true) and get
+	 * HexColorForNode for the background color.
+	 * 
+	 * @param nodeType
+	 * @param highlighted
+	 * @return This returns a CSS style.
+	 */
+	public abstract String getStyle(String nodeType, boolean highlighted);
+
+	public abstract String getStyleForEdge(String key);
+
+	public abstract String getStyleForNode(String key);
 
 	public abstract Color hex2Rgb(String hexColor);
 

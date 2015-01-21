@@ -18,7 +18,7 @@ public interface DocumentGraphParser<T> {
 	/**
 	 * The key for storing an address for the entity.
 	 */
-	public static final String ADDRESS = "address";
+	public static final String LABEL2 = "label2";
 	/**
 	 * The key for storing a list of dates of the filings in the report. Since
 	 * there may be multiple transactions, there can be multiple dates of

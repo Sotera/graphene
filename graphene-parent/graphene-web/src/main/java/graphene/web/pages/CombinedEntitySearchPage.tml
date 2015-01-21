@@ -24,7 +24,9 @@ table td {
 	border-left: 1px solid #EEEEEE;
 	border-bottom: 1px solid #888888;
 }
-
+.legend{
+margin-right: 3px;
+}
 .pivotlink {
 	max-width: 400px;
 	white-space: normal;
@@ -92,16 +94,16 @@ table td {
 								</p:amountCell>
 								<p:subjectsCell>
 									<t:loop source="nameList" value="currentName">
-										<a class="btn btn-xs ${styleForName} pivotlink"
-											href="${getPivotLink(currentName)}"> ${currentName} </a>
+										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentName)}"
+											href="${getNamePivotLink(currentName.third)}"> ${currentName.second} </a>
 										<br />
 										<br />
 									</t:loop>
 								</p:subjectsCell>
 								<p:addressListCell>
 									<t:loop source="addressList" value="currentAddress">
-										<a class="btn btn-xs ${styleForAddress} pivotlink"
-											href="${getPivotLink(currentAddress)}"> ${currentAddress}
+										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentAddress)}"
+											href="${getAddressPivotLink(currentAddress.third)}"> ${currentAddress.second}
 										</a>
 										<br />
 									</t:loop>
@@ -109,17 +111,16 @@ table td {
 								<p:communicationIdentifierListCell>
 									<t:loop source="cIdentifierList" value="currentCommunicationId">
 										<a
-											class="btn btn-xs ${styleForCommunicationIdentifier} pivotlink"
-											href="${getPivotLink(currentCommunicationId)}">
-											${currentCommunicationId}</a>
-
+											class="btn btn-xs pivotlink"  style="${getStyleFor(currentCommunicationId)}"
+											href="${getPivotLink(currentCommunicationId.third)}">
+											${currentCommunicationId.second}</a>
 									</t:loop>
 								</p:communicationIdentifierListCell>
 								<p:identifierListCell>
 									<t:loop source="identifierList" value="currentIdentifier">
-										<a class="btn btn-xs ${styleForIdentifier} pivotlink"
-											href="${getPivotLink(currentIdentifier)}">
-											${currentIdentifier}</a>
+										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentIdentifier)}"
+											href="${getPivotLink(currentIdentifier.third)}">
+											${currentIdentifier.second}</a>
 
 									</t:loop>
 								</p:identifierListCell>

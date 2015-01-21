@@ -69,19 +69,19 @@ public class GlobalSearch {
 			selectedMaxResults = defaultMaxResults;
 		}
 		if (ValidationUtils.isValid(searchValue)) {
-			final Link link2 = searchPage.set(dao.getDefaultSchema(),
-					selectedType, G_SearchType.COMPARE_CONTAINS.name(),
-					searchValue, selectedMaxResults);
-
-			retval = link2;
+			G_SearchType searchtype = G_SearchType.COMPARE_CONTAINS;
+			if (searchValue.startsWith("\"") && searchValue.endsWith("\"")) {
+				searchtype = G_SearchType.COMPARE_EQUALS;
+			}
+			final Link link = searchPage.set(dao.getDefaultSchema(), selectedType, searchtype.name(), searchValue,
+					selectedMaxResults);
+			retval = link;
 		} else {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					"Please enter a valid search value.");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Please enter a valid search value.");
 		}
 		if (!ValidationUtils.isValid(retval)) {
-			alertManager
-					.alert(Duration.TRANSIENT, Severity.WARN,
-							"There is no search broker configured for this instance of Graphene");
+			alertManager.alert(Duration.TRANSIENT, Severity.WARN,
+					"There is no search broker configured for this instance of Graphene");
 		}
 		return retval;
 	}
@@ -92,7 +92,12 @@ public class GlobalSearch {
 		maxResultsList.add(new Integer(200));
 		maxResultsList.add(new Integer(500));
 		maxResultsList.add(new Integer(1000));
-		selectedMaxResults = defaultMaxResults;
+		if (!ValidationUtils.isValid(selectedMaxResults)) {
+			selectedMaxResults = defaultMaxResults;
+		}
+		if (!ValidationUtils.isValid(selectedType)) {
+			selectedType = DataSourceListDAO.ALL_REPORTS;
+		}
 		if (!ValidationUtils.isValid(availableTypes)) {
 			availableTypes = dao.getAvailableTypes();
 			if (!ValidationUtils.isValid(availableTypes)) {

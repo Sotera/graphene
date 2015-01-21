@@ -5,6 +5,7 @@ import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.query.EntityQuery;
 import graphene.util.G_CallBack;
 import graphene.util.StringUtils;
@@ -29,7 +30,9 @@ import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_LegendItem;
 import mil.darpa.vande.generic.V_NodeList;
 
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.URLEncoder;
 import org.slf4j.Logger;
 
@@ -62,21 +65,25 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 	protected List<DocumentError> errors = new ArrayList<DocumentError>();
 
 	// TODO: Change this to a FIFO Queue and address any duplicate node issues
-	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(
-			3);
+	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(3);
 
 	protected Set<String> scannedQueries = new HashSet<String>();
 
 	protected Set<String> scannedResults = new HashSet<String>();
 
-	protected PriorityQueue<EntityQuery> queriesToRun = new PriorityQueue<EntityQuery>(
-			10, new ScoreComparator());
+	protected PriorityQueue<EntityQuery> queriesToRun = new PriorityQueue<EntityQuery>(10, new ScoreComparator());
 
 	protected Stack<EntityQuery> queriesToRunNextDegree = new Stack<EntityQuery>();
 	protected V_NodeList nodeList = new V_NodeList();
 	protected Set<V_LegendItem> legendItems = new HashSet<V_LegendItem>();
 	@Inject
 	private Logger logger;
+
+	protected LinkGenerator linkGenerator;
+
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+	protected Integer defaultMaxResults;
 
 	public AbstractGraphBuilder() {
 		super();
@@ -88,34 +95,27 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		}
 	}
 
-	public void addReportDetails(final V_GenericNode reportNode,
-			final Map<String, Object> properties) {
+	public void addReportDetails(final V_GenericNode reportNode, final Map<String, Object> properties) {
 		try {
-			reportNode.setSize(getLogSize(((Double) properties
-					.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
+			reportNode.setSize(getLogSize(((Double) properties.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
 					MIN_NODE_SIZE, MAX_NODE_SIZE));
 
-			reportNode
-					.addData("Amount involved", (String) properties
-							.get(DocumentGraphParser.TOTALAMOUNTSTR));
+			reportNode.addData("Amount involved", (String) properties.get(DocumentGraphParser.TOTALAMOUNTSTR));
 
-			final List<String> datesOfEvents = (List<String>) properties
-					.get(DocumentGraphParser.DATES_OF_EVENTS);
+			final Set<String> datesOfEvents = (Set<String>) properties.get(DocumentGraphParser.DATES_OF_EVENTS);
 			if (ValidationUtils.isValid(datesOfEvents)) {
 				for (final String d : datesOfEvents) {
 					reportNode.addData("Date of Event", d);
 				}
 			}
 
-			final List<String> datesFiled = (List<String>) properties
-					.get(DocumentGraphParser.DATES_FILED);
+			final Set<String> datesFiled = (Set<String>) properties.get(DocumentGraphParser.DATES_FILED);
 			if (ValidationUtils.isValid(datesFiled)) {
 				for (final String d : datesFiled) {
 					reportNode.addData("Date filed", d);
 				}
 			}
-			final List<String> datesReceived = (List<String>) properties
-					.get(DocumentGraphParser.DATES_RECEIVED);
+			final Set<String> datesReceived = (Set<String>) properties.get(DocumentGraphParser.DATES_RECEIVED);
 			if (ValidationUtils.isValid(datesReceived)) {
 				for (final String d : datesReceived) {
 					reportNode.addData("Date received", d);
@@ -131,8 +131,10 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		scannedResults.add(reportId);
 	}
 
-	public boolean createEdge(final String fromId, final String relationType,
-			final String toId, final String relationValue) {
+	// TODO: We want to remove query path edges if we have other edges going to
+	// it.
+	public boolean createEdge(final String fromId, final String relationType, final String toId,
+			final String relationValue) {
 		if (ValidationUtils.isValid(fromId, toId)) {
 			final String key = generateEdgeId(fromId, relationType, toId);
 			final V_GenericNode a = nodeList.getNode(fromId);
@@ -143,10 +145,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 				v.setIdType(relationType);
 				v.setLabel(null);
 				v.setIdVal(relationType);
-				v.addData(
-						"Value",
-						StringUtils.coalesc(" ", a.getLabel(), relationValue,
-								b.getLabel()));
+				v.addData("Value", StringUtils.coalesc(" ", a.getLabel(), relationValue, b.getLabel()));
 				edgeMap.put(key, v);
 				return true;
 			}
@@ -166,8 +165,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		if ((addendIds != null) && (addendIds.length > 0)) {
 			key = Arrays.toString(addendIds).toLowerCase();
 		} else {
-			logger.error("Unable to contruct an generateEdgeId for "
-					+ Arrays.toString(addendIds).toLowerCase());
+			logger.error("Unable to contruct an generateEdgeId for " + Arrays.toString(addendIds).toLowerCase());
 		}
 		return key;
 	}
@@ -184,8 +182,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		boolean foundValue = false;
 
 		// Allow for null values as part of the id.
-		if ((addendIds != null) && (addendIds.length == 1)
-				&& ValidationUtils.isValid(addendIds[0])) {
+		if ((addendIds != null) && (addendIds.length == 1) && ValidationUtils.isValid(addendIds[0])) {
 			// removes all non alphanumeric, and converts to lowercase
 			key = addendIds[0].replaceAll("[\\W]|_", "").toLowerCase();
 			// replace leading zeros as part of the id.
@@ -202,16 +199,23 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 				key = Arrays.toString(addendIds).toLowerCase();
 			}
 		} else {
-			logger.error("Unable to contruct an generateNodeId for "
-					+ Arrays.toString(addendIds).toLowerCase());
+			logger.error("Unable to contruct an generateNodeId for " + Arrays.toString(addendIds).toLowerCase());
 		}
 		return key;
 	}
 
 	protected String getCombinedSearchLink(final String identifier) {
-		final String context = encoder.encode(identifier);
-		return "<a href=\"graphene\\CombinedEntitySearchPage/" + context
-				+ "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+		if (linkGenerator != null) {
+			logger.debug("Search page is defined");
+			final Link link = linkGenerator.set(null, null, null, identifier, defaultMaxResults);
+			return "<a href=\"" + link.toRedirectURI() + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+		} else {
+			// logger.error("No search page defined");
+			final String encodedIdentigier = encoder.encode(identifier);
+
+			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentigier
+					+ "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+		}
 	}
 
 	/**
@@ -230,8 +234,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 	 * @param maxSize
 	 * @return an integer that can be used for sizing nodes on a display
 	 */
-	protected int getLogSize(final Long amount, final int minSize,
-			final int maxSize) {
+	protected int getLogSize(final Long amount, final int minSize, final int maxSize) {
 		int size = minSize;
 		if (ValidationUtils.isValid(amount)) {
 			final long additionalPixels = Math.round(Math.log(amount));
@@ -273,10 +276,21 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		return scannedResults.contains(reportId);
 	}
 
-	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery)
-			throws Exception;
+	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery) throws Exception;
 
 	public abstract void performPostProcess(V_GraphQuery graphQuery);
+
+	public boolean removeEdge(final String fromId, final String relationType, final String toId,
+			final String relationValue) {
+		if (ValidationUtils.isValid(fromId, toId)) {
+			final String key = generateEdgeId(fromId, relationType, toId);
+			final V_GenericEdge removedEdge = edgeMap.remove(key);
+			if (removedEdge != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * @param errors

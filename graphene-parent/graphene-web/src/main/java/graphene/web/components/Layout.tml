@@ -33,7 +33,7 @@
 	<!-- possible classes: minified, fixed-ribbon, fixed-header, fixed-width -->
 	<noscript class="js-required">
 		${message:javascript_required}</noscript>
-	<t:jquery.jgrowl />
+	<t:jquery.jgrowl params="jgrowlParams"/>
 	<!-- HEADER -->
 	
 

@@ -6,7 +6,7 @@
 		from Layout.tml -->
 	<!-- This is a span 10 in the bootstrap layout. You just need to add one 
 		or more fluid rows here. -->
-	<t:jquery.jgrowl />
+
 	<div class="row-fluid">
 		<div class="box span12">
 			<div class="box-header">

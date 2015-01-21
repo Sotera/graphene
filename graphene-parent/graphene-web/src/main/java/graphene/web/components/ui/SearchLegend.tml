@@ -7,17 +7,36 @@
 	xmlns:p="tapestry:parameter">
 	<h2>
 		<span style="margin-right: 3px"> Legend: </span> <span
-			class="label bg-color-red txt-color-white" style="margin-right: 3px"
+			class="label legend" style="${styleForHighlight};"
 			title="An attribute or any other identifier that contains the term you searched for.">
 			Item Containing Search Term </span> <span
-			class="label bg-color-orange txt-color-white"
-			style="margin-right: 3px"
+			class="label legend"
+			style="${styleForName};"
 			title="Formal name of a person or group involved or mentioned in the report.">
-			Entity Name </span> <span class="label bg-color-yellow txt-color-white"
-			style="margin-right: 3px"
+			Entity Name </span> 
+			<span class="label legend"
+			style="${styleForAddress};"
 			title="Street address, state, province, or any location identifier.">
-			Address </span> <span class="label bg-color-magenta txt-color-white"
-			style="margin-right: 3px" title="Any other attribute or identifier.">
-			Attribute </span>
+			Address </span> 
+			
+			<span class="label legend"
+			style="${styleForPhone};" title="A phone number.">
+			Phone </span>
+				<span class="label legend"
+			style="${styleForEmail};" title="An Email Address.">
+			Email </span>
+				<span class="label legend"
+			style="${styleForOccupation}; " title="Occupation of a subject.">
+			Occupation </span>
+			<span class="label legend"
+			style="${styleForVisa};" title="an International Visa">
+			Visa </span>
+				<span class="label legend"
+			style="${styleForGovId};" title="Any other government issued identifier, like SSN,EIN,Passport or Driver's License.">
+			Government Id </span>
+				
+			<span class="label legend"
+			style="${styleForOther};" title="Any other attribute or identifier.">
+			Other </span>
 	</h2>
 </t:container>

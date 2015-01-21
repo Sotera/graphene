@@ -139,8 +139,9 @@ public class MeaningfulBeanDisplay {
 	private DataSourceListDAO dao;
 
 	public Link getPivotLink() {
-		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS
-				.name(), getPropertyValue().toString(), defaultMaxResults);
+		// XXX: pick the right search type based on the link value
+		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), getPropertyValue().toString(),
+				defaultMaxResults);
 		return l;
 	}
 
@@ -197,8 +198,7 @@ public class MeaningfulBeanDisplay {
 
 	public boolean isMeaningful(final Object obj) {
 
-		if ((obj == null)
-				|| (!ValidationUtils.isValid(obj.toString()) && !foundOneProperty)) {
+		if ((obj == null) || (!ValidationUtils.isValid(obj.toString()) && !foundOneProperty)) {
 			return false;
 		}
 		return true;
@@ -208,8 +208,7 @@ public class MeaningfulBeanDisplay {
 
 		className = object.getClass().getName();
 		if (model == null) {
-			model = modelSource.createDisplayModel(object.getClass(),
-					overrides.getContainerMessages());
+			model = modelSource.createDisplayModel(object.getClass(), overrides.getContainerMessages());
 			final List<String> names = model.getPropertyNames();
 			for (final String p : names) {
 				final PropertyModel pm = model.get(p);
@@ -218,8 +217,7 @@ public class MeaningfulBeanDisplay {
 				if (!ValidationUtils.isValid(propertyValue)) {
 					model.exclude(p);
 				} else {
-					if (propertyValue.getClass().isAssignableFrom(
-							Collection.class)) {
+					if (propertyValue.getClass().isAssignableFrom(Collection.class)) {
 						logger.debug("Autoexcluding collection");
 						model.exclude(p);
 					} else {

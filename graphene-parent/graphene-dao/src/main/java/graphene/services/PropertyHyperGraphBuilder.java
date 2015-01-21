@@ -46,14 +46,15 @@ import org.slf4j.Logger;
  * @param <T>
  */
 @UsesConfiguration(DocumentGraphParser.class)
-public abstract class PropertyHyperGraphBuilder<T> extends
-		AbstractGraphBuilder<T, EntityQuery> implements HyperGraphBuilder<T> {
+public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<T, EntityQuery> implements
+		HyperGraphBuilder<T> {
+
 	protected Collection<DocumentGraphParser> singletons;
 	private static final boolean INHERIT_ATTRIBUTES = true;
 	@Inject
 	protected StopWordService stopwordService;
 	@Inject
-	private StyleService style;
+	protected StyleService style;
 	@Inject
 	private Logger logger;
 
@@ -72,35 +73,35 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		super();
 	}
 
-	public void addGraphQueryPath(final V_GenericNode reportNode,
-			final EntityQuery q) {
+	public PropertyHyperGraphBuilder(final Collection<DocumentGraphParser> singletons) {
+		this.singletons = singletons;
+		for (final DocumentGraphParser s : singletons) {
+			s.setPhgb(this);
+		}
+	}
+
+	public void addGraphQueryPath(final V_GenericNode reportNode, final EntityQuery q) {
 		if (enableGraphQueryPath && ValidationUtils.isValid(reportNode, q)) {
-			createEdge(q.getInitiatorId(),
-					G_CanonicalRelationshipType.CONTAINED_IN.name(),
-					reportNode.getId(),
+			createEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
 					G_CanonicalRelationshipType.CONTAINED_IN.name());
 		}
 	}
 
 	@Override
-	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired,
-			final double inheritedScore, final double localPriority,
-			final String originalId, final String idType,
-			final String nodeType, final V_GenericNode attachTo,
-			final String relationType, final String relationValue,
+	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired, final double inheritedScore,
+			final double localPriority, final String originalId, final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType, final String relationValue,
 			final double nodeCertainty) {
 		V_GenericNode a = null;
 
 		if (ValidationUtils.isValid(originalId)) {
 			if (!stopwordService.isValid(originalId)) {
-				addError(new DocumentError("Bad Identifier", "The " + nodeType
-						+ " (" + originalId + ") contains a stopword",
-						Severity.WARN));
+				addError(new DocumentError("Bad Identifier", "The " + nodeType + " (" + originalId
+						+ ") contains a stopword", Severity.WARN));
 			} else {
 				final String id = generateNodeId(originalId);
 				a = nodeList.getNode(id);
-				final double calculatedPriority = inheritedScore
-						* localPriority;
+				final double calculatedPriority = inheritedScore * localPriority;
 				if (a == null) {
 					a = new V_GenericNode(id);
 					a.setIdType(idType);
@@ -113,35 +114,30 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					a.setPriority(calculatedPriority);
 					// Remove leading zeros from the label
 					a.setLabel(StringUtils.removeLeadingZeros(originalId));
+					// XXX: need a way of getting the link to the page with TYPE
 					a.addData(nodeType, getCombinedSearchLink(originalId));
 					nodeList.addNode(a);
-					legendItems.add(new V_LegendItem(a.getColor(), a
-							.getNodeType()));
+					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
 				}
 				// now we have a valid node. Attach it to the other node
 				// provided.
 				if (ValidationUtils.isValid(attachTo)) {
-					final String key = generateEdgeId(attachTo.getId(),
-							relationType, a.getId());
+					final String key = generateEdgeId(attachTo.getId(), relationType, a.getId());
 					if ((key != null) && !edgeMap.containsKey(key)) {
-						final V_GenericEdge edge = new V_GenericEdge(a,
-								attachTo);
+						final V_GenericEdge edge = new V_GenericEdge(a, attachTo);
 						edge.setIdType(relationType);
 						edge.setLabel(null);
 						edge.setIdVal(relationType);
 						if (nodeCertainty < 100.0) {
-							edge.addData("Certainty", DataFormatConstants
-									.formatPercent(nodeCertainty));
+							edge.addData("Certainty", DataFormatConstants.formatPercent(nodeCertainty));
 							edge.setLineStyle("dotted");
 							// edge.setColor("#787878");
 						}
 						edge.addData("Local_Priority", "" + localPriority);
-						edge.addData("Min_Score_Required", ""
-								+ minimumScoreRequired);
+						edge.addData("Min_Score_Required", "" + minimumScoreRequired);
 						edge.addData("Parent_Score", "" + inheritedScore);
-						edge.addData("Value", StringUtils.coalesc(" ",
-								a.getLabel(), relationValue,
-								attachTo.getLabel()));
+						edge.addData("Value",
+								StringUtils.coalesc(" ", a.getLabel(), relationValue, attachTo.getLabel()));
 						edgeMap.put(key, edge);
 					}
 
@@ -150,8 +146,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					// node.
 					if (INHERIT_ATTRIBUTES) {
 						// attachTo.addData(a.getNodeType(), a.getIdVal());
-						attachTo.inheritPropertiesOfExcept(a,
-								skipInheritanceTypes);
+						attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
 					}
 				}
 			}
@@ -162,20 +157,15 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	}
 
 	@Override
-	public V_GenericNode createOrUpdateNode(final String originalId,
-			final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType,
-			final String relationValue) {
-		return createOrUpdateNode(originalId, idType, nodeType, attachTo,
-				relationType, relationValue, 100.0d);
+	public V_GenericNode createOrUpdateNode(final String originalId, final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType, final String relationValue) {
+		return createOrUpdateNode(originalId, idType, nodeType, attachTo, relationType, relationValue, 100.0d);
 	}
 
-	public V_GenericNode createOrUpdateNode(final String originalId,
-			final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType,
-			final String relationValue, final double certainty) {
-		return createOrUpdateNode(0.5d, 1.0d, 0.7d, originalId, idType,
-				nodeType, attachTo, relationType, relationValue, 100.0d);
+	public V_GenericNode createOrUpdateNode(final String originalId, final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType, final String relationValue, final double certainty) {
+		return createOrUpdateNode(0.5d, 1.0d, 0.7d, originalId, idType, nodeType, attachTo, relationType,
+				relationValue, 100.0d);
 	}
 
 	/*
@@ -186,8 +176,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	@Override
 	public abstract GenericDAO<T, EntityQuery> getDAO();
 
-	public void inheritLabelIfNeeded(final V_GenericNode a,
-			final V_GenericNode... nodes) {
+	public void inheritLabelIfNeeded(final V_GenericNode a, final V_GenericNode... nodes) {
 		for (final V_GenericNode n : nodes) {
 			if ((n != null) && ValidationUtils.isValid(n.getLabel())) {
 				a.setLabel(n.getLabel());
@@ -204,8 +193,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	 * .generic.V_GraphQuery)
 	 */
 	@Override
-	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery)
-			throws Exception {
+	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery) throws Exception {
 		nodeList = new V_NodeList();
 		edgeMap = new HashMap<String, V_GenericEdge>();
 		edgeList = new V_EdgeList(graphQuery);
@@ -216,8 +204,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		if (graphQuery.getMaxHops() <= 0) {
 			return new V_GenericGraph();
 		} else {
-			logger.debug("Attempting a graph for query "
-					+ graphQuery.toString());
+			logger.debug("Attempting a graph for query " + graphQuery.toString());
 		}
 
 		int intStatus = 0;
@@ -227,11 +214,9 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
-		final G_IdType nodeType = nodeTypeAccess
-				.getCommonNodeType(G_CanonicalPropertyType.ANY);
+		final G_IdType nodeType = nodeTypeAccess.getCommonNodeType(G_CanonicalPropertyType.ANY);
 		for (final String id : graphQuery.getSearchIds()) {
-			eq.addAttribute(new G_SearchTuple<String>(
-					G_SearchType.COMPARE_EQUALS, nodeType, id));
+			eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
 		queriesToRun.add(eq);
 
@@ -240,15 +225,12 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
 				&& (nodeList.getNodes().size() < graphQuery.getMaxNodes()); currentDegree++) {
 			eq = null;
-			logger.debug("$$$$There are " + queriesToRun.size()
-					+ " queries to run in the current degree.");
-			while ((queriesToRun.size() > 0)
-					&& ((eq = queriesToRun.poll()) != null)
+			logger.debug("$$$$There are " + queriesToRun.size() + " queries to run in the current degree.");
+			while ((queriesToRun.size() > 0) && ((eq = queriesToRun.poll()) != null)
 					&& (nodeList.getNodes().size() < graphQuery.getMaxNodes())) {
 
 				if (ValidationUtils.isValid(eq.getAttributeList())
-						&& ValidationUtils.isValid(eq.getAttributeList().get(0)
-								.getValue())) {
+						&& ValidationUtils.isValid(eq.getAttributeList().get(0).getValue())) {
 
 					savNodeList = nodeList.clone();
 					logger.debug("Processing degree " + currentDegree);
@@ -260,9 +242,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 					 */
 					logger.debug("1111=====Running query " + eq.toString());
 					getDAO().performCallback(0, 0, this, eq);
-					logger.debug("3333====After running " + eq.toString()
-							+ ", there are " + queriesToRunNextDegree.size()
-							+ " queries to run in the next degree.");
+					logger.debug("3333====After running " + eq.toString() + ", there are "
+							+ queriesToRunNextDegree.size() + " queries to run in the next degree.");
 					try {
 
 						// long count = dao.count(eq);
@@ -289,13 +270,11 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			// very important!!
 			// unscannedNodeList.clear();
 			// ////////////////////////////////////////////////
-			logger.debug("4444==== At the end of degree " + currentDegree
-					+ ", there are " + nodeList.size() + " nodes and "
-					+ edgeMap.size() + " edges");
+			logger.debug("4444==== At the end of degree " + currentDegree + ", there are " + nodeList.size()
+					+ " nodes and " + edgeMap.size() + " edges");
 
 			saveEdgeMap = new HashMap<String, V_GenericEdge>(edgeMap);
-			logger.debug("5555====There are " + queriesToRunNextDegree.size()
-					+ " queries to run in the next degree.");
+			logger.debug("5555====There are " + queriesToRunNextDegree.size() + " queries to run in the next degree.");
 			queriesToRun.addAll(queriesToRunNextDegree);
 			queriesToRunNextDegree.clear();
 		}
@@ -306,12 +285,10 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 			nodeList = savNodeList;
 			edgeMap = saveEdgeMap;
 			intStatus = 1; // will trigger the message.
-			strStatus = "Returning only " + currentDegree
-					+ " hops, as maximum nodes you requested would be exceeded";
+			strStatus = "Returning only " + currentDegree + " hops, as maximum nodes you requested would be exceeded";
 		} else {
 			intStatus = 1; // will trigger the message.
-			strStatus = "Returning " + nodeList.getNodes().size()
-					+ " nodes and " + edgeMap.size() + " edges.";
+			strStatus = "Returning " + nodeList.getNodes().size() + " nodes and " + edgeMap.size() + " edges.";
 		}
 
 		// NOW finally add in all those unique edges.
@@ -321,8 +298,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 		}
 
 		performPostProcess(graphQuery);
-		final V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(),
-				edgeList.getEdges());
+		final V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 		logger.debug("Graph status: " + g.getStrStatus());
@@ -343,5 +319,10 @@ public abstract class PropertyHyperGraphBuilder<T> extends
 	@Override
 	public void performPostProcess(final V_GraphQuery graphQuery) {
 		// default blank
+	}
+
+	public void removeGraphQueryPath(final V_GenericNode reportNode, final EntityQuery q) {
+		removeEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
+				G_CanonicalRelationshipType.CONTAINED_IN.name());
 	}
 }

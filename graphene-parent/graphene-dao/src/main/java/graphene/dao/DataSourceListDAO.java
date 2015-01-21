@@ -17,6 +17,8 @@ import java.util.List;
  * 
  */
 public interface DataSourceListDAO {
+	public static final String ALL_REPORTS = "All Reports";
+
 	public List<String> getAvailableTypes();
 
 	public String getDefaultSchema();

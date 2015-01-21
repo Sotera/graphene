@@ -24,7 +24,6 @@ public class JestModule {
 	public static final String ES_LOGGING_INDEX = "graphene.es-logging-index";
 	public static final String ES_PERSISTED_GRAPH_INDEX = "graphene.es-persisted-graph-index";
 	public static final String ES_PERSISTED_GRAPH_TYPE = "graphene.es-persisted-graph-type";
-
 	public static final String ES_DEFAULT_TIMEOUT = "graphene.es-default-timeout";
 
 	public static void bind(final ServiceBinder binder) {
@@ -36,13 +35,12 @@ public class JestModule {
 	 * @param server
 	 * @return
 	 */
-	public static JestClient buildJestClient(
-			@Symbol(ES_SERVER) final String server) {
+	public static JestClient buildJestClient(@Symbol(ES_SERVER) final String server) {
 
 		// Construct a new Jest client according to configuration via factory
 		final JestClientFactory factory = new JestClientFactory();
-		final HttpClientConfig clientConfig = new HttpClientConfig.Builder(
-				server).discoveryEnabled(true).multiThreaded(true).build();
+		final HttpClientConfig clientConfig = new HttpClientConfig.Builder(server).discoveryEnabled(true)
+				.multiThreaded(true).build();
 
 		factory.setHttpClientConfig(clientConfig);
 
@@ -58,10 +56,8 @@ public class JestModule {
 	 * @param configuration
 	 */
 	@Contribute(SymbolSource.class)
-	public void contributePropertiesFileAsSymbols(
-			final OrderedConfiguration<SymbolProvider> configuration) {
-		configuration.add("DatabaseConfiguration",
-				new ClasspathResourceSymbolProvider("es.properties"),
+	public void contributePropertiesFileAsSymbols(final OrderedConfiguration<SymbolProvider> configuration) {
+		configuration.add("DatabaseConfiguration", new ClasspathResourceSymbolProvider("es.properties"),
 				"after:SystemProperties", "before:ApplicationDefaults");
 	}
 

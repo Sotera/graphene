@@ -1,7 +1,9 @@
 package graphene.web.pages;
 
 import graphene.dao.CombinedDAO;
+import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
+import graphene.dao.StyleService;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
@@ -11,7 +13,9 @@ import graphene.model.idl.G_Workspace;
 import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
+import graphene.services.LinkGenerator;
 import graphene.util.DataFormatConstants;
+import graphene.util.Triple;
 import graphene.util.Tuple;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
@@ -67,20 +71,19 @@ import org.slf4j.Logger;
  * 
  */
 @PluginPage(visualType = G_VisualType.HIDDEN, menuName = "Combined Search", icon = "fa fa-lg fa-fw fa-search")
-@Import(stylesheet = {
-		"context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
+@Import(stylesheet = { "context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
 		"context:core/js/plugin/datatables/media/css/TableTools.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
-public class CombinedEntitySearchPage extends SimpleBasePage {
+public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGenerator {
 	@Inject
 	private G_UserDataAccess userDataAccess;
 	@Inject
 	private BeanModelSource beanModelSource;
 
 	@Property
-	private String currentAddress;
+	private Triple<String, String, String> currentAddress;
 	@Property
-	private String currentCommunicationId;
+	private Triple<String, String, String> currentCommunicationId;
 	@Property
 	private String currentDate;
 	@Property
@@ -90,10 +93,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	private Tuple<String, String> currentIcon;
 
 	@Property
-	private String currentIdentifier;
+	private Triple<String, String, String> currentIdentifier;
 
 	@Property
-	private String currentName;
+	private Triple<String, String, String> currentName;
 
 	@Inject
 	private CombinedDAO dao;
@@ -179,26 +182,19 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 	@Property
 	private boolean currentSelectedWorkspaceExists;
+	@Property
+	private String currentSearchValue;
 
-	public Collection<String> getAddressList() {
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.SUBJECTADDRESSLIST);
+	@Inject
+	private StyleService style;
+
+	public Collection<Triple<String, String, String>> getAddressList() {
+		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTADDRESSLIST);
 	}
 
-	// public String getAmount() {
-	// Long l = (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
-	// return DataFormatConstants.formatMoney(l);
-	// }
-
-	// public Format getMoneyFormat() {
-	// Locale locale = new Locale("en", "US");
-	// return NumberFormat.getCurrencyInstance(locale);
-	// }
-
-	public Link getAddressPivotLink() {
-		final Link l = searchPage.set(null, null,
-				G_SearchType.COMPARE_EQUALS.name(), currentAddress,
-				defaultMaxResults);
+	public Link getAddressPivotLink(final String term) {
+		// XXX: pick the right search type based on the link value
+		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
 		return l;
 	}
 
@@ -206,9 +202,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
-	public Collection<String> getCIdentifierList() {
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.SUBJECTCIDLIST);
+	public Collection<Triple<String, String, String>> getCIdentifierList() {
+		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTCIDLIST);
 	}
 
 	public Format getDateFormat() {
@@ -226,9 +221,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	 * @param searchValue2
 	 * @return
 	 */
-	private GrapheneResults<Object> getEntities(final String schema,
-			final String subType, final String matchType, final String value,
-			final int maxResults) {
+	private GrapheneResults<Object> getEntities(final String schema, final String subType, final String matchType,
+			final String value, final int maxResults) {
 		GrapheneResults<Object> metaresults = null;
 		if (ValidationUtils.isValid(value)) {
 			final EntityQuery sq = new EntityQuery();
@@ -240,12 +234,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 					g_SearchType = G_SearchType.COMPARE_CONTAINS;
 				}
 			}
-			final G_SearchTuple<String> gs = new G_SearchTuple<String>(value,
-					g_SearchType);
-			if (ValidationUtils.isValid(subType)) {
-				sq.getFilters().addAll(
-						graphene.util.StringUtils.tokenizeToStringCollection(
-								subType, ","));
+			final G_SearchTuple<String> gs = new G_SearchTuple<String>(value, g_SearchType);
+			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
+				sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
 			}
 			sq.addAttribute(gs);
 			sq.setMaxResult(maxResults);
@@ -259,8 +250,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 			try {
 				loggingDao.recordQuery(sq);
 				if (currentSelectedWorkspaceExists) {
-					List<Object> qo = currentSelectedWorkspace
-							.getQueryObjects();
+					List<Object> qo = currentSelectedWorkspace.getQueryObjects();
 					if (qo == null) {
 						qo = new ArrayList<Object>(1);
 						qo.add(sq);
@@ -268,44 +258,37 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 					}
 					currentSelectedWorkspace.setQueryObjects(qo);
 
-					userDataAccess.saveWorkspace(getUser().getId(),
-							currentSelectedWorkspace);
+					userDataAccess.saveWorkspace(getUser().getId(), currentSelectedWorkspace);
 				}
 				metaresults = dao.findByQueryWithMeta(sq);
-				final TimeReporter tr = new TimeReporter(
-						"parsing details of results", logger);
+				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
 				populatedTableResults = new ArrayList<Map<String, Object>>();
 				// Populate all the results!
 				for (final Object m : metaresults.getResults()) {
-					final DocumentGraphParser parserForObject = phgb
-							.getParserForObject(m);
+					final DocumentGraphParser parserForObject = phgb.getParserForObject(m);
 					if (parserForObject != null) {
 						parserForObject.populateExtraFields(m, sq);
-						populatedTableResults.add(parserForObject
-								.getAdditionalProperties(m));
+						populatedTableResults.add(parserForObject.getAdditionalProperties(m));
 					} else {
 						logger.error("Could not find parser for " + m);
 					}
 				}
 				tr.logAsCompleted();
 			} catch (final Exception e) {
-				alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-						e.getMessage());
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
 				e.printStackTrace();
 			}
 		}
-		if ((metaresults == null)
-				|| (metaresults.getNumberOfResultsReturned() == 0)) {
-			alertManager.alert(Duration.TRANSIENT, Severity.INFO,
-					"No results found for " + value + ".");
+		if ((metaresults == null) || (metaresults.getNumberOfResultsReturned() == 0)) {
+			alertManager.alert(Duration.TRANSIENT, Severity.INFO, "No results found for " + value + ".");
 			resultShowingCount = 0;
 			resultTotalCount = 0;
 		} else {
-			alertManager
-					.alert(Duration.TRANSIENT, Severity.SUCCESS, "Showing "
-							+ metaresults.getNumberOfResultsReturned() + " of "
-							+ metaresults.getNumberOtResultsTotal()
-							+ " results found.");
+			alertManager.alert(
+					Duration.TRANSIENT,
+					Severity.SUCCESS,
+					"Showing " + metaresults.getNumberOfResultsReturned() + " of "
+							+ metaresults.getNumberOtResultsTotal() + " results found.");
 		}
 		return metaresults;
 	}
@@ -325,18 +308,15 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	 * @return
 	 */
 	public Collection<Tuple<String, String>> getIconList() {
-		return (Collection<Tuple<String, String>>) currentEntity
-				.get(DocumentGraphParser.ICONLIST);
+		return (Collection<Tuple<String, String>>) currentEntity.get(DocumentGraphParser.ICONLIST);
 	}
 
-	public Collection<String> getIdentifierList() {
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.SUBJECTIDLIST);
+	public Collection<Triple<String, String, String>> getIdentifierList() {
+		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
 	}
 
 	public BeanModel getModel() {
-		final BeanModel<Object> model = beanModelSource.createEditModel(
-				Object.class, messages);
+		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
 		model.addEmpty("rank");
 		model.addEmpty("actions");
 
@@ -365,15 +345,20 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return DataFormatConstants.getMoneyFormat();
 	}
 
-	public Collection<String> getNameList() {
-		return (Collection<String>) currentEntity
-				.get(DocumentGraphParser.SUBJECTNAMELIST);
+	public Collection<Triple<String, String, String>> getNameList() {
+		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTNAMELIST);
 
 	}
 
 	// /////////////////////////////////////////////////////////////////////
 	// FILTER
 	// /////////////////////////////////////////////////////////////////////
+
+	public Link getNamePivotLink(final String term) {
+		// XXX: pick the right search type based on the link value
+		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+		return l;
+	}
 
 	public JSONObject getOptions() {
 
@@ -385,58 +370,44 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
-		json.put(
-				"aaSorting",
-				new JSONArray().put(new JSONArray().put(0).put("asc")).put(
-						new JSONArray().put(3).put("desc")));
+		json.put("aaSorting",
+				new JSONArray().put(new JSONArray().put(0).put("asc")).put(new JSONArray().put(3).put("desc")));
 
 		final JSONArray columnArray = new JSONArray();
 
 		// a two-dimensional array that acts as a definition and mapping between
 		// column headers and their widths (in %)
-		final String[][] properties = { { "rank", "1%" }, { "actions", "10%" },
-				{ "informationIcons", "8%" }, { "date", "7%" },
-				{ "amount", "7%" }, { "subjects", "12%" },
-				{ "addressList", "25%" },
-				{ "communicationIdentifierList", "15%" },
-				{ "identifierList", "15%" } };
+		final String[][] properties = { { "rank", "1%" }, { "actions", "10%" }, { "informationIcons", "8%" },
+				{ "date", "7%" }, { "amount", "7%" }, { "subjects", "12%" }, { "addressList", "25%" },
+				{ "communicationIdentifierList", "15%" }, { "identifierList", "15%" } };
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "numeric"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "date"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "numeric" // TODO
 																		// fixme
 		));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray
-				.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
 		json.put("aoColumns", columnArray);
@@ -445,8 +416,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	}
 
 	public Link getPivotLink(final String term) {
-		final Link l = searchPage.set(null, null,
-				G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_CONTAINS.name(), term, defaultMaxResults);
 		return l;
 	}
 
@@ -478,40 +448,13 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return searchValue;
 	}
 
-	public String getStyleForAddress() {
-		if (StringUtils.containsIgnoreCase(currentAddress, searchValue)) {
-			return "bg-color-red txt-color-white";
-		} else {
-			return "bg-color-yellow txt-color-white";
-		}
+	public String getStyleFor(final Triple<String, String, String> currentThing) {
+		return style.getStyle(currentThing.getFirst(),
+				StringUtils.containsIgnoreCase(currentThing.getThird(), currentSearchValue));
 	}
 
-	public String getStyleForCommunicationIdentifier() {
-		if (StringUtils.containsIgnoreCase(currentCommunicationId, searchValue)) {
-			return "bg-color-red txt-color-white";
-		} else {
-			return "bg-color-magenta txt-color-white";
-		}
-	}
-
-	public String getStyleForIdentifier() {
-		if (StringUtils.containsIgnoreCase(currentIdentifier, searchValue)) {
-			return "bg-color-red txt-color-white";
-		} else {
-			return "bg-color-magenta txt-color-white";
-		}
-	}
-
-	public String getStyleForName() {
-		if (StringUtils.containsIgnoreCase(currentName, searchValue)) {
-			return "bg-color-red txt-color-white";
-		} else {
-			return "bg-color-orange txt-color-white";
-		}
-	}
-
-	public Link set(final String schema, final String type, final String match,
-			final String value, final int maxResults) {
+	@Override
+	public Link set(final String schema, final String type, final String match, final String value, final int maxResults) {
 		searchSchema = schema;
 		searchType = type;
 		searchValue = value;
@@ -534,9 +477,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Log
 	void setupRender() {
 		if (ValidationUtils.isValid(searchValue)) {
+			currentSearchValue = searchValue;
 			try {
-				results = getEntities(searchSchema, searchType, searchMatch,
-						searchValue, maxResults);
+				results = getEntities(searchSchema, searchType, searchMatch, currentSearchValue, maxResults);
 
 			} catch (final Exception e) {
 				e.printStackTrace();

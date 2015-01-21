@@ -2,7 +2,6 @@
 <html t:type="graphene/layout" title="Manage Workspaces"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 
-	<t:jquery.jgrowl />
 	<div class="row">
 		<div class="col-xs-2 col-sm-5 col-md-5 col-lg-4">
 			<h1 class="page-title txt-color-blueDark">

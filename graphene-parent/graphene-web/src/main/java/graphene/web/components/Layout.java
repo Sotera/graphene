@@ -22,6 +22,7 @@ import org.apache.tapestry5.func.Tuple;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
@@ -36,12 +37,9 @@ import com.trsvax.bootstrap.annotations.Exclude;
  * 
  */
 @Exclude(stylesheet = { "core" })
-@Import(stylesheet = { "context:/core/css/t5default.css",
-		"context:/core/css/bootstrap.min.css",
-		"context:/core/css/font-awesome.min.css",
-		"context:/core/css/graphene-production.css",
-		"context:/core/css/pace-radar.css",
-		"context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
+@Import(stylesheet = { "context:/core/css/t5default.css", "context:/core/css/bootstrap.min.css",
+		"context:/core/css/font-awesome.min.css", "context:/core/css/graphene-production.css",
+		"context:/core/css/pace-radar.css", "context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
 		"context:/core/css/googlefonts.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
 public class Layout {
@@ -92,6 +90,12 @@ public class Layout {
 	@SessionState(create = false)
 	private List<G_Workspace> workspaces;
 
+	public JSONObject getJgrowlParams() {
+		final JSONObject json = new JSONObject("position", "bottom-right");
+		return json;
+
+	}
+
 	/**
 	 * 
 	 * @return a link to be put inside a javascript component, which lets the
@@ -104,10 +108,8 @@ public class Layout {
 
 	@SetupRender
 	public void loginIfNeeded() {
-		if (!authenticatorHelper.isUserObjectCreated()
-				&& securityService.isAuthenticated()) {
-			authenticatorHelper.loginAuthenticatedUser((String) securityService
-					.getSubject().getPrincipal());
+		if (!authenticatorHelper.isUserObjectCreated() && securityService.isAuthenticated()) {
+			authenticatorHelper.loginAuthenticatedUser((String) securityService.getSubject().getPrincipal());
 		}
 		if (userExists) {
 			try {

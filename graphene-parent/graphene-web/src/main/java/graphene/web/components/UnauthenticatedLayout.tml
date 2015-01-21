@@ -25,7 +25,7 @@
 	</head>
 
 	<body class="">
-		<t:jquery.jgrowl />
+		<t:jquery.jgrowl params="jgrowlParams"/>
 		<!-- MAIN CONTENT -->
 		<div id="content">
 			<t:body />
