@@ -7,14 +7,14 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"json\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"queries\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"datamap\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"queries\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\"]}},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private boolean active;
    private java.lang.String description;
-   private java.lang.String json;
-   private java.lang.String queries;
-   private java.lang.String datamap;
+   private java.lang.String reports;
    private java.lang.String title;
+   private java.util.List<java.lang.String> queries;
+   private java.util.List<java.lang.Object> queryObjects;
    private java.lang.String id;
   /** workspace's modified datetime */
    private java.lang.Long modified;
@@ -31,13 +31,13 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String json, java.lang.String queries, java.lang.String datamap, java.lang.String title, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
+  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String reports, java.lang.String title, java.util.List<java.lang.String> queries, java.util.List<java.lang.Object> queryObjects, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
     this.active = active;
     this.description = description;
-    this.json = json;
-    this.queries = queries;
-    this.datamap = datamap;
+    this.reports = reports;
     this.title = title;
+    this.queries = queries;
+    this.queryObjects = queryObjects;
     this.id = id;
     this.modified = modified;
     this.created = created;
@@ -49,10 +49,10 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     switch (field$) {
     case 0: return active;
     case 1: return description;
-    case 2: return json;
-    case 3: return queries;
-    case 4: return datamap;
-    case 5: return title;
+    case 2: return reports;
+    case 3: return title;
+    case 4: return queries;
+    case 5: return queryObjects;
     case 6: return id;
     case 7: return modified;
     case 8: return created;
@@ -65,10 +65,10 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     switch (field$) {
     case 0: active = (java.lang.Boolean)value$; break;
     case 1: description = (java.lang.String)value$; break;
-    case 2: json = (java.lang.String)value$; break;
-    case 3: queries = (java.lang.String)value$; break;
-    case 4: datamap = (java.lang.String)value$; break;
-    case 5: title = (java.lang.String)value$; break;
+    case 2: reports = (java.lang.String)value$; break;
+    case 3: title = (java.lang.String)value$; break;
+    case 4: queries = (java.util.List<java.lang.String>)value$; break;
+    case 5: queryObjects = (java.util.List<java.lang.Object>)value$; break;
     case 6: id = (java.lang.String)value$; break;
     case 7: modified = (java.lang.Long)value$; break;
     case 8: created = (java.lang.Long)value$; break;
@@ -107,48 +107,18 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'json' field.
+   * Gets the value of the 'reports' field.
    */
-  public java.lang.String getJson() {
-    return json;
+  public java.lang.String getReports() {
+    return reports;
   }
 
   /**
-   * Sets the value of the 'json' field.
+   * Sets the value of the 'reports' field.
    * @param value the value to set.
    */
-  public void setJson(java.lang.String value) {
-    this.json = value;
-  }
-
-  /**
-   * Gets the value of the 'queries' field.
-   */
-  public java.lang.String getQueries() {
-    return queries;
-  }
-
-  /**
-   * Sets the value of the 'queries' field.
-   * @param value the value to set.
-   */
-  public void setQueries(java.lang.String value) {
-    this.queries = value;
-  }
-
-  /**
-   * Gets the value of the 'datamap' field.
-   */
-  public java.lang.String getDatamap() {
-    return datamap;
-  }
-
-  /**
-   * Sets the value of the 'datamap' field.
-   * @param value the value to set.
-   */
-  public void setDatamap(java.lang.String value) {
-    this.datamap = value;
+  public void setReports(java.lang.String value) {
+    this.reports = value;
   }
 
   /**
@@ -164,6 +134,36 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
    */
   public void setTitle(java.lang.String value) {
     this.title = value;
+  }
+
+  /**
+   * Gets the value of the 'queries' field.
+   */
+  public java.util.List<java.lang.String> getQueries() {
+    return queries;
+  }
+
+  /**
+   * Sets the value of the 'queries' field.
+   * @param value the value to set.
+   */
+  public void setQueries(java.util.List<java.lang.String> value) {
+    this.queries = value;
+  }
+
+  /**
+   * Gets the value of the 'queryObjects' field.
+   */
+  public java.util.List<java.lang.Object> getQueryObjects() {
+    return queryObjects;
+  }
+
+  /**
+   * Sets the value of the 'queryObjects' field.
+   * @param value the value to set.
+   */
+  public void setQueryObjects(java.util.List<java.lang.Object> value) {
+    this.queryObjects = value;
   }
 
   /**
@@ -234,10 +234,10 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
 
     private boolean active;
     private java.lang.String description;
-    private java.lang.String json;
-    private java.lang.String queries;
-    private java.lang.String datamap;
+    private java.lang.String reports;
     private java.lang.String title;
+    private java.util.List<java.lang.String> queries;
+    private java.util.List<java.lang.Object> queryObjects;
     private java.lang.String id;
     private java.lang.Long modified;
     private java.lang.Long created;
@@ -258,20 +258,20 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         this.description = data().deepCopy(fields()[1].schema(), other.description);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.json)) {
-        this.json = data().deepCopy(fields()[2].schema(), other.json);
+      if (isValidValue(fields()[2], other.reports)) {
+        this.reports = data().deepCopy(fields()[2].schema(), other.reports);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.queries)) {
-        this.queries = data().deepCopy(fields()[3].schema(), other.queries);
+      if (isValidValue(fields()[3], other.title)) {
+        this.title = data().deepCopy(fields()[3].schema(), other.title);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.datamap)) {
-        this.datamap = data().deepCopy(fields()[4].schema(), other.datamap);
+      if (isValidValue(fields()[4], other.queries)) {
+        this.queries = data().deepCopy(fields()[4].schema(), other.queries);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.title)) {
-        this.title = data().deepCopy(fields()[5].schema(), other.title);
+      if (isValidValue(fields()[5], other.queryObjects)) {
+        this.queryObjects = data().deepCopy(fields()[5].schema(), other.queryObjects);
         fieldSetFlags()[5] = true;
       }
       if (isValidValue(fields()[6], other.id)) {
@@ -299,20 +299,20 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         this.description = data().deepCopy(fields()[1].schema(), other.description);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.json)) {
-        this.json = data().deepCopy(fields()[2].schema(), other.json);
+      if (isValidValue(fields()[2], other.reports)) {
+        this.reports = data().deepCopy(fields()[2].schema(), other.reports);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.queries)) {
-        this.queries = data().deepCopy(fields()[3].schema(), other.queries);
+      if (isValidValue(fields()[3], other.title)) {
+        this.title = data().deepCopy(fields()[3].schema(), other.title);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.datamap)) {
-        this.datamap = data().deepCopy(fields()[4].schema(), other.datamap);
+      if (isValidValue(fields()[4], other.queries)) {
+        this.queries = data().deepCopy(fields()[4].schema(), other.queries);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.title)) {
-        this.title = data().deepCopy(fields()[5].schema(), other.title);
+      if (isValidValue(fields()[5], other.queryObjects)) {
+        this.queryObjects = data().deepCopy(fields()[5].schema(), other.queryObjects);
         fieldSetFlags()[5] = true;
       }
       if (isValidValue(fields()[6], other.id)) {
@@ -378,78 +378,28 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Gets the value of the 'json' field */
-    public java.lang.String getJson() {
-      return json;
+    /** Gets the value of the 'reports' field */
+    public java.lang.String getReports() {
+      return reports;
     }
     
-    /** Sets the value of the 'json' field */
-    public graphene.model.idl.G_Workspace.Builder setJson(java.lang.String value) {
+    /** Sets the value of the 'reports' field */
+    public graphene.model.idl.G_Workspace.Builder setReports(java.lang.String value) {
       validate(fields()[2], value);
-      this.json = value;
+      this.reports = value;
       fieldSetFlags()[2] = true;
       return this; 
     }
     
-    /** Checks whether the 'json' field has been set */
-    public boolean hasJson() {
+    /** Checks whether the 'reports' field has been set */
+    public boolean hasReports() {
       return fieldSetFlags()[2];
     }
     
-    /** Clears the value of the 'json' field */
-    public graphene.model.idl.G_Workspace.Builder clearJson() {
-      json = null;
+    /** Clears the value of the 'reports' field */
+    public graphene.model.idl.G_Workspace.Builder clearReports() {
+      reports = null;
       fieldSetFlags()[2] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'queries' field */
-    public java.lang.String getQueries() {
-      return queries;
-    }
-    
-    /** Sets the value of the 'queries' field */
-    public graphene.model.idl.G_Workspace.Builder setQueries(java.lang.String value) {
-      validate(fields()[3], value);
-      this.queries = value;
-      fieldSetFlags()[3] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'queries' field has been set */
-    public boolean hasQueries() {
-      return fieldSetFlags()[3];
-    }
-    
-    /** Clears the value of the 'queries' field */
-    public graphene.model.idl.G_Workspace.Builder clearQueries() {
-      queries = null;
-      fieldSetFlags()[3] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'datamap' field */
-    public java.lang.String getDatamap() {
-      return datamap;
-    }
-    
-    /** Sets the value of the 'datamap' field */
-    public graphene.model.idl.G_Workspace.Builder setDatamap(java.lang.String value) {
-      validate(fields()[4], value);
-      this.datamap = value;
-      fieldSetFlags()[4] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'datamap' field has been set */
-    public boolean hasDatamap() {
-      return fieldSetFlags()[4];
-    }
-    
-    /** Clears the value of the 'datamap' field */
-    public graphene.model.idl.G_Workspace.Builder clearDatamap() {
-      datamap = null;
-      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -460,20 +410,70 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'title' field */
     public graphene.model.idl.G_Workspace.Builder setTitle(java.lang.String value) {
-      validate(fields()[5], value);
+      validate(fields()[3], value);
       this.title = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'title' field has been set */
     public boolean hasTitle() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'title' field */
     public graphene.model.idl.G_Workspace.Builder clearTitle() {
       title = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'queries' field */
+    public java.util.List<java.lang.String> getQueries() {
+      return queries;
+    }
+    
+    /** Sets the value of the 'queries' field */
+    public graphene.model.idl.G_Workspace.Builder setQueries(java.util.List<java.lang.String> value) {
+      validate(fields()[4], value);
+      this.queries = value;
+      fieldSetFlags()[4] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'queries' field has been set */
+    public boolean hasQueries() {
+      return fieldSetFlags()[4];
+    }
+    
+    /** Clears the value of the 'queries' field */
+    public graphene.model.idl.G_Workspace.Builder clearQueries() {
+      queries = null;
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'queryObjects' field */
+    public java.util.List<java.lang.Object> getQueryObjects() {
+      return queryObjects;
+    }
+    
+    /** Sets the value of the 'queryObjects' field */
+    public graphene.model.idl.G_Workspace.Builder setQueryObjects(java.util.List<java.lang.Object> value) {
+      validate(fields()[5], value);
+      this.queryObjects = value;
+      fieldSetFlags()[5] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'queryObjects' field has been set */
+    public boolean hasQueryObjects() {
+      return fieldSetFlags()[5];
+    }
+    
+    /** Clears the value of the 'queryObjects' field */
+    public graphene.model.idl.G_Workspace.Builder clearQueryObjects() {
+      queryObjects = null;
       fieldSetFlags()[5] = false;
       return this;
     }
@@ -559,10 +559,10 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         G_Workspace record = new G_Workspace();
         record.active = fieldSetFlags()[0] ? this.active : (java.lang.Boolean) defaultValue(fields()[0]);
         record.description = fieldSetFlags()[1] ? this.description : (java.lang.String) defaultValue(fields()[1]);
-        record.json = fieldSetFlags()[2] ? this.json : (java.lang.String) defaultValue(fields()[2]);
-        record.queries = fieldSetFlags()[3] ? this.queries : (java.lang.String) defaultValue(fields()[3]);
-        record.datamap = fieldSetFlags()[4] ? this.datamap : (java.lang.String) defaultValue(fields()[4]);
-        record.title = fieldSetFlags()[5] ? this.title : (java.lang.String) defaultValue(fields()[5]);
+        record.reports = fieldSetFlags()[2] ? this.reports : (java.lang.String) defaultValue(fields()[2]);
+        record.title = fieldSetFlags()[3] ? this.title : (java.lang.String) defaultValue(fields()[3]);
+        record.queries = fieldSetFlags()[4] ? this.queries : (java.util.List<java.lang.String>) defaultValue(fields()[4]);
+        record.queryObjects = fieldSetFlags()[5] ? this.queryObjects : (java.util.List<java.lang.Object>) defaultValue(fields()[5]);
         record.id = fieldSetFlags()[6] ? this.id : (java.lang.String) defaultValue(fields()[6]);
         record.modified = fieldSetFlags()[7] ? this.modified : (java.lang.Long) defaultValue(fields()[7]);
         record.created = fieldSetFlags()[8] ? this.created : (java.lang.Long) defaultValue(fields()[8]);
