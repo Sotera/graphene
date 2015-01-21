@@ -133,21 +133,23 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	public boolean createEdge(final String fromId, final String relationType,
 			final String toId, final String relationValue) {
-		final String key = generateEdgeId(fromId, relationType, toId);
-		final V_GenericNode a = nodeList.getNode(fromId);
-		final V_GenericNode b = nodeList.getNode(toId);
-		if (ValidationUtils.isValid(key, a, b) && !edgeMap.containsKey(key)) {
+		if (ValidationUtils.isValid(fromId, toId)) {
+			final String key = generateEdgeId(fromId, relationType, toId);
+			final V_GenericNode a = nodeList.getNode(fromId);
+			final V_GenericNode b = nodeList.getNode(toId);
+			if (ValidationUtils.isValid(key, a, b) && !edgeMap.containsKey(key)) {
 
-			final V_GenericEdge v = new V_GenericEdge(a, b);
-			v.setIdType(relationType);
-			v.setLabel(null);
-			v.setIdVal(relationType);
-			v.addData(
-					"Value",
-					StringUtils.coalesc(" ", a.getLabel(), relationValue,
-							b.getLabel()));
-			edgeMap.put(key, v);
-			return true;
+				final V_GenericEdge v = new V_GenericEdge(a, b);
+				v.setIdType(relationType);
+				v.setLabel(null);
+				v.setIdVal(relationType);
+				v.addData(
+						"Value",
+						StringUtils.coalesc(" ", a.getLabel(), relationValue,
+								b.getLabel()));
+				edgeMap.put(key, v);
+				return true;
+			}
 		}
 		return false;
 	}
