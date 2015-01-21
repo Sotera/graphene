@@ -1,0 +1,20 @@
+<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+<t:content>
+	<t:if test="federatedEnabled">
+		<h5 class="text-center">- Or sign in using -</h5>
+		<ul class="list-inline text-center">
+			<li><a href="javascript:void(0);"
+				class="btn btn-primary btn-circle"> Federated provider 1 </a></li>
+			<li><a href="javascript:void(0);"
+				class="btn btn-info btn-circle"> Federated provider 2 </a></li>
+			<li><a href="javascript:void(0);"
+				class="btn btn-warning btn-circle"> Federated provider 3 </a></li>
+		</ul>
+	</t:if>
+</t:content>
+</html>

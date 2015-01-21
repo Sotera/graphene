@@ -64,8 +64,8 @@ table td {
 								<p:actionsCell>
 									<t:if test="reportPageLink">
 										<t:pagelink class="btn btn-default" page="prop:reportPageLink"
-											context="reportId" target="reportId">
-											<i class="fa fa-folder-open-o" /> ${reportType} ${reportId}
+											context="reportId" target="reportId"  title="${score}">
+											<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
 												</t:pagelink>
 										<br />
 										<p:else>Report View Unavailable</p:else>

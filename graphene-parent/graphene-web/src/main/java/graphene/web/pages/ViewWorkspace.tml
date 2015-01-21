@@ -31,17 +31,20 @@ table td {
 	<div class="row">
 		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			<!-- Start results area -->
-			<t:if test="list">
+			<t:if test="currentSelectedWorkspace">
 				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1"
 					data-widget-sortable="false" data-widget-deletebutton="false"
 					data-widget-editbutton="false" data-widget-colorbutton="false">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-table"></i>
 						</span>
-						<h2>${currentSelectedWorkspace?.title}</h2>
+						<h2>Workspace:</h2>
+						<h2 style="font-weight: bold;">${currentSelectedWorkspace?.title}</h2>
 						<h2>Last Modified</h2>
-						<t:graphene.jodatimeoutput
-							value="currentSelectedWorkspace?.modified" style="LL" />
+						<h2 style="font-weight: bold;">
+							<t:graphene.jodatimeoutput
+								value="currentSelectedWorkspace?.modified" style="LL" />
+						</h2>
 					</header>
 					<!-- widget div-->
 					<div>

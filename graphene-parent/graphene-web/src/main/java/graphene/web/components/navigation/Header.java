@@ -18,5 +18,8 @@ public class Header {
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
 	private String appName;
-
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
+	private String appVersion;
 }

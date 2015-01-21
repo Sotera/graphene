@@ -5,7 +5,9 @@ import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
+import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
+import graphene.model.idl.G_Workspace;
 import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
@@ -17,12 +19,10 @@ import graphene.web.annotations.PluginPage;
 import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +35,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
@@ -65,13 +66,14 @@ import org.slf4j.Logger;
  * @author djue
  * 
  */
-@PluginPage(visualType = G_VisualType.SEARCH, menuName = "Combined Search", icon = "fa fa-lg fa-fw fa-search")
+@PluginPage(visualType = G_VisualType.HIDDEN, menuName = "Combined Search", icon = "fa fa-lg fa-fw fa-search")
 @Import(stylesheet = {
 		"context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
 		"context:core/js/plugin/datatables/media/css/TableTools.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 public class CombinedEntitySearchPage extends SimpleBasePage {
-
+	@Inject
+	private G_UserDataAccess userDataAccess;
 	@Inject
 	private BeanModelSource beanModelSource;
 
@@ -171,10 +173,27 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 	@Symbol(G_SymbolConstants.EXT_PATH)
 	private String extPath;
 
+	@Property
+	@SessionState(create = false)
+	private G_Workspace currentSelectedWorkspace;
+
+	@Property
+	private boolean currentSelectedWorkspaceExists;
+
 	public Collection<String> getAddressList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTADDRESSLIST);
 	}
+
+	// public String getAmount() {
+	// Long l = (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
+	// return DataFormatConstants.formatMoney(l);
+	// }
+
+	// public Format getMoneyFormat() {
+	// Locale locale = new Locale("en", "US");
+	// return NumberFormat.getCurrencyInstance(locale);
+	// }
 
 	public Link getAddressPivotLink() {
 		final Link l = searchPage.set(null, null,
@@ -187,20 +206,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
-	//public String getAmount() {
-	//	Long l = (Long) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
-	//	return DataFormatConstants.formatMoney(l);
-	//}
-	
-	public Format getMoneyFormat() {
-	    Locale locale = new Locale("en", "US"); 
-		return NumberFormat.getCurrencyInstance(locale);
-	}
-
-	//public Format getMoneyFormat() {
-	//	return DataFormatConstants.getMoneyFormat();
-	//}
-	
 	public Collection<String> getCIdentifierList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTCIDLIST);
@@ -245,7 +250,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 			sq.addAttribute(gs);
 			sq.setMaxResult(maxResults);
 			sq.setSchema(schema);
-			sq.setMinimumScore(0.50);
+			sq.setMinimumScore(0.0);
 			if (isUserExists()) {
 				sq.setUserId(getUser().getId());
 				sq.setUserName(getUser().getUsername());
@@ -253,6 +258,19 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 
 			try {
 				loggingDao.recordQuery(sq);
+				if (currentSelectedWorkspaceExists) {
+					List<Object> qo = currentSelectedWorkspace
+							.getQueryObjects();
+					if (qo == null) {
+						qo = new ArrayList<Object>(1);
+						qo.add(sq);
+
+					}
+					currentSelectedWorkspace.setQueryObjects(qo);
+
+					userDataAccess.saveWorkspace(getUser().getId(),
+							currentSelectedWorkspace);
+				}
 				metaresults = dao.findByQueryWithMeta(sq);
 				final TimeReporter tr = new TimeReporter(
 						"parsing details of results", logger);
@@ -343,6 +361,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 		return model;
 	}
 
+	public Format getMoneyFormat() {
+		return DataFormatConstants.getMoneyFormat();
+	}
+
 	public Collection<String> getNameList() {
 		return (Collection<String>) currentEntity
 				.get(DocumentGraphParser.SUBJECTNAMELIST);
@@ -364,86 +386,61 @@ public class CombinedEntitySearchPage extends SimpleBasePage {
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
 		json.put(
-			"aaSorting",
-			new JSONArray()
-				.put(new JSONArray().put(0).put("asc"))
-				.put(new JSONArray().put(3).put("desc"))
-		);
-		
-		JSONArray columnArray = new JSONArray();
-		
-		// a two-dimensional array that acts as a definition and mapping between column headers and their widths (in %)
-		final String[][] properties = {
-			{"rank", "1%"}, {"actions", "10%"}, {"informationIcons", "8%"}, 
-			{"date", "7%"}, {"amount", "7%"}, {"subjects", "12%"}, {"addressList", "25%"},
-			{"communicationIdentifierList", "15%"}, {"identifierList", "15%"}
-		};
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "numeric"
+				"aaSorting",
+				new JSONArray().put(new JSONArray().put(0).put("asc")).put(
+						new JSONArray().put(3).put("desc")));
+
+		final JSONArray columnArray = new JSONArray();
+
+		// a two-dimensional array that acts as a definition and mapping between
+		// column headers and their widths (in %)
+		final String[][] properties = { { "rank", "1%" }, { "actions", "10%" },
+				{ "informationIcons", "8%" }, { "date", "7%" },
+				{ "amount", "7%" }, { "subjects", "12%" },
+				{ "addressList", "25%" },
+				{ "communicationIdentifierList", "15%" },
+				{ "identifierList", "15%" } };
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "numeric"));
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "date"));
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "numeric" // TODO
+																		// fixme
 		));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "string"
-		));
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "string"
-		));
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "date"
-		));
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "numeric" // TODO fixme
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "string"	
-		));
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "string"	
-		));
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "string"
-		));
-		
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0],
-			"bSortable", "true",
-			"sWidth", properties[columnArray.length()][1],
-			"sType", "string"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
+
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray
+				.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
 		json.put("aoColumns", columnArray);
-		
+
 		return json;
 	}
 
