@@ -138,7 +138,7 @@ The POM.xml at the IMDB level lists the Ingest and Web modules as children, so y
  
 We recommend that the ingest module depend on parts from the web module (and not the other way around), so that code relating to ingest doesn't get deployed with your war.
  
-###The injest module
+###The ingest module
  The ingest module has to do with ETL (Extract, Transform, Load) of your data into a more generic format.
  
 ###The web module
