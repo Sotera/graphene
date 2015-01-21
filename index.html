@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Graphene : Search and Graph your data">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Graphene</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Sotera/graphene">View on GitHub</a>
+
+          <h1 id="project_title">Graphene</h1>
+          <h2 id="project_tagline">Search and Graph your data</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Sotera/graphene/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Sotera/graphene/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="graphene-search-and-graph-your-data-" class="anchor" href="#graphene-search-and-graph-your-data-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphene: Search and Graph your data </h1>
+
+<p>Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J or Titan (and to that extent, Tinkerpop Blueprints), from your non-graph datastore (RDBMS, Solr, etc).</p>
+
+<p>For configurations, building, and deployment instructions, view the <a href="https://github.com/Sotera/graphene/wiki">Graphene Wiki</a>.
+Please see the road maps in the wiki for new features and their slated order.</p>
+
+<h2>
+<a id="using-graphene-" class="anchor" href="#using-graphene-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Graphene </h2>
+
+<p>The core of the Graphene project is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.</p>
+
+<p>It is our goal that you should not have to modify this project in order to suit your individual needs (although we welcome ideas and suggestions).  The intent is that this project be used as an underlying framework, and that your individual implementations can be wired within your code using IOC.</p>
+
+<h2>
+<a id="building-graphene-" class="anchor" href="#building-graphene-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building Graphene </h2>
+
+<p>Graphene is built using <a href="http://maven.apache.org">Apache Maven</a> version 3.0.4 or later and a recent version of <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java 7</a>. </p>
+
+<ul>
+<li>A plain 'mvn clean install' will build all the jar files and a single war file (to be overlaid on your project)</li>
+<li>Test execution is part of the build, but you can add -DskipTests=true to cut down on the build time.</li>
+<li>A BuildAll.bat is supplied for windows users.  This will perform a few cleans to overcome some windows issues, and then compile and install to your local maven repo.</li>
+</ul>
+
+<h2>
+<a id="graphene-overview" class="anchor" href="#graphene-overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphene overview</h2>
+
+<p>Graphene expects that you are familiar with some modern Java concepts:</p>
+
+<ul>
+<li> Interfaces and Implementations</li>
+<li> Knowledge of Maven, or a knowledge of how to search for answers to your questions</li>
+<li> Dependency Injection (aka Inversion of Control or IOC or DI)
+
+<ul>
+<li> Graphene uses <a href="http://tapestry.apache.org/">Apache Tapestry</a> to provide the IOC framework.  It is very similar to Guice, but also allows distributed configuration and can act as a light weight OSGI alternative.  We may use the term 'wiring' and 'binding' interchangeably.  Essentially a registry is created and lives throughout the life of your program, which defines which implementation services will get when they ask for the interface. The IOC 'wiring' is mostly done at the customer implementation level, although basic shared services are wired in modules within graphene-parent.  For consistency's sake, any class that performs IOC wiring we suffix with the word "Module", i.e. AppModule.java or DAOModule.java.
+</li>
+</ul>
+</li>
+<li>Graphene currently requires you to implement an ExtJS U. The Walker and Kiva demos should be helpful in setting up the application for your own dataset.</li>
+</ul>
+
+
+<p>Graphene is structured as a multi module maven project. The modules are:
+ </p><ul>
+  <li> <h3>
+<a id="graphene-parent" class="anchor" href="#graphene-parent" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-parent</h3>
+    <ul>
+      <li>
+<h4>
+<a id="graphene-analytics" class="anchor" href="#graphene-analytics" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-analytics</h4>
+        <ul> 
+          <li>Still under development.  This is for precomputed or post ingest analytics</li>
+        </ul>
+      </li>
+     <li>
+<h4>
+<a id="graphene-dao" class="anchor" href="#graphene-dao" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-dao</h4>
+        <ul> 
+          <li>Defines all DAO interfaces used under graphene-parent, as well as any business logic interfaces and implementations</li>
+        </ul>
+     </li>
+     <li>
+<h4>
+<a id="graphene-dao-neo4j" class="anchor" href="#graphene-dao-neo4j" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-dao-neo4j</h4>
+        <ul> 
+          <li>Defines some DAO implementations for a standardized Neo4J property graph, and graph querying abilities using Cypher and the Neo4J Java API</li>
+        </ul>
+     </li>
+     <li>
+<h4>
+<a id="graphene-dao-titan" class="anchor" href="#graphene-dao-titan" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-dao-titan</h4>
+        <ul> 
+          <li>Defines some helper classes for working with the Titan graph database for property and event graphs, and graph querying abilities using the Tinkerpop/Gremlin APIs</li>
+        </ul>
+     </li>
+     <li>
+<h4>
+<a id="graphene-dao-sql" class="anchor" href="#graphene-dao-sql" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-dao-sql</h4>
+        <ul> 
+          <li>Defines some DAO implementations for standardized SQL tables.  These are not used unless you wire them in IOC</li>
+        </ul>
+     </li>
+      <li>
+<h4>
+<a id="graphene-export" class="anchor" href="#graphene-export" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-export</h4>
+        <ul> 
+          <li>Defines utilities for converting internal lists into CSV and native Excel XLS files</li>
+        </ul>
+      </li>
+    <li>
+<h4>
+<a id="graphene-hts" class="anchor" href="#graphene-hts" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-hts</h4>
+        <ul> 
+          <li>Under development. Defines utilities for entity extraction and resolution based on the nature and context of the data. </li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-ingest" class="anchor" href="#graphene-ingest" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-ingest</h4>
+        <ul> 
+          <li>Defines some basic ingest utilities which are used only by other ingest modules.</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-introspect" class="anchor" href="#graphene-introspect" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-introspect</h4>
+        <ul> 
+          <li>Used during the ingest phase.  Currently its main function is to run a series of queries against every table and every column, so you can get a feel for the bounds of your data and which columns are interesting.</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-memorydb" class="anchor" href="#graphene-memorydb" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-memorydb</h4>
+        <ul> 
+          <li>An in house memory database for property graphs, for small datasets and when a graph database is not available.  An implementation of this is preloaded into memory when the application is started (which may take several minutes depending on how much you tell it to load)</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-model" class="anchor" href="#graphene-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-model</h4>
+        <ul> 
+          <li>This module contains generic model and view classes which are used by graphene's services.  </li>
+<li>Your DAO implementations translate your domain specific (and database specific) objects into the more generic objects defined in this module.</li>
+<li>Your DAO implementations receive query objects (POJOs) defined in this module.</li>
+<li>Many of the objects are generated use <a href="http://avro.apache.org/">Apache Avro</a>.</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-rest" class="anchor" href="#graphene-rest" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-rest</h4>
+        <ul> 
+          <li>This module defines the REST interfaces which will be exposed to the UI.</li>
+<li>Your REST implementations will adhere to the interfaces defined here.</li>
+<li>The REST interfaces control the paths of the resource, so the UI will not break because of bad paths.</li>
+<li>This module uses Tynamo RESTEasy integration with the Apache Tapestry web framework.</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-search" class="anchor" href="#graphene-search" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-search</h4>
+        <ul> 
+          <li>General search utilities</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-util" class="anchor" href="#graphene-util" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-util</h4>
+        <ul> 
+          <li>Utilities which have cross cutting concerns for all modules.  For example, query timing, logging, memory and file utilities.</li>
+<li>Almost all modules require this module as a dependency.</li>
+        </ul>
+      </li>
+      <li>
+<h4>
+<a id="graphene-web" class="anchor" href="#graphene-web" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-web</h4>
+        <ul> 
+          <li>This module defines some basic wiring and imports many other of the *Module.java classes from other graphene maven modules.</li>
+<li>The web module also contains shared html, css and js resources used by ExtJs, Cytoscape and many other libraries.</li>
+<li>It also contains Apache Tapestry based UI components and pages (currently limited)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2>
+<a id="-developing-with-graphene" class="anchor" href="#-developing-with-graphene" aria-hidden="true"><span class="octicon octicon-link"></span></a> Developing with Graphene</h2>
+
+<p>We recommend that your application use the Maven module structure, as shown in the Walker and Kiva demos.  For example, if you have a company name or dataset name you are developing for, like IMDB, the structure would look as follows:</p>
+
+<ul>
+<li>graphene-imdb
+..<em>graphene-imdb-ingest (aka the ingest module)
+..</em>graphene-imdb-web (aka the web module)</li>
+</ul>
+
+<p>The POM.xml at the IMDB level lists the Ingest and Web modules as children, so you can build both parts together.</p>
+
+<p>We recommend that the ingest module depend on parts from the web module (and not the other way around), so that code relating to ingest doesn't get deployed with your war.</p>
+
+<h3>
+<a id="the-injest-module" class="anchor" href="#the-injest-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>The injest module</h3>
+
+<p>The ingest module has to do with ETL (Extract, Transform, Load) of your data into a more generic format.</p>
+
+<h3>
+<a id="the-web-module" class="anchor" href="#the-web-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>The web module</h3>
+
+<h4>
+<a id="if-you-etld-into-an-rdbms" class="anchor" href="#if-you-etld-into-an-rdbms" aria-hidden="true"><span class="octicon octicon-link"></span></a>If you ETL'd into an RDBMS</h4>
+
+<p>The first thing you might want to do with the web module is to setup and run the DTOGeneration.java main(). Once it connects to your database, it will generate Java model objects that reflect your database tables, and query helping objects which will ensure you write valid SQL (invalid SQL or bad type conversions will be caught during compilation).  This portion of the process uses QueryDSL to do code generation, which is normally tedious and error prone when done by hand.</p>
+
+<h4>
+<a id="if-you-didnt-etl-into-an-rdbms" class="anchor" href="#if-you-didnt-etl-into-an-rdbms" aria-hidden="true"><span class="octicon octicon-link"></span></a>If you didn't ETL into an RDBMS</h4>
+
+<p>You can skip the DTOGeneration, and go straight to implementing your DAOs</p>
+
+<h4>
+<a id="dao-implementation" class="anchor" href="#dao-implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>DAO Implementation</h4>
+
+<p>Graphene expects you to create implementations for most of the DAOs following the interfaces provided in the graphene-dao module.
+   This allows the storage mechanism you choose to be independent of the main services and UI.  In the DAO implementations, you will mostly be querying your datastore and then converting the results into one of the model or view objects in the graphene-model module. </p>
+
+<h2>
+<a id="running-a-graphene-application" class="anchor" href="#running-a-graphene-application" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running a Graphene application</h2>
+
+<p>By default, Graphene expects some other software to be available (Although it is easy to change this or override the defaults) </p>
+
+<ul>
+<li>JDK 1.7 (latest will be fine).  Graphene and its dependencies are not built with JDK 8 compatibility.</li>
+<li>Tomcat 7 or 8, with any JDBC on the class path (i.e. tomcat/lib or packaged with your app)</li>
+<li>You should set the Catalina_Home environment variable</li>
+<li>Graphene supports Chrome and Firefox, and does not require any browser plugins. </li>
+</ul>
+
+<h2>
+<a id="licensing" class="anchor" href="#licensing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
+
+<p>Graphene is an open source project, containing dependencies on other open source projects.  This project was funded by DARPA under part of the XDATA program.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Graphene maintained by <a href="https://github.com/Sotera">Sotera</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
