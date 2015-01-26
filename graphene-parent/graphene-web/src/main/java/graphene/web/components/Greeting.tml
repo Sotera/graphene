@@ -8,11 +8,11 @@
 
 			<div class="pull-left login-desc-box-l">
 				<h4 class="paragraph-header">
-					${appName} is a multi-faceted enterprise platform that provides: 
+					${appName} is a targeted investigation tool for analysts that provides: 
 					<ul>
-						<li>a powerful search interface</li>
-						<li> structured report views</li>
-						<li>interactive shared-attribute network graphs</li>
+						<li>Powerful search capabilities that help analysts find key reports quickly</li>
+						<li>User-friendly report views that make analysis easier and faster</li>
+						<li>Shared attribute network graphs that ease entity resolution and empower users to uncover hidden connections</li>
 					</ul>
 				</h4>
 				<div class="login-app-icons">

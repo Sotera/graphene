@@ -26,6 +26,11 @@ public class JestModule {
 	public static final String ES_PERSISTED_GRAPH_TYPE = "graphene.es-persisted-graph-type";
 	public static final String ES_DEFAULT_TIMEOUT = "graphene.es-default-timeout";
 
+	public static final String ES_LOGGING_SEARCH_TYPE = "graphene.es-logging-search-type";
+	public static final String ES_LOGGING_GRAPHQUERY_TYPE = "graphene.es-logging-graph-query-type";
+	public static final String ES_LOGGING_REPORT_VIEW_TYPE = "graphene.es-logging-report-view-type";
+	public static final String ES_LOGGING_EXPORT_TYPE = "graphene.es-logging-export-type";
+
 	public static void bind(final ServiceBinder binder) {
 
 	}

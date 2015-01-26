@@ -20,6 +20,7 @@ import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -33,17 +34,31 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
-	private static final String SEARCHQUERYTYPE = "search";
-	private static final String GRAPHQUERYTYPE = "graphquery";
-	private static final String REPORTVIEWTYPE = "reportview";
-	private static final String EXPORTTYPE = "export";
+	// private static final String SEARCHQUERYTYPE = "search";
+	// private static final String GRAPHQUERYTYPE = "graphquery";
+	// private static final String REPORTVIEWTYPE = "reportview";
+	// private static final String EXPORTTYPE = "export";
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_INDEX)
 	private String indexName;
 
 	@Inject
-	public LoggingDAODefaultESImpl(final ESRestAPIConnection c,
-			final JestClient jestClient, final Logger logger) {
+	@Symbol(JestModule.ES_LOGGING_SEARCH_TYPE)
+	private String searchQueryType;
+
+	@Inject
+	@Symbol(JestModule.ES_LOGGING_GRAPHQUERY_TYPE)
+	private String graphQueryType;
+
+	@Inject
+	@Symbol(JestModule.ES_LOGGING_REPORT_VIEW_TYPE)
+	private String reportViewType;
+	@Inject
+	@Symbol(JestModule.ES_LOGGING_EXPORT_TYPE)
+	private String exportType;
+
+	@Inject
+	public LoggingDAODefaultESImpl(final ESRestAPIConnection c, final JestClient jestClient, final Logger logger) {
 		auth = null;
 		this.c = c;
 		this.jestClient = jestClient;
@@ -52,52 +67,42 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<Object> getAllEvents(final String userId,
-			final String partialTerm, final int limit) {
+	public List<Object> getAllEvents(final String userId, final String partialTerm, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TemporalGraphQuery> getGraphQueries(final String userId,
-			final String partialTerm, final int limit) {
+	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
 			if (ValidationUtils.isValid(partialTerm)) {
 				// use the partial name to filter
-				searchSourceBuilder.query(QueryBuilders.filteredQuery(
-						QueryBuilders.fuzzyQuery("value", partialTerm),
-						FilterBuilders.andFilter(FilterBuilders.termFilter(
-								"userId", userId))));
+				searchSourceBuilder.query(QueryBuilders.filteredQuery(QueryBuilders.fuzzyQuery("value", partialTerm),
+						FilterBuilders.andFilter(FilterBuilders.termFilter("userId", userId))));
 			} else {
 				// don't filter on name, get all of them.
-				searchSourceBuilder.query(QueryBuilders.matchQuery("userId",
-						userId));
+				searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
 			}
 		} else {
 			if (ValidationUtils.isValid(partialTerm)) {
 				// use the partial name to filter
-				searchSourceBuilder.query(QueryBuilders.fuzzyQuery("value",
-						partialTerm));
+				searchSourceBuilder.query(QueryBuilders.fuzzyQuery("value", partialTerm));
 			} else {
 				searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 			}
 		}
-		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated")
-				.order(SortOrder.DESC).ignoreUnmapped(true);
+		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(true);
 
-		final Search search = new Search.Builder(searchSourceBuilder.sort(
-				byDate).toString()).addIndex(indexName).addType(GRAPHQUERYTYPE)
-				.build();
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).toString()).addIndex(indexName)
+				.addType(graphQueryType).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
-		List<TemporalGraphQuery> returnValue = new ArrayList<TemporalGraphQuery>(
-				0);
+		List<TemporalGraphQuery> returnValue = new ArrayList<TemporalGraphQuery>(0);
 		try {
 			result = jestClient.execute(search);
-			returnValue = result
-					.getSourceAsObjectList(TemporalGraphQuery.class);
+			returnValue = result.getSourceAsObjectList(TemporalGraphQuery.class);
 			for (final TemporalGraphQuery u : returnValue) {
 				System.out.println(u);
 			}
@@ -109,44 +114,38 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<EntityQuery> getQueries(final String userId,
-			final String partialTerm, final int offset, final int limit) {
+	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
 			if (ValidationUtils.isValid(partialTerm)) {
 				// use the partial name to filter
-				searchSourceBuilder.query(QueryBuilders.filteredQuery(
-						QueryBuilders.fuzzyQuery("value", partialTerm),
-						FilterBuilders.andFilter(FilterBuilders.termFilter(
-								"userId", userId))));
+				searchSourceBuilder.query(QueryBuilders.filteredQuery(QueryBuilders.fuzzyQuery("value", partialTerm),
+						FilterBuilders.andFilter(FilterBuilders.termFilter("userId", userId))));
 			} else {
 				// don't filter on name, get all of them.
-				searchSourceBuilder.query(QueryBuilders.matchQuery("userId",
-						userId));
+				searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
 			}
 		} else {
 			if (ValidationUtils.isValid(partialTerm)) {
 				// use the partial name to filter
-				searchSourceBuilder.query(QueryBuilders.fuzzyQuery("value",
-						partialTerm));
+				searchSourceBuilder.query(QueryBuilders.fuzzyQuery("value", partialTerm));
 			} else {
 				searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 			}
 		}
-		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated")
-				.order(SortOrder.DESC).ignoreUnmapped(false);
+		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(false);
 
-		final Search search = new Search.Builder(searchSourceBuilder.sort(
-				byDate).toString()).addIndex(indexName).addType(type)
-				.setParameter("from", offset).setParameter("size", limit)
-				.build();
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).toString()).addIndex(indexName)
+				.addType(searchQueryType).setParameter("from", offset).setParameter("size", limit).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
 		List<EntityQuery> returnValue = new ArrayList<EntityQuery>(0);
 		try {
 			result = jestClient.execute(search);
+			System.out.println(result);
 			returnValue = result.getSourceAsObjectList(EntityQuery.class);
+
 			for (final EntityQuery u : returnValue) {
 				System.out.println(u);
 			}
@@ -159,26 +158,22 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<ReportViewEvent> getReportViewEvents(final String userId,
-			final int limit) {
+	public List<ReportViewEvent> getReportViewEvents(final String userId, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
 			// don't filter on name, get all of them.
-			searchSourceBuilder.query(QueryBuilders
-					.matchQuery("userId", userId));
+			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
 
 		} else {
 
 			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 
 		}
-		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated")
-				.order(SortOrder.DESC).ignoreUnmapped(true);
+		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(true);
 
-		final Search search = new Search.Builder(searchSourceBuilder.sort(
-				byDate).toString()).addIndex(indexName).addType(REPORTVIEWTYPE)
-				.build();
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).toString()).addIndex(indexName)
+				.addType(reportViewType).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
 		List<ReportViewEvent> returnValue = new ArrayList<ReportViewEvent>(0);
@@ -195,11 +190,12 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		return returnValue;
 	}
 
-	// @PostInjection
+	@PostInjection
 	@Override
 	public void initialize() {
 		setIndex(indexName);
-		setType("queryLog");
+		// default type, although we can have multiple types
+		setType(searchQueryType);
 		super.initialize();
 	}
 
@@ -221,12 +217,10 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		if (ValidationUtils.isValid(q)) {
 			if (!ValidationUtils.isValid(q.getId())) {
 				// auto id
-				saveAction = new Index.Builder(q).index(indexName)
-						.type(SEARCHQUERYTYPE).build();
+				saveAction = new Index.Builder(q).index(indexName).type(searchQueryType).build();
 			} else {
 				// use id that was provided
-				saveAction = new Index.Builder(q).index(indexName)
-						.id(q.getId()).type(SEARCHQUERYTYPE).build();
+				saveAction = new Index.Builder(q).index(indexName).id(q.getId()).type(searchQueryType).build();
 			}
 			try {
 				jestClient.executeAsync(saveAction, new JestResultHandler() {
@@ -238,8 +232,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 					@Override
 					public void failed(final Exception ex) {
-						logger.error("Error saving log to server! "
-								+ ex.getMessage());
+						logger.error("Error saving log to server! " + ex.getMessage());
 					}
 
 				});
@@ -270,12 +263,10 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 			if (!ValidationUtils.isValid(q.getId())) {
 				// auto id
-				saveAction = new Index.Builder(q).index(indexName)
-						.type(GRAPHQUERYTYPE).build();
+				saveAction = new Index.Builder(q).index(indexName).type(graphQueryType).build();
 			} else {
 				// use id that was provided
-				saveAction = new Index.Builder(q).index(indexName)
-						.id(q.getId()).type(GRAPHQUERYTYPE).build();
+				saveAction = new Index.Builder(q).index(indexName).id(q.getId()).type(graphQueryType).build();
 			}
 
 			try {
@@ -288,8 +279,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 					@Override
 					public void failed(final Exception ex) {
-						logger.error("Error saving log to server! "
-								+ ex.getMessage());
+						logger.error("Error saving log to server! " + ex.getMessage());
 					}
 
 				});
@@ -313,17 +303,14 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		if (ValidationUtils.isValid(q)) {
 			if (!ValidationUtils.isValid(q.getId())) {
 				// auto id
-				saveAction = new Index.Builder(q).index(indexName)
-						.type(REPORTVIEWTYPE).build();
+				saveAction = new Index.Builder(q).index(indexName).type(reportViewType).build();
 			} else {
 				// use id that was provided
-				saveAction = new Index.Builder(q).index(indexName)
-						.id(q.getId()).type(REPORTVIEWTYPE).build();
+				saveAction = new Index.Builder(q).index(indexName).id(q.getId()).type(reportViewType).build();
 			}
 			try {
 				final JestResult result = jestClient.execute(saveAction);
-				if (!ValidationUtils.isValid(q.getId())
-						&& ValidationUtils.isValid(result.getValue("_id"))) {
+				if (!ValidationUtils.isValid(q.getId()) && ValidationUtils.isValid(result.getValue("_id"))) {
 
 				}
 			} catch (ExecutionException | InterruptedException | IOException e) {

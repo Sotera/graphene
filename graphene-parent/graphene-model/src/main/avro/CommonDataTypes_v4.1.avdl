@@ -102,6 +102,11 @@ protocol G_CommonDataTypes {
 	ENTITY,					//(500, "Entity", "entity"),
 	TYPE,					//(501, "Type", "type"),
 	URL,					//(502, "URL", "url"),
+	SUBJECT,		//The subject of an event or report or freetext
+	FREETEXT,  //
+	INSTITUTION,  //Some kind of institution
+	FILER,  //One who files
+	EVENT, //Some activity or event
 	REDACTED				//(-1, "[REDACTED]", "REDACTED");
 	
 	}

@@ -1,6 +1,9 @@
 package graphene.dao;
 
+import graphene.model.view.LegendItem;
+
 import java.awt.Color;
+import java.util.List;
 
 /**
  * Provides styling for nodes and property types based on a key String.
@@ -51,6 +54,8 @@ public interface StyleService {
 	 * @return This returns a CSS style.
 	 */
 	public abstract String getHighlightStyle();
+
+	public abstract List<LegendItem> getLegendForReports();
 
 	/**
 	 * This is a combination of get HighlightStyle (if the bool is true) and get

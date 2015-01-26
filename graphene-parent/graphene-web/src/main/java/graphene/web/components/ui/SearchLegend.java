@@ -46,6 +46,6 @@ public class SearchLegend {
 	}
 
 	public String getStyleForVisa() {
-		return style.getStyle(G_CanonicalPropertyType.VISA.name(), false);
+		return style.getStyle(G_CanonicalPropertyType.OTHER.name(), false);
 	}
 }

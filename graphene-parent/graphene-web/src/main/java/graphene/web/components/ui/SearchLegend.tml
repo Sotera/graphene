@@ -13,7 +13,7 @@
 			class="label legend"
 			style="${styleForName};"
 			title="Formal name of a person or group involved or mentioned in the report.">
-			Entity Name </span> 
+			Subject Name </span> 
 			<span class="label legend"
 			style="${styleForAddress};"
 			title="Street address, state, province, or any location identifier.">
@@ -28,9 +28,6 @@
 				<span class="label legend"
 			style="${styleForOccupation}; " title="Occupation of a subject.">
 			Occupation </span>
-			<span class="label legend"
-			style="${styleForVisa};" title="an International Visa">
-			Visa </span>
 				<span class="label legend"
 			style="${styleForGovId};" title="Any other government issued identifier, like SSN,EIN,Passport or Driver's License.">
 			Government Id </span>

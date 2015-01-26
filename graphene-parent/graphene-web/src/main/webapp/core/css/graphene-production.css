@@ -17131,6 +17131,18 @@ to {
 	-webkit-tap-highlight-color: rgba(229, 59, 44, .5)
 }
 
+.btn-action {
+color: #333;
+background-color: #ebebeb;
+border-color: #ccc;
+}
+
+.btn-action:hover, .btn-action:focus, .btn-action:active, .btn-action.active, .open .dropdown-toggle.btn-action {
+color: #333;
+background-color: #fff;
+border-color: #adadad;
+}
+
 #logo-group *,.login-info,.login-info *,.minified .menu-item-parent {
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
@@ -21835,9 +21847,9 @@ tr.highlight td,tr.unread.highlight td {
 }
 
 .tree li.parent_li>span:hover+ul li span {
-	background: #FDDFB3 !important;
+	background: #707070 !important;
 	border: 1px solid #FAA937;
-	color: #000
+	color: #FFF
 }
 
 .select2-container {

@@ -1,5 +1,6 @@
 package graphene.dao.es;
 
+import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
@@ -24,22 +25,32 @@ public class BasicESDAO {
 	protected String auth;
 	protected String type = "defaultType";
 
-	public boolean indexExists() {
+	protected void createIndex(final JestClient jestClient, final String indexName) throws Exception {
+		logger.debug("Creating index " + indexName + " with client " + jestClient.toString());
+		// create new index (if u have this in elasticsearch.yml and prefer
+		// those defaults, then leave this out
+		final ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
+		settings.put("number_of_shards", 3);
+		settings.put("number_of_replicas", 0);
+		final JestResult execute = jestClient.execute(new CreateIndex.Builder(indexName).settings(
+				settings.build().getAsMap()).build());
+		logger.debug(execute.toString());
+	}
+
+	public boolean delete(final String id) {
 		boolean success = false;
-		if (index == null) {
-			logger.warn("Index was not initialized! Cannot check for existence.");
-		} else {
-			try {
-				JestResult result = jestClient
-						.execute(new IndicesExists.Builder(index).build());
-				success = result.isSucceeded();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			jestClient.execute((new Delete.Builder(id)).index(index).type(type).build());
+			success = true;
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
 		return success;
+	}
 
+	protected void deleteIndex(final JestClient jestClient, final String indexName) throws Exception {
+		final DeleteIndex deleteIndex = new DeleteIndex.Builder(indexName).build();
+		jestClient.execute(deleteIndex);
 	}
 
 	public String getIndex() {
@@ -50,74 +61,58 @@ public class BasicESDAO {
 		return DateTime.now(DateTimeZone.UTC).getMillis();
 	}
 
-	public void setIndex(String index) {
-		this.index = index;
+	public String getType() {
+		return type;
+	}
+
+	public boolean indexExists() {
+		boolean success = false;
+		if (index == null) {
+			logger.warn("Index was not initialized! Cannot check for existence.");
+		} else {
+			try {
+				final JestResult result = jestClient.execute(new IndicesExists.Builder(index).build());
+				success = result.isSucceeded();
+			} catch (final Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return success;
+
 	}
 
 	public void initialize() {
-		if (!indexExists()) {
+		if (!indexExists() && ValidationUtils.isValid(index)) {
 			try {
 				createIndex(jestClient, index);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public boolean delete(String id) {
-		boolean success = false;
-		try {
-			JestResult result = jestClient.execute((new Delete.Builder(id))
-					.index(index).type(type).build());
-			success = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return success;
-	}
-
 	public void recreateIndex() {
 		try {
 			deleteIndex(jestClient, index);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			createIndex(jestClient, index);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	protected void deleteIndex(final JestClient jestClient, String indexName)
-			throws Exception {
-		DeleteIndex deleteIndex = new DeleteIndex.Builder(indexName).build();
-		jestClient.execute(deleteIndex);
+	public void setIndex(final String index) {
+		this.index = index;
 	}
 
-	protected void createIndex(final JestClient jestClient, String indexName)
-			throws Exception {
-		logger.debug("Creating index " + indexName + " with client "
-				+ jestClient.toString());
-		// create new index (if u have this in elasticsearch.yml and prefer
-		// those defaults, then leave this out
-		ImmutableSettings.Builder settings = ImmutableSettings
-				.settingsBuilder();
-		settings.put("number_of_shards", 3);
-		settings.put("number_of_replicas", 0);
-		JestResult execute = jestClient.execute(new CreateIndex.Builder(
-				indexName).settings(settings.build().getAsMap()).build());
-		logger.debug(execute.toString());
+	public void setType(final String type) {
+		this.type = type;
 	}
 }

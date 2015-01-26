@@ -1,5 +1,6 @@
 package graphene.web.pages.admin;
 
+import graphene.business.commons.ReportViewEvent;
 import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_VisualType;
@@ -21,8 +22,7 @@ import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-@Import(stylesheet = {
-		"context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
+@Import(stylesheet = { "context:core/js/plugin/datatables/media/css/TableTools_JUI.css",
 		"context:core/js/plugin/datatables/media/css/TableTools.css" })
 @ImportJQueryUI(theme = "context:core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 @PluginPage(visualType = G_VisualType.ADMIN, menuName = "Query Audit", icon = "fa fa-lg fa-fw fa-info-circle")
@@ -40,26 +40,33 @@ public class QueryAudit {
 	private LoggingDAO dao;
 
 	@Property
+	private String currentFilter;
+	@Property
+	private List<String> currentFilters;
+	@Property
 	private G_SearchTuple<String> currentTuple;
+	@Property
+	private ReportViewEvent currentReportView;
 
 	@Property
-	private List<EntityQuery> list;
-	private BeanModel<EntityQuery> model;
+	private List<EntityQuery> searchQueryList;
+	private BeanModel<EntityQuery> entityQuerymodel;
+	private BeanModel<ReportViewEvent> reportViewmodel;
 	@Inject
 	private ComponentResources resources;
+	@Property
+	private List<ReportViewEvent> reportViewList;
 
 	// Generally useful bits and pieces
-	public BeanModel<EntityQuery> getModel() {
+	public BeanModel<EntityQuery> getEntityQueryModel() {
 		// TODO: Move the initialization to setupRender
-		model = beanModelSource.createDisplayModel(EntityQuery.class,
-				resources.getMessages());
-		model.exclude("caseSensitive", "searchFreeText", "initiatorId",
-				"attributevalues", "minimumscore", "minsecs", "maxsecs",
-				"sortcolumn", "sortfield", "firstresult", "maxresult",
-				"datasource", "userid", "sortascending", "id", "schema");
+		entityQuerymodel = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
+		entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues", "minimumscore",
+				"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userid",
+				"sortascending", "id", "schema");
 
-		model.get("AttributeList").sortable(true);
-		return model;
+		entityQuerymodel.get("AttributeList").sortable(true);
+		return entityQuerymodel;
 	}
 
 	public JSONObject getOptions() {
@@ -72,8 +79,7 @@ public class QueryAudit {
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
-		json.put("aaSorting",
-				new JSONArray().put(new JSONArray().put(0).put("desc")));
+		json.put("aaSorting", new JSONArray().put(new JSONArray().put(0).put("desc")));
 		new JSONObject().put("aTargets", new JSONArray().put(0, 4));
 		final JSONObject sortType = new JSONObject("sType", "formatted-num");
 		final JSONArray columnArray = new JSONArray();
@@ -83,8 +89,20 @@ public class QueryAudit {
 		return json;
 	}
 
+	public BeanModel<ReportViewEvent> getReportViewModel() {
+		// TODO: Move the initialization to setupRender
+		reportViewmodel = beanModelSource.createDisplayModel(ReportViewEvent.class, resources.getMessages());
+		// reportViewmodel.exclude("caseSensitive", "searchFreeText",
+		// "initiatorId", "attributevalues", "minimumscore",
+		// "minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult",
+		// "maxresult", "datasource", "userid",
+		// "sortascending", "id", "schema");
+		return reportViewmodel;
+	}
+
 	@SetupRender
 	private void loadQueries() {
-		list = dao.getQueries(null, null, 0, 200000);
+		searchQueryList = dao.getQueries(null, null, 0, 200000);
+		reportViewList = dao.getReportViewEvents(null, 200000);
 	}
 }

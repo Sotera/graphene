@@ -65,7 +65,7 @@ margin-right: 3px;
 								</p:rankCell>
 								<p:actionsCell>
 									<t:if test="reportPageLink">
-										<t:pagelink class="btn btn-default" page="prop:reportPageLink"
+										<t:pagelink class="btn btn-action" page="prop:reportPageLink"
 											context="reportId" target="reportId"  title="${score}">
 											<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
 												</t:pagelink>
@@ -73,7 +73,7 @@ margin-right: 3px;
 										<p:else>Report View Unavailable</p:else>
 									</t:if>
 
-									<a class="btn btn-default" href="${extLink}" target="extjs">
+									<a class="btn btn-action" href="${extLink}" target="extjs">
 										<i class="fa fa-code-fork"> </i> Graph
 									</a>
 								</p:actionsCell>
