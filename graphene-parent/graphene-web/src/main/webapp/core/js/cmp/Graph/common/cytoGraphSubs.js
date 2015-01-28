@@ -253,6 +253,47 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 					fillColor: _this.CONSTANTS("fillColor"), 
 					activeFillColor: _this.CONSTANTS("activeFillColor"), 
 					commands: [{
+						content: "Unmerge",
+						select: function() {
+							var node = this;
+							if (_this.owner.givePromptToUnmerge) { _this.owner.givePromptToUnmerge([node]); } 
+							else if (_this.owner.unmergeNode) { _this.owner.unmergeNode(node); } 
+							else { console.log("Capability to unmerge nodes is undefined"); }
+						}
+					}, {
+						content: "Connect Node",
+						select: function() {
+							var node = this;
+							var gg = _this.getGenerator();
+							if (typeof gg !== "undefined") {
+								gg.clear();
+								gg.setParent(node);
+								gg.changeState("CONNECT");
+								gg.givePrompt();
+							}
+						}
+					}, {
+						content: "Add Node",
+						select: function() {
+							var node = this;
+							var gg = _this.getGenerator();
+							if (typeof gg !== "undefined") {
+								gg.clear();
+								gg.setParent(node);
+								gg.changeState("ADD");
+								gg.givePrompt();
+							}
+						}
+					}, {
+						content: "Merge Selected Nodes",
+						select: function() {
+							var node = this;
+							var selectedNodes = _this.gv.$("node:selected");
+							if (_this.owner.givePromptToMerge) { _this.owner.givePromptToMerge(node, selectedNodes); } 
+							else if (_this.owner.mergeNodes) { _this.owner.mergeNodes(node, selectedNodes); } 
+							else { console.log("Capability to merge nodes is undefined"); }
+						}
+					}, {
 						content: "Expand",
 						select: function() {
 							var node = this;
@@ -272,48 +313,18 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 							} else { console.log("dijkstra pathfinding is unavailable."); }
 						}
 					}, {
-						content: "Add Node",
-						select: function() {
-							var node = this;
-							var gg = _this.getGenerator();
-							if (typeof gg !== "undefined") {
-								gg.clear();
-								gg.setParent(node);
-								gg.changeState("ADD");
-								gg.givePrompt();
-							}
-						}
-					}, {
-						content: "Connect Node",
-						select: function() {
-							var node = this;
-							var gg = _this.getGenerator();
-							if (typeof gg !== "undefined") {
-								gg.clear();
-								gg.setParent(node);
-								gg.changeState("CONNECT");
-								gg.givePrompt();
-							}
-						}
-					}, {
-						content: "Edit Node",
+						content: "Edit",
 						select: function() {
 							var node = this;
 							if (_this.owner.editElement) { _this.owner.editElement(node); } 
 							else { console.log("editElement() is undefined"); }
 						}
 					}, {
-						content: "Merge Selected Nodes",
+						content: "Unexpand",
 						select: function() {
 							var node = this;
-							var selectedNodes = _this.gv.$("node:selected");
-							if (_this.owner.givePromptToMerge) {
-								_this.owner.givePromptToMerge(node, selectedNodes);
-							} else if (_this.owner.mergeNodes) {
-								_this.owner.mergeNodes(node, selectedNodes);
-							} else {
-								console.log("Capability to merge nodes is undefined"); 
-							}
+							if (_this.owner.unexpand) { _this.owner.unexpand(node); }
+							else { console.log("unexpand() is undefined"); }
 						}
 					}]
 				}); // END NODE CONTEXT MENU

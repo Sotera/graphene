@@ -384,10 +384,11 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		var window = Ext.create("DARPA.NodeMergeDialog", {
 			confirmFn: function(reason) {
 				// first, do the client-side merge of all the nodes
-				superNodes.each(function(i, n) {
+				for (var i = 0; i < superNodes.length; i++) {
+					var n = superNodes[i];
 					n.removeData("reason");
 					if (n.hasClass("super-node")) scope.unmergeNode(n);
-				});
+				}
 			},
 			cancelFn: function() {
 				// don't merge
