@@ -329,8 +329,8 @@ Ext.define("DARPA.Node_Actions", {
 				   "<p><b>Expanding</b>: Add the neighbors, if any, of the selected node(s) to the graph with EXPAND.  UNEXPAND deletes the newly discovered neighbors.</p>" +
 				   "<p><b>Halt</b>: Stop a procedurally-generated layout in process.</p>" +
 				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>" +
-				   "<p><b>Snap To Graph</b>: Automatically pans back to the graph, setting it to fit the display without adjusting the current layout.</p>" +
-				   "<p><b>Unmerge</b>: Retrieves any second-class subnodes from inside a 'super node' and puts them back on the graph as first-class nodes.</p>"
+				   "<p><b>Snap To Graph</b>: Automatically pans back to the graph, setting it to fit the display without adjusting the current layout.</p>"
+				   //"<p><b>Unmerge</b>: Retrieves any second-class subnodes from inside a 'super node' and puts them back on the graph as first-class nodes.</p>"
 			    );
 			}
 		});
@@ -371,7 +371,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype: 'fieldcontainer',
 				height: 'auto',
 				width: '100%',
-				items: [snap, unmerge, help]
+				items: [snap, /*unmerge,*/ help]
 			}]
 		});
 
@@ -391,6 +391,7 @@ Ext.define("DARPA.Node_Actions", {
 		this.getStopButton = function() { return stop; };
 		this.getDeleteButton = function() { return deleteBtn; };
 		this.getUnmergeButton = function() { return unmerge; };
+		this.getSnapButton = function() { return snap; };
 		this.getHelpButton = function() { return help; };
 		
 		this.callParent(arguments);
