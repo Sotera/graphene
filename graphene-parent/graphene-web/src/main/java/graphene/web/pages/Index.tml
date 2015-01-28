@@ -13,7 +13,7 @@
 			<p>Available Workspaces:</p>
 
 			<ul t:type="loop" source="workspaces" value="currentWorkspace">
-				<a t:type="pagelink" page="graphene/ViewWorkspace"
+				<a t:type="pagelink" page="graphene/workspace/view"
 					context="currentWorkspace.id">${currentWorkspace.title}</a>
 				<t:graphene.jodatimeoutput value="currentWorkspace.modified"
 					style="LL" />

@@ -57,6 +57,8 @@ public class G_SymbolConstants {
 
 	public static final String ENABLE_GRAPH_QUERY_PATH = "graphene.enable-graph-query-path";
 
+	public static final String ENABLE_DELETE_WORKSPACES = "graphene.enable-delete-workspaces";
+
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}

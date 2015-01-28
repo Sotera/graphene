@@ -1,6 +1,6 @@
 package graphene.dao;
 
-import graphene.business.commons.ReportViewEvent;
+import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityQuery;
 
@@ -22,13 +22,11 @@ public interface LoggingDAO {
 
 	List<Object> getAllEvents(String userId, String partialTerm, int limit);
 
-	List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm,
-			int limit);
+	List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm, int limit);
 
-	List<EntityQuery> getQueries(String userId, String partialTerm, int offset,
-			int limit);
+	List<EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
 
-	List<ReportViewEvent> getReportViewEvents(String userId, int limit);
+	List<G_ReportViewEvent> getReportViewEvents(String userId, int limit);
 
 	/**
 	 * Record an export event and what values were used to initiate the export.
@@ -68,6 +66,6 @@ public interface LoggingDAO {
 
 	public abstract void recordQuery(V_GraphQuery q);
 
-	public abstract void recordReportViewEvent(ReportViewEvent q);
+	public abstract void recordReportViewEvent(G_ReportViewEvent q);
 
 }

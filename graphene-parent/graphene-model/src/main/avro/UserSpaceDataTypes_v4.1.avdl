@@ -30,8 +30,8 @@ protocol G_UserSpaceDataTypes {
 	record G_User {
 		/** */
 		boolean active = true;
-		union {string, null} id =null;
-		string username = "notset";
+		string id =null;
+		union {string, null} username = "notset";
 		/**
 		 * some id of an avatar (could be a file name or other string to look
 		 * up)
@@ -67,14 +67,22 @@ protocol G_UserSpaceDataTypes {
 	
 
 	record G_Group {
-		union {string, null} id =null;
-		string name = "notset";
-		string description = "notset";
+		string id =null;
+		union {string, null}  name = "notset";
+		union {string, null}  description = "notset";
 		/** groups's modified datetime */
 		union { long, null} modified = 0;
 	}
 	
-
+	record G_ReportViewEvent {
+		string id =null;
+		string reportId;
+		string reportType;
+		string reportPageLink;
+		long timeInitiated;
+		union {string, null}  userId = "None";
+		union {string, null}  userName = "None";
+	}
 	
 
 	
@@ -83,8 +91,8 @@ protocol G_UserSpaceDataTypes {
 		union {string, null} description=null;
 		union {string, null} reports=null;
 		string title="untitled";
-		array<string> queries;
-		array<union {string, int, float, double, long, boolean}> queryObjects;
+		array<G_ReportViewEvent> savedReports;
+		array<@java-class("graphene.model.query.EntityQuery") string> queryObjects;
 		union {string, null} id =null;
 			
 		 /** workspace's modified datetime */

@@ -1,6 +1,5 @@
 <!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
-<html t:type="graphene/layout" title="Contact ${contact}"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html t:type="graphene/layout" title="Contact ${contact}" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 
 <style>
@@ -32,9 +31,9 @@ table td {
 		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			<!-- Start results area -->
 			<t:if test="searchQueryList">
-				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1"
-					data-widget-sortable="false" data-widget-deletebutton="false"
-					data-widget-editbutton="false" data-widget-colorbutton="false">
+				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
+					data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
+					data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-table"></i>
 						</span>
@@ -46,14 +45,12 @@ table td {
 						<div class="widget-body no-padding">
 
 							<div class="widget-body-toolbar"></div>
-							<t:jquery.datatable t:id="queryList" t:source="searchQueryList"
-								t:row="currentQuery" t:model="entityquerymodel" t:options="options"
-								class="table table-striped table-bordered table-hover table-responsive"
-								t:rowsPerPage="200" t:empty="block:emptyQueryList">
+							<t:jquery.datatable t:id="queryList" t:source="searchQueryList" t:row="currentQuery" t:model="entityquerymodel"
+								t:options="options" class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="200"
+								t:empty="block:emptyQueryList">
 
 								<p:attributeListCell>
-									<t:loop source="currentQuery.attributeList"
-										value="currentTuple">
+									<t:loop source="currentQuery.attributeList" value="currentTuple">
 						${currentTuple.searchType}: ${currentTuple.value} <br />
 									</t:loop>
 								</p:attributeListCell>
@@ -67,8 +64,7 @@ table td {
 									</t:if>
 								</p:filtersCell>
 								<p:timeInitiatedCell>
-									<t:graphene.jodatimeoutput value="currentQuery.timeInitiated"
-										formatter="ISODate" />
+									<t:graphene.jodatimeoutput value="currentQuery.timeInitiated" formatter="ISODate" />
 								</p:timeInitiatedCell>
 							
 										[Grid here]
@@ -96,9 +92,9 @@ table td {
 
 			<!-- Start report view area -->
 			<t:if test="reportViewList">
-				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1"
-					data-widget-sortable="false" data-widget-deletebutton="false"
-					data-widget-editbutton="false" data-widget-colorbutton="false">
+				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-2" data-widget-sortable="false"
+					data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
+					data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-table"></i>
 						</span>
@@ -110,15 +106,13 @@ table td {
 						<div class="widget-body no-padding">
 
 							<div class="widget-body-toolbar"></div>
-							<t:jquery.datatable t:id="reportViewList"
-								t:source="reportViewList" t:row="currentReportView"
+							<t:jquery.datatable t:id="reportViewList" t:source="reportViewList" t:row="currentReportView"
 								t:model="reportviewmodel" t:options="options"
-								class="table table-striped table-bordered table-hover table-responsive"
-								t:rowsPerPage="200" t:empty="block:emptyReportViewList">
+								class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="200"
+								t:empty="block:emptyReportViewList">
 
 								<p:timeInitiatedCell>
-									<t:graphene.jodatimeoutput
-										value="currentReportView.timeInitiated" formatter="ISODate" />
+									<t:graphene.jodatimeoutput value="currentReportView.timeInitiated" formatter="ISODate" />
 								</p:timeInitiatedCell>
 							
 										[Grid here]

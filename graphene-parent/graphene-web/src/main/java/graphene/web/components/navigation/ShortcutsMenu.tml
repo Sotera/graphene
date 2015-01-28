@@ -9,25 +9,14 @@
 		<div id="shortcut">
 			<ul>
 				<li>
-					<a t:type="pagelink" t:page="graphene/workspaces"
-						class="jarvismetro-tile big-cubes bg-color-blue">
-						<span class="iconbox">
-							<i class="fa fa-folder fa-4x"></i>
-							<span>
-								New Workspace
-								<span class="label pull-right bg-color-darken">14</span>
-							</span>
-						</span>
-					</a>
-				</li>
-				<li>
-					<a t:type="pagelink" t:page="graphene/workspaces"
+					<a t:type="pagelink" t:page="graphene/workspace/manage"
 						class="jarvismetro-tile big-cubes bg-color-blueDark">
 						<span class="iconbox">
 							<i class="fa fa-book fa-4x"></i>
 							<span>
-								My Workspaces
-								<span class="label pull-right bg-color-darken">99</span>
+								Workspaces
+								<t:if  test="workspacesExists">
+								<span class="label pull-right bg-color-darken">${workspaces?.size()}</span></t:if>
 							</span>
 						</span>
 					</a>
@@ -38,7 +27,7 @@
 						class="jarvismetro-tile big-cubes selected bg-color-pinkDark">
 						<span class="iconbox">
 							<i class="fa fa-user fa-4x"></i>
-							<span>My Profile </span>
+							<span>Change Password </span>
 						</span>
 					</a>
 				</li>

@@ -73,8 +73,7 @@ public class GrapheneModule {
 	 * .getVersion(AppModule.class);
 	 */
 	@Contribute(JavaScriptStackSource.class)
-	public static void addGrapheneJSStacks(
-			final MappedConfiguration<String, JavaScriptStack> configuration) {
+	public static void addGrapheneJSStacks(final MappedConfiguration<String, JavaScriptStack> configuration) {
 		configuration.addInstance("CytoscapeStack", CytoscapeStack.class);
 		configuration.addInstance("NeoCytoscapeStack", NeoCytoscapeStack.class);
 	}
@@ -83,8 +82,7 @@ public class GrapheneModule {
 		binder.bind(ChatManager.class, ChatManagerImpl.class);
 	}
 
-	public static void contributeApplicationDefaults(
-			final MappedConfiguration<String, Object> configuration) {
+	public static void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
 		/*
 		 * The application version number is incorporated into URLs for some
 		 * assets. Web browsers will cache assets because of the far future
@@ -102,18 +100,14 @@ public class GrapheneModule {
 		 */
 
 		configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene");
-		configuration.add(SymbolConstants.APPLICATION_VERSION,
-				"${graphene.application-version}");
-		configuration.add(G_SymbolConstants.APPLICATION_CONTACT,
-				"Sotera Defense Solutions, DFA");
+		configuration.add(SymbolConstants.APPLICATION_VERSION, "${graphene.application-version}");
+		configuration.add(G_SymbolConstants.APPLICATION_CONTACT, "Sotera Defense Solutions, DFA");
 		configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
 		configuration.add(G_SymbolConstants.THEME_PATH, "core/");
 		configuration.add(SymbolConstants.PRODUCTION_MODE, false);
 		configuration.add(G_SymbolConstants.DATABASE_PROPERTIES_LOCATION, "");
-		configuration.add(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX,
-				"graphene");
-		configuration.add(SymbolConstants.HMAC_PASSPHRASE,
-				"ad4c17c4ec6da4afe3aad15660abaf8e");
+		configuration.add(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX, "graphene");
+		configuration.add(SymbolConstants.HMAC_PASSPHRASE, "ad4c17c4ec6da4afe3aad15660abaf8e");
 
 		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
 		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
@@ -127,36 +121,32 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS, 200);
 		configuration.add(G_SymbolConstants.ENABLE_FREE_TEXT_EXTRACTION, true);
 		configuration.add(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH, true);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_WORKSPACES, true);
 	}
 
 	@Contribute(AtmosphereHttpServletRequestFilter.class)
-	public static void contributeAtmosphere(
-			final MappedConfiguration<String, String> config) {
+	public static void contributeAtmosphere(final MappedConfiguration<String, String> config) {
 		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
 	}
 
-	public static void contributeBeanBlockSource(
-			final Configuration<BeanBlockContribution> configuration) {
+	public static void contributeBeanBlockSource(final Configuration<BeanBlockContribution> configuration) {
 
 		// Display blocks
-		configuration.add(new DisplayBlockContribution("dateTime",
-				"infrastructure/AppPropertyDisplayBlocks", "dateTime"));
-		configuration.add(new DisplayBlockContribution("localDateTime",
-				"infrastructure/AppPropertyDisplayBlocks", "localDateTime"));
-		configuration.add(new DisplayBlockContribution("localDate",
-				"infrastructure/AppPropertyDisplayBlocks", "localDate"));
-		configuration.add(new DisplayBlockContribution("localTime",
-				"infrastructure/AppPropertyDisplayBlocks", "localTime"));
+		configuration.add(new DisplayBlockContribution("dateTime", "infrastructure/AppPropertyDisplayBlocks",
+				"dateTime"));
+		configuration.add(new DisplayBlockContribution("localDateTime", "infrastructure/AppPropertyDisplayBlocks",
+				"localDateTime"));
+		configuration.add(new DisplayBlockContribution("localDate", "infrastructure/AppPropertyDisplayBlocks",
+				"localDate"));
+		configuration.add(new DisplayBlockContribution("localTime", "infrastructure/AppPropertyDisplayBlocks",
+				"localTime"));
 
 		// Edit blocks
-		configuration.add(new EditBlockContribution("localDate",
-				"infrastructure/AppPropertyEditBlocks", "localDate"));
-		configuration.add(new EditBlockContribution("dateTime",
-				"infrastructure/AppPropertyEditBlocks", "dateTime"));
+		configuration.add(new EditBlockContribution("localDate", "infrastructure/AppPropertyEditBlocks", "localDate"));
+		configuration.add(new EditBlockContribution("dateTime", "infrastructure/AppPropertyEditBlocks", "dateTime"));
 	}
 
-	public static void contributeComponentClassResolver(
-			final Configuration<LibraryMapping> configuration,
+	public static void contributeComponentClassResolver(final Configuration<LibraryMapping> configuration,
 			@Inject @Symbol(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX) final String pathPrefix) {
 		configuration.add(new LibraryMapping(pathPrefix, "graphene.web"));
 	}
@@ -180,20 +170,16 @@ public class GrapheneModule {
 		configuration.add(LocalTime.class, "localTime");
 	}
 
-	public static void contributeSymbolSource(
-			final OrderedConfiguration<SymbolProvider> configuration,
+	public static void contributeSymbolSource(final OrderedConfiguration<SymbolProvider> configuration,
 			@InjectService("VersionSymbolProvider") final SymbolProvider c) {
-		configuration.add("VersionPropertiesFile", c, "after:SystemProperties",
-				"before:ApplicationDefaults");
+		configuration.add("VersionPropertiesFile", c, "after:SystemProperties", "before:ApplicationDefaults");
 	}
 
-	public static void contributeTopicAuthorizer(
-			final OrderedConfiguration<TopicAuthorizer> config) {
+	public static void contributeTopicAuthorizer(final OrderedConfiguration<TopicAuthorizer> config) {
 		config.addInstance("chat", ChatTopicAuthorizer.class);
 	}
 
-	public static void contributeTopicListener(
-			final OrderedConfiguration<TopicListener> config) {
+	public static void contributeTopicListener(final OrderedConfiguration<TopicListener> config) {
 		config.addInstance("chat", ChatTopicListener.class);
 	}
 
@@ -210,8 +196,7 @@ public class GrapheneModule {
 	 */
 
 	@SuppressWarnings("rawtypes")
-	public static void contributeTypeCoercer(
-			final Configuration<CoercionTuple> configuration) {
+	public static void contributeTypeCoercer(final Configuration<CoercionTuple> configuration) {
 		// LocalDate ///////////////////////////
 		// From java.util.Date to LocalDate
 
@@ -222,8 +207,7 @@ public class GrapheneModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<>(java.util.Date.class,
-				LocalDate.class, toLocalDate));
+		configuration.add(new CoercionTuple<>(java.util.Date.class, LocalDate.class, toLocalDate));
 
 		// From LocalDate to java.util.Date
 
@@ -234,8 +218,7 @@ public class GrapheneModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<>(LocalDate.class,
-				java.util.Date.class, fromLocalDate));
+		configuration.add(new CoercionTuple<>(LocalDate.class, java.util.Date.class, fromLocalDate));
 		// End LocalDate ///////////////////////////
 
 		// /////////////////////////////////////
@@ -249,8 +232,7 @@ public class GrapheneModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<>(java.util.Date.class,
-				DateTime.class, toDateTime));
+		configuration.add(new CoercionTuple<>(java.util.Date.class, DateTime.class, toDateTime));
 
 		// From DateTime to java.util.Date
 
@@ -261,8 +243,7 @@ public class GrapheneModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<>(DateTime.class,
-				java.util.Date.class, fromDateTime));
+		configuration.add(new CoercionTuple<>(DateTime.class, java.util.Date.class, fromDateTime));
 		// End DateTime ///////////////////////////
 
 		// /////////////////////////////////////
@@ -276,8 +257,7 @@ public class GrapheneModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<>(java.lang.Long.class,
-				DateTime.class, longToDateTime));
+		configuration.add(new CoercionTuple<>(java.lang.Long.class, DateTime.class, longToDateTime));
 
 		// From DateTime to java.util.Date
 
@@ -288,25 +268,21 @@ public class GrapheneModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<>(DateTime.class,
-				java.lang.Long.class, fromDateTimetoLong));
+		configuration.add(new CoercionTuple<>(DateTime.class, java.lang.Long.class, fromDateTimetoLong));
 		// End DateTime ///////////////////////////
 	}
 
 	@Contribute(MarkupRenderer.class)
-	public static void deactivateDefaultCSS(
-			final OrderedConfiguration<MarkupRendererFilter> config) {
+	public static void deactivateDefaultCSS(final OrderedConfiguration<MarkupRendererFilter> config) {
 		config.override("InjectDefaultStylesheet", null);
 	}
 
 	@Contribute(ValueEncoderSource.class)
-	public static void provideEncoders(
-			final MappedConfiguration<Class, ValueEncoderFactory> configuration,
+	public static void provideEncoders(final MappedConfiguration<Class, ValueEncoderFactory> configuration,
 			@InjectService("Primary") final TransactionDAO transactionService) {
 		final ValueEncoderFactory<DirectedEventRow> factory = new ValueEncoderFactory<DirectedEventRow>() {
 			@Override
-			public ValueEncoder<DirectedEventRow> create(
-					final Class<DirectedEventRow> clazz) {
+			public ValueEncoder<DirectedEventRow> create(final Class<DirectedEventRow> clazz) {
 				return new EventEncoder(transactionService);
 			}
 		};
@@ -335,8 +311,7 @@ public class GrapheneModule {
 	public RequestFilter buildTimingFilter(final Logger log) {
 		return new RequestFilter() {
 			@Override
-			public boolean service(final Request request,
-					final Response response, final RequestHandler handler)
+			public boolean service(final Request request, final Response response, final RequestHandler handler)
 					throws IOException {
 				final long startTime = System.currentTimeMillis();
 
@@ -357,8 +332,7 @@ public class GrapheneModule {
 		};
 	}
 
-	public PropertiesFileSymbolProvider buildVersionSymbolProvider(
-			final Logger logger) {
+	public PropertiesFileSymbolProvider buildVersionSymbolProvider(final Logger logger) {
 		return new PropertiesFileSymbolProvider(logger, "version.prop", true);
 	}
 }

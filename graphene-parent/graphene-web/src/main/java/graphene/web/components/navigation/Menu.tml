@@ -74,6 +74,7 @@
 							</li>
 						</ul></li>
 				</t:if>
+				
 				<t:if test="enableExperimental">
 					<li><a href="#"> <i class="fa fa-lg fa-fw fa-cog"></i> <span
 							class="menu-item-parent">Labs</span>
@@ -86,6 +87,11 @@
 								</t:pagelink></li>
 						</ul></li>
 				</t:if>
+				<li class="" t:type="loop" source="lastactionPages" value="page"><t:pagelink
+						page="prop:page.first">
+						<i class="${page.second}"></i>
+						<span class="menu-item-parent"> ${page.third}</span>
+					</t:pagelink></li>
 			</ul>
 		</nav>
 		<span class="minifyme"> <i class="fa fa-arrow-circle-left hit"></i>

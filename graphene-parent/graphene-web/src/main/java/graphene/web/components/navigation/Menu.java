@@ -30,12 +30,12 @@ public class Menu {
 	private AssetSource assetSource;
 	@Inject
 	private ComponentClassResolver componentClassResolver;
-	
+
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_ADMIN)
 	@Property
 	private boolean enableAdmin;
-	
+
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_EXPERIMENTAL)
 	@Property
@@ -82,17 +82,18 @@ public class Menu {
 
 	public String getAvatar() {
 		if (userExists) {
-			return assetSource.getContextAsset(
-					"core/img/avatars/" + user.getAvatar(), locale)
-					.toClientURL();
+			return assetSource.getContextAsset("core/img/avatars/" + user.getAvatar(), locale).toClientURL();
 		} else {
-			return assetSource.getContextAsset("core/img/avatars/default.png",
-					locale).toClientURL();
+			return assetSource.getContextAsset("core/img/avatars/default.png", locale).toClientURL();
 		}
 	}
 
 	public Collection<Triple<String, String, String>> getExperimentalPages() {
 		return menuHierarchy.get(MenuType.EXPERIMENTAL);
+	}
+
+	public Collection<Triple<String, String, String>> getLastActionPages() {
+		return menuHierarchy.get(MenuType.LASTACTION);
 	}
 
 	public Collection<Triple<String, String, String>> getMetaPages() {
@@ -107,62 +108,51 @@ public class Menu {
 	void initializeValue() {
 		if (menuHierarchy == null) {
 			logger.info("Constructing page links for side menu items.");
-			List<String> pageList = this.componentClassResolver.getPageNames();
+			final List<String> pageList = componentClassResolver.getPageNames();
 			menuHierarchy = new HashMap<MenuType, Collection<Triple<String, String, String>>>();
-			menuHierarchy.put(MenuType.ACTION,
-					new ArrayList<Triple<String, String, String>>(1));
-			menuHierarchy.put(MenuType.META,
-					new ArrayList<Triple<String, String, String>>(1));
-			menuHierarchy.put(MenuType.EXPERIMENTAL,
-					new ArrayList<Triple<String, String, String>>(1));
-			menuHierarchy.put(MenuType.ADMIN, new ArrayList<Triple<String, String, String>>(
-					1));
-			menuHierarchy.put(MenuType.SETTINGS,
-					new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.ACTION, new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.LASTACTION, new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.META, new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.EXPERIMENTAL, new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.ADMIN, new ArrayList<Triple<String, String, String>>(1));
+			menuHierarchy.put(MenuType.SETTINGS, new ArrayList<Triple<String, String, String>>(1));
 			for (final String pageName : pageList) {
-				String className = this.componentClassResolver
-						.resolvePageNameToClassName(pageName);
-				Class clazz = loadClass(className);
+				final String className = componentClassResolver.resolvePageNameToClassName(pageName);
+				final Class clazz = loadClass(className);
 				if (clazz.isAnnotationPresent(PluginPage.class)) {
-					PluginPage p = (PluginPage) clazz
-							.getAnnotation(PluginPage.class);
+					final PluginPage p = (PluginPage) clazz.getAnnotation(PluginPage.class);
 
-					List<G_VisualType> vtlist = Arrays.asList(p.visualType());
+					final List<G_VisualType> vtlist = Arrays.asList(p.visualType());
 					if (!vtlist.contains(G_VisualType.HIDDEN)) {
-						if (vtlist.contains(G_VisualType.GRAPH)
-								|| vtlist.contains(G_VisualType.TOP)
-								|| vtlist.contains(G_VisualType.GEO)
-								|| vtlist.contains(G_VisualType.TEXT)
-								|| vtlist.contains(G_VisualType.EVENT)
-								|| vtlist.contains(G_VisualType.SEARCH)
-								|| vtlist.contains(G_VisualType.MONEY)
-								|| vtlist.contains(G_VisualType.LIST)) {
+						if (vtlist.contains(G_VisualType.GRAPH) || vtlist.contains(G_VisualType.TOP)
+								|| vtlist.contains(G_VisualType.GEO) || vtlist.contains(G_VisualType.TEXT)
+								|| vtlist.contains(G_VisualType.EVENT) || vtlist.contains(G_VisualType.SEARCH)
+								|| vtlist.contains(G_VisualType.MONEY) || vtlist.contains(G_VisualType.LIST)) {
 							menuHierarchy.get(MenuType.ACTION).add(
-									new Triple<String, String, String>(
-											pageName, p.icon(), p.menuName()));
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
+
+						}
+						if (vtlist.contains(G_VisualType.HELP)) {
+							menuHierarchy.get(MenuType.LASTACTION).add(
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 
 						} else if (vtlist.contains(G_VisualType.META)) {
 							menuHierarchy.get(MenuType.META).add(
-									new Triple<String, String, String>(
-											pageName, p.icon(), p.menuName()));
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 						} else if (vtlist.contains(G_VisualType.SETTINGS)) {
 							menuHierarchy.get(MenuType.SETTINGS).add(
-									new Triple<String, String, String>(
-											pageName, p.icon(), p.menuName()));
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 
 						} else if (vtlist.contains(G_VisualType.ADMIN)) {
 							menuHierarchy.get(MenuType.ADMIN).add(
-									new Triple<String, String, String>(
-											pageName, p.icon(), p.menuName()));
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 
 						} else if (vtlist.contains(G_VisualType.EXPERIMENTAL)) {
 							menuHierarchy.get(MenuType.EXPERIMENTAL).add(
-									new Triple<String, String, String>(
-											pageName, p.icon(), p.menuName()));
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 						} else {
 							menuHierarchy.get(MenuType.EXPERIMENTAL).add(
-									new Triple<String, String, String>(
-											pageName, p.icon(), p.menuName()));
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 						}
 
 					}
@@ -174,8 +164,7 @@ public class Menu {
 
 	private Class loadClass(final String className) {
 		try {
-			return Thread.currentThread().getContextClassLoader()
-					.loadClass(className);
+			return Thread.currentThread().getContextClassLoader().loadClass(className);
 		} catch (final ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}

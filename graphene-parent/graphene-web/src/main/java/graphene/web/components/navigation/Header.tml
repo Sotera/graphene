@@ -53,7 +53,7 @@
 
 		</div>
 		<!-- end pulled right: nav area -->
-		<t:graphene.navigation.globalsearch />
+		
 	</header>
 </t:content>
 </html>

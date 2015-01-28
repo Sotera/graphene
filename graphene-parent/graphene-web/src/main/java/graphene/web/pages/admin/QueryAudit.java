@@ -1,11 +1,11 @@
 package graphene.web.pages.admin;
 
-import graphene.business.commons.ReportViewEvent;
-import graphene.dao.LoggingDAO;
+import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_VisualType;
 import graphene.model.query.EntityQuery;
 import graphene.web.annotations.PluginPage;
+import graphene.web.pages.SimpleBasePage;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import org.joda.time.format.ISODateTimeFormat;
 		"context:core/js/plugin/datatables/media/css/TableTools.css" })
 @ImportJQueryUI(theme = "context:core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 @PluginPage(visualType = G_VisualType.ADMIN, menuName = "Query Audit", icon = "fa fa-lg fa-fw fa-info-circle")
-public class QueryAudit {
+public class QueryAudit extends SimpleBasePage {
 	@Property
 	private final DateTimeFormatter ISODate = ISODateTimeFormat.dateTime();
 	@Inject
@@ -36,8 +36,6 @@ public class QueryAudit {
 
 	@Property
 	private EntityQuery currentQuery;
-	@Inject
-	private LoggingDAO dao;
 
 	@Property
 	private String currentFilter;
@@ -46,16 +44,16 @@ public class QueryAudit {
 	@Property
 	private G_SearchTuple<String> currentTuple;
 	@Property
-	private ReportViewEvent currentReportView;
+	private G_ReportViewEvent currentReportView;
 
 	@Property
 	private List<EntityQuery> searchQueryList;
 	private BeanModel<EntityQuery> entityQuerymodel;
-	private BeanModel<ReportViewEvent> reportViewmodel;
+	private BeanModel<G_ReportViewEvent> reportViewmodel;
 	@Inject
 	private ComponentResources resources;
 	@Property
-	private List<ReportViewEvent> reportViewList;
+	private List<G_ReportViewEvent> reportViewList;
 
 	// Generally useful bits and pieces
 	public BeanModel<EntityQuery> getEntityQueryModel() {
@@ -89,20 +87,19 @@ public class QueryAudit {
 		return json;
 	}
 
-	public BeanModel<ReportViewEvent> getReportViewModel() {
-		// TODO: Move the initialization to setupRender
-		reportViewmodel = beanModelSource.createDisplayModel(ReportViewEvent.class, resources.getMessages());
-		// reportViewmodel.exclude("caseSensitive", "searchFreeText",
-		// "initiatorId", "attributevalues", "minimumscore",
-		// "minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult",
-		// "maxresult", "datasource", "userid",
-		// "sortascending", "id", "schema");
+	public BeanModel<G_ReportViewEvent> getReportViewModel() {
+
+		reportViewmodel = beanModelSource.createDisplayModel(G_ReportViewEvent.class, resources.getMessages());
+		reportViewmodel.exclude("schema", "userid", "id");
+
+		reportViewmodel.reorder("timeinitiated", "username", "reportid", "reporttype", "reportpagelink");
+
 		return reportViewmodel;
 	}
 
 	@SetupRender
 	private void loadQueries() {
-		searchQueryList = dao.getQueries(null, null, 0, 200000);
-		reportViewList = dao.getReportViewEvents(null, 200000);
+		searchQueryList = loggingDao.getQueries(null, null, 0, 200000);
+		reportViewList = loggingDao.getReportViewEvents(null, 200000);
 	}
 }

@@ -1,7 +1,7 @@
 package graphene.dao.es;
 
-import graphene.business.commons.ReportViewEvent;
 import graphene.dao.LoggingDAO;
+import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityQuery;
 import graphene.util.validator.ValidationUtils;
@@ -158,16 +158,16 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<ReportViewEvent> getReportViewEvents(final String userId, final int limit) {
+	public List<G_ReportViewEvent> getReportViewEvents(final String userId, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
 			// don't filter on name, get all of them.
-			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
+			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId)).size(limit);
 
 		} else {
 
-			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(limit);
 
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(true);
@@ -176,11 +176,11 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				.addType(reportViewType).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
-		List<ReportViewEvent> returnValue = new ArrayList<ReportViewEvent>(0);
+		List<G_ReportViewEvent> returnValue = new ArrayList<G_ReportViewEvent>(0);
 		try {
 			result = jestClient.execute(search);
-			returnValue = result.getSourceAsObjectList(ReportViewEvent.class);
-			for (final ReportViewEvent u : returnValue) {
+			returnValue = result.getSourceAsObjectList(G_ReportViewEvent.class);
+			for (final G_ReportViewEvent u : returnValue) {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
@@ -298,7 +298,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public void recordReportViewEvent(final ReportViewEvent q) {
+	public void recordReportViewEvent(final G_ReportViewEvent q) {
 		Index saveAction;
 		if (ValidationUtils.isValid(q)) {
 			if (!ValidationUtils.isValid(q.getId())) {

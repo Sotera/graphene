@@ -144,10 +144,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 */
 	@ActivationRequestParameter(value = "type")
 	@Property
-	private String searchType;
+	private String searchTypeFilter;
 	@ActivationRequestParameter(value = "maxResults")
 	@Property
-	private int maxResults;
+	private long maxResults;
 	/**
 	 * The value the user types in
 	 */
@@ -250,12 +250,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			try {
 				loggingDao.recordQuery(sq);
 				if (currentSelectedWorkspaceExists) {
-					List<Object> qo = currentSelectedWorkspace.getQueryObjects();
+					List<EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
 					if (qo == null) {
-						qo = new ArrayList<Object>(1);
-						qo.add(sq);
-
+						qo = new ArrayList<EntityQuery>(1);
 					}
+					qo.add(sq);
 					currentSelectedWorkspace.setQueryObjects(qo);
 
 					userDataAccess.saveWorkspace(getUser().getId(), currentSelectedWorkspace);
@@ -454,9 +453,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	}
 
 	@Override
-	public Link set(final String schema, final String type, final String match, final String value, final int maxResults) {
+	public Link set(final String schema, final String type, final String match, final String value,
+			final long maxResults) {
 		searchSchema = schema;
-		searchType = type;
+		searchTypeFilter = type;
 		searchValue = value;
 		searchMatch = match;
 		this.maxResults = maxResults;
@@ -479,7 +479,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		if (ValidationUtils.isValid(searchValue)) {
 			currentSearchValue = searchValue;
 			try {
-				results = getEntities(searchSchema, searchType, searchMatch, currentSearchValue, maxResults);
+				results = getEntities(searchSchema, searchTypeFilter, searchMatch, currentSearchValue, (int) maxResults);
 
 			} catch (final Exception e) {
 				e.printStackTrace();

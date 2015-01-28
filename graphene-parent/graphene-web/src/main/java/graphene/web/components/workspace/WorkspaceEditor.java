@@ -1,11 +1,16 @@
-package graphene.web.components;
+package graphene.web.components.workspace;
 
+import graphene.model.idl.G_ReportViewEvent;
+import graphene.model.idl.G_SearchTuple;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
+import graphene.model.query.EntityQuery;
 import graphene.util.ExceptionUtil;
 import graphene.util.time.JodaTimeUtil;
 import graphene.util.validator.ValidationUtils;
+import graphene.web.components.CustomForm;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -27,18 +32,16 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
-@Events({ WorkspaceEditor.CANCEL_CREATE, WorkspaceEditor.SUCCESSFUL_CREATE,
-		WorkspaceEditor.FAILED_CREATE, WorkspaceEditor.TO_UPDATE,
-		WorkspaceEditor.CANCEL_UPDATE, WorkspaceEditor.SUCCESSFUL_UPDATE,
-		WorkspaceEditor.FAILED_UPDATE, WorkspaceEditor.SUCCESSFUL_DELETE,
-		WorkspaceEditor.FAILED_DELETE, WorkspaceEditor.TO_CONFIRM_DELETE,
-		WorkspaceEditor.CANCEL_CONFIRM_DELETE,
-		WorkspaceEditor.SUCCESSFUL_CONFIRM_DELETE,
-		WorkspaceEditor.FAILED_CONFIRM_DELETE })
+@Events({ WorkspaceEditor.CANCEL_CREATE, WorkspaceEditor.SUCCESSFUL_CREATE, WorkspaceEditor.FAILED_CREATE,
+		WorkspaceEditor.TO_UPDATE, WorkspaceEditor.CANCEL_UPDATE, WorkspaceEditor.SUCCESSFUL_UPDATE,
+		WorkspaceEditor.FAILED_UPDATE, WorkspaceEditor.SUCCESSFUL_DELETE, WorkspaceEditor.FAILED_DELETE,
+		WorkspaceEditor.TO_CONFIRM_DELETE, WorkspaceEditor.CANCEL_CONFIRM_DELETE,
+		WorkspaceEditor.SUCCESSFUL_CONFIRM_DELETE, WorkspaceEditor.FAILED_CONFIRM_DELETE })
 public class WorkspaceEditor {
 	public enum Mode {
 		CONFIRM_DELETE, CREATE, REVIEW, UPDATE;
@@ -77,8 +80,9 @@ public class WorkspaceEditor {
 	@Persist(PersistenceConstants.FLASH)
 	private String deleteMessage;
 
-	private final String enableDelete = System
-			.getProperty("jumpstart.demo-mode");
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_DELETE_WORKSPACES)
+	private boolean enableDelete;
 
 	// Work fields
 
@@ -127,10 +131,13 @@ public class WorkspaceEditor {
 
 	// Component "createForm" bubbles up the PREPARE event when it is rendered
 	// or submitted
-
+	@Property
+	private G_ReportViewEvent currentReport;
+	@Property
+	private EntityQuery currentQuery;
 	@Parameter(required = true)
 	@Property
-	private String workspaceId = null;
+	private String workspaceId;
 
 	// Component "createForm" bubbles up the VALIDATE event when it is submitted
 
@@ -158,25 +165,35 @@ public class WorkspaceEditor {
 
 	// Handle event "toUpdate"
 
+	@Property
+	private String currentFilter;
+
+	// Handle event "cancelUpdate"
+
+	@Property
+	private G_SearchTuple<String> currentTuple;
+
+	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
+	// form render
+
 	public Format getDateFormat() {
 		return new SimpleDateFormat(getDatePattern());
 	}
 
-	// Handle event "cancelUpdate"
+	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during
+	// form submission
 
 	public String getDatePattern() {
-		return "dd/MM/yyyy";
+		return "yyyy/MM/dd";
 	}
-
-	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
-	// form render
 
 	public boolean isModeConfirmDelete() {
 		return mode == Mode.CONFIRM_DELETE;
 	}
 
-	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during
-	// form submission
+	// Component "updateForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether VALIDATE
+	// records an error
 
 	public boolean isModeCreate() {
 		return mode == Mode.CREATE;
@@ -186,23 +203,28 @@ public class WorkspaceEditor {
 		return mode == null;
 	}
 
-	// Component "updateForm" bubbles up SUCCESS or FAILURE when it is
-	// submitted, depending on whether VALIDATE
-	// records an error
-
-	public boolean isModeReview() {
-		return mode == Mode.REVIEW;
-	}
-
-	public boolean isModeUpdate() {
-		return mode == Mode.UPDATE;
-	}
-
 	// /////////////////////////////////////////////////////////////////////
 	// DELETE
 	// /////////////////////////////////////////////////////////////////////
 
 	// Handle event "delete"
+
+	public boolean isModeReview() {
+		return mode == Mode.REVIEW;
+	}
+
+	// /////////////////////////////////////////////////////////////////////
+	// CONFIRM DELETE - used only when JavaScript is disabled.
+	// /////////////////////////////////////////////////////////////////////
+
+	// Handle event "cancelConfirmDelete"
+
+	public boolean isModeUpdate() {
+		return mode == Mode.UPDATE;
+	}
+
+	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_RENDER event
+	// during form render
 
 	boolean onCancelConfirmDelete(final String workspaceId) {
 		// Return false, which means we haven't handled the event so bubble it
@@ -212,11 +234,8 @@ public class WorkspaceEditor {
 		return false;
 	}
 
-	// /////////////////////////////////////////////////////////////////////
-	// CONFIRM DELETE - used only when JavaScript is disabled.
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "cancelConfirmDelete"
+	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_SUBMIT event
+	// during form submission
 
 	boolean onCancelCreate() {
 		// Return false, which means we haven't handled the event so bubble it
@@ -226,8 +245,8 @@ public class WorkspaceEditor {
 		return false;
 	}
 
-	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_RENDER event
-	// during form render
+	// Component "confirmDeleteForm" bubbles up the VALIDATE event when it is
+	// submitted
 
 	boolean onCancelUpdate(final String workspaceId) {
 		// Return false, which means we haven't handled the event so bubble it
@@ -237,8 +256,9 @@ public class WorkspaceEditor {
 		return false;
 	}
 
-	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_SUBMIT event
-	// during form submission
+	// Component "confirmDeleteForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether
+	// VALIDATE records an error
 
 	// Component "updateForm" bubbles up the VALIDATE event when it is submitted
 	/**
@@ -250,7 +270,7 @@ public class WorkspaceEditor {
 	 * @param workspaceVersion
 	 * @return
 	 */
-	boolean onDelete(final String workspaceId, final String workspaceVersion) {
+	boolean onDelete(final String workspaceId) {
 		this.workspaceId = workspaceId;
 
 		// If request is AJAX then the user has pressed Delete..., was presented
@@ -259,15 +279,14 @@ public class WorkspaceEditor {
 		if (request.isXHR()) {
 			boolean successfulDelete = false;
 
-			if ((enableDelete != null) && enableDelete.equals("true")) {
+			if (!enableDelete) {
 				deleteMessage = "Sorry, but Delete is not allowed at this time.";
 			} else {
 
 				try {
 					// TODO: It would be a wise idea to allow revisions of the
-					// workspaces, for historys sake.
-					successfulDelete = userDataAccess.removeUserFromWorkspace(
-							user.getId(), workspaceId);
+					// workspaces, for history's sake.
+					successfulDelete = userDataAccess.removeUserFromWorkspace(user.getId(), workspaceId);
 					// dao.deleteWorkspaceById(workspaceId);// ,
 					// workspaceVersion);
 
@@ -283,13 +302,11 @@ public class WorkspaceEditor {
 			if (successfulDelete) {
 				// Trigger new event "successfulDelete" (which in this example
 				// will bubble up to the page).
-				componentResources.triggerEvent(SUCCESSFUL_DELETE,
-						new Object[] { workspaceId }, null);
+				componentResources.triggerEvent(SUCCESSFUL_DELETE, new Object[] { workspaceId }, null);
 			} else {
 				// Trigger new event "failedDelete" (which in this example will
 				// bubble up to the page).
-				componentResources.triggerEvent(FAILED_DELETE,
-						new Object[] { workspaceId }, null);
+				componentResources.triggerEvent(FAILED_DELETE, new Object[] { workspaceId }, null);
 			}
 		}
 
@@ -299,17 +316,13 @@ public class WorkspaceEditor {
 		else {
 			// Trigger new event "toConfirmDelete" (which in this example will
 			// bubble up to the page).
-			componentResources.triggerEvent(TO_CONFIRM_DELETE,
-					new Object[] { workspaceId }, null);
+			componentResources.triggerEvent(TO_CONFIRM_DELETE, new Object[] { workspaceId }, null);
 		}
 
 		// We don't want "delete" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
 	}
-
-	// Component "confirmDeleteForm" bubbles up the VALIDATE event when it is
-	// submitted
 
 	boolean onFailureFromConfirmDeleteForm() {
 		// versionFlash = workspace.getVersion();
@@ -318,16 +331,17 @@ public class WorkspaceEditor {
 		// were trying to do, we trigger new event
 		// "failedDelete". It will bubble up because we don't have a handler
 		// method for it.
-		componentResources.triggerEvent(FAILED_CONFIRM_DELETE,
-				new Object[] { workspace.getId() }, null);
+		componentResources.triggerEvent(FAILED_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
 		// We don't want "failure" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
 	}
 
-	// Component "confirmDeleteForm" bubbles up SUCCESS or FAILURE when it is
-	// submitted, depending on whether
-	// VALIDATE records an error
+	// /////////////////////////////////////////////////////////////////////
+	// OTHER
+	// /////////////////////////////////////////////////////////////////////
+
+	// Getters
 
 	boolean onFailureFromCreateForm() {
 		// Rather than letting "failure" bubble up which doesn't say what you
@@ -341,28 +355,15 @@ public class WorkspaceEditor {
 	}
 
 	boolean onFailureFromUpdateForm() {
-		if (!request.isXHR()) {
-			dateFlash = JodaTimeUtil.toDateTime(workspace.getModified());
-			// versionFlash = workspace.getVersion();
-
-		}
-
 		// Rather than letting "failure" bubble up which doesn't say what you
 		// were trying to do, we trigger new event
 		// "failedUpdate". It will bubble up because we don't have a handler
 		// method for it.
-		componentResources.triggerEvent(FAILED_UPDATE,
-				new Object[] { workspaceId }, null);
+		componentResources.triggerEvent(FAILED_UPDATE, new Object[] { workspaceId }, null);
 		// We don't want "failure" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
 	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// OTHER
-	// /////////////////////////////////////////////////////////////////////
-
-	// Getters
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
 		try {
@@ -388,43 +389,16 @@ public class WorkspaceEditor {
 	void onPrepareForRenderFromUpdateForm(final String workspaceId) {
 		this.workspaceId = workspaceId;
 
-		if (request.isXHR()) {
+		// If the form is valid then we're not redisplaying due to error, so
+		// get the workspace.
 
-			// If the form is valid then we're not redisplaying due to error, so
-			// get the workspace.
-
-			if (updateForm.isValid()) {
-				try {
-					workspace = userDataAccess.getWorkspace(user.getId(),
-							this.workspaceId);
-				} catch (final AvroRemoteException e) {
-					workspace = null;
-					e.printStackTrace();
-				}
-			}
-
-		} else {
+		if (updateForm.isValid()) {
 			try {
-				workspace = userDataAccess.getWorkspace(user.getId(),
-						this.workspaceId);
+				workspace = userDataAccess.getWorkspace(user.getId(), this.workspaceId);
 			} catch (final AvroRemoteException e) {
 				workspace = null;
 				e.printStackTrace();
-				updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 			}
-			// Handle null workspace in the template.
-
-			// If the form has errors then we're redisplaying after a redirect.
-			// Form will restore your input values but it's up to us to restore
-			// Hidden values.
-
-			if (updateForm.getHasErrors()) {
-				if (workspace != null) {
-					workspace.setModified(dateFlash.getMillis());
-					// workspace.setVersion(versionFlash);
-				}
-			}
-
 		}
 
 	}
@@ -445,19 +419,13 @@ public class WorkspaceEditor {
 
 		// Get objects for the form fields to overlay.
 		try {
-			workspace = userDataAccess.getWorkspace(user.getId(),
-					this.workspaceId);
+			workspace = userDataAccess.getWorkspace(user.getId(), this.workspaceId);
 		} catch (final AvroRemoteException e) {
 			workspace = null;
-			e.printStackTrace();
-			updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
+			logger.error(e.getMessage());
+			updateForm.recordError("Workspace has been deleted by another process.  "
+					+ ExceptionUtil.getRootCauseMessage(e));
 		}
-
-		// if (workspace == null) {
-		// workspace = new G_Workspace();
-		// updateForm
-		// .recordError("Workspace has been deleted by another process.");
-		// }
 	}
 
 	void onPrepareFromCreateForm() throws Exception {
@@ -465,8 +433,7 @@ public class WorkspaceEditor {
 		if (userExists) {
 			workspace = userDataAccess.createTempWorkspaceForUser(user.getId());
 			if (workspace == null) {
-				logger.error("Unable to create a new workspace for user "
-						+ user.getId());
+				logger.error("Unable to create a new workspace for user " + user.getId());
 			}
 		} else {
 			// disallow a new workspace to be created if no user is logged in.
@@ -482,18 +449,15 @@ public class WorkspaceEditor {
 		if (workspace != null) {
 			boolean deleted = false;
 			try {
-				deleted = userDataAccess.deleteWorkspace(user.getId(),
-						workspace.getId());
-				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE,
-						new Object[] { workspace.getId() }, null);
+				deleted = userDataAccess.deleteWorkspace(user.getId(), workspace.getId());
+				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
 			} catch (final AvroRemoteException e) {
 				logger.error(ExceptionUtil.getRootCauseMessage(e));
 				// TODO: Add a popup alert
 			}
 			if (deleted == false) {
 				// TODO: Add a popup alert
-				componentResources.triggerEvent(FAILED_DELETE,
-						new Object[] { workspace.getId() }, null);
+				componentResources.triggerEvent(FAILED_DELETE, new Object[] { workspace.getId() }, null);
 			}
 			// We don't want "success" to bubble up, so we return true to say
 			// we've
@@ -508,20 +472,18 @@ public class WorkspaceEditor {
 		}
 	}
 
+	// public String getWorkspaceRegion() {
+	// // Follow the same naming convention that the Select component uses
+	// return messages.get(Regions.class.getSimpleName() + "."
+	// + workspace.getRegion().name());
+	// }
+
 	boolean onSuccessFromCreateForm() {
 		// We want to tell our containing page explicitly what workspace we've
 		// created, so we trigger new event
 		// "successfulCreate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		try {
-			workspace = userDataAccess.addNewWorkspaceForUser(user.getId(),
-					workspace);
-			componentResources.triggerEvent(SUCCESSFUL_CREATE,
-					new Object[] { workspace.getId() }, null);
-		} catch (final AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		componentResources.triggerEvent(SUCCESSFUL_CREATE, new Object[] { workspace.getId() }, null);
 
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
@@ -534,33 +496,11 @@ public class WorkspaceEditor {
 		// updated, so we trigger new event
 		// "successfulUpdate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		try {
-			workspace = userDataAccess.saveWorkspace(user.getId(), workspace);
-			logger.info("Successfully updated workspace " + workspace.getId());
-			componentResources.triggerEvent(SUCCESSFUL_UPDATE,
-					new Object[] { workspaceId }, null);
-			if (currentSelectedWorkspaceExists) {
-				if (currentSelectedWorkspace.getId().equals(workspace.getId())) {
-					currentSelectedWorkspace = workspace;
-				}
-			}
-		} catch (final AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("Could not update workspace" + workspace.getId());
-			componentResources.triggerEvent(FAILED_UPDATE,
-					new Object[] { workspaceId }, null);
-		}
+		componentResources.triggerEvent(SUCCESSFUL_UPDATE, new Object[] { workspaceId }, null);
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
 	}
-
-	// public String getWorkspaceRegion() {
-	// // Follow the same naming convention that the Select component uses
-	// return messages.get(Regions.class.getSimpleName() + "."
-	// + workspace.getRegion().name());
-	// }
 
 	boolean onToUpdate(final String workspaceId) {
 		// Return false, which means we haven't handled the event so bubble it
@@ -570,6 +510,7 @@ public class WorkspaceEditor {
 		return false;
 	}
 
+	@Log
 	void onValidateFromConfirmDeleteForm() {
 
 		if (confirmDeleteForm.getHasErrors()) {
@@ -577,19 +518,22 @@ public class WorkspaceEditor {
 			return;
 		}
 
-		if ((enableDelete != null) && enableDelete.equals("true")) {
-			confirmDeleteForm
-					.recordError("Sorry, but Delete is not allowed in Demo mode.");
+		if (!enableDelete) {
+			confirmDeleteForm.recordError("Sorry, but Delete is not allowed at this time.");
 		} else {
 
 			try {
-				userDataAccess.deleteWorkspace(user.getId(), workspaceId);// (workspaceId,
-				// workspace.getVersion());
+				final boolean success = userDataAccess.deleteWorkspace(user.getId(), workspaceId);
+				if (success) {
+					alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Successfully deleted workspace");
+				} else {
+					alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Failed to delete workspace");
+				}
 			} catch (final Exception e) {
 				// Display the cause. In a real system we would try harder to
 				// get a user-friendly message.
-				confirmDeleteForm.recordError(ExceptionUtil
-						.getRootCauseMessage(e));
+				confirmDeleteForm.recordError(ExceptionUtil.getRootCauseMessage(e));
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Failed to delete workspace");
 			}
 
 		}
@@ -603,20 +547,24 @@ public class WorkspaceEditor {
 			return;
 		}
 
-		if ((enableDelete != null) && enableDelete.equals("true")) {
-			createForm
-					.recordError("Sorry, but Create is not allowed in Demo mode.");
+		if (!enableDelete) {
+			createForm.recordError("Sorry, but Create is not allowed in Demo mode.");
 			return;
 		}
 
-		// try {
-		// workspace = userService.addNewWorkspaceForUser(user.getId(),
-		// workspace);
-		// } catch (Exception e) {
-		// // Display the cause. In a real system we would try harder to get a
-		// // user-friendly message.
-		// createForm.recordError(ExceptionUtil.getRootCauseMessage(e));
-		// }
+		try {
+			workspace = userDataAccess.addNewWorkspaceForUser(user.getId(), workspace);
+			if (workspace != null) {
+				logger.info("Successfully created workspace " + workspace.getId());
+				alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Successfully created workspace");
+			} else {
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Failed to create workspace");
+			}
+
+		} catch (final AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	void onValidateFromUpdateForm() {
@@ -627,8 +575,21 @@ public class WorkspaceEditor {
 		}
 
 		try {
-			userDataAccess.saveWorkspace(user.getId(), workspace);
+			workspace = userDataAccess.saveWorkspace(user.getId(), workspace);
+			if (workspace != null) {
+				if (workspace.getId().equals(currentSelectedWorkspace.getId())) {
+					currentSelectedWorkspace = workspace;
+				}
+				logger.info("Successfully updated workspace " + workspace.getId());
+				alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS,
+						"Successfully updated workspace " + workspace.getTitle());
+			} else {
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Failed to update workspace");
+			}
 		} catch (final Exception e) {
+			logger.error("Could not update workspace" + workspace.getId() + " " + e.getMessage());
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Failed to update workspace");
+
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
 			updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
@@ -636,7 +597,6 @@ public class WorkspaceEditor {
 	}
 
 	@SetupRender
-	@Log
 	void switchModes() {
 		if (mode == Mode.REVIEW) {
 			if (!ValidationUtils.isValid(workspaceId)) {
@@ -645,14 +605,15 @@ public class WorkspaceEditor {
 			} else if (ValidationUtils.isValid(user)) {
 
 				try {
-					logger.info("Attempting to retrieve workspace "
-							+ workspaceId + " for user " + user.getId());
+					logger.info("Attempting to retrieve workspace " + workspaceId + " for user " + user.getId());
 					// FIXME: Something is awry here; we sometimes get 'core' as
 					// a workspace id, and that fails of course.
-					workspace = userDataAccess.getWorkspace(user.getId(),
-							workspaceId);
-				} catch (final AvroRemoteException e) {
-					// TODO Auto-generated catch block
+					workspace = userDataAccess.getWorkspace(user.getId(), workspaceId);
+
+				} catch (final Exception e) {
+					logger.error(e.getMessage());
+					alertManager
+							.alert(Duration.SINGLE, Severity.ERROR, "Problem creating workspace: " + e.getMessage());
 					e.printStackTrace();
 					workspace = null;
 				}
@@ -669,9 +630,8 @@ public class WorkspaceEditor {
 				 * them to log in.
 				 */
 				logger.error("User was not logged in, but needs to be logged in to view this page.");
-				alertManager
-						.alert(Duration.UNTIL_DISMISSED, Severity.ERROR,
-								"User was not logged in, but needs to be logged in to view this page.");
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+						"User was not logged in, but needs to be logged in to view this page.");
 			}
 		}
 

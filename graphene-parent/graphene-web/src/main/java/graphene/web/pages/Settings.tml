@@ -2,7 +2,7 @@
 <html t:type="graphene/layout" title="${appName}" t:pageTitle="Change your password"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
 
-	<h2>User's setting : Change your password</h2>
+	<h2>Change your password</h2>
 
 	<form class="full-form" t:id="settingsForm">
 		<t:errors />

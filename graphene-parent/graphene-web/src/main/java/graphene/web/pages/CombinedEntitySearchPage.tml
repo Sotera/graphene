@@ -39,13 +39,14 @@ margin-right: 3px;
 			<t:if test="populatedTableResults">
 				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1"
 					data-widget-sortable="false" data-widget-deletebutton="false"
-					data-widget-editbutton="false" data-widget-colorbutton="false">
+					data-widget-editbutton="false" data-widget-colorbutton="false" 
+					data-widget-collapsebutton="false"  data-widget-fullscreenbutton="false">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-table"></i>
 						</span>
 						<h2>Results</h2>
 						<h2>[ Showing ${results.numberOfResultsReturned} hits out of
-							${results.numberOtResultsTotal} ]</h2>
+							${results.numberOtResultsTotal} ] for ${searchValue} in ${searchTypeFilter}</h2>
 						<t:graphene.ui.searchlegend />
 					</header>
 					<!-- widget div-->

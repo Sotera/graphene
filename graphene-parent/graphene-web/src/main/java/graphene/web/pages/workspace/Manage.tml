@@ -1,0 +1,73 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="Manage Workspaces" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+<style>
+<!--
+-->
+.ui-buttonset .ui-button {
+	margin-left: 0;
+	margin-right: 0em;
+}
+
+table {
+	border: none;
+	border-collapse: collapse;
+}
+
+table td {
+	border-right: 1px solid #EEEEEE;
+	border-left: 1px solid #EEEEEE;
+	border-bottom: 1px solid #888888;
+}
+
+.pivotlink {
+	max-width: 200px;
+	white-space: normal;
+}
+</style>
+<div class="row">
+	<div class="col-xs-2 col-sm-5 col-md-5 col-lg-4">
+		<h1 class="page-title txt-color-blueDark">
+			<i class="fa fa-table fa-fw "></i> Manage Workspaces
+		</h1>
+	</div>
+	<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8">
+		<span> </span>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-2 col-sm-5 col-md-5 col-lg-4">
+		<h1 class="page-title txt-color-blueDark">
+			<a class="btn btn-action" t:type="eventLink" t:event="toCreate" t:zone="editorZone" href="#"><i
+				class="fa fa-plus" /> Create New Workspace</a>
+		</h1>
+	</div>
+	<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8">
+		<span> </span>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="col-sm-12">
+		<!-- widget grid -->
+		<section id="widget-grid" class="">
+			<article id="listCell" class="col-sm-12 col-md-12 col-lg-6 sortable-grid ui-sortable">
+				<!-- This is the left side of the table: a list of Workspaces -->
+				<t:zone t:id="listZone" id="listZone" t:update="prop:zoneUpdateFunction">
+					<t:graphene.workspace.WorkspaceList t:id="list" partialName="partialName" selectedWorkspaceId="listWorkspaceId" />
+				</t:zone>
+			</article>
+
+			<article id="editorCell" class="col-sm-12 col-md-12 col-lg-6 sortable-grid ui-sortable">
+				<!-- This is the right side of the table: where a Workspace will be 
+						created, reviewed, or updated. -->
+				<t:zone t:id="editorZone" id="editorZone" t:update="prop:zoneUpdateFunction">
+					<t:graphene.workspace.WorkspaceEditor t:id="editor" mode="editorMode" workspaceId="editorWorkspaceId" />
+				</t:zone>
+			</article>
+
+
+		</section>
+	</div>
+</div>
+
+</html>

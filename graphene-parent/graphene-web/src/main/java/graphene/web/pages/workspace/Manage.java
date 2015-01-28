@@ -1,44 +1,41 @@
-package graphene.web.pages;
+package graphene.web.pages.workspace;
 
 import graphene.model.idl.G_VisualType;
 import graphene.web.annotations.PluginPage;
-import graphene.web.components.WorkspaceEditor.Mode;
+import graphene.web.components.workspace.WorkspaceEditor.Mode;
 
 import javax.inject.Inject;
 
-import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+
 @PluginPage(visualType = G_VisualType.SETTINGS, menuName = "Manage Workspaces", icon = "fa fa-lg fa-fw fa-list-alt")
-public class Workspaces {
+public class Manage {
 
 	// The activation context
 
 	@Inject
 	private AjaxResponseRenderer ajaxResponseRenderer;
 
-	@ActivationRequestParameter
-	private Mode arpEditorMode;
-
-	@ActivationRequestParameter
-	private String arpEditorWorkspaceId;
-
 	@Property
+	@ActivationRequestParameter
 	private Mode editorMode;
 
 	// Screen fields
 
 	@Property
+	@ActivationRequestParameter
 	private String editorWorkspaceId;
 
 	@InjectComponent
 	private Zone editorZone;
+	// @InjectComponent
+	// private RecentWorkspaces recentWorkspaces;
 
 	@Property
 	@Persist
@@ -80,44 +77,17 @@ public class Workspaces {
 
 	// onActivate() is called by Tapestry to pass in the activation context from
 	// the URL.
-@Log
-	void onActivate(EventContext ec) {
-		// TODO: Add userid to the activation context, and verify that the user
-		// has the rights to the CRUD functions.
-		if (request.isXHR()) {
-			editorMode = arpEditorMode;
-			editorWorkspaceId = arpEditorWorkspaceId;
-		} else {
-			if (ec.getCount() == 0) {
-				editorMode = null;
-				editorWorkspaceId = null;
-			} else if (ec.getCount() == 1) {
-				editorMode = ec.get(Mode.class, 0);
-				editorWorkspaceId = null;
-			} else {
-				editorMode = ec.get(Mode.class, 0);
-				editorWorkspaceId = ec.get(String.class, 1);
-			}
-		}
 
+	void onActivate() {
 		listWorkspaceId = editorWorkspaceId;
 	}
 
-	// setupRender() is called by Tapestry right before it starts rendering the
-	// page.
-
-	Object onCancelConfirmDeleteFromEditor(String workspaceId) {
+	Object onCancelConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
 		listWorkspaceId = workspaceId;
 		return null;
 	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// FILTER
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "filter" from component "list"
 
 	void onCancelCreateFromEditor() {
 		editorMode = null;
@@ -134,7 +104,7 @@ public class Workspaces {
 
 	// Handle event "toCreate" from this page
 
-	void onCancelUpdateFromEditor(String workspaceId) {
+	void onCancelUpdateFromEditor(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
 
@@ -145,7 +115,7 @@ public class Workspaces {
 
 	// Handle event "cancelCreate" from component "editor"
 
-	void onFailedConfirmDeleteFromEditor(String workspaceId) {
+	void onFailedConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.CONFIRM_DELETE;
 		editorWorkspaceId = workspaceId;
 
@@ -167,7 +137,7 @@ public class Workspaces {
 
 	// Handle event "failedCreate" from component "editor"
 
-	void onFailedDeleteFromEditor(String workspaceId) {
+	void onFailedDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
 
@@ -182,7 +152,7 @@ public class Workspaces {
 
 	// Handle event "selected" from component "list"
 
-	void onFailedUpdateFromEditor(String workspaceId) {
+	void onFailedUpdateFromEditor(final String workspaceId) {
 		editorMode = Mode.UPDATE;
 		editorWorkspaceId = workspaceId;
 
@@ -197,6 +167,12 @@ public class Workspaces {
 
 	// Handle event "toUpdate" from component "editor"
 
+	// /////////////////////////////////////////////////////////////////////
+	// FILTER
+	// /////////////////////////////////////////////////////////////////////
+
+	// Handle event "filter" from component "list"
+
 	void onFilterFromList() {
 		if (request.isXHR()) {
 			ajaxResponseRenderer.addRender(listZone);
@@ -205,32 +181,32 @@ public class Workspaces {
 
 	// Handle event "cancelUpdate" from component "editor"
 
-	Object[] onPassivate() {
-
-		if (request.isXHR()) {
-			arpEditorMode = editorMode;
-			arpEditorWorkspaceId = editorWorkspaceId;
-
-			return null;
-		} else {
-
-			if (editorMode == null) {
-				return null;
-			} else if (editorMode == Mode.CREATE) {
-				return new Object[] { editorMode };
-			} else if (editorMode == Mode.REVIEW || editorMode == Mode.UPDATE
-					|| editorMode == Mode.CONFIRM_DELETE) {
-				return new Object[] { editorMode, editorWorkspaceId };
-			} else {
-				throw new IllegalStateException(editorMode.toString());
-			}
-		}
-
-	}
+	// Object[] onPassivate() {
+	//
+	// if (request.isXHR()) {
+	// arpEditorMode = editorMode;
+	// arpEditorWorkspaceId = editorWorkspaceId;
+	//
+	// return null;
+	// } else {
+	//
+	// if (editorMode == null) {
+	// return null;
+	// } else if (editorMode == Mode.CREATE) {
+	// return new Object[] { editorMode };
+	// } else if ((editorMode == Mode.REVIEW) || (editorMode == Mode.UPDATE)
+	// || (editorMode == Mode.CONFIRM_DELETE)) {
+	// return new Object[] { editorMode, editorWorkspaceId };
+	// } else {
+	// throw new IllegalStateException(editorMode.toString());
+	// }
+	// }
+	//
+	// }
 
 	// Handle event "successfulUpdate" from component "editor"
 
-	void onSelectedFromList(String workspaceId) {
+	void onSelectedFromList(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
 		listWorkspaceId = workspaceId;
@@ -242,7 +218,7 @@ public class Workspaces {
 
 	// Handle event "failedUpdate" from component "editor"
 
-	void onSuccessfulConfirmDeleteFromEditor(String workspaceId) {
+	void onSuccessfulConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = null;
 		editorWorkspaceId = workspaceId;
 
@@ -257,7 +233,7 @@ public class Workspaces {
 
 	// Handle event "successfulDelete" from component "editor"
 
-	void onSuccessfulCreateFromEditor(String workspaceId) {
+	void onSuccessfulCreateFromEditor(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
 		listWorkspaceId = workspaceId;
@@ -269,7 +245,7 @@ public class Workspaces {
 
 	// Handle event "failedDelete" from component "editor"
 
-	void onSuccessfulDeleteFromEditor(String workspaceId) {
+	void onSuccessfulDeleteFromEditor(final String workspaceId) {
 		editorMode = null;
 		editorWorkspaceId = null;
 		listWorkspaceId = null;
@@ -285,7 +261,7 @@ public class Workspaces {
 
 	// Handle event "toConfirmDelete" from component "editor"
 
-	void onSuccessfulUpdateFromEditor(String workspaceId) {
+	void onSuccessfulUpdateFromEditor(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
 		listWorkspaceId = workspaceId;
@@ -297,7 +273,7 @@ public class Workspaces {
 
 	// Handle event "cancelConfirmDelete" from component "editor"
 
-	void onToConfirmDeleteFromEditor(String workspaceId) {
+	void onToConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.CONFIRM_DELETE;
 		editorWorkspaceId = workspaceId;
 
@@ -320,7 +296,7 @@ public class Workspaces {
 
 	// Handle event "failedConfirmDelete" from component "editor"
 
-	void onToUpdateFromEditor(String workspaceId) {
+	void onToUpdateFromEditor(final String workspaceId) {
 		editorMode = Mode.UPDATE;
 		editorWorkspaceId = workspaceId;
 

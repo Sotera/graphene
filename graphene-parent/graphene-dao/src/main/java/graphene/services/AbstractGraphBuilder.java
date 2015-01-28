@@ -208,13 +208,14 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		if (linkGenerator != null) {
 			logger.debug("Search page is defined");
 			final Link link = linkGenerator.set(null, null, null, identifier, defaultMaxResults);
-			return "<a href=\"" + link.toRedirectURI() + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+			return "<a href=\"" + link.toRedirectURI() + "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >"
+					+ identifier + "</a>";
 		} else {
-			// logger.error("No search page defined");
-			final String encodedIdentigier = encoder.encode(identifier);
+			logger.warn("No linkGenerator search page defined");
+			final String encodedIdentifier = encoder.encode(identifier);
 
-			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentigier
-					+ "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentifier + "\" target=\""
+					+ identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
 		}
 	}
 

@@ -3,7 +3,7 @@
  */
 package graphene.dao;
 
-import graphene.business.commons.ReportViewEvent;
+import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityQuery;
 
@@ -23,15 +23,13 @@ import org.joda.time.DateTime;
 public class LoggingDAONullImpl implements LoggingDAO {
 
 	@Override
-	public List<Object> getAllEvents(final String userId,
-			final String partialTerm, final int limit) {
+	public List<Object> getAllEvents(final String userId, final String partialTerm, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TemporalGraphQuery> getGraphQueries(final String userId,
-			final String partialTerm, final int limit) {
+	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -43,15 +41,13 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	 * java.lang.String, int)
 	 */
 	@Override
-	public List<EntityQuery> getQueries(final String userId,
-			final String partialTerm, final int offset, final int limit) {
+	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<ReportViewEvent> getReportViewEvents(final String userId,
-			final int limit) {
+	public List<G_ReportViewEvent> getReportViewEvents(final String userId, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -109,7 +105,7 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
-	public void recordReportViewEvent(final ReportViewEvent q) {
+	public void recordReportViewEvent(final G_ReportViewEvent q) {
 		// TODO Auto-generated method stub
 
 	}

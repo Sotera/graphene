@@ -21,7 +21,6 @@ import graphene.util.validator.ValidationUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
@@ -55,16 +54,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 	private WorkspaceDAO wDao;
 
 	@Override
-	public G_Workspace addNewWorkspaceForUser(final String userId,
-			final G_Workspace workspace) {
+	public G_Workspace addNewWorkspaceForUser(final String userId, final G_Workspace workspace) {
 		// save the workspace
 		try {
 			final G_Workspace w = wDao.save(workspace);
 			if (w == null) {
 				logger.error("Could not create new workspace");
 			} else {
-				final boolean success = uwDao.addRelationToWorkspace(userId,
-						G_UserSpaceRelationshipType.EDITOR_OF,
+				final boolean success = uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.EDITOR_OF,
 						workspace.getId());
 				if (!success) {
 					logger.error("Could not create editor relationship for workspace");
@@ -73,8 +70,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 		} catch (final Exception e) {
 			e.printStackTrace();
-			logger.error("Could not create editor relationship for workspace "
-					+ e.getMessage());
+			logger.error("Could not create editor relationship for workspace " + e.getMessage());
 		}
 		return workspace;
 	}
@@ -94,8 +90,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public int countWorkspaces(final String userId,
-			final String partialWorkspaceName) {
+	public int countWorkspaces(final String userId, final String partialWorkspaceName) {
 		// TODO: Put business logic here to let admins see all workspaces.
 		final long lcount = wDao.countWorkspaces(userId, partialWorkspaceName);
 		if (lcount > Integer.MAX_VALUE) {
@@ -116,10 +111,8 @@ public class UserServiceImpl implements G_UserDataAccess {
 			w.setTitle("First Workspace");
 			w = wDao.save(w);
 			if (ValidationUtils.isValid(w)) {
-				uwDao.addRelationToWorkspace(userId,
-						G_UserSpaceRelationshipType.CREATOR_OF, w.getId());
-				uwDao.addRelationToWorkspace(userId,
-						G_UserSpaceRelationshipType.EDITOR_OF, w.getId());
+				uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.CREATOR_OF, w.getId());
+				uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.EDITOR_OF, w.getId());
 			}
 		}
 		return w;
@@ -138,9 +131,8 @@ public class UserServiceImpl implements G_UserDataAccess {
 			w.setCreated(time.getMillis());
 			w.setModified(time.getMillis());
 			w.setDescription("New Workspace");
-			w.setTitle(user.getUsername() + "-Workspace"
-					+ time.toString("YYYYmmDD-HHMMSS"));
-			w.setQueries(new ArrayList<String>());
+			w.setTitle(user.getUsername() + "-Workspace" + time.toString("YYYYmmDD-HHMMSS"));
+
 		}
 		return w;
 	}
@@ -151,48 +143,42 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public boolean deleteWorkspace(final String userId, final String workspaceId)
-			throws UnauthorizedActionException {
-		if (uwDao.hasRelationship(userId, workspaceId,
-				G_UserSpaceRelationshipType.CREATOR_OF)) {
+	public boolean deleteWorkspace(final String userId, final String workspaceId) throws UnauthorizedActionException {
+		if (uwDao.hasRelationship(userId, workspaceId, G_UserSpaceRelationshipType.CREATOR_OF)) {
 			return wDao.delete(workspaceId);
 
 		} else {
-			final String errorStr = "User " + userId
-					+ " did not have permission to delete Workspace "
-					+ workspaceId + ".";
+			final String errorStr = "User " + userId + " did not have permission to delete Workspace " + workspaceId
+					+ ".";
 			logger.error(errorStr);
 			throw new UnauthorizedActionException(errorStr);
 		}
 	}
 
 	@Override
-	public boolean deleteWorkspaceIfUnused(final String userId,
-			final String workspaceId) throws UnauthorizedActionException {
-		if (uwDao.hasRelationship(userId, workspaceId,
-				G_UserSpaceRelationshipType.CREATOR_OF)) {
+	public boolean deleteWorkspaceIfUnused(final String userId, final String workspaceId)
+			throws UnauthorizedActionException {
+		if (uwDao.hasRelationship(userId, workspaceId, G_UserSpaceRelationshipType.CREATOR_OF)) {
 			wDao.delete(workspaceId);
 			uwDao.deleteWorkspaceRelations(workspaceId);
 			return true;
 		} else {
-			final String errorStr = "User " + userId
-					+ " did not have permission to delete Workspace "
-					+ workspaceId + ".";
+			final String errorStr = "User " + userId + " did not have permission to delete Workspace " + workspaceId
+					+ ".";
 			logger.error(errorStr);
 			throw new UnauthorizedActionException(errorStr);
 		}
 	}
 
 	@Override
-	public List<G_Workspace> findWorkspaces(final String userId,
-			final String partialName, final int offset, final int limit) {
+	public List<G_Workspace> findWorkspaces(final String userId, final String partialName, final int offset,
+			final int limit) {
 		// TODO: Put business logic here to let admins see all workspaces.
 		return uwDao.getWorkspacesForUser(userId);
 	}
 
 	@Override
-	public List<G_User> getByPartialUsername(final String partialName,
-			final int offset, final int limit) {
+	public List<G_User> getByPartialUsername(final String partialName, final int offset, final int limit) {
 		// TODO: Put business logic here to let admins see all users.
 		return uDao.getByPartialUsername(partialName, offset, limit);
 	}
@@ -204,14 +190,12 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public List<G_Permission> getPermissionsByRole(final G_Role role)
-			throws AvroRemoteException {
+	public List<G_Permission> getPermissionsByRole(final G_Role role) throws AvroRemoteException {
 		return pDao.getForRole(role);
 	}
 
 	@Override
-	public List<G_Role> getRolesByUser(final String id)
-			throws AvroRemoteException {
+	public List<G_Role> getRolesByUser(final String id) throws AvroRemoteException {
 		return rDao.getForUser(id);
 	}
 
@@ -223,24 +207,18 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public G_Workspace getWorkspace(final String userId,
-			final String workspaceId) throws UnauthorizedActionException {
+	public G_Workspace getWorkspace(final String userId, final String workspaceId) throws UnauthorizedActionException {
 		if (!ValidationUtils.isValid(userId)) {
-			throw new UnauthorizedActionException(
-					"The username provided was not valid");
+			throw new UnauthorizedActionException("The username provided was not valid");
 		} else if (!ValidationUtils.isValid(workspaceId)) {
-			throw new UnauthorizedActionException(
-					"The workspace id provided was not valid");
+			throw new UnauthorizedActionException("The workspace id provided was not valid");
 		}
-		if (uwDao.hasRelationship(userId, workspaceId,
-				G_UserSpaceRelationshipType.CREATOR_OF,
-				G_UserSpaceRelationshipType.EDITOR_OF,
-				G_UserSpaceRelationshipType.REVIEWER_OF)) {
+		if (uwDao.hasRelationship(userId, workspaceId, G_UserSpaceRelationshipType.CREATOR_OF,
+				G_UserSpaceRelationshipType.EDITOR_OF, G_UserSpaceRelationshipType.REVIEWER_OF)) {
 			return wDao.getById(workspaceId);
 		} else {
-			final String errorStr = "User " + userId
-					+ " did not have permission to view Workspace "
-					+ workspaceId + ".";
+			final String errorStr = "User " + userId + " did not have permission to view Workspace " + workspaceId
+					+ ".";
 			logger.error(errorStr);
 			throw new UnauthorizedActionException(errorStr);
 		}
@@ -254,12 +232,10 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public List<G_Workspace> getWorkspacesOrCreateNewForUser(final String userId)
-			throws AvroRemoteException {
+	public List<G_Workspace> getWorkspacesOrCreateNewForUser(final String userId) throws AvroRemoteException {
 		final List<G_Workspace> workspaces = getWorkspacesForUser(userId);
 		if (workspaces.size() == 0) {
-			logger.debug("No workspaces found for userId " + userId
-					+ ". Creating a new one.");
+			logger.debug("No workspaces found for userId " + userId + ". Creating a new one.");
 			final G_Workspace g = createFirstWorkspaceForUser(userId);
 			if (g != null) {
 				workspaces.add(g);
@@ -269,25 +245,22 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public G_User loginAuthenticatedUser(final String userId)
-			throws AvroRemoteException, AuthenticationException {
+	public G_User loginAuthenticatedUser(final String userId) throws AvroRemoteException, AuthenticationException {
 		return uDao.loginAuthenticatedUser(userId);
 	}
 
 	@Override
-	public G_User loginUser(final String userId, final String password)
-			throws AuthenticationException {
+	public G_User loginUser(final String userId, final String password) throws AuthenticationException {
 		final G_User u = uDao.loginUser(userId, password);
 		if (u == null) {
-			throw new AuthenticationException("Could not login user " + userId
-					+ ".  Check username and password.");
+			throw new AuthenticationException("Could not login user " + userId + ".  Check username and password.");
 		}
 		return u;
 	}
 
 	@Override
-	public G_User registerUser(G_User d, final String password,
-			final boolean createWorkspace) throws AvroRemoteException {
+	public G_User registerUser(G_User d, final String password, final boolean createWorkspace)
+			throws AvroRemoteException {
 		// Perform any business logic
 		if (ValidationUtils.isValid(d)) {
 			if (!ValidationUtils.isValid(d.getAvatar())) {
@@ -318,17 +291,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public boolean removeUserFromWorkspace(final String userId,
-			final String workspaceId) {
+	public boolean removeUserFromWorkspace(final String userId, final String workspaceId) {
 		return uwDao.removeUserFromWorkspace(userId, workspaceId);
 	}
 
 	@Override
-	public boolean removeUserPermissionFromWorkspace(final String userId,
-			final String permission, final String workspaceId)
-			throws AvroRemoteException {
-		final boolean success = uwDao.removeUserPermissionFromWorkspace(userId,
-				permission, workspaceId);
+	public boolean removeUserPermissionFromWorkspace(final String userId, final String permission,
+			final String workspaceId) throws AvroRemoteException {
+		final boolean success = uwDao.removeUserPermissionFromWorkspace(userId, permission, workspaceId);
 		if (success) {
 			if (uwDao.countUsersForWorkspace(workspaceId) == 0) {
 				wDao.delete(workspaceId);
@@ -350,17 +320,15 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public G_Workspace saveWorkspace(final String userId,
-			final G_Workspace workspace) throws UnauthorizedActionException {
+	public G_Workspace saveWorkspace(final String userId, final G_Workspace workspace)
+			throws UnauthorizedActionException {
 		// save the workspace
-		if (uwDao.hasRelationship(userId, workspace.getId(),
-				G_UserSpaceRelationshipType.CREATOR_OF,
+		if (uwDao.hasRelationship(userId, workspace.getId(), G_UserSpaceRelationshipType.CREATOR_OF,
 				G_UserSpaceRelationshipType.EDITOR_OF)) {
 			workspace.setModified(DateTime.now().getMillis());
 			return wDao.save(workspace);
 		} else {
-			final String errorStr = "User " + userId
-					+ " did not have permission to save Workspace "
+			final String errorStr = "User " + userId + " did not have permission to save Workspace "
 					+ workspace.getId() + ".";
 			logger.error(errorStr);
 			throw new UnauthorizedActionException(errorStr);
@@ -390,8 +358,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public boolean usernameExists(final String username)
-			throws AvroRemoteException {
+	public boolean usernameExists(final String username) throws AvroRemoteException {
 		final boolean exists = uDao.isExisting(username);
 		if (exists) {
 			logger.warn("Username already exists");

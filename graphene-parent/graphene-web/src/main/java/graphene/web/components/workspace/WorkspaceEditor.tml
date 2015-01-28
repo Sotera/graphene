@@ -1,0 +1,326 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+<t:content>
+
+	<t:if test="modeCreate">
+		<div class="jarviswidget jarviswidget-sortable" id="wid-id-2" data-widget-colorbutton="false"
+			data-widget-editbutton="false" role="widget" style="position: relative; opacity: 1;">
+			<!-- widget options: usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false"> 
+					data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" 
+					data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" 
+					data-widget-collapsed="true" data-widget-sortable="false" -->
+			<header role="heading">
+				<div class="jarviswidget-ctrls" role="menu">
+					<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip" title="" data-placement="bottom"
+						data-original-title="Collapse"> <i class="fa fa-minus "></i>
+					</a> <a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn" rel="tooltip" title=""
+						data-placement="bottom" data-original-title="Fullscreen"> <i class="fa fa-resize-full "></i>
+					</a> <a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn" rel="tooltip" title=""
+						data-placement="bottom" data-original-title="Delete"> <i class="fa fa-times"></i>
+					</a>
+				</div>
+				<span class="widget-icon"> <i class="fa fa-eye"></i>
+				</span>
+				<h2>Create</h2>
+
+				<span class="jarviswidget-loader"> <i class="fa fa-refresh fa-spin"></i>
+				</span>
+			</header>
+
+			<!-- widget div -->
+			<div role="content">
+
+				<!-- widget edit box -->
+				<div class="jarviswidget-editbox">
+					<!-- This area used as dropdown edit box -->
+
+				</div>
+				<!-- end widget edit box -->
+
+				<!-- widget content -->
+				<div class="widget-body">
+					<form t:type="graphene/CustomForm" t:id="createForm" t:zone="^">
+						<fieldset>
+							<input name="authenticity_token" type="hidden" />
+							<div class="form-group">
+								<t:label for="title" />
+								<input class="form-control" t:type="TextField" t:id="title" placeholder="Workspace Title"
+									value="workspace?.title" t:validate="required ,minlength= 1, maxlength=200" />
+							</div>
+							<div class="form-group">
+								<t:label for="description" />
+								<input class="form-control" t:type="TextArea" rows="20" t:id="description" placeholder="Description"
+									value="workspace?.description" />
+							</div>
+
+						</fieldset>
+						<div class="form-actions">
+
+							<div class="btn-group">
+								<button type="submit" class="btn btn-labeled btn-success">
+									<span class="btn-label"> <i class="glyphicon glyphicon-ok"></i>
+									</span> Save
+								</button>
+								&nbsp; <a t:type="eventLink" t:event="cancelCreate" t:zone="^" href="#">
+									<div class="btn btn-labeled btn-danger">
+										<span class="btn-label"> <i class="glyphicon glyphicon-remove"></i>
+										</span> Cancel
+									</div>
+								</a>
+							</div>
+						</div>
+					</form>
+
+				</div>
+				<!-- end widget content -->
+
+			</div>
+			<!-- end widget div -->
+
+		</div>
+	</t:if>
+
+	<t:if test="modeReview">
+		<div class="jarviswidget jarviswidget-sortable" id="wid-id-2" data-widget-sortable="false"
+			data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
+			data-widget-collapsebutton="false" data-widget-fullscreenbutton="false" role="widget"
+			style="position: relative; opacity: 1;">
+			<header>
+				<span class="widget-icon"> <i class="fa fa-eye"></i>
+				</span>
+				<t:if test="workspace">
+					<h2>Reviewing Workspace:</h2>
+					<h2 style="font-weight: bold;">${workspace.title}</h2>
+					<h2>Last Modified</h2>
+					<h2 style="font-weight: bold;">
+						<t:graphene.jodatimeoutput value="workspace?.modified" style="LL" />
+					</h2>
+					<p:else>
+						<h2>No workspace selected for review.</h2>
+					</p:else>
+				</t:if>
+				<span class="jarviswidget-loader"> <i class="fa fa-refresh fa-spin"></i>
+				</span>
+			</header>
+			<!-- widget div -->
+			<div role="content">
+
+				<!-- widget edit box -->
+				<div class="jarviswidget-editbox">
+					<!-- This area used as dropdown edit box -->
+
+				</div>
+				<!-- end widget edit box -->
+
+				<!-- widget content -->
+				<div class="widget-body">
+					<t:if test="workspace">
+						<div t:type="if" t:test="deleteMessage" class="error">${deleteMessage}</div>
+
+						<table style="border-width: thin; border-style: solid; border-color: lightgray;">
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Id:</th>
+								<td>${workspace.id}</td>
+							</tr>
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Title:</th>
+								<td >${workspace.title}</td>
+							</tr>
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Description:</th>
+								<td>${workspace.description}</td>
+							</tr>
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Saved Reports (${workspace?.savedReports?.size()}):</th>
+								<td><t:loop source="workspace?.savedReports" value="currentReport">
+										${currentReport.reportType} ${currentReport.reportId} <br />
+									</t:loop></td>
+							</tr>
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Queries (${workspace?.queryObjects?.size()}):</th>
+								<td><t:loop source="workspace?.queryObjects" value="currentQuery">
+										<t:loop source="currentQuery.attributeList" value="currentTuple">
+										${currentTuple.searchType}: ${currentTuple.value} <br />
+										</t:loop>
+										<t:if test="! currentQuery.filters.empty">
+											<t:loop source="currentQuery.filters" value="currentFilter">
+										${currentFilter} <br />
+											</t:loop>
+											<p:else>All Types</p:else>
+										</t:if>
+
+									</t:loop></td>
+							</tr>
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Created:</th>
+								<td><t:graphene.jodatimeoutput value="workspace?.created" style="LL" /></td>
+							</tr>
+							<tr style="border-width: thin; border-style: solid; border-color: lightgray;">
+								<th>Last Modified:</th>
+								<td><t:graphene.jodatimeoutput value="workspace?.modified" style="LL" /></td>
+							</tr>
+						</table>
+
+						<div class="buttons">
+
+							<span t:type="any" t:mixins="jquery/Confirm" t:message="Delete ${workspace.title} ${workspace.id}?"> </span> <a
+								class="btn btn-labeled btn-primary" t:type="eventLink" t:event="toUpdate" t:context="workspace.id" t:zone="^"
+								href="#"><span class="btn-label"><i class="glyphicon glyphicon-pencil"></i></span>Update</a> <a
+								class="btn btn-labeled btn-danger" t:type="eventLink" t:event="delete" t:context="workspace.id" t:zone="^"
+								href="#"> <!-- The Confirm mixin can't cancel an EventLink that specifies 
+										a Zone, so we put the Confirm inside the EventLink. --> <!-- See http://tapestry-users.832.n2.nabble.com/Confirm-mixin-won-t-cancel-when-in-zone-td5048950.html#a5048950 -->
+								<span class="btn-label"><i class="glyphicon glyphicon-trash"></i></span>Delete
+							</a>
+						</div>
+
+					</t:if>
+					<t:if negate="true" test="workspace">
+							Workspace ${workspaceId} does not exist.
+							<br />
+						<br />
+					</t:if>
+				</div>
+			</div>
+			<!-- end widget content -->
+		</div>
+		<!-- end widget div -->
+	</t:if>
+
+	<t:if test="modeUpdate">
+		<div class="jarviswidget jarviswidget-sortable" id="wid-id-2" data-widget-colorbutton="false"
+			data-widget-editbutton="false" role="widget" style="position: relative; opacity: 1;">
+			<!-- widget options: usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false"> 
+					data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" 
+					data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" 
+					data-widget-collapsed="true" data-widget-sortable="false" -->
+			<header role="heading">
+				<div class="jarviswidget-ctrls" role="menu">
+					<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip" title="" data-placement="bottom"
+						data-original-title="Collapse"> <i class="fa fa-minus "></i>
+					</a> <a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn" rel="tooltip" title=""
+						data-placement="bottom" data-original-title="Fullscreen"> <i class="fa fa-resize-full "></i>
+					</a> <a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn" rel="tooltip" title=""
+						data-placement="bottom" data-original-title="Delete"> <i class="fa fa-times"></i>
+					</a>
+				</div>
+				<span class="widget-icon"> <i class="fa fa-eye"></i>
+				</span>
+				<h2>Update</h2>
+
+				<span class="jarviswidget-loader"> <i class="fa fa-refresh fa-spin"></i>
+				</span>
+			</header>
+
+			<!-- widget div -->
+			<div role="content">
+
+				<!-- widget edit box -->
+				<div class="jarviswidget-editbox">
+					<!-- This area used as dropdown edit box -->
+
+				</div>
+				<!-- end widget edit box -->
+
+				<!-- widget content -->
+				<div class="widget-body">
+
+					<form t:type="form" t:id="updateForm" t:context="workspaceId" t:zone="^">
+						<t:if test="workspace">
+							<t:errors />
+							<fieldset>
+								<!-- If optimistic locking is not needed then comment out this next 
+									line. It works because Hidden fields are part of the submit. -->
+								<!-- <t:hidden value="workspace.version"/> -->
+								<legend>Updating ${workspace.title}</legend>
+
+								<div class="form-group">
+									<t:label class="col-md-2 control-label" for="updTitle" />
+									<div class="col-md-9">
+										<input t:type="TextField" style="width: 100%;" t:id="updTitle" value="workspace.title"
+											t:validate="required, maxlength=200" />
+									</div>
+									<div class="col-md-1">(required)</div>
+								</div>
+								<div class="form-group">
+									<div class="col-md-12">
+										<t:graphene.CustomError for="updTitle" />
+									</div>
+								</div>
+								<div class="form-group">
+									<t:label class="col-md-2 control-label" for="updDescription" />
+									<div class="col-md-9">
+										<input t:type="TextArea" style="width: 100%;" t:id="updDescription" value="workspace.description" rows="20" />
+									</div>
+									<div class="col-md-1">(optional)</div>
+								</div>
+								<div class="form-group">
+									<div class="col-md-12">
+										<t:graphene.CustomError for="updDescription" />
+									</div>
+								</div>
+								<div class="form-actions">
+									<a class="btn btn-default" t:type="eventLink" t:event="cancelUpdate" t:context="workspaceId" t:zone="^"
+										href="#">Cancel</a>
+									<button class="btn btn-primary" type="submit">
+										<i class="fa fa-save"></i> Save
+									</button>
+								</div>
+
+							</fieldset>
+
+						</t:if>
+						<t:if negate="true" test="workspace">
+								Workspace ${workspaceId} does not exist.
+								<br />
+							<br />
+						</t:if>
+					</form>
+
+				</div>
+				<!-- end widget content -->
+
+			</div>
+			<!-- end widget div -->
+
+		</div>
+	</t:if>
+
+	<t:if test="modeConfirmDelete">
+		<h1>Delete</h1>
+
+		<form t:type="form" t:id="confirmDeleteForm" t:zone="^">
+			<t:errors />
+
+			<t:if test="workspace">
+				<!-- If optimistic locking is not needed then comment out this next 
+						line. It works because Hidden fields are part of the submit. -->
+				<!-- <t:hidden value="workspace.version"/> -->
+
+
+				<div class="buttons">
+					Delete ${workspace.title} (${workspace.id})? <br /> <br /> <a t:type="eventLink" t:event="cancelConfirmDelete"
+						t:context="workspace.id" t:zone="^" href="#">Cancel</a> <input type="submit" value="Delete" />
+				</div>
+			</t:if>
+
+			<t:if negate="true" test="workspace">
+					Workspace ${workspaceId} does not exist.
+					<br />
+				<br />
+			</t:if>
+
+		</form>
+
+	</t:if>
+
+	<!-- This is needed to clear the zone. -->
+	<t:if test="modeNull">
+		<!-- The space character is needed only to make the zone update highlight 
+				visible. -->
+		&nbsp;
+		</t:if>
+
+</t:content>
+</html>

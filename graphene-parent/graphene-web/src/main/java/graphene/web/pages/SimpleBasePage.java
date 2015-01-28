@@ -21,15 +21,15 @@ public class SimpleBasePage {
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
-	private String appName;
+	protected String appName;
 
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
-	private String appVersion;
+	protected String appVersion;
 	@Property
 	@SessionState(create = false)
-	private List<G_Workspace> workspaces;
+	protected List<G_Workspace> workspaces;
 	@Inject
 	protected LoggingDAO loggingDao;
 
@@ -37,18 +37,18 @@ public class SimpleBasePage {
 	protected AlertManager alertManager;
 
 	@SessionState(create = false)
-	private G_User user;
+	protected G_User user;
 
-	private boolean userExists;
-
-	@Inject
-	private Logger logger;
+	protected boolean userExists;
 
 	@Inject
-	private Messages messages;
+	protected Logger logger;
 
 	@Inject
-	private Request request;
+	protected Messages messages;
+
+	@Inject
+	protected Request request;
 
 	protected Messages getMessages() {
 		return messages;

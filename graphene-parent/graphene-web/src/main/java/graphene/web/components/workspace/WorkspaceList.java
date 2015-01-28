@@ -1,10 +1,13 @@
-package graphene.web.components;
+package graphene.web.components.workspace;
 
+import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
-import graphene.web.model.WorkspaceFilteredDataSource;
 
+import java.util.List;
+
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Events;
@@ -14,8 +17,8 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Request;
@@ -35,7 +38,7 @@ public class WorkspaceList {
 
 	// Parameters
 	@Property
-	private DateTimeFormatter ISODate = ISODateTimeFormat.date();
+	private final DateTimeFormatter ISODate = ISODateTimeFormat.date();
 	@Inject
 	private BeanModelSource beanModelSource;
 
@@ -69,6 +72,9 @@ public class WorkspaceList {
 	@Property
 	private String selectedWorkspaceId;
 
+	@Property
+	private G_ReportViewEvent currentReport;
+
 	@Inject
 	private G_UserDataAccess userDataAccess;
 	@SessionState(create = false)
@@ -79,18 +85,35 @@ public class WorkspaceList {
 	private G_Workspace workspace;
 
 	public String getLinkCSSClass() {
-		if (workspace != null && workspace.getId() == selectedWorkspaceId) {
+		if ((workspace != null) && (workspace.getId() == selectedWorkspaceId)) {
 			return "active";
 		} else {
 			return "";
 		}
 	}
 
+	public List<G_Workspace> getListOfWorkspaces() {
+		List<G_Workspace> list = null;
+		if (userExists) {
+			try {
+				list = userDataAccess.getWorkspacesForUser(user.getId());
+			} catch (final AvroRemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			logger.error("No user name to get workspaces for.");
+
+		}
+		return list;
+	}
+
 	// Generally useful bits and pieces
 	public BeanModel<G_Workspace> getModel() {
 		// TODO: Move the initialization to setupRender
-		this.model = beanModelSource.createDisplayModel(G_Workspace.class,
-				resources.getMessages());
+		model = beanModelSource.createDisplayModel(G_Workspace.class, resources.getMessages());
+		model.exclude("schema", "active", "reports", "id");
+		model.reorder("title", "description", "savedreports", "queryObjects", "modified", "created");
 		return model;
 	}
 
@@ -116,38 +139,33 @@ public class WorkspaceList {
 	 * @return
 	 */
 	public JSONObject getOptions() {
-		String sDom = "<\"widget-body-toolbar\"lfip><t>";
-		// String sDom =
-		// "<\"widget-body-toolbar\"i>rt<\"bottom\"flp><\"clear\">";
-		// String sDom = "TC<\"clear\">Rlfrtip";
-		JSONObject json = new JSONObject("bJQueryUI", "true", "sDom", sDom);
 
+		final JSONObject json = new JSONObject(
+				"bJQueryUI",
+				"true",
+				"bAutoWidth",
+				"true",
+				"sDom",
+				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
+		// Sort by score then by date.
+		json.put("aaSorting", new JSONArray().put(new JSONArray().put(1).put("desc")));
+		// new JSONObject().put("aTargets", new JSONArray().put(0, 4));
+		// final JSONObject sortType = new JSONObject("sType", "formatted-num");
+		// final JSONArray columnArray = new JSONArray();
+		// columnArray.put(4, sortType);
+
+		// json.put("aoColumns", columnArray);
 		return json;
 	}
 
 	// Getters
-	/**
-	 * Change this to return all workspaces if the user has the right
-	 * privileges.
-	 * 
-	 * @return
-	 */
-	public GridDataSource getWorkspaces() {
-		if (userExists) {
-			return new WorkspaceFilteredDataSource(userDataAccess, user.getId(),
-					partialName);
-		} else {
-			logger.error("No user name to get workspaces for.");
-			return null;
-		}
-	}
 
 	public boolean isAjax() {
 		return request.isXHR();
 	}
 
 	// Handle event "selected"
-	boolean onSelected(String workspaceId) {
+	boolean onSelected(final String workspaceId) {
 		// Return false, which means we haven't handled the event so bubble it
 		// up.
 		// This method is here solely as documentation, because without this
@@ -155,11 +173,4 @@ public class WorkspaceList {
 		return false;
 	}
 
-	boolean onSuccessFromFilterForm() {
-		// Trigger new event "filter" which will bubble up.
-		componentResources.triggerEvent("filter", null, null);
-		// We don't want "success" to bubble up, so we return true to say we've
-		// handled it.
-		return true;
-	}
 }

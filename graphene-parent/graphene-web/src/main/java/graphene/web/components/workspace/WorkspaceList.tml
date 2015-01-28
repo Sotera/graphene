@@ -1,0 +1,90 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+<t:content>
+	<!-- row -->
+	<div class="row">
+
+		<!-- NEW WIDGET START -->
+		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+			<!-- Widget ID (each widget will need unique ID) -->
+			<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
+				data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
+				data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+				<header>
+					<span class="widget-icon"> <i class="fa fa-table"></i>
+					</span>
+					<h2>My Workspaces</h2>
+
+				</header>
+
+				<t:zone t:id="listZone" id="listZone" t:update="show">
+					<t:if test="listofworkspaces">
+						<!-- widget div -->
+						<div>
+
+							<!-- widget edit box -->
+							<div class="jarviswidget-editbox">
+								<!-- This area used as dropdown edit box -->
+
+							</div>
+							<!-- end widget edit box -->
+
+							<!-- widget content -->
+							<div class="widget-body no-padding">
+								<div class="widget-body-toolbar">
+									<!-- start table content -->
+								</div>
+								<t:jquery.datatable t:id="list" class="table table-striped table-bordered table-hover table-responsive"
+									t:source="listofworkspaces" t:row="workspace" t:rowsPerPage="20" t:options="options" t:model="model"
+									t:empty="block:emptyWorkspaces" t:inplace="ajax">
+										[Grid here]
+									
+									<p:titleCell>
+										<a style="min-width: 137px;" t:type="eventLink" t:event="selected" t:context="workspace.id"
+											class="prop:linkCSSClass" t:zone="^" href="#"> ${workspace.title} </a>
+									</p:titleCell>
+									<p:savedReportsCell>
+									 ${workspace?.savedReports?.size()}
+										
+									</p:savedReportsCell>
+									<p:queryObjectsCell>
+									${workspace?.queryObjects?.size()}
+									</p:queryObjectsCell>
+									<p:modifiedCell>
+										<span style="white-space: nowrap;"> <t:graphene.jodatimeoutput value="workspace.modified"
+												formatter="ISODate" />
+										</span>
+									</p:modifiedCell>
+									<p:createdCell>
+										<span style="white-space: nowrap;"> <t:graphene.jodatimeoutput value="
+											workspace.created"
+												formatter="ISODate" /></span>
+									</p:createdCell>
+								</t:jquery.datatable>
+								<!-- end table content -->
+							</div>
+							<!-- end widget content -->
+
+						</div>
+						<!-- end widget div -->
+					</t:if>
+					<!-- end if not displaying widget -->
+					<t:block t:id="emptyWorkspaces">
+						<div id="noWorkspaces">(No workspaces found)</div>
+					</t:block>
+				</t:zone>
+			</div>
+			<!-- end widget -->
+
+		</article>
+		<!-- WIDGET END -->
+
+	</div>
+
+	<!-- end row -->
+</t:content>
+
+
+</html>

@@ -7,14 +7,14 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"queries\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\"]}},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"savedReports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_ReportViewEvent\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"graphene.model.query.EntityQuery\"}}},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private boolean active;
    private java.lang.String description;
    private java.lang.String reports;
    private java.lang.String title;
-   private java.util.List<java.lang.String> queries;
-   private java.util.List<java.lang.Object> queryObjects;
+   private java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports;
+   private java.util.List<graphene.model.query.EntityQuery> queryObjects;
    private java.lang.String id;
   /** workspace's modified datetime */
    private java.lang.Long modified;
@@ -31,12 +31,12 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String reports, java.lang.String title, java.util.List<java.lang.String> queries, java.util.List<java.lang.Object> queryObjects, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
+  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String reports, java.lang.String title, java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports, java.util.List<graphene.model.query.EntityQuery> queryObjects, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
     this.active = active;
     this.description = description;
     this.reports = reports;
     this.title = title;
-    this.queries = queries;
+    this.savedReports = savedReports;
     this.queryObjects = queryObjects;
     this.id = id;
     this.modified = modified;
@@ -51,7 +51,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     case 1: return description;
     case 2: return reports;
     case 3: return title;
-    case 4: return queries;
+    case 4: return savedReports;
     case 5: return queryObjects;
     case 6: return id;
     case 7: return modified;
@@ -67,8 +67,8 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     case 1: description = (java.lang.String)value$; break;
     case 2: reports = (java.lang.String)value$; break;
     case 3: title = (java.lang.String)value$; break;
-    case 4: queries = (java.util.List<java.lang.String>)value$; break;
-    case 5: queryObjects = (java.util.List<java.lang.Object>)value$; break;
+    case 4: savedReports = (java.util.List<graphene.model.idl.G_ReportViewEvent>)value$; break;
+    case 5: queryObjects = (java.util.List<graphene.model.query.EntityQuery>)value$; break;
     case 6: id = (java.lang.String)value$; break;
     case 7: modified = (java.lang.Long)value$; break;
     case 8: created = (java.lang.Long)value$; break;
@@ -137,24 +137,24 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'queries' field.
+   * Gets the value of the 'savedReports' field.
    */
-  public java.util.List<java.lang.String> getQueries() {
-    return queries;
+  public java.util.List<graphene.model.idl.G_ReportViewEvent> getSavedReports() {
+    return savedReports;
   }
 
   /**
-   * Sets the value of the 'queries' field.
+   * Sets the value of the 'savedReports' field.
    * @param value the value to set.
    */
-  public void setQueries(java.util.List<java.lang.String> value) {
-    this.queries = value;
+  public void setSavedReports(java.util.List<graphene.model.idl.G_ReportViewEvent> value) {
+    this.savedReports = value;
   }
 
   /**
    * Gets the value of the 'queryObjects' field.
    */
-  public java.util.List<java.lang.Object> getQueryObjects() {
+  public java.util.List<graphene.model.query.EntityQuery> getQueryObjects() {
     return queryObjects;
   }
 
@@ -162,7 +162,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
    * Sets the value of the 'queryObjects' field.
    * @param value the value to set.
    */
-  public void setQueryObjects(java.util.List<java.lang.Object> value) {
+  public void setQueryObjects(java.util.List<graphene.model.query.EntityQuery> value) {
     this.queryObjects = value;
   }
 
@@ -236,8 +236,8 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.String description;
     private java.lang.String reports;
     private java.lang.String title;
-    private java.util.List<java.lang.String> queries;
-    private java.util.List<java.lang.Object> queryObjects;
+    private java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports;
+    private java.util.List<graphene.model.query.EntityQuery> queryObjects;
     private java.lang.String id;
     private java.lang.Long modified;
     private java.lang.Long created;
@@ -266,8 +266,8 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         this.title = data().deepCopy(fields()[3].schema(), other.title);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.queries)) {
-        this.queries = data().deepCopy(fields()[4].schema(), other.queries);
+      if (isValidValue(fields()[4], other.savedReports)) {
+        this.savedReports = data().deepCopy(fields()[4].schema(), other.savedReports);
         fieldSetFlags()[4] = true;
       }
       if (isValidValue(fields()[5], other.queryObjects)) {
@@ -307,8 +307,8 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         this.title = data().deepCopy(fields()[3].schema(), other.title);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.queries)) {
-        this.queries = data().deepCopy(fields()[4].schema(), other.queries);
+      if (isValidValue(fields()[4], other.savedReports)) {
+        this.savedReports = data().deepCopy(fields()[4].schema(), other.savedReports);
         fieldSetFlags()[4] = true;
       }
       if (isValidValue(fields()[5], other.queryObjects)) {
@@ -428,38 +428,38 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Gets the value of the 'queries' field */
-    public java.util.List<java.lang.String> getQueries() {
-      return queries;
+    /** Gets the value of the 'savedReports' field */
+    public java.util.List<graphene.model.idl.G_ReportViewEvent> getSavedReports() {
+      return savedReports;
     }
     
-    /** Sets the value of the 'queries' field */
-    public graphene.model.idl.G_Workspace.Builder setQueries(java.util.List<java.lang.String> value) {
+    /** Sets the value of the 'savedReports' field */
+    public graphene.model.idl.G_Workspace.Builder setSavedReports(java.util.List<graphene.model.idl.G_ReportViewEvent> value) {
       validate(fields()[4], value);
-      this.queries = value;
+      this.savedReports = value;
       fieldSetFlags()[4] = true;
       return this; 
     }
     
-    /** Checks whether the 'queries' field has been set */
-    public boolean hasQueries() {
+    /** Checks whether the 'savedReports' field has been set */
+    public boolean hasSavedReports() {
       return fieldSetFlags()[4];
     }
     
-    /** Clears the value of the 'queries' field */
-    public graphene.model.idl.G_Workspace.Builder clearQueries() {
-      queries = null;
+    /** Clears the value of the 'savedReports' field */
+    public graphene.model.idl.G_Workspace.Builder clearSavedReports() {
+      savedReports = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
     /** Gets the value of the 'queryObjects' field */
-    public java.util.List<java.lang.Object> getQueryObjects() {
+    public java.util.List<graphene.model.query.EntityQuery> getQueryObjects() {
       return queryObjects;
     }
     
     /** Sets the value of the 'queryObjects' field */
-    public graphene.model.idl.G_Workspace.Builder setQueryObjects(java.util.List<java.lang.Object> value) {
+    public graphene.model.idl.G_Workspace.Builder setQueryObjects(java.util.List<graphene.model.query.EntityQuery> value) {
       validate(fields()[5], value);
       this.queryObjects = value;
       fieldSetFlags()[5] = true;
@@ -561,8 +561,8 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         record.description = fieldSetFlags()[1] ? this.description : (java.lang.String) defaultValue(fields()[1]);
         record.reports = fieldSetFlags()[2] ? this.reports : (java.lang.String) defaultValue(fields()[2]);
         record.title = fieldSetFlags()[3] ? this.title : (java.lang.String) defaultValue(fields()[3]);
-        record.queries = fieldSetFlags()[4] ? this.queries : (java.util.List<java.lang.String>) defaultValue(fields()[4]);
-        record.queryObjects = fieldSetFlags()[5] ? this.queryObjects : (java.util.List<java.lang.Object>) defaultValue(fields()[5]);
+        record.savedReports = fieldSetFlags()[4] ? this.savedReports : (java.util.List<graphene.model.idl.G_ReportViewEvent>) defaultValue(fields()[4]);
+        record.queryObjects = fieldSetFlags()[5] ? this.queryObjects : (java.util.List<graphene.model.query.EntityQuery>) defaultValue(fields()[5]);
         record.id = fieldSetFlags()[6] ? this.id : (java.lang.String) defaultValue(fields()[6]);
         record.modified = fieldSetFlags()[7] ? this.modified : (java.lang.Long) defaultValue(fields()[7]);
         record.created = fieldSetFlags()[8] ? this.created : (java.lang.Long) defaultValue(fields()[8]);
