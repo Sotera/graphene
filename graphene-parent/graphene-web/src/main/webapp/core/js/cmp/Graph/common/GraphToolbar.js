@@ -379,7 +379,7 @@ Ext.define("DARPA.GraphToolbar", {
 					"</ul>" +
 					"<b>Import</b> - Import a JSONized graph to replace the graph currently displayed." + "<br>" + 
 					"<b>Export</b> - Export your current graph as a .PNG image or a .JSON file for use elsewhere." + "<br>" + 
-					"<b>Snap To Graph</b> - Automatically pans back to the graph, setting it to fit the display without adjusting the existing layout." + "<br>" +
+					//"<b>Snap To Graph</b> - Automatically pans back to the graph, setting it to fit the display without adjusting the existing layout." + "<br>" +
 					"<hr>" +
 					/* Grid layout help */
 					"<img src='" + Config.coreImagesUrl + "grid_icon.png'></img>" + "<b>Grid Layout</b> - Place the nodes in an evenly spaced grid to fill the display bounds." + "<br>" +
@@ -411,8 +411,8 @@ Ext.define("DARPA.GraphToolbar", {
 			cose_anim, cose_unanim, 
 			"-", 
 			arbor_anim, arbor_unanim, arbor_wheel_anim, arbor_wheel_unanim, 
-			"-", 
-			snap_btn, inst_label,
+			// "-", 
+			// snap_btn, inst_label,
 			"->", 
 			help_btn
 		];

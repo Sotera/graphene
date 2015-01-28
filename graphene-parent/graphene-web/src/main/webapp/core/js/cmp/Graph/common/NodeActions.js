@@ -1,6 +1,6 @@
 //nodeActions.js
 
-// A panel in the graph layout that shows the buttons available whan a node is selected
+// A panel in the graph layout that shows the buttons available when a node is selected
 // This might be replaced by context menu options on the nodes
 
 Ext.define("DARPA.Node_Actions", {
@@ -290,6 +290,22 @@ Ext.define("DARPA.Node_Actions", {
 			}
 		}); // unmerge
 		
+		var snap = Ext.create("Ext.Button", {
+			text: "SNAP TO GRAPH",
+			id: config.id + "-SNAP",
+			margin: 4,
+			height: 24,
+			width: "50%",
+			handler: function(btn) {
+				var path = btn.id.split("-");
+				var graphId = path[0] + "-" + path[1];
+				var graph = Ext.getCmp(graphId);
+				if (graph) {
+					graph.GraphVis.gv.fit();
+				}
+			}
+		});
+		
 		var help = Ext.create("Ext.Button", {
 		    icon: Config.helpIcon,
 		    maxHeight: 30,
@@ -312,7 +328,8 @@ Ext.define("DARPA.Node_Actions", {
 				   "<p><b>Hide</b>: Remove the selected nodes and their connected edges from view with HIDE. UNHIDE resets this action, making everything visible.</p>" +
 				   "<p><b>Expanding</b>: Add the neighbors, if any, of the selected node(s) to the graph with EXPAND.  UNEXPAND deletes the newly discovered neighbors.</p>" +
 				   "<p><b>Halt</b>: Stop a procedurally-generated layout in process.</p>" +
-				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>" + 
+				   "<p><b>Delete</b>: Permanently removes selected nodes and their attached edges from the graph.  UNHIDE will <i>not</i> bring them back.</p>" +
+				   "<p><b>Snap To Graph</b>: Automatically pans back to the graph, setting it to fit the display without adjusting the current layout.</p>" +
 				   "<p><b>Unmerge</b>: Retrieves any second-class subnodes from inside a 'super node' and puts them back on the graph as first-class nodes.</p>"
 			    );
 			}
@@ -354,7 +371,7 @@ Ext.define("DARPA.Node_Actions", {
 				xtype: 'fieldcontainer',
 				height: 'auto',
 				width: '100%',
-				items: [unmerge, help]
+				items: [snap, unmerge, help]
 			}]
 		});
 
