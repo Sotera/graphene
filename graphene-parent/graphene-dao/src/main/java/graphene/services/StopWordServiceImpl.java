@@ -56,6 +56,9 @@ public class StopWordServiceImpl implements StopWordService {
 	@Override
 	public boolean isValid(String... words) {
 		for (String w : words) {
+			if (w.length() <= 1) {
+				return false;
+			}
 			if (stopwords.contains(w.toLowerCase())) {
 				return false;
 			}
