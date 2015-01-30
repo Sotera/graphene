@@ -53,7 +53,7 @@ Ext.define("DARPA.GraphSettings",
 			}
 			helpText = helpText +
 			    "<b>APPLY TO GRAPH</b>:&nbsp;&nbsp; This will display the graph using the new settings. " +
-			    "If Maximum Hops > 2 this may return a very large graph that will take some time to display.";
+			    "If Maximum Degree > 2 this may return a very large graph that will take some time to display.";
 
 			Ext.Msg.alert('Help', helpText);
 		}
@@ -63,7 +63,7 @@ Ext.define("DARPA.GraphSettings",
 		this.items = [
 			{
 				xtype:'textfield',
-				fieldLabel:'Maximum Hops',
+				fieldLabel:'Maximum Degree',
 				labelLength:150,
 				value:'2',
 				width:200
