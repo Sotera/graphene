@@ -197,8 +197,10 @@ Ext.define("DARPA.EntityGraphPanel", {
 		}
 		graphStore.proxy.extraParams.Type = intype;
 
-		// Type must be set in the URL
-		graphStore.proxy.url = Config.entityGraphUrl + intype + '/' + node.data().name;
+		// FIXME: REST services don't seem to like properly encoded symbols. Re-address when time permits
+		// In the meantime, use regex to replace all / characters with a space
+		/* graphStore.proxy.url = Config.entityGraphUrl + intype + "/" + encodeURIComponent(node.data("name")); */
+		graphStore.proxy.url = Config.entityGraphUrl + intype + "/" + node.data("name").replace(/\//g, " ");
 
 		self.json1Hop = null; // prevents us from trying to display the previous graph if we switch to this tab before we have fully loaded the new graph
 		self.json1HopNode = node;

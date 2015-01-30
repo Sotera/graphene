@@ -192,7 +192,11 @@ Ext.define("DARPA.TransactionGraphPanel", {
 		graphStore.proxy.extraParams.minWeight  = s.getMinWeight();
 		graphStore.proxy.extraParams.Type	= "account";	
 		
-		graphStore.proxy.url = Config.transferGraphCSUrl + node.data().id;
+		
+		// FIXME: REST services don't seem to like properly encoded symbols. Re-address when time permits
+		// In the meantime, use regex to replace all / characters with a space
+		/* graphStore.proxy.url = Config.transferGraphCSUrl + encodeURIComponent(node.data("id")); */
+		graphStore.proxy.url = Config.transferGraphCSUrl + node.data("id").replace(/\//g, " ");
 		
 		if (graphStore.proxy.extraParams.maxNodes > 200) {
 			graphStore.proxy.extraParams.maxNodes = 200;    // hard limit for this case

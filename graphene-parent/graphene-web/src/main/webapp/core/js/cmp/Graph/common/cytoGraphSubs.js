@@ -613,6 +613,7 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	};
 	
 	// randomly select an edge attached to this node and use it to push it away from the rest of the graph
+	/*
 	try {
 		var connectedNodes = innode.connectedEdges().connectedNodes();
 		var neighbor = null;
@@ -632,7 +633,7 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	} catch(e) {
 		console.log(e.message);
 	}
-	
+	*/
 	var nodes = json.nodes;
 	for (var i = 0; i < nodes.length; i++) {
 		var node = nodes[i];
