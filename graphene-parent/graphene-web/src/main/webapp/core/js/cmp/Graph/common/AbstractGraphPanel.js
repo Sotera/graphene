@@ -456,6 +456,12 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		var id = node.data("idVal");
 		self.previousPivotIds.push(self.prevLoadParams.prevValue);
 		self.load(id);
+		
+		if (typeof setTabTitle == "function") {
+			setTabTitle("" + id);
+		} else {
+			console.error("the function setTabTitle() has not yet been implemented in the .html");
+		}
 	},
 	
 	unpivot: function() {
@@ -463,6 +469,12 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		var prevId = self.previousPivotIds.pop();
 		if (prevId != null && typeof prevId !== "undefined") {
 			this.load(prevId);
+			
+			if (typeof setTabTitle == "function") {
+				setTabTitle("" + prevId);
+			} else {
+				console.error("the function setTabTitle() has not yet been implemented in the .html");
+			}
 		}
 	},
 	
