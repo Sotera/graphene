@@ -14,7 +14,7 @@ Ext.define("DARPA.GraphToolbar", {
 			id: config.id + "-SERVER-SAVE",
 			text: "To Server",
 			height: myHeight,
-			tooltip: "Persist any changes you have made so that any similar queries will have these changes by default",
+			tooltip: "Persist any changes you have made so that other users can see these changes by default",
 			handler: function(item) {
 				var gr = scope.up();
 
@@ -64,8 +64,8 @@ Ext.define("DARPA.GraphToolbar", {
 		
 		var server_load_changes_btn = {
 			id: config.id + "-SERVER-NOCHANGES-LOAD",
-			text: "From Server (with changes)",
-			tooltip: "Re-loads graph with all of its persisted changes",
+			text: "From Server",
+			tooltip: "Re-loads graph with all of its saved changes",
 			height: myHeight,
 			handler: function(item) {
 				var gr = scope.up();
@@ -84,8 +84,8 @@ Ext.define("DARPA.GraphToolbar", {
 		
 		var server_load_no_changes_btn = {
 			id: config.id + "-SERVER-LOAD",
-			text: "From Server (without changes)",
-			tooltip: "Re-loads graph without any persisted changes and returns what is in the data store",
+			text: "From Raw Data",
+			tooltip: "Regenerates the graph without any previously saved changes",
 			height: myHeight,
 			handler: function(item) {
 				var gr = scope.up();
@@ -368,16 +368,16 @@ Ext.define("DARPA.GraphToolbar", {
 					"Toolbar Help",
 					"<b>Save</b>" +
 					"<ul>" + 
-						"<li>" + "<i>To Server</i> - Persist any changes you have made so that any similar queries will have these changes by default." + "</li>" +
+						"<li>" + "<i>To Server</i> - Persist any changes you have made so that other users will get these changes by default." + "</li>" +
 						"<li>" + "<i>To Browser Cookie</i> - Save the state of your session to be loaded exactly as-is in a future session." + "</li>" +
 					"</ul>" +
 					"<b>Load</b>" +
 					"<ul>" + 
-						"<li>" + "<i>From Server (with changes)</i> - Fetches the graph directly from the database and automatically applies any previous user adjustments." + "</li>" +
-						"<li>" + "<i>From Server (without changes)</i> - Fetches the graph directly from the database without applying any existing user adjustments." + "</li>" +
+						"<li>" + "<i>From Server</i> - Fetches the graph directly from the database and automatically applies any previous user adjustments." + "</li>" +
+						"<li>" + "<i>From Raw Data</i> - Fetches the graph directly from the database without applying any existing user adjustments." + "</li>" +
 						"<li>" + "<i>From Browser Cookies</i> - Load a saved session to replace the graph state of your current session." + "</li>" +
 					"</ul>" +
-					"<b>Import</b> - Import a JSONized graph to replace the graph currently displayed." + "<br>" + 
+					"<b>Import</b> - Import a graph in JSON format to replace the graph currently displayed." + "<br>" + 
 					"<b>Export</b> - Export your current graph as a .PNG image or a .JSON file for use elsewhere." + "<br>" + 
 					//"<b>Snap To Graph</b> - Automatically pans back to the graph, setting it to fit the display without adjusting the existing layout." + "<br>" +
 					"<hr>" +
