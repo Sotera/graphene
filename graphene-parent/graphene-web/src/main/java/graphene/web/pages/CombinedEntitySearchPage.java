@@ -410,7 +410,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				properties[columnArray.length()][1], "sType", "string"));
 
 		json.put("aoColumns", columnArray);
-
+		
+		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
+		
 		return json;
 	}
 
