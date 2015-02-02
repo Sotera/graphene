@@ -192,6 +192,7 @@ Ext.define("DARPA.ElementEditor", {
 			fieldLabel: "Attr_Name",
 			name: "name",
 			value: inName,
+			//disabled: inValue.search("<a") >= 0,
 			layout: {
 				type: "column",
 				pack: "center"
@@ -206,6 +207,7 @@ Ext.define("DARPA.ElementEditor", {
 			fieldLabel: "Attr_Value",
 			name: "value",
 			value: inValue,
+			readOnly: inValue.search("<a") >= 0,
 			layout: {
 				type: "column",
 				pack: "center"
@@ -221,7 +223,7 @@ Ext.define("DARPA.ElementEditor", {
 			height: 20, width: 20,
 			handler: function(btn) {
 				var attrRows = btn.up().up();
-				attrRows.add(_this.makeNewDataRow());
+				attrRows.add(_this.makeNewDataRow("", ""));
 			}
 		};
 		
@@ -267,6 +269,6 @@ Ext.define("DARPA.ElementEditor", {
 			attrRows.add(this.makeNewDataRow(attr.key, attr.val));
 		}
 		
-		attrRows.add(this.makeNewDataRow());
+		attrRows.add(this.makeNewDataRow("", ""));
 	}
 });
