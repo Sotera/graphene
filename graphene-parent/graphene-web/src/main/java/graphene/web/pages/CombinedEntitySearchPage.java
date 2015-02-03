@@ -327,7 +327,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		model.addEmpty("communicationIdentifierList");
 		model.addEmpty("identifierList");
 
-		model.getById("informationIcons").sortable(true);
+		model.getById("informationIcons").sortable(false);
 		model.getById("rank").sortable(true);
 		model.getById("amount").sortable(true);
 		model.getById("date").sortable(true);
