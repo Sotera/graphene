@@ -115,7 +115,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 					// Remove leading zeros from the label
 					a.setLabel(StringUtils.removeLeadingZeros(originalId));
 					// XXX: need a way of getting the link to the page with TYPE
-					a.addData(nodeType, getCombinedSearchLink(originalId));
+					a.addData(nodeType, getCombinedSearchLink(nodeType, originalId));
 					nodeList.addNode(a);
 					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
 				}
