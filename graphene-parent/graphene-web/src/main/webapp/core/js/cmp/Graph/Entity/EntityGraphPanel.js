@@ -156,21 +156,38 @@ Ext.define("DARPA.EntityGraphPanel", {
 					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
-				if (self.json && self.json.nodes.length == 0) {
-					self.setStatus("NO DATA FOUND TO PLOT");
-					// self.clear(); // don't clear what is already shown
-				} else {
-					// hack to determine if graph comes back with saved positions
-					if (self.json.nodes[0].position == null) useSaved = false;
-					if (self.GraphVis.getGv() != null) {
-						self.clear();
-						self.showjson(self.prevLoadParams.value, useSaved);
+				var loadGraph = function(scope, useSaved) {
+					if (scope.GraphVis.getGv() != null) {
+						scope.clear();
+						scope.showjson(scope.prevLoadParams.value, useSaved);
 					}
+				};
+				
+				if (self.json != undefined) {
+					var useSaved = self.json.nodes[0].position != null;
+					var THRESHOLD = 200;
+					
+					if (self.json.nodes.length == 0) {
+						self.setStatus("NO DATA FOUND TO PLOT");
+					} else if (self.json.nodes.length < THRESHOLD) {
+						loadGraph(self, useSaved);
+					} else {
+						Ext.Msg.confirm(
+							"Loading a Large Graph",
+							"The expected graph contains over " + THRESHOLD + " nodes.  This may take a moment to render.  Do you wish to wait?\n" +
+							"If not, the graph will not render.",
+							function(ans) {
+								if (ans == 'yes') {
+									loadGraph(self, useSaved);
+								}
+							}
+						);
+					}
+					
+					var nodeCount = self.json.nodes.length;
+					self.appendTabTitle("(" + nodeCount.toString() + ")");
+					self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 				}
-
-				var nodeCount = self.json.nodes.length;
-				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 			}
 		});
 	},
