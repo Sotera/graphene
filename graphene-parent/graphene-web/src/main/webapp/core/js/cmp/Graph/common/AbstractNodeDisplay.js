@@ -52,7 +52,8 @@ Ext.define("DARPA.AbstractNodeDisplay", {
     },        
     
     updateLegend: function(jsonArray, groupName) {
-    	var legendPanel = this.getLegendPanel();
+    	var scope = this;
+    	var legendPanel = scope.getLegendPanel();
 		// assume jsonArray is array of objects, each containing "text" and "color" or "iconPath"
     	
     	if (typeof legendPanel !== "undefined") {
