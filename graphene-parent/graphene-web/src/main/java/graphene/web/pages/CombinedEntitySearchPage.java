@@ -386,7 +386,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "false", "sWidth",
 				properties[columnArray.length()][1], "sType", "string"));
 
 		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
