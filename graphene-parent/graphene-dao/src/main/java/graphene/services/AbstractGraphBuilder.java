@@ -97,8 +97,11 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	public void addReportDetails(final V_GenericNode reportNode, final Map<String, Object> properties) {
 		try {
+			// for now, prevent the log-based increase on node dimensions
+			/*
 			reportNode.setSize(getLogSize(((Double) properties.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
 					MIN_NODE_SIZE, MAX_NODE_SIZE));
+			*/
 
 			reportNode.addData("Amount involved", (String) properties.get(DocumentGraphParser.TOTALAMOUNTSTR));
 
