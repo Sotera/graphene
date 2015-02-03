@@ -164,14 +164,15 @@ Ext.define("DARPA.EntityGraphPanel", {
 				};
 				
 				if (self.json != undefined) {
-					var useSaved = self.json.nodes[0].position != null;
-					var THRESHOLD = 200;
-					
+					var THRESHOLD = 300;
+					var useSaved = false;
 					if (self.json.nodes.length == 0) {
 						self.setStatus("NO DATA FOUND TO PLOT");
 					} else if (self.json.nodes.length < THRESHOLD) {
+						useSaved = self.json.nodes[0].position != null;
 						loadGraph(self, useSaved);
 					} else {
+						useSaved = self.json.nodes[0].position != null;
 						Ext.Msg.confirm(
 							"Loading a Large Graph",
 							"The expected graph contains over " + THRESHOLD + " nodes.  This may take a moment to render.  Do you wish to wait?\n" +
