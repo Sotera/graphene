@@ -13,17 +13,20 @@
 			<t:loop t:source="model.propertyNames" formState="ITERATION"
 				t:value="propertyName">
 				<div class="row">
-					<div class="col-sm-12 col-md-4 ${propertyClass}"
-						style="white-space: normal;">${propertyModel.label}</div>
-					<div t:type="any" t:mixins="NotEmpty"
-						class="col-sm-12 col-md-8 ${propertyClass}">
-						<a class="${propertyLinkClass}" style="white-space: normal;" href="${pivotLink}">
-							<t:propertydisplay model="propertyModel" overrides="overrides"
-								object="object" />
-						</a>
-					</div>
+					<div class="col-sm-12 col-md-4 ${propertyClass}" style="white-space: normal;">${propertyModel.label}</div>
+					<t:if test="pivotableType">
+						<div t:type="any" t:mixins="NotEmpty" class="col-sm-12 col-md-8 ${propertyClass}">
+							<a class="${propertyLinkClass}" style="white-space: normal;" href="${pivotLink}">
+								<t:propertydisplay model="propertyModel" overrides="overrides" object="object" />
+							</a>
+						</div>
+					</t:if> 
+					<t:if negate="true" test="pivotableType">  
+						<div t:type="any" t:mixins="NotEmpty" class="col-sm-12 col-md-8 ${propertyClass}">
+							${propertyValue}
+						</div>
+					</t:if>
 				</div>
-
 			</t:loop>
 		</div>
 	</t:if>

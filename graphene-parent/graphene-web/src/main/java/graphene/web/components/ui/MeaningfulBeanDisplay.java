@@ -196,6 +196,21 @@ public class MeaningfulBeanDisplay {
 		return model.get(propertyName).getConduit().get(object);
 	}
 
+	public boolean isPivotableType() {
+		
+		// match a value that looks like <numbers...>.X or <numbers...>.XX
+		boolean matchesMoney = getPropertyValue().toString().matches(
+			"^\\d+\\.[0-9]{1,2}$"
+		);
+
+		// match a value that resembles a date YYYY-MM-DD or YYYY/MM/DD or YYYY MM DD or YYYY.MM.DD
+		boolean matchesDate = getPropertyValue().toString().matches(
+			"^(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"
+		);
+		
+		return !(matchesMoney || matchesDate);
+	}
+	
 	public boolean isMeaningful(final Object obj) {
 
 		if ((obj == null) || (!ValidationUtils.isValid(obj.toString()) && !foundOneProperty)) {
