@@ -131,6 +131,7 @@ public class View extends SimpleBasePage {
 		// columnArray.put(4, sortType);
 
 		// json.put("aoColumns", columnArray);
+		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
 		return json;
 	}
 
