@@ -530,11 +530,20 @@ CytoGraphVis.prototype.reset = function() {
  *	Show all elements on this graph and toggle their class appropriately
  */
 CytoGraphVis.prototype.showAll = function(isFilter) {
+	var scope = this;
 	var selector = "";
 	if (typeof isFilter !== "undefined") {
 		selector = (isFilter == true) ? ".toggled-filter" : ".toggled-hide";
 	}
-	this.gv.elements(selector).show();
+	
+	// gather all elements, nodes and edges, that may have been hidden via Hide or Filter 
+	scope.gv.elements(selector).each(function(i, ele) {
+		if (ele.isNode()) {
+			scope.showNode(ele, isFilter);
+		} else if (ele.isEdge()) {
+			scope.showEdge(ele, isFilter);
+		}
+	});
 };
 
 /*
