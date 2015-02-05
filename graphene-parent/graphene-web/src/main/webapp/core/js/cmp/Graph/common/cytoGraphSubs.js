@@ -552,25 +552,34 @@ CytoGraphVis.prototype.showAll = function(isFilter) {
  *		name:String - identifier of the root node/entity 
  */
 CytoGraphVis.prototype.showGraph = function(json, name, useSaved) {
-	this.searchName = name;
-	this.gv.load(json);
+	var scope = this;
+	scope.searchName = name;
+	scope.gv.load(json); // <---- FIXME: renders elements even when ele.data("visible") == false
 	if (useSaved === true) {
-		this.changeLayout("preset", {});
+		scope.changeLayout("preset", {});
 	} else { 
-		this.changeLayout(this.CONSTANTS("defaultLayout"), {});
+		scope.changeLayout(scope.CONSTANTS("defaultLayout"), {});
 	}
 	
 	try {
 		if (useSaved === true) {
-			var btn = this.getOwner().getToolbar().getEnabledLayoutBtn();
+			var btn = scope.getOwner().getToolbar().getEnabledLayoutBtn();
 			if (btn) btn.toggle(false);
 		} else {
-			var btn = this.getOwner().getToolbar().getHierarchyBtn();
+			var btn = scope.getOwner().getToolbar().getHierarchyBtn();
 			if (btn) btn.toggle(true); 
 		}
 	} catch (e) {
 		console.error(e.message);
 	}
+	
+	// for some reason, elements marked as hidden to not remain hidden when loaded into cytoscape.
+	// investigate that later.  for now, just re-hide the hidden elements
+	scope.gv.elements("[!visible]").each(function(i, ele) {
+		var isFilter = ele.hasClass("toggled-filter");
+		if (ele.isNode()) {scope.hideNode(ele, isFilter);}
+		else if (ele.isEdge()) {scope.hideEdge(ele, isFilter);}
+	});
 };
 
 CytoGraphVis.prototype.resize = function(w, h) {
