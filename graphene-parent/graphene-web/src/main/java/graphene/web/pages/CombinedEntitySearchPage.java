@@ -23,6 +23,7 @@ import graphene.web.annotations.PluginPage;
 import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -201,6 +202,15 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public Double getAmount() {
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
+	
+	public String getFormattedAmount() {
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		String amount = formatter.format(getAmount());
+		//if (amount.charAt(0) == '$') {
+		//	amount = amount.substring(1, amount.length());
+		//}
+		return amount;
+	}
 
 	public Collection<Triple<String, String, String>> getCIdentifierList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTCIDLIST);
@@ -362,15 +372,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public JSONObject getOptions() {
 
 		final JSONObject json = new JSONObject(
-				"bJQueryUI",
-				"true",
-				"bAutoWidth",
-				"true",
-				"sDom",
-				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
+			"bJQueryUI", "true",
+			"bAutoWidth", "true",
+			"sDom", "<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>"
+		);
 		// Sort by score then by date.
-		json.put("aaSorting",
-				new JSONArray().put(new JSONArray().put(0).put("asc")).put(new JSONArray().put(3).put("desc")));
+		json.put("aaSorting", new JSONArray().put(new JSONArray().put(0).put("asc")).put(new JSONArray().put(3).put("desc")));
 
 		final JSONArray columnArray = new JSONArray();
 
@@ -380,34 +387,69 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				{ "date", "7%" }, { "amount", "7%" }, { "subjects", "12%" }, { "addressList", "25%" },
 				{ "communicationIdentifierList", "15%" }, { "identifierList", "15%" } };
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "numeric"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "false", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "date"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "numeric" // TODO
-																		// fixme
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "numeric"
 		));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "false", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "html"
+		));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "date"
+		));
 
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"type", "currency",
+			"sType", "currency"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
 
 		json.put("aoColumns", columnArray);
 		

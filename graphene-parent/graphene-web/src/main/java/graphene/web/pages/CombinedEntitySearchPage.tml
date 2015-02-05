@@ -89,9 +89,7 @@ margin-right: 3px;
 									${currentEntity.get('firstDate')}
 								</p:dateCell>
 								<p:amountCell>
-									<!-- <span class="label label-info"> -->
-										<t:output value="amount" format="moneyFormat" />
-									<!-- </span> -->
+									${formattedAmount}
 								</p:amountCell>
 								<p:subjectsCell>
 									<t:loop source="nameList" value="currentName">
