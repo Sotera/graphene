@@ -8,6 +8,7 @@
 	<t:content>
 		<div id="shortcut">
 			<ul>
+				<!--
 				<li>
 					<a t:type="pagelink" t:page="graphene/workspace/manage"
 						class="jarvismetro-tile big-cubes bg-color-blueDark">
@@ -21,6 +22,7 @@
 						</span>
 					</a>
 				</li>
+				-->
 				
 				<li>
 					<a t:type="pagelink" t:page="graphene/settings"

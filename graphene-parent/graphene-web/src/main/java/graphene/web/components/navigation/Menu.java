@@ -122,6 +122,12 @@ public class Menu {
 				if (clazz.isAnnotationPresent(PluginPage.class)) {
 					final PluginPage p = (PluginPage) clazz.getAnnotation(PluginPage.class);
 
+					//XXX: HACK
+					//FIXME: do not add any workspace menu options
+					if (p.menuName().toLowerCase().indexOf("workspace") >= 0) {
+						continue;
+					}
+					
 					final List<G_VisualType> vtlist = Arrays.asList(p.visualType());
 					if (!vtlist.contains(G_VisualType.HIDDEN)) {
 						if (vtlist.contains(G_VisualType.GRAPH) || vtlist.contains(G_VisualType.TOP)
