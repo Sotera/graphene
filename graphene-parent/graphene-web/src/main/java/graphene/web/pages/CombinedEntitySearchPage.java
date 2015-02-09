@@ -451,8 +451,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			"sType", "string"
 		));
 
+		//json.put("sScrollX", "100%");
+		//json.put("bScrollCollapse", false);
 		json.put("aoColumns", columnArray);
-		
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
 		
 		return json;
@@ -492,8 +493,18 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	}
 
 	public String getStyleFor(final Triple<String, String, String> currentThing) {
-		return style.getStyle(currentThing.getFirst(),
-				StringUtils.containsIgnoreCase(currentThing.getThird(), currentSearchValue));
+		boolean containsTerm = false;
+		// splits on " ", "/", and "\" in the search term.
+		// FIXME: tokenize based on " and use the substring between them as a single term
+		String[] searchTerms = currentSearchValue.split("[ \\/]+");
+		for (String term : searchTerms) {
+			// term.replaceAll() looks for all " characters and removes them for the sake of comparison
+			if (StringUtils.containsIgnoreCase(currentThing.getThird(), term.replaceAll("[\"]+", ""))) {
+				containsTerm = true;
+				break;
+			}
+		}
+		return style.getStyle(currentThing.getFirst(), containsTerm);
 	}
 
 	@Override

@@ -21,11 +21,10 @@ table {
 
 table td {
 	border-right: 1px solid #EEEEEE;
-	border-left: 1px solid #EEEEEE;
 	border-bottom: 1px solid #888888;
 }
 .legend{
-margin-right: 3px;
+	margin-right: 3px;
 }
 .pivotlink {
 	max-width: 400px;
