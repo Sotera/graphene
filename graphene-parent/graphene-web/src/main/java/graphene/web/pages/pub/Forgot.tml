@@ -3,8 +3,10 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 	<div class="row-fluid">
 		<div class="col-sm-12">
-			<p>You've forgotten your email or password</p>
-			<p>Email us: someemail@somedomain.tld</p>
+			<!-- TODO: display information from a .txt document the client can adjust according -->
+			<!-- TODO: re-implement as a form that will reset the user's password to a default one that they can use to log in and change their password -->
+			<p>If you have forgotten your username or password, please contact your system administrator to resolve the issue.</p>
+			<p>In the meantime, you may create a new user account to continue your work.</p>
 		</div>
 	</div>
 </html>
