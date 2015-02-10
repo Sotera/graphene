@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ValidationUtils {
-	private static final Logger logger = LoggerFactory
-			.getLogger(ValidationUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
 
 	/**
 	 * Returns the first valid object in the list.
@@ -57,8 +56,7 @@ public class ValidationUtils {
 	 * @param unsafeProps
 	 * @return
 	 */
-	public static Map<String, Object> getSafeProperties(
-			final Map<String, Object> unsafeProps) {
+	public static Map<String, Object> getSafeProperties(final Map<String, Object> unsafeProps) {
 		if (unsafeProps == null) {
 			return null;
 		} else {
@@ -178,7 +176,7 @@ public class ValidationUtils {
 	 */
 	public static boolean isValid(final Number t) {
 		boolean isvalid = true;
-		if ((t == null) || (t.doubleValue() <= 0) || (t.intValue() <= 0)) {
+		if ((t == null) || (t.doubleValue() <= 0) || (t.longValue() <= 0)) {
 			isvalid = false;
 		}
 		return isvalid;
