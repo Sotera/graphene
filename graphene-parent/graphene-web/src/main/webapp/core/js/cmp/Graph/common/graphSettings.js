@@ -60,12 +60,19 @@ Ext.define("DARPA.GraphSettings",
 		});
 
 		
+		var defaultDegree = 2;
+		if (typeof Config.defaultDegree != "undefined") {
+			defaultDegree = Config.defaultDegree;
+		} else {
+			console.log("Using 2 as default degree.");
+		}
+		
 		this.items = [
 			{
 				xtype:'textfield',
 				fieldLabel:'Maximum Degree',
 				labelLength:150,
-				value:'2',
+				value: "" + defaultDegree,
 				width:200
 			},
 			{
