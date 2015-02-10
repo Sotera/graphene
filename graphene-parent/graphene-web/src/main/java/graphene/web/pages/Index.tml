@@ -7,7 +7,9 @@
 <div class="row-fluid">
 
 	<div class="span9">
-		<h1>Use the search bar to initiate a search.</h1>
+		<h1>Welcome to Graphene!</h1>
+		<h2>Please use the search bar above to get started.</h2>
+		<h2>If you would like to learn more about the tool, refer to the user guides in Getting Started or Advanced Help.</h2>
 		<!--
 		<t:if test="workspaces">
 			<p>Available Workspaces:</p>
