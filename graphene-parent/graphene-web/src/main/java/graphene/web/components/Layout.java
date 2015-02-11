@@ -118,8 +118,7 @@ public class Layout {
 				// userDataAccess.getWorkspacesOrCreateNewForUser(user
 				// .getId());
 			} catch (final AvroRemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 	}

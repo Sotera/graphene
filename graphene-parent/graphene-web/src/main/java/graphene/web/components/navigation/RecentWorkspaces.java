@@ -152,7 +152,7 @@ public class RecentWorkspaces {
 			workspaces = userDataAccess.getWorkspacesForUser(user.getId());
 		} catch (final AvroRemoteException e) {
 			workspaces = null;
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 }
