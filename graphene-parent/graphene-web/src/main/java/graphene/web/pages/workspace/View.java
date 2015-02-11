@@ -225,11 +225,9 @@ public class View extends SimpleBasePage {
 			currentSelectedWorkspace = userDataAccess.saveWorkspace(user.getId(), currentSelectedWorkspace);
 
 		} catch (final UnauthorizedActionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (final AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		reportViewList = currentSelectedWorkspace.getSavedReports();
 		if (request.isXHR()) {
@@ -260,11 +258,9 @@ public class View extends SimpleBasePage {
 			currentSelectedWorkspace = userDataAccess.saveWorkspace(user.getId(), currentSelectedWorkspace);
 
 		} catch (final UnauthorizedActionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (final AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		searchQueryList = currentSelectedWorkspace.getQueryObjects();
 		if (request.isXHR()) {

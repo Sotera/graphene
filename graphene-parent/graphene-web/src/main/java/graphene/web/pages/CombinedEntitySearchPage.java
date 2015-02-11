@@ -285,7 +285,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				tr.logAsCompleted();
 			} catch (final Exception e) {
 				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		if ((metaresults == null) || (metaresults.getNumberOfResultsReturned() == 0)) {
@@ -297,7 +297,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 					Duration.TRANSIENT,
 					Severity.SUCCESS,
 					"Showing " + metaresults.getNumberOfResultsReturned() + " of "
-							+ metaresults.getNumberOtResultsTotal() + " results found.");
+							+ metaresults.getNumberOfResultsTotal() + " results found.");
 		}
 		return metaresults;
 	}
@@ -537,7 +537,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				results = getEntities(searchSchema, searchTypeFilter, searchMatch, currentSearchValue, (int) maxResults);
 
 			} catch (final Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			results = null;

@@ -99,7 +99,7 @@ public class ExportGraphRSImpl implements ExportGraphRS {
 			writer.write(graphJSONdata);
 		} catch (IOException e) {
 			logger.error("exportGraphAsJSON: Exception writing JSON");
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		try {

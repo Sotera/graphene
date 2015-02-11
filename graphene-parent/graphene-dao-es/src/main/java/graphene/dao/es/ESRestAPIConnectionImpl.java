@@ -75,8 +75,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				client.execute(new CreateIndex.Builder(indexName).build());
 			}
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -92,8 +91,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				client.execute(new CreateIndex.Builder(indexName).build());
 			}
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -179,7 +177,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			logger.debug("Found a count of: " + longCount);
 			return longCount;
 		} catch (final Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}
@@ -263,7 +261,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				}
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}
@@ -278,7 +276,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final SearchResult result = client.execute(action);
 			retval = result.getJsonString();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}
@@ -297,7 +295,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 					.setParameter("from", from).setParameter("size", size);
 			return executeAction(sb);
 		} catch (final Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}

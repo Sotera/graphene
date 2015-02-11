@@ -370,7 +370,7 @@ public class WorkspaceEditor {
 			workspace = userDataAccess.getWorkspace(user.getId(), workspaceId);
 		} catch (final AvroRemoteException e) {
 			workspace = null;
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		// Handle null workspace in the template.
 
@@ -397,7 +397,7 @@ public class WorkspaceEditor {
 				workspace = userDataAccess.getWorkspace(user.getId(), this.workspaceId);
 			} catch (final AvroRemoteException e) {
 				workspace = null;
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 
@@ -409,7 +409,7 @@ public class WorkspaceEditor {
 			workspace = userDataAccess.getWorkspace(user.getId(), workspaceId);
 		} catch (final AvroRemoteException e) {
 			workspace = null;
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -562,8 +562,7 @@ public class WorkspaceEditor {
 			}
 
 		} catch (final AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -614,7 +613,6 @@ public class WorkspaceEditor {
 					logger.error(e.getMessage());
 					alertManager
 							.alert(Duration.SINGLE, Severity.ERROR, "Problem creating workspace: " + e.getMessage());
-					e.printStackTrace();
 					workspace = null;
 				}
 				// Handle null workspace in the template.

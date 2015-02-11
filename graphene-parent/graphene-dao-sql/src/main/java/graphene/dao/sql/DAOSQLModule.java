@@ -34,19 +34,8 @@ import org.slf4j.Logger;
  */
 @SubModule({ DAOModule.class })
 public class DAOSQLModule {
-	public static void bind(ServiceBinder binder) {
+	public static void bind(final ServiceBinder binder) {
 
-	}
-	/**
-	 * Tell Tapestry to look for a database properties file in the WEB-INF/classes folder of the war.
-	 * @param configuration
-	 */
-	@Contribute(SymbolSource.class)
-	public void contributePropertiesFileAsSymbols(
-			OrderedConfiguration<SymbolProvider> configuration) {
-		configuration.add("DatabaseConfiguration",
-				new ClasspathResourceSymbolProvider("database.properties"),
-				"after:SystemProperties", "before:ApplicationDefaults");
 	}
 
 	/**
@@ -65,48 +54,45 @@ public class DAOSQLModule {
 	 * @throws Exception
 	 */
 	@Marker(MainDB.class)
-	public static DBConnectionPoolService buildGrapheneConnectionPool(
-			RegistryShutdownHub ptm,
-			@Inject JDBCUtil util,
-			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_URL) String serverUrl,
-			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) String userName,
-			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_PASSWORD) String userPassword,
-			final Logger logger) throws Exception {
+	public static DBConnectionPoolService buildGrapheneConnectionPool(final RegistryShutdownHub ptm,
+			@Inject final JDBCUtil util, @Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_URL) final String serverUrl,
+			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) final String userName,
+			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_PASSWORD) final String userPassword, final Logger logger)
+			throws Exception {
 
-		final DBConnectionPoolService cps = new DBConnectionPoolService(logger,
-				util, serverUrl, userName, userPassword, true);
+		final DBConnectionPoolService cps = new DBConnectionPoolService(logger, util, serverUrl, userName,
+				userPassword, true);
 
 		ptm.addRegistryShutdownListener(new Runnable() {
+			@Override
 			public void run() {
 				if (cps != null) {
-					logger.info("Shuting down Connection Pool for "
-							+ cps.getUrl()
+					logger.info("Shuting down Connection Pool for " + cps.getUrl()
 							+ " from buildGrapheneConnectionPool");
 					Connection conn;
 					try {
 						conn = cps.getConnection();
-						java.sql.Statement statement = conn.createStatement();
+						final java.sql.Statement statement = conn.createStatement();
 						statement.executeUpdate("SHUTDOWN");
 						statement.close();
+
 						// Note that calling close on the connection here gets a
 						// NPE.
-					} catch (Exception e) {
-						e.printStackTrace();
+					} catch (final Exception e) {
+						logger.error(e.getMessage());
 					}
 					JVMHelper.suggestGC();
 				}
 
 				// Now unregister any JDBC drivers
-				Enumeration<Driver> drivers = DriverManager.getDrivers();
+				final Enumeration<Driver> drivers = DriverManager.getDrivers();
 				while (drivers.hasMoreElements()) {
-					Driver driver = drivers.nextElement();
+					final Driver driver = drivers.nextElement();
 					try {
 						DriverManager.deregisterDriver(driver);
-						logger.info(String.format(
-								"deregistering jdbc driver: %s", driver));
-					} catch (SQLException e) {
-						logger.error(String.format(
-								"Error deregistering driver %s", driver), e);
+						logger.info(String.format("deregistering jdbc driver: %s", driver));
+					} catch (final SQLException e) {
+						logger.error(String.format("Error deregistering driver %s", driver), e);
 					}
 
 				}
@@ -115,5 +101,17 @@ public class DAOSQLModule {
 
 		return cps;
 
+	}
+
+	/**
+	 * Tell Tapestry to look for a database properties file in the
+	 * WEB-INF/classes folder of the war.
+	 * 
+	 * @param configuration
+	 */
+	@Contribute(SymbolSource.class)
+	public void contributePropertiesFileAsSymbols(final OrderedConfiguration<SymbolProvider> configuration) {
+		configuration.add("DatabaseConfiguration", new ClasspathResourceSymbolProvider("database.properties"),
+				"after:SystemProperties", "before:ApplicationDefaults");
 	}
 }

@@ -15,10 +15,13 @@ import java.util.List;
 
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.slf4j.Logger;
 
 public class CombinedEntityDataSource implements GridDataSource {
 	private final CombinedDAO dao;
-
+	@Inject
+	private Logger logger;
 	private final String partialName = null;
 	private final String schema = null;
 	private List<Object> preparedResults;
@@ -42,13 +45,11 @@ public class CombinedEntityDataSource implements GridDataSource {
 			return 0;
 		}
 		final EntityQuery q = new EntityQuery();
-		q.addAttribute(new G_SearchTuple(partialName,
-				G_SearchType.COMPARE_EQUALS));
+		q.addAttribute(new G_SearchTuple(partialName, G_SearchType.COMPARE_EQUALS));
 		try {
 			return (int) dao.count(q);
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return 0;
 	}
@@ -64,8 +65,7 @@ public class CombinedEntityDataSource implements GridDataSource {
 	}
 
 	@Override
-	public void prepare(final int startIndex, final int endIndex,
-			final List<SortConstraint> sortConstraints) {
+	public void prepare(final int startIndex, final int endIndex, final List<SortConstraint> sortConstraints) {
 		if (partialName == null) {
 			preparedResults = new ArrayList<Object>();
 		} else {
@@ -77,12 +77,11 @@ public class CombinedEntityDataSource implements GridDataSource {
 			srch.setFilters(filters);
 
 			final EntityQuery q = new EntityQuery();
-			q.addAttribute(new G_SearchTuple(partialName,
-					G_SearchType.COMPARE_EQUALS));
+			q.addAttribute(new G_SearchTuple(partialName, G_SearchType.COMPARE_EQUALS));
 			try {
 				preparedResults = dao.findByQuery(q);
 			} catch (final Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		if (preparedResults == null) {
@@ -98,14 +97,12 @@ public class CombinedEntityDataSource implements GridDataSource {
 	 * tier's SortCriterion. The business tier does not use SortConstraint
 	 * because that would create a dependency on Tapestry.
 	 */
-	private List<G_SortCriterion> toSortCriteria(
-			final List<SortConstraint> sortConstraints) {
+	private List<G_SortCriterion> toSortCriteria(final List<SortConstraint> sortConstraints) {
 		final List<G_SortCriterion> sortCriteria = new ArrayList<G_SortCriterion>();
 
 		for (final SortConstraint sortConstraint : sortConstraints) {
 
-			final String propertyName = sortConstraint.getPropertyModel()
-					.getPropertyName();
+			final String propertyName = sortConstraint.getPropertyModel().getPropertyName();
 			G_SortOrder sortDirection = G_SortOrder.UNSORTED;
 
 			switch (sortConstraint.getColumnSort()) {
@@ -118,8 +115,7 @@ public class CombinedEntityDataSource implements GridDataSource {
 			default:
 			}
 
-			final G_SortCriterion sortCriterion = new G_SortCriterion(
-					sortDirection, propertyName);
+			final G_SortCriterion sortCriterion = new G_SortCriterion(sortDirection, propertyName);
 			sortCriteria.add(sortCriterion);
 		}
 

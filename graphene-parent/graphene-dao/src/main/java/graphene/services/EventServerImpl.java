@@ -106,8 +106,7 @@ public class EventServerImpl implements EventServer {
 				logger.debug("Out of total count " + allRows.size());
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return transactions;
 	}

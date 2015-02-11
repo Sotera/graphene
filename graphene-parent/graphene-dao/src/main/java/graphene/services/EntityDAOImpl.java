@@ -141,8 +141,7 @@ public class EntityDAOImpl implements EntityDAO {
 		try {
 			return dao.count(q);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return 0;
 	}

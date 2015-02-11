@@ -38,8 +38,7 @@ public class UserGroupDAONeo4JEImpl  extends GenericUserSpaceDAONeo4jE implement
 			tx.success();
 			return true;
 		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return false;
 	}
@@ -78,8 +77,7 @@ public class UserGroupDAONeo4JEImpl  extends GenericUserSpaceDAONeo4jE implement
 				tx.success();
 			}
 		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return list;
 	}
@@ -127,8 +125,7 @@ public class UserGroupDAONeo4JEImpl  extends GenericUserSpaceDAONeo4jE implement
 						}
 					}
 				} catch (AvroRemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 			tx.success();
@@ -159,8 +156,7 @@ public class UserGroupDAONeo4JEImpl  extends GenericUserSpaceDAONeo4jE implement
 			tx.success();
 			return true;
 		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return false;
 	}

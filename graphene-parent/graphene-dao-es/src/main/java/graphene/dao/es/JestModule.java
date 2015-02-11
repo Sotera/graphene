@@ -31,6 +31,8 @@ public class JestModule {
 	public static final String ES_LOGGING_REPORT_VIEW_TYPE = "graphene.es-logging-report-view-type";
 	public static final String ES_LOGGING_EXPORT_TYPE = "graphene.es-logging-export-type";
 
+	public static final String ES_READ_DELAY_MS = "graphene.es-read-delay-ms";
+
 	public static void bind(final ServiceBinder binder) {
 
 	}

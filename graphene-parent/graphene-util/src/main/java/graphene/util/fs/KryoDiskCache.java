@@ -90,7 +90,7 @@ public class KryoDiskCache<T, Q> implements DiskCache<T, Q> {
 			} catch (FileNotFoundException e) {
 				logger.error("Expected to create the file " + fileName
 						+ ", but could not.");
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			logger.debug("File not found: '" + fileName + "'");

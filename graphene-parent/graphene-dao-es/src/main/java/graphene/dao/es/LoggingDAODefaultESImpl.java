@@ -107,8 +107,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return returnValue;
 	}
@@ -150,8 +149,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return returnValue;
 
@@ -184,8 +182,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return returnValue;
 	}
@@ -238,11 +235,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				});
 
 			} catch (ExecutionException | InterruptedException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			logger.error("Attempted to save a null user object!");
@@ -285,11 +280,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				});
 
 			} catch (ExecutionException | InterruptedException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			logger.error("Attempted to save a null user object!");
@@ -314,11 +307,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 				}
 			} catch (ExecutionException | InterruptedException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			logger.error("Attempted to save a null user object!");

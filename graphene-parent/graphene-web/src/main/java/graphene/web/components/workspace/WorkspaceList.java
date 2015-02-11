@@ -98,8 +98,7 @@ public class WorkspaceList {
 			try {
 				list = userDataAccess.getWorkspacesForUser(user.getId());
 			} catch (final AvroRemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			logger.error("No user name to get workspaces for.");

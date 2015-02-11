@@ -8,6 +8,8 @@ import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.DeleteIndex;
 import io.searchbox.indices.IndicesExists;
 
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -22,8 +24,12 @@ public class BasicESDAO {
 	private String index;
 	protected Logger logger;
 	protected ESRestAPIConnection c;
-	protected String auth;
+	protected String auth = null;
 	protected String type = "defaultType";
+
+	@Inject
+	@Symbol(JestModule.ES_READ_DELAY_MS)
+	protected long ES_READ_DELAY_MS;
 
 	protected void createIndex(final JestClient jestClient, final String indexName) throws Exception {
 		logger.debug("Creating index " + indexName + " with client " + jestClient.toString());
@@ -43,7 +49,7 @@ public class BasicESDAO {
 			jestClient.execute((new Delete.Builder(id)).index(index).type(type).build());
 			success = true;
 		} catch (final Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return success;
 	}
@@ -74,8 +80,7 @@ public class BasicESDAO {
 				final JestResult result = jestClient.execute(new IndicesExists.Builder(index).build());
 				success = result.isSucceeded();
 			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return success;
@@ -87,8 +92,7 @@ public class BasicESDAO {
 			try {
 				createIndex(jestClient, index);
 			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 	}
@@ -97,14 +101,12 @@ public class BasicESDAO {
 		try {
 			deleteIndex(jestClient, index);
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		try {
 			createIndex(jestClient, index);
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 

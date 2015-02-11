@@ -125,7 +125,6 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 				}
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 	}

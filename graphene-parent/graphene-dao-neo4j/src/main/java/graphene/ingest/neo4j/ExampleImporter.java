@@ -23,6 +23,8 @@ import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserterIndex;
 import org.neo4j.unsafe.batchinsert.BatchInserterIndexProvider;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a generic version of the batch importer that came with Neo4J (off
@@ -36,12 +38,84 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
  */
 public class ExampleImporter {
 	private static Report report;
-	private BatchInserter db;
-	private BatchInserterIndexProvider lucene;
-	private Config config = new Config(null);
+
+	public static void main(final String[] args) throws IOException {
+		if (args.length < 3) {
+			System.err
+					.println("Usage java -jar batchimport.jar data/dir nodes.csv relationships.csv [node_index node-index-name fulltext|exact nodes_index.csv rel_index rel-index-name fulltext|exact rels_index.csv ....]");
+		}
+		final File graphDb = new File(args[0]);
+		final File nodesFile = new File(args[1]);
+		final File relationshipsFile = new File(args[2]);
+
+		if (graphDb.exists()) {
+			FileUtils.deleteRecursively(graphDb);
+		}
+		final ExampleImporter importer = new ExampleImporter(graphDb);
+		try {
+			if (nodesFile.exists()) {
+				importer.importNodes(new FileReader(nodesFile));
+			} else {
+				System.err.println("Nodes file " + nodesFile + " does not exist");
+			}
+
+			if (relationshipsFile.exists()) {
+				importer.importRelationships(new FileReader(relationshipsFile));
+			} else {
+				System.err.println("Relationships file " + relationshipsFile + " does not exist");
+			}
+
+			for (int i = 3; i < args.length; i = i + 4) {
+				final String elementType = args[i];
+				final String indexName = args[i + 1];
+				final String indexType = args[i + 2];
+				final String indexFileName = args[i + 3];
+				importer.importIndex(elementType, indexName, indexType, indexFileName);
+			}
+		} finally {
+			importer.finish();
+		}
+	}
+
+	private final BatchInserter db;
+	private final BatchInserterIndexProvider lucene;
+
+	private final Config config = new Config(null);
+
+	private static Logger logger = LoggerFactory.getLogger(ExampleImporter.class);
+
+	public ExampleImporter(final File graphDb) {
+		final Map<String, String> config = getDefaultParams();
+
+		db = createBatchInserter(graphDb, config);
+		lucene = createIndexProvider();
+		report = createReport();
+	}
+
+	private Map<String, String> configFor(final String indexType) {
+		return indexType.equals("fulltext") ? FULLTEXT_CONFIG : EXACT_CONFIG;
+	}
+
+	protected BatchInserter createBatchInserter(final File graphDb, final Map<String, String> config) {
+		return BatchInserters.inserter(graphDb.getAbsolutePath(), config);
+	}
+
+	protected LuceneBatchInserterIndexProvider createIndexProvider() {
+		return new LuceneBatchInserterIndexProvider(db);
+	}
+
+	protected StdOutReport createReport() {
+		return new StdOutReport(10 * 1000 * 1000, 100);
+	}
+
+	void finish() {
+		lucene.shutdown();
+		db.shutdown();
+		report.finish();
+	}
 
 	private Map<String, String> getDefaultParams() {
-		Map<String, String> params = new HashMap<>();
+		final Map<String, String> params = new HashMap<>();
 		params.put("neostore.nodestore.db.mapped_memory", "20M");
 		params.put("neostore.propertystore.db.mapped_memory", "90M");
 		params.put("neostore.propertystore.db.index.mapped_memory", "1M");
@@ -52,76 +126,49 @@ public class ExampleImporter {
 		return params;
 	}
 
-	public ExampleImporter(File graphDb) {
-		Map<String, String> config = getDefaultParams();
-
-		db = createBatchInserter(graphDb, config);
-		lucene = createIndexProvider();
-		report = createReport();
+	private long id(final Object id) {
+		return FastNumberUtils.parseLongWithCheck(id.toString());
 	}
 
-	protected StdOutReport createReport() {
-		return new StdOutReport(10 * 1000 * 1000, 100);
-	}
+	void importIndex(final String indexName, final BatchInserterIndex index, final Reader reader) throws IOException {
 
-	protected LuceneBatchInserterIndexProvider createIndexProvider() {
-		return new LuceneBatchInserterIndexProvider(db);
-	}
+		final BufferedReader bf = new BufferedReader(reader);
 
-	protected BatchInserter createBatchInserter(File graphDb,
-			Map<String, String> config) {
-		return BatchInserters.inserter(graphDb.getAbsolutePath(), config);
-	}
+		final RowData data = new RowData(bf.readLine(), "\t", 1, config);
+		final Object[] node = new Object[1];
+		String line = null;
+		report.reset();
+		long l = 0;
 
-	public static void main(String[] args) throws IOException {
-		if (args.length < 3) {
-			System.err
-					.println("Usage java -jar batchimport.jar data/dir nodes.csv relationships.csv [node_index node-index-name fulltext|exact nodes_index.csv rel_index rel-index-name fulltext|exact rels_index.csv ....]");
-		}
-		File graphDb = new File(args[0]);
-		File nodesFile = new File(args[1]);
-		File relationshipsFile = new File(args[2]);
-
-		if (graphDb.exists()) {
-			FileUtils.deleteRecursively(graphDb);
-		}
-		ExampleImporter importer = new ExampleImporter(graphDb);
-		try {
-			if (nodesFile.exists()) {
-				importer.importNodes(new FileReader(nodesFile));
-			} else {
-				System.err.println("Nodes file " + nodesFile
-						+ " does not exist");
+		while ((line = bf.readLine()) != null) {
+			try {
+				final Map<String, Object> properties = data.updateMap(line, node);
+				index.add(id(node[0]), properties);
+				report.dots();
+			} catch (final Exception e) {
+				System.out.println("Error on line " + l + ": " + line);
+				logger.error(e.getMessage());
 			}
-
-			if (relationshipsFile.exists()) {
-				importer.importRelationships(new FileReader(relationshipsFile));
-			} else {
-				System.err.println("Relationships file " + relationshipsFile
-						+ " does not exist");
-			}
-
-			for (int i = 3; i < args.length; i = i + 4) {
-				String elementType = args[i];
-				String indexName = args[i + 1];
-				String indexType = args[i + 2];
-				String indexFileName = args[i + 3];
-				importer.importIndex(elementType, indexName, indexType,
-						indexFileName);
-			}
-		} finally {
-			importer.finish();
+			l++;
 		}
+
+		report.finishImport("Done inserting into " + indexName + " Index");
 	}
 
-	void finish() {
-		lucene.shutdown();
-		db.shutdown();
-		report.finish();
+	private void importIndex(final String elementType, final String indexName, final String indexType,
+			final String indexFileName) throws IOException {
+		final File indexFile = new File(indexFileName);
+		if (!indexFile.exists()) {
+			System.err.println("Index file " + indexFile + " does not exist");
+			return;
+		}
+		final BatchInserterIndex index = elementType.equals("node_index") ? nodeIndexFor(indexName, indexType)
+				: relationshipIndexFor(indexName, indexType);
+		importIndex(indexName, index, new FileReader(indexFile));
 	}
 
-	void importNodes(Reader reader) throws IOException {
-		BufferedReader bf = new BufferedReader(reader);
+	void importNodes(final Reader reader) throws IOException {
+		final BufferedReader bf = new BufferedReader(reader);
 		final RowData data = new RowData(bf.readLine(), "\t", 0, config);
 		String line;
 		long l = 0;
@@ -130,33 +177,31 @@ public class ExampleImporter {
 			try {
 				db.createNode(data.updateMap(line));
 				report.dots();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.out.println("Error on line " + l + ": " + line);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			l++;
 		}
 		report.finishImport("Nodes");
 	}
 
-	void importRelationships(Reader reader) throws IOException {
-		BufferedReader bf = new BufferedReader(reader);
-		final RowData data = new RowData(bf.readLine(), "\t", 3,config);
-		Object[] rel = new Object[3];
+	void importRelationships(final Reader reader) throws IOException {
+		final BufferedReader bf = new BufferedReader(reader);
+		final RowData data = new RowData(bf.readLine(), "\t", 3, config);
+		final Object[] rel = new Object[3];
 		final RelType relType = new RelType();
 		String line;
 		report.reset();
 		long l = 0;
 		while ((line = bf.readLine()) != null) {
 			try {
-				final Map<String, Object> properties = data
-						.updateMap(line, rel);
-				db.createRelationship(id(rel[0]), id(rel[1]),
-						relType.update(rel[2]), properties);
+				final Map<String, Object> properties = data.updateMap(line, rel);
+				db.createRelationship(id(rel[0]), id(rel[1]), relType.update(rel[2]), properties);
 				report.dots();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.out.println("Error on line " + l + ": " + line);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			l++;
 
@@ -164,60 +209,11 @@ public class ExampleImporter {
 		report.finishImport("Relationships");
 	}
 
-	void importIndex(String indexName, BatchInserterIndex index, Reader reader)
-			throws IOException {
-
-		BufferedReader bf = new BufferedReader(reader);
-
-		final RowData data = new RowData(bf.readLine(), "\t", 1,config);
-		Object[] node = new Object[1];
-		String line = null;
-		report.reset();
-		long l = 0;
-
-		while ((line = bf.readLine()) != null) {
-			try {
-				final Map<String, Object> properties = data.updateMap(line,
-						node);
-				index.add(id(node[0]), properties);
-				report.dots();
-			} catch (Exception e) {
-				System.out.println("Error on line " + l + ": " + line);
-				e.printStackTrace();
-			}
-			l++;
-		}
-
-		report.finishImport("Done inserting into " + indexName + " Index");
-	}
-
-	private BatchInserterIndex nodeIndexFor(String indexName, String indexType) {
+	private BatchInserterIndex nodeIndexFor(final String indexName, final String indexType) {
 		return lucene.nodeIndex(indexName, configFor(indexType));
 	}
 
-	private BatchInserterIndex relationshipIndexFor(String indexName,
-			String indexType) {
+	private BatchInserterIndex relationshipIndexFor(final String indexName, final String indexType) {
 		return lucene.relationshipIndex(indexName, configFor(indexType));
-	}
-
-	private Map<String, String> configFor(String indexType) {
-		return indexType.equals("fulltext") ? FULLTEXT_CONFIG : EXACT_CONFIG;
-	}
-
-	private long id(Object id) {
-		return FastNumberUtils.parseLongWithCheck(id.toString());
-	}
-
-	private void importIndex(String elementType, String indexName,
-			String indexType, String indexFileName) throws IOException {
-		File indexFile = new File(indexFileName);
-		if (!indexFile.exists()) {
-			System.err.println("Index file " + indexFile + " does not exist");
-			return;
-		}
-		BatchInserterIndex index = elementType.equals("node_index") ? nodeIndexFor(
-				indexName, indexType) : relationshipIndexFor(indexName,
-				indexType);
-		importIndex(indexName, index, new FileReader(indexFile));
 	}
 }

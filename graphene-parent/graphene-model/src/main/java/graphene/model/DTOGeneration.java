@@ -96,19 +96,16 @@ public class DTOGeneration {
 			exporter.export(conn.getMetaData());
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} finally {
 			try {
 				if (conn != null && !conn.isClosed()) {
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 	}

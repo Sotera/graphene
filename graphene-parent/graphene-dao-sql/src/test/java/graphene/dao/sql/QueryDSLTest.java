@@ -33,8 +33,7 @@ public class QueryDSLTest {
 //
 //			System.out.println(p.toString());
 //		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
+//			logger.error(e.getMessage());
 //		}
 //	}
 }

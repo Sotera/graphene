@@ -136,8 +136,7 @@ public abstract class AbstractMemoryDB<T, I, EntityQuery> implements G_CallBack<
 
 			}
 		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return results;
 	}
@@ -275,7 +274,7 @@ public abstract class AbstractMemoryDB<T, I, EntityQuery> implements G_CallBack<
 		try {
 			dmcomp = (String) dm.encode((Object) name);
 		} catch (EncoderException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return results;
 		}
 		for (String s : identifiers.getValues()) {
@@ -660,8 +659,7 @@ public abstract class AbstractMemoryDB<T, I, EntityQuery> implements G_CallBack<
 		try {
 			dmcomp = (String) dm.encode((Object) src);
 		} catch (EncoderException e) {
-			// TODO report an error
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return results;
 		}
 		for (String s : identifiers.getValues()) {

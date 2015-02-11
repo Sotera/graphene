@@ -144,7 +144,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 						);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 				// we're done scanning this id.
 

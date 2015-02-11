@@ -60,11 +60,11 @@ public class Register {
 	private String email;
 
 	@Property
-	@Validate("required, minlength=3, maxlength=50")
+	@Validate("required, minlength=1, maxlength=50")
 	@Persist(PersistenceConstants.FLASH)
 	private String firstName;
 	@Property
-	@Validate("required, minlength=3, maxlength=50")
+	@Validate("required, minlength=1, maxlength=50")
 	@Persist(PersistenceConstants.FLASH)
 	private String lastName;
 	@Inject
@@ -98,15 +98,9 @@ public class Register {
 	@Persist(PersistenceConstants.FLASH)
 	private String verifyPassword;
 
-	@OnEvent(value = EventConstants.VALIDATE, component = "RegisterForm")
-	public void checkForm() {
-		if (!verifyPassword.equals(password)) {
-			registerForm.recordError(messages.get("error.verifypassword"));
-		}
-	}
-
 	@Inject
 	private Response response;
+
 	@Inject
 	private RequestGlobals requestGlobals;
 	@Inject
@@ -120,6 +114,15 @@ public class Register {
 	@Inject
 	@Symbol(SecuritySymbols.REDIRECT_TO_SAVED_URL)
 	private boolean redirectToSavedUrl;
+	private final boolean rememberMe = true;
+	private final boolean createWorkspace = true;
+
+	@OnEvent(value = EventConstants.VALIDATE, component = "RegisterForm")
+	public void checkForm() {
+		if (!verifyPassword.equals(password)) {
+			registerForm.recordError(messages.get("error.verifypassword"));
+		}
+	}
 
 	@OnEvent(value = EventConstants.SUCCESS, component = "RegisterForm")
 	public Object proceedSignup() {
@@ -130,7 +133,7 @@ public class Register {
 				return null;
 			} else {
 
-				String fullName = firstName + " " + lastName;
+				final String fullName = firstName + " " + lastName;
 				G_User tempUser = new G_User();
 				tempUser.setFullname(fullName);
 				tempUser.setEmail(email);
@@ -138,25 +141,25 @@ public class Register {
 
 				// Get the version that has been registered, because it will
 				// have added business logic.
-				tempUser = userDataAccess
-						.registerUser(tempUser, password, true);
+				tempUser = userDataAccess.registerUser(tempUser, password, createWorkspace);
 				if (tempUser != null) {
+					// log out any previously logged in account.
 					authenticatorHelper.logout();
-					alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS,
-							"You are being logged in.");
 
-					return authenticatorHelper.loginAndRedirect(
-							username, password, true, requestGlobals,
+					// tell the user what's about to happen.
+					alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "You are being logged in.");
+					Thread.sleep(1000);
+					// do the login with the newly created user.
+					return authenticatorHelper.loginAndRedirect(username, password, rememberMe, requestGlobals,
 							loginContextService, response, messages, alertManager);
 				} else {
 					logger.error("An error occured while registering the user.");
-					alertManager.alert(Duration.SINGLE, Severity.ERROR,
-							"An error occured while registering the user.");
+					alertManager.alert(Duration.SINGLE, Severity.ERROR, "An error occured while registering the user.");
 				}
 				return Index.class;
 			}
-		} catch (Exception ex) {
-			String message = ExceptionUtil.getRootCauseMessage(ex);
+		} catch (final Exception ex) {
+			final String message = ExceptionUtil.getRootCauseMessage(ex);
 			alertManager.alert(Duration.SINGLE, Severity.ERROR, "ERROR: " + message);
 			logger.error(message);
 			ex.printStackTrace();

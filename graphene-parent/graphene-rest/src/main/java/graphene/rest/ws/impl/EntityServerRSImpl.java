@@ -49,14 +49,11 @@ public class EntityServerRSImpl implements EntityServerRS {
 			search = mapper.readValue(bytes, 0, bytes.length,
 					AdvancedSearch.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		EntitySearchResults results = new EntitySearchResults();
 		if (search == null) {

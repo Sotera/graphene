@@ -69,7 +69,6 @@ public class UserServiceImpl implements G_UserDataAccess {
 			}
 
 		} catch (final Exception e) {
-			e.printStackTrace();
 			logger.error("Could not create editor relationship for workspace " + e.getMessage());
 		}
 		return workspace;
@@ -114,6 +113,8 @@ public class UserServiceImpl implements G_UserDataAccess {
 				uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.CREATOR_OF, w.getId());
 				uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.EDITOR_OF, w.getId());
 			}
+		} else {
+			logger.error("Could not create a first workspace for user id " + userId);
 		}
 		return w;
 	}
@@ -133,6 +134,8 @@ public class UserServiceImpl implements G_UserDataAccess {
 			w.setDescription("New Workspace");
 			w.setTitle(user.getUsername() + "-Workspace" + time.toString("YYYYmmDD-HHMMSS"));
 
+		} else {
+			logger.error("Could not find user " + userId + " to create a temp workspace for.");
 		}
 		return w;
 	}
@@ -263,6 +266,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			throws AvroRemoteException {
 		// Perform any business logic
 		if (ValidationUtils.isValid(d)) {
+			logger.debug("Beginning user registration process.");
 			if (!ValidationUtils.isValid(d.getAvatar())) {
 				d.setAvatar("unknown.png");
 			}
@@ -270,9 +274,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 				final String hash = passwordHasher.createHash(password);
 				d.setHashedpassword(hash);
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				logger.error("Could not store hashed password for new user registration");
+				logger.error("Could not store hashed password for new user registration " +e.getMessage());
 			}
 			d.setActive(true);
 			d.setLastlogin(0l);
@@ -280,9 +282,17 @@ public class UserServiceImpl implements G_UserDataAccess {
 			d = uDao.save(d);
 			if (ValidationUtils.isValid(d)) {
 				logger.debug("User registered!");
+
+				if (createWorkspace) {
+					final G_Workspace w = createFirstWorkspaceForUser(d.getId());
+					if (w == null) {
+						logger.error("Error creating new workspace for newly registered user!");
+					}
+				}
 			} else {
 				logger.error("Error registering new user!");
 			}
+
 		} else {
 			logger.error("Could not register null user!");
 		}
@@ -343,8 +353,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			hash = passwordHasher.createHash(newPassword);
 			success = uDao.updatePasswordHash(userId, hash);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		if (!success) {
 			logger.error("Problem saving password hash");

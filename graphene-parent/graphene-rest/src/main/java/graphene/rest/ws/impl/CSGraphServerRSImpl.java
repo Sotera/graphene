@@ -106,7 +106,6 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 				m = new V_CSGraph(g, true);
 			} catch (final Exception e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 			}
 		} else {
 			m = new V_CSGraph();
@@ -168,7 +167,6 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					}
 
 				} catch (final Exception e) {
-					e.printStackTrace();
 					logger.error(e.getMessage());
 				}
 			}
@@ -186,8 +184,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					g = propertyGraphBuilder.makeGraphResponse(q);
 					m = new V_CSGraph(g, true);
 				} catch (final Exception e) {
-					logger.error(ExceptionUtil.getRootCauseMessage(e));
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 
@@ -286,7 +283,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 				logger.error(e.getMessage());
 				m.setStrStatus("An error occurred when creating the graph: "
 						+ e.getMessage());
-				e.printStackTrace();
+			
 			}
 		} else {
 			m = new V_CSGraph();

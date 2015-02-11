@@ -198,8 +198,8 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		try {
 			hash = passwordHasher.createHash(password);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			logger.error("Error getting password hash for id " + id);
-			e.printStackTrace();
+			logger.error("Error getting password hash for id " + id+" : "+e.getMessage());
+		
 		}
 		return hash;
 	}
@@ -246,8 +246,8 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 					}
 				} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 					logger.error("Error logging in, could not validate password for "
-							+ id);
-					e.printStackTrace();
+							+ id+ " : "+e.getMessage());
+				
 				}
 			} else {
 				logger.error("No user with id " + id);
@@ -332,8 +332,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				n.setProperty(G_UserFields.hashedpassword.name(), hash);
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 				logger.error("Error setting password hash for user "
-						+ n.getProperty(G_UserFields.username.name()));
-				e.printStackTrace();
+						+ n.getProperty(G_UserFields.username.name())+ " : "+e.getMessage());
 			}
 
 		}

@@ -51,8 +51,7 @@ public class NetworkUtils {
 			proc = processBuilder.start();
 			returnVal = proc.waitFor();
 		} catch (IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		
@@ -71,8 +70,7 @@ public class NetworkUtils {
 //			ping.doCommand(commands);
 //			return true;
 //		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
+//			logger.error(e.getMessage());
 //			return false;
 //		}
 //	}

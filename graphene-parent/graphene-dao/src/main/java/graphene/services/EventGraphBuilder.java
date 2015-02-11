@@ -147,7 +147,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 									valueToSearchOn));
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error(e.getMessage());
 					}
 				} else {
 					logger.warn("The value '" + valueToSearchOn

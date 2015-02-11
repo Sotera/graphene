@@ -137,8 +137,7 @@ public class Introspector {
 				// learnAboutClass(c);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		for (String s : domainClasses.keySet()) {
 			Class q = queryClasses.get("Q" + s);
@@ -225,12 +224,11 @@ public class Introspector {
 							+ qInstance.getType().getCanonicalName()
 							+ " on column " + column + ": "
 							+ ExceptionUtil.getRootCauseMessage(e));
-					//e.printStackTrace();
+				
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 	}

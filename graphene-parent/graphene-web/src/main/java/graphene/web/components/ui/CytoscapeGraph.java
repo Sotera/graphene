@@ -104,7 +104,6 @@ public class CytoscapeGraph implements ClientElement {
 			} catch (JsonProcessingException e) {
 				logger.error("Could not convert graph to json: "
 						+ e.getMessage());
-				e.printStackTrace();
 			}
 			options.put("container", "document.getElementById('"
 					+ getClientId() + "')");

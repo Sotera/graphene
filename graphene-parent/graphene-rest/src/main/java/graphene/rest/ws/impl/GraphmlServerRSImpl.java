@@ -87,8 +87,7 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 			m = new GraphmlGraph(g, true);
 			c = new GraphmlContainer(m);
 		} catch (Exception e) {
-			logger.error(ExceptionUtil.getRootCauseMessage(e));
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return c;
@@ -148,7 +147,6 @@ public class GraphmlServerRSImpl implements GraphmlServerRS {
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 				c = new GraphmlContainer();
 			}
 		} else {

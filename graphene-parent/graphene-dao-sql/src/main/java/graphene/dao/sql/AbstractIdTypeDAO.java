@@ -214,7 +214,6 @@ public abstract class AbstractIdTypeDAO<T> extends
 			setLoaded(true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
 			setLoaded(false);
 		}
 	}

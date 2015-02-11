@@ -155,15 +155,15 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 		} catch (AvroRemoteException e) {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
 					messages.get("InternalAuthenticationError"));
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (BusinessException e) {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
 					messages.get("InternalAuthenticationError"));
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
 					messages.get("InternalAuthenticationError"));
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -201,8 +201,7 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 				// request.getSession(true).setAttribute(AUTH_TOKEN, user);
 			}
 		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 

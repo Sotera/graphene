@@ -26,6 +26,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 
 public class MetaSearchRSImpl implements MetaSearchRS {
 
@@ -41,12 +42,15 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 
 	@Inject
 	private G_EdgeTypeAccess edgeTypeAccess;
-	
+
 	@Inject
 	private G_NodeTypeAccess nodeTypeAccess;
 
 	@Inject
 	private G_PropertyKeyTypeAccess propertyKeyTypeAccess;
+
+	@Inject
+	private Logger logger;
 
 	@Override
 	public G_AppInfo getAppInfo() {
@@ -82,9 +86,8 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	public List<G_IdType> getNodeTypes() {
 		try {
 			return nodeTypeAccess.getNodeTypes();
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final AvroRemoteException e) {
+			logger.error(e.getMessage());
 		}
 		return null;
 
@@ -94,9 +97,8 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	public List<G_PropertyKey> getPropertyKeys() {
 		try {
 			return propertyKeyTypeAccess.getPropertyKeys();
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final AvroRemoteException e) {
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -115,9 +117,8 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	public List<G_EdgeType> getRelationshipTypes() {
 		try {
 			return edgeTypeAccess.getEdgeTypes();
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final AvroRemoteException e) {
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

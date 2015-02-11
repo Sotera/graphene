@@ -125,7 +125,6 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 			}
 			if (results == null || results.size() == 0) {
 
@@ -460,7 +459,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 			} catch (Exception e) {
 				logger.error("Problem in throttling callback: "
 						+ e.getMessage());
-				e.printStackTrace();
+				
 			}
 			if (results == null || results.size() == 0) {
 				logger.info("Amount of rows processed during this throttling session was zero.");
@@ -670,7 +669,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 			} catch (Exception e) {
 				logger.error("Problem in throttling callback: "
 						+ e.getMessage());
-				e.printStackTrace();
+			
 			}
 			if (results == null) {
 				doneProcessing = true;

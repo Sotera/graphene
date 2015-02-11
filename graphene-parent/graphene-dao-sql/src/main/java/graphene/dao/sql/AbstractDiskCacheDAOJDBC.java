@@ -110,7 +110,6 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 			}
 			if (results == null || results.size() == 0) {
 
@@ -231,7 +230,6 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 					// numRows = diskCache.getNumberOfRecordsCached();
 				} catch (Exception e) {
 					logger.error(e.getMessage());
-					e.printStackTrace();
 				} finally {
 					tr.logAsCompleted();
 				}
@@ -449,7 +447,7 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 			} catch (Exception e) {
 				logger.error("Problem in throttling callback: "
 						+ e.getMessage());
-				e.printStackTrace();
+			
 			}
 			if (results == null || results.size() == 0) {
 				logger.info("Amount of rows processed during this throttling session was zero.");
@@ -660,7 +658,6 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends
 			} catch (Exception e) {
 				logger.error("Problem in throttling callback: "
 						+ e.getMessage());
-				e.printStackTrace();
 			}
 			if (results == null) {
 				logger.debug("No results returned, done processing.");

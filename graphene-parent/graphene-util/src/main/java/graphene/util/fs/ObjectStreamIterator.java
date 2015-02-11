@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A generic object stream iterator, for use in iterating over disk cache copies
  * of data tables.
@@ -13,11 +16,21 @@ import java.util.Iterator;
  * @param <T>
  */
 public class ObjectStreamIterator<T> implements Iterator<T> {
-	private ObjectInputStream s;
+	private final ObjectInputStream s;
 	private boolean atEndOfFile = false;
+	private final Logger logger = LoggerFactory.getLogger(ObjectStreamIterator.class);
 
-	public ObjectStreamIterator(ObjectInputStream s) {
+	public ObjectStreamIterator(final ObjectInputStream s) {
 		this.s = s;
+	}
+
+	public void close() {
+		atEndOfFile = true;
+		try {
+			s.close();
+		} catch (final IOException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	@Override
@@ -39,17 +52,7 @@ public class ObjectStreamIterator<T> implements Iterator<T> {
 
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException(
-				"This method is not available for this iterator");
-	}
-
-	public void close() {
-		atEndOfFile = true;
-		try {
-			s.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		throw new UnsupportedOperationException("This method is not available for this iterator");
 	}
 
 }

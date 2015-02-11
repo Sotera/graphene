@@ -14,7 +14,7 @@ public class GrapheneResults<T> {
 		this.maxScore = maxScore;
 	}
 
-	private int numberOtResultsTotal = 0;
+	private int numberOfResultsTotal = 0;
 
 	List<T> results;
 
@@ -28,8 +28,8 @@ public class GrapheneResults<T> {
 	/**
 	 * @return the numberOtResultsTotal
 	 */
-	public final int getNumberOtResultsTotal() {
-		return numberOtResultsTotal;
+	public final int getNumberOfResultsTotal() {
+		return numberOfResultsTotal;
 	}
 
 	/**
@@ -48,11 +48,11 @@ public class GrapheneResults<T> {
 	}
 
 	/**
-	 * @param numberOtResultsTotal
+	 * @param numberOfResultsTotal
 	 *            the numberOtResultsTotal to set
 	 */
-	public final void setNumberOtResultsTotal(int numberOtResultsTotal) {
-		this.numberOtResultsTotal = numberOtResultsTotal;
+	public final void setNumberOfResultsTotal(int numberOfResultsTotal) {
+		this.numberOfResultsTotal = numberOfResultsTotal;
 	}
 
 	/**

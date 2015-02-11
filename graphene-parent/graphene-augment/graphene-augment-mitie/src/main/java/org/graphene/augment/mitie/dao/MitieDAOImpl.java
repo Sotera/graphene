@@ -32,8 +32,7 @@ public class MitieDAOImpl implements MitieDAO {
 			performQuery = connection.performQuery(input.trim());
 			x = mapper.readValue(performQuery, MitieResponse.class);
 		} catch (DataAccessException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			throw new graphene.business.commons.exception.DataAccessException(
 					"Could not augment the text with MITIE: " + e.getMessage());
 		}

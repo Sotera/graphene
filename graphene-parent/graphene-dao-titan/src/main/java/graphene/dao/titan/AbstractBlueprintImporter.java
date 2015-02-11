@@ -8,6 +8,7 @@ import graphene.util.validator.ValidationUtils;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.slf4j.Logger;
 
 import com.thinkaurelius.titan.core.attribute.Geoshape;
 import com.tinkerpop.blueprints.Edge;
@@ -27,15 +28,18 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 
 	protected Graph g;
 
-	public Vertex createOrUpdateNode(String id, String idType, String nodeType,
-			Vertex attachTo, String relationType, String relationValue) {
+	@Inject
+	private Logger logger;
+
+	public Vertex createOrUpdateNode(final String id, final String idType, final String nodeType,
+			final Vertex attachTo, final String relationType, final String relationValue) {
 		Vertex a = null;
 		if (ValidationUtils.isValid(id)) {
 			a = getBasicNode(g, id, nodeType);
 			setSafeProperty("idtype", idType, a);
 			// now we have a valid node. Attach it to the other node provided.
 			if (ValidationUtils.isValid(attachTo)) {
-				Edge e = getSafeEdge(g, attachTo, relationType, a);
+				final Edge e = getSafeEdge(g, attachTo, relationType, a);
 				setSafeProperty("value", relationValue, e);
 			}
 		}
@@ -51,7 +55,7 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 	 * 
 	 * @return
 	 */
-	public Vertex getBasicNode(Graph g, String id, String type) {
+	public Vertex getBasicNode(final Graph g, final String id, final String type) {
 		Vertex v = null;
 		if (ValidationUtils.isValid(id)) {
 			v = g.getVertex(id);
@@ -63,12 +67,11 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 		return v;
 	}
 
-	public Vertex getGeoNode(Graph g, String lat, String lon, String type) {
+	public Vertex getGeoNode(final Graph g, final String lat, final String lon, final String type) {
 		Vertex v = null;
 		if (ValidationUtils.isValid(lat, lon)) {
 			try {
-				Geoshape geo = Geoshape.point(Double.parseDouble(lat),
-						Double.parseDouble(lon));
+				final Geoshape geo = Geoshape.point(Double.parseDouble(lat), Double.parseDouble(lon));
 
 				if (ValidationUtils.isValid(geo)) {
 					v = g.getVertex(geo);
@@ -77,8 +80,8 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 						setSafeProperty(type, geo, v);
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (final Exception e) {
+				logger.error(e.getMessage());
 			}
 		}
 		return v;
@@ -93,21 +96,28 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 	 * @param type
 	 * @return
 	 */
-	public Edge getSafeEdge(Graph g, Vertex a, String type, Vertex b) {
+	public Edge getSafeEdge(final Graph g, final Vertex a, final String type, final Vertex b) {
 		Edge e = null;
 		if (ValidationUtils.isValid(a, b)) {
 			try {
-				G_EdgeType edgeType = edgeTypeAccess.getEdgeType(type);
+				final G_EdgeType edgeType = edgeTypeAccess.getEdgeType(type);
 
-				String id = a.getId().toString() + b.getId().toString()
-						+ edgeType.getName();
+				final String id = a.getId().toString() + b.getId().toString() + edgeType.getName();
 				e = g.addEdge(id, a, b, edgeType.getName());
-			} catch (AvroRemoteException e1) {
+			} catch (final AvroRemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		return e;
+	}
+
+	public void setSafeProperty(final String key, final Object value, final Edge e) {
+		if (ValidationUtils.isValid(value, e)) {
+			if (e.getProperty(key) == null) {
+				e.setProperty(key, value);
+			}
+		}
 	}
 
 	/**
@@ -117,18 +127,10 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 	 * @param value
 	 * @param v
 	 */
-	public void setSafeProperty(String key, Object value, Vertex v) {
+	public void setSafeProperty(final String key, final Object value, final Vertex v) {
 		if (ValidationUtils.isValid(value, v)) {
 			if (v.getProperty(key) == null) {
 				v.setProperty(key, value);
-			}
-		}
-	}
-
-	public void setSafeProperty(String key, Object value, Edge e) {
-		if (ValidationUtils.isValid(value, e)) {
-			if (e.getProperty(key) == null) {
-				e.setProperty(key, value);
 			}
 		}
 	}

@@ -162,7 +162,6 @@ public class Neo4JEmbeddedService {
 				connected = true;
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 				connected = false;
 			}
 		} else {
@@ -247,7 +246,7 @@ public class Neo4JEmbeddedService {
 
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return false;
 	}
@@ -380,8 +379,7 @@ public class Neo4JEmbeddedService {
 				tx.success();
 				return result;
 			} catch (Exception e) {
-				e.printStackTrace();
-
+				logger.error(e.getMessage());
 			}
 		}
 		return null;
@@ -555,7 +553,7 @@ public class Neo4JEmbeddedService {
 		} catch (Exception e) {
 			logger.error("Problem with loading or finding properties file at "
 					+ propertiesFileLocation + ":" + e.getMessage());
-			e.printStackTrace();
+		
 			return false;
 		}
 		return true;

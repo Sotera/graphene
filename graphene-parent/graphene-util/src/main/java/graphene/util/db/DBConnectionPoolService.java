@@ -88,7 +88,7 @@ public class DBConnectionPoolService {
 				}
 				connection = null;
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 				initialized = false;
 				throw e;
 			}

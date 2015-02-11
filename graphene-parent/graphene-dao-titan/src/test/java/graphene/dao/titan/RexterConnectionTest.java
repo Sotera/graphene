@@ -34,8 +34,7 @@ public class RexterConnectionTest {
 			result = client.execute("g.V('name','saturn').in('father').map");
 			logger.debug(result.toString());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 

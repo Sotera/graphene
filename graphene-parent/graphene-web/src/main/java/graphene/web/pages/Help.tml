@@ -53,10 +53,10 @@
 
 			<div class="col-sm-6"></div>
 		</div>
-		<!--
 		<p>Create a workspace, or choose from a previous one</p>
-		<p>Make changes to your workspace. Changes are saved automatically.</p>
-		-->
+		<p>Make changes to your workspace. Changes are saved
+			automatically.</p>
+
 	</div>
 </div>
 </html>

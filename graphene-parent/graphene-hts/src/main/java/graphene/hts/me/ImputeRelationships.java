@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.slf4j.Logger;
 
 /**
  * Moved familial imputing to it's own class, outside of the main ingest class.
@@ -25,7 +26,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * 
  */
 public class ImputeRelationships {
-
+	@Inject
+	private Logger logger;
 	@Inject
 	private G_EdgeTypeAccess edgeTypeAccess;
 
@@ -35,41 +37,45 @@ public class ImputeRelationships {
 	@Inject
 	private G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 
-	public void impute(ArrayList<Triple<Long, G_Gender, String>> fatherTriples,
-			Object customerId1, Object relationship_bf, Object hasKinRels,
-			Object customerId2, Object customers) {
+	private void createSafeRelationship(final Long first, final G_EdgeType hasKin, final Object customerId1,
+			final Map<String, Object> fprops, final Object relationship_bf, final Object hasKinRels) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private Long getOrCreateNodeId(final G_IdType g_NodeType, final String third, final Map<String, Object> mbtsprops,
+			final Object customers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void impute(final ArrayList<Triple<Long, G_Gender, String>> fatherTriples, final Object customerId1,
+			final Object relationship_bf, final Object hasKinRels, final Object customerId2, final Object customers) {
 		// Deal with Familial Parents of the node
 
 		int childIsMaleVote = 0;
 		int childIsFemaleVote = 0;
 		int childIsUnknownVote = 0;
-		for (Triple<Long, G_Gender, String> imputedFatherTriple : fatherTriples) {
+		for (final Triple<Long, G_Gender, String> imputedFatherTriple : fatherTriples) {
 			// properties for the RELATION object, not the nodes.
-			Map<String, Object> fprops = new HashMap<String, Object>();
-			fprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(),
-					"Dataset1");
+			final Map<String, Object> fprops = new HashMap<String, Object>();
+			fprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(), "Dataset1");
 			fprops.put(G_CanonicalPropertyType.CONTEXT.toString(), "Parent Of");
-			fprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(),
-					G_CanonicalTruthValues.TRUE.toString());
+			fprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(), G_CanonicalTruthValues.TRUE.toString());
 			try {
 				createSafeRelationship(imputedFatherTriple.getFirst(),
-						edgeTypeAccess
-								.getEdgeType(G_CanonicalRelationshipType.KIN_OF
-										.name()), customerId1, fprops,
+						edgeTypeAccess.getEdgeType(G_CanonicalRelationshipType.KIN_OF.name()), customerId1, fprops,
 						relationship_bf, hasKinRels);
-			} catch (AvroRemoteException e1) {
+			} catch (final AvroRemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			try {
 				createSafeRelationship(imputedFatherTriple.getFirst(),
-						edgeTypeAccess
-								.getEdgeType(G_CanonicalRelationshipType.KIN_OF
-										.name()), customerId2, fprops,
+						edgeTypeAccess.getEdgeType(G_CanonicalRelationshipType.KIN_OF.name()), customerId2, fprops,
 						relationship_bf, hasKinRels);
-			} catch (AvroRemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (final AvroRemoteException e) {
+				logger.error(e.getMessage());
 			}
 			/*
 			 * This below is a tricky experimental part, so hold on to your
@@ -93,33 +99,23 @@ public class ImputeRelationships {
 			 * be the same' relationship, without looking at properties to see
 			 * how something was imputed.
 			 */
-			Map<String, Object> mbtsprops = new HashMap<String, Object>();
-			mbtsprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(),
-					"Dataset1");
-			mbtsprops.put(G_CanonicalPropertyType.CONTEXT.toString(),
-					"Parent Of");
-			mbtsprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(),
-					G_CanonicalTruthValues.TRUE.toString());
+			final Map<String, Object> mbtsprops = new HashMap<String, Object>();
+			mbtsprops.put(G_CanonicalPropertyType.METRIC_PROVENANCE.toString(), "Dataset1");
+			mbtsprops.put(G_CanonicalPropertyType.CONTEXT.toString(), "Parent Of");
+			mbtsprops.put(G_CanonicalPropertyType.METRIC_IMPUTED.toString(), G_CanonicalTruthValues.TRUE.toString());
 			Long nonImputedFatherId = null;
 			try {
-				nonImputedFatherId = getOrCreateNodeId(
-						nodeTypeAccess.getNodeType(G_CanonicalPropertyType.NAME
-								.name()), imputedFatherTriple.getThird(),
-						mbtsprops, customers);
-			} catch (AvroRemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				nonImputedFatherId = getOrCreateNodeId(nodeTypeAccess.getNodeType(G_CanonicalPropertyType.NAME.name()),
+						imputedFatherTriple.getThird(), mbtsprops, customers);
+			} catch (final AvroRemoteException e) {
+				logger.error(e.getMessage());
 			}
 			try {
-				createSafeRelationship(
-						imputedFatherTriple.getFirst(),
-						edgeTypeAccess
-								.getEdgeType(G_CanonicalRelationshipType.MAY_BE_THE_SAME
-										.name()), nonImputedFatherId,
-						mbtsprops, relationship_bf, hasKinRels);
-			} catch (AvroRemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				createSafeRelationship(imputedFatherTriple.getFirst(),
+						edgeTypeAccess.getEdgeType(G_CanonicalRelationshipType.MAY_BE_THE_SAME.name()),
+						nonImputedFatherId, mbtsprops, relationship_bf, hasKinRels);
+			} catch (final AvroRemoteException e) {
+				logger.error(e.getMessage());
 			}
 
 			if (imputedFatherTriple.getSecond().equals(G_Gender.MALE)) {
@@ -135,30 +131,11 @@ public class ImputeRelationships {
 		}
 		// Deal with imputed sex of main node here
 
-		HashMap<String, Object> nameNodeImputedProperties = new HashMap<String, Object>();
-		int totalVotes = childIsMaleVote + childIsFemaleVote
-				+ childIsUnknownVote;
+		final HashMap<String, Object> nameNodeImputedProperties = new HashMap<String, Object>();
+		final int totalVotes = childIsMaleVote + childIsFemaleVote + childIsUnknownVote;
 		if (totalVotes > 0) {
-			nameNodeImputedProperties.put(ImputedScoreType.MALE.toString(),
-					G_CanonicalTruthValues.TRUE.toString());
-
-			double scoreMale = childIsMaleVote / totalVotes;
-			double scoreFemale = childIsMaleVote / totalVotes;
-			double scoreUnknown = childIsMaleVote / totalVotes;
+			nameNodeImputedProperties.put(ImputedScoreType.MALE.toString(), G_CanonicalTruthValues.TRUE.toString());
 		}
-
-	}
-
-	private Long getOrCreateNodeId(G_IdType g_NodeType, String third,
-			Map<String, Object> mbtsprops, Object customers) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private void createSafeRelationship(Long first, G_EdgeType hasKin,
-			Object customerId1, Map<String, Object> fprops,
-			Object relationship_bf, Object hasKinRels) {
-		// TODO Auto-generated method stub
 
 	}
 }

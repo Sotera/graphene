@@ -8,15 +8,18 @@ import java.util.List;
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.slf4j.Logger;
 
 public class UserFilteredDataSource implements GridDataSource {
-	private G_UserDataAccess userDataAccess;
-	private String partialName;
-
+	private final G_UserDataAccess userDataAccess;
+	private final String partialName;
+	@Inject
+	private Logger logger;
 	private int startIndex;
 	private List<G_User> preparedResults;
 
-	public UserFilteredDataSource(G_UserDataAccess userDataAccess, String partialName) {
+	public UserFilteredDataSource(final G_UserDataAccess userDataAccess, final String partialName) {
 		this.userDataAccess = userDataAccess;
 		this.partialName = partialName;
 	}
@@ -24,22 +27,16 @@ public class UserFilteredDataSource implements GridDataSource {
 	@Override
 	public int getAvailableRows() {
 		try {
-			return (int) userDataAccess.countUsers(partialName);
-		} catch (AvroRemoteException e) {
-			e.printStackTrace();
+			return userDataAccess.countUsers(partialName);
+		} catch (final AvroRemoteException e) {
+			logger.error(e.getMessage());
 		}
 		return 0;
 	}
 
 	@Override
-	public void prepare(final int startIndex, final int endIndex, final List<SortConstraint> sortConstraints) {
-		try {
-			preparedResults = userDataAccess.getByPartialUsername(partialName, startIndex, endIndex - startIndex + 1);
-		} catch (AvroRemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.startIndex = startIndex;
+	public Class<G_User> getRowType() {
+		return G_User.class;
 	}
 
 	@Override
@@ -48,8 +45,13 @@ public class UserFilteredDataSource implements GridDataSource {
 	}
 
 	@Override
-	public Class<G_User> getRowType() {
-		return G_User.class;
+	public void prepare(final int startIndex, final int endIndex, final List<SortConstraint> sortConstraints) {
+		try {
+			preparedResults = userDataAccess.getByPartialUsername(partialName, startIndex, (endIndex - startIndex) + 1);
+		} catch (final AvroRemoteException e) {
+			logger.error(e.getMessage());
+		}
+		this.startIndex = startIndex;
 	}
 
 }

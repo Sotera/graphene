@@ -45,7 +45,6 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 				output.close();
 			} catch (IOException e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 			}
 		}
 		if (input != null) {
@@ -53,7 +52,6 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 				input.close();
 			} catch (IOException e) {
 				logger.error(e.getMessage());
-				e.printStackTrace();
 			}
 		}
 	}
@@ -109,7 +107,6 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 			t = (T) input.readObject();
 		} catch (ClassNotFoundException | IOException e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
 		}
 		return t;
 	}
@@ -121,8 +118,7 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 			numberOfRecordsCached++;
 			success = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return success;
 	}

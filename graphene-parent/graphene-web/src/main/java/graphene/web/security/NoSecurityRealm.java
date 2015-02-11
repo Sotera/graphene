@@ -82,7 +82,7 @@ public class NoSecurityRealm extends AuthorizingRealm {
 					}
 				}
 			} catch (AvroRemoteException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return info;
@@ -98,7 +98,6 @@ public class NoSecurityRealm extends AuthorizingRealm {
 			user = userDataAccess.getByUsername(token.getUsername());
 		} catch (AvroRemoteException e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
 		}
 		if (user != null) {
 			// We are putting the previously stored hashed password in here.
