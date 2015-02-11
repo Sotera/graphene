@@ -9,7 +9,7 @@ package graphene.model.idl;
 	 * */
 @org.apache.avro.specific.AvroGenerated
 public class G_Role extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Role\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* This is the role object used in security concerns.  A G_User has one or more G_Role.\\r\\n\\t *\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* Name of the role\",\"default\":null},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the role\",\"default\":null}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Role\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* This is the role object used in security concerns.  A G_User has one or more G_Role.\\n\\t *\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* Name of the role\",\"default\":null},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"* For describing the nature of the role\",\"default\":null}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** * Name of the role */
    private java.lang.String name;

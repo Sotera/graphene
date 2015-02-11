@@ -229,6 +229,7 @@ protocol G_CommonDataTypes {
 		CREATOR_OF,			// ENTITY to n
 		FRIEND_OF,			// ENTITY to ENTITY
 		ENEMY_OF,			// ENTITY to ENTITY
+		LIKES, 				// ENTITY to ENTITY
 		LOVES, 				// ENTITY to ENTITY
 		HATES, 				// ENTITY to ENTITY
 		KNOWS, 				// ENTITY to ENTITY

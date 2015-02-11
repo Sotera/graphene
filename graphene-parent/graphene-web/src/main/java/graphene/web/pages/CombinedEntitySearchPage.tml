@@ -65,10 +65,10 @@ table td {
 								</p:rankCell>
 								<p:actionsCell>
 									<t:if test="reportPageLink">
-										<t:pagelink class="btn btn-action" page="prop:reportPageLink"
-											context="reportId" target="report-${reportId}"  title="${score}">
+										<a href="${reportPageLink}" class="btn btn-action" page="prop:reportPageLink"
+											context="reportId" target="reportId"  title="${score}">
 											<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
-												</t:pagelink>
+										</a>
 										<br />
 										<p:else>Report View Unavailable</p:else>
 									</t:if>
@@ -88,7 +88,7 @@ table td {
 									${currentEntity.get('firstDate')}
 								</p:dateCell>
 								<p:amountCell>
-									${formattedAmount}
+<!-- 									${formattedAmount} -->
 								</p:amountCell>
 								<p:subjectsCell>
 									<t:loop source="nameList" value="currentName">

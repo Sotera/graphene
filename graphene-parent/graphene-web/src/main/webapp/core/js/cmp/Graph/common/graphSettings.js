@@ -65,7 +65,7 @@ Ext.define("DARPA.GraphSettings",
 				xtype:'textfield',
 				fieldLabel:'Maximum Degree',
 				labelLength:150,
-				value:'2',
+				value:'1',
 				width:200
 			},
 			{
