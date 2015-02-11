@@ -79,10 +79,6 @@ table td {
 								</p:actionsCell>
 
 								<p:informationIconsCell>
-									<t:loop source="iconList" value="currentIcon">
-										<span class="${currentIcon.first} label alert-info"
-											title="${currentIcon.second}">&nbsp; </span>
-									</t:loop>
 								</p:informationIconsCell>
 								<p:dateCell>
 									${currentEntity.get('firstDate')}
@@ -91,11 +87,15 @@ table td {
 <!-- 									${formattedAmount} -->
 								</p:amountCell>
 								<p:subjectsCell>
-									<t:loop source="nameList" value="currentName">
-										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentName)}"
-											href="${getNamePivotLink(currentName.third)}"> ${currentName.second} </a>
-										<br />
-										<br />
+									<t:loop source="atsInComments" value="currentAt">
+										<a class="btn btn-xs pivotlink">
+											${currentAt.first}
+										</a>
+									</t:loop>
+									<t:loop source="atsInCaption" value="currentAt">
+										<a class="btn btn-xs pivotlink">
+											${currentAt.first}
+										</a>
 									</t:loop>
 								</p:subjectsCell>
 								<p:addressListCell>
@@ -115,11 +115,15 @@ table td {
 									</t:loop>
 								</p:communicationIdentifierListCell>
 								<p:identifierListCell>
-									<t:loop source="identifierList" value="currentIdentifier">
-										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentIdentifier)}"
-											href="${getPivotLink(currentIdentifier.third)}">
-											${currentIdentifier.second}</a>
-
+									<t:loop source="hashTagsInComments" value="currentHashTag">
+										<a class="btn btn-xs pivotlink">
+											${currentHashTag.first}
+										</a>
+									</t:loop>
+									<t:loop source="hashTagsInCaption" value="currentHashTag">
+										<a class="btn btn-xs pivotlink">
+											${currentHashTag.first}
+										</a>
 									</t:loop>
 								</p:identifierListCell>
 							</t:jquery.datatable>
