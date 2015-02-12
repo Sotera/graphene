@@ -99,9 +99,37 @@ table td {
 									${mediaCommentCount}
 								</p:commentCountCell>
 								
+								<p:hashtagsCell>
+									<t:loop source="hashTagsInComments" value="currentHashTag">
+										<a class="btn btn-xs pivotlink">
+											${currentHashTag.first}
+										</a>
+									</t:loop>
+									<t:loop source="hashTagsInCaption" value="currentHashTag">
+										<a class="btn btn-xs pivotlink">
+											${currentHashTag.first}
+										</a>
+									</t:loop>
+								</p:hashtagsCell>
+								
+								<p:atsCell>
+									<t:loop source="atsInComments" value="currentAt">
+										<a class="btn btn-xs pivotlink">
+											${currentAt.first}
+										</a>
+									</t:loop>
+									<t:loop source="atsInCaption" value="currentAt">
+										<a class="btn btn-xs pivotlink">
+											${currentAt.first}
+										</a>
+									</t:loop>
+								</p:atsCell>
+								
 								<p:locationCell>
 								</p:locationCell>
-							
+
+								
+								
 							</t:jquery.datatable>
 
 							<t:block t:id="emptyResults">

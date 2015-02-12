@@ -99,6 +99,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Property
 	private Triple<String, String, String> currentName;
 
+	@Property
+	private Tuple<String, String> currentAt;
+	
+	@Property
+	private Tuple<String, String> currentHashTag;
+	
 	@Inject
 	private CombinedDAO dao;
 
@@ -333,6 +339,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		model.addEmpty("captionText");
 		model.addEmpty("likeCount");
 		model.addEmpty("commentCount");
+		model.addEmpty("hashtags");
+		model.addEmpty("ats");
 		model.addEmpty("location");
 
 		model.getById("rank").sortable(true);
@@ -342,6 +350,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		model.getById("captionText").sortable(true);
 		model.getById("likeCount").sortable(true);
 		model.getById("commentCount").sortable(true);
+		model.getById("hashtags").sortable(true);
+		model.getById("ats").sortable(true);
 		model.getById("location").sortable(true);
 
 		return model;
@@ -510,6 +520,22 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return DataFormatConstants.formatScore(d);
 	}
 
+	public Collection<Tuple<String, String>> getAtsInComments() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_COMMENTS");
+	}
+	
+	public Collection<Tuple<String, String>> getAtsInCaption() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_CAPTION");
+	}
+	
+	public Collection<Tuple<String, String>> getHashTagsInComments() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_COMMENTS");
+	}
+	
+	public Collection<Tuple<String, String>> getHashTagsInCaption() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_CAPTION");
+	}
+	
 	/**
 	 * @return the searchValue
 	 */
