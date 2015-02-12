@@ -25,8 +25,7 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.slf4j.Logger;
 
 @PluginPage(visualType = G_VisualType.PLUGIN, menuName = "NER", icon = "fa fa-lg fa-fw fa-comments")
-@Import(library = { "context:core/js/plugin/dropzone/dropzone.js",
-		"context:/core/js/startdropzone.js" })
+@Import(library = { "context:core/js/plugin/dropzone/dropzone.js", "context:/core/js/startdropzone.js" })
 public class NER {
 	@Inject
 	private AjaxResponseRenderer ajaxResponseRenderer;
@@ -53,25 +52,20 @@ public class NER {
 	@Persist
 	private List<NERResult> nerresults;
 
+	@Inject
+	private NERService nerService;
+
 	public List<NERResult> getResults() {
 		return nerresults;
 	}
-
-	@Inject
-	private NERService nerService;
 
 	public String getZoneUpdateFunction() {
 		return highlightZoneUpdates ? "highlight" : "show";
 	}
 
-	void setupRender() {
-
-	}
-
 	public Object onSuccess() {
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				file.getStream()));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(file.getStream()));
 		String line;
 		nerresults = new ArrayList<NERResult>();
 		try {
@@ -80,10 +74,14 @@ public class NER {
 				nerresults.addAll(nerService.getResults(line));
 			}
 			logger.debug("Done extracting entities");
-		} catch (IOException e) {
-			logger.error(e.getMessage());
+		} catch (final IOException e) {
+			logger.error("onSuccess" + e.getMessage());
 		}
 
 		return request.isXHR() ? listZone.getBody() : null;
+	}
+
+	void setupRender() {
+
 	}
 }
