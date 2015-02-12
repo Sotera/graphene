@@ -36,7 +36,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_GraphQuery> {
+public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T, V_GraphQuery> {
 	@Inject
 	private Logger logger;
 
@@ -47,12 +47,6 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 
 	public EventGraphBuilder() {
 		super();
-	}
-
-	@Override
-	public void performPostProcess(V_GraphQuery graphQuery) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -67,25 +61,23 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 	 * @return
 	 * @throws Exception
 	 */
-	
-	public V_GenericGraph makeGraphResponse(final TemporalGraphQuery graphQuery)
-			throws Exception {
+
+	public V_GenericGraph makeGraphResponse(final TemporalGraphQuery graphQuery) throws Exception {
 		if (graphQuery.getMaxHops() <= 0) {
 			return new V_GenericGraph();
 		}
 
-		this.nodeList = new V_NodeList();
-		this.edgeList = new V_EdgeList(graphQuery);
-		this.edgeMap = new HashMap<String, V_GenericEdge>();
+		nodeList = new V_NodeList();
+		edgeList = new V_EdgeList(graphQuery);
+		edgeMap = new HashMap<String, V_GenericEdge>();
 
 		int intStatus = 0;
 		String strStatus = "Graph Loaded";
-		Set<String> scannedActors = new HashSet<String>();
+		final Set<String> scannedActors = new HashSet<String>();
 
 		V_NodeList savNodeList = nodeList.clone();
 		// V_EdgeList savEdgeList = edgeList.clone();
-		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>(
-				edgeMap);
+		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>(edgeMap);
 		EventQuery eq = new EventQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
@@ -99,19 +91,17 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 
 		// aka traversals from legacy--djue
 		int hop = 0;
-		for (hop = 0; hop < graphQuery.getMaxHops()
-				&& nodeList.getNodes().size() < graphQuery.getMaxNodes()
-				&& eq.getIdList().size() > 0; hop++) {
+		for (hop = 0; (hop < graphQuery.getMaxHops()) && (nodeList.getNodes().size() < graphQuery.getMaxNodes())
+				&& (eq.getIdList().size() > 0); hop++) {
 
 			logger.debug("Processing hop " + hop);
 			// If we have some ids to look for
 			if (eq.getIdList().size() > 0) {
-				logger.debug("Found " + eq.getIdList().size()
-						+ " unscanned nodes to query on");
+				logger.debug("Found " + eq.getIdList().size() + " unscanned nodes to query on");
 
-				boolean performCallback = dao.performCallback(0, 0, this, eq);
+				dao.performCallback(0, 0, this, eq);
 
-				for (String scannedId : eq.getIdList()) {
+				for (final String scannedId : eq.getIdList()) {
 					scannedActors.add(scannedId);
 				}
 
@@ -119,39 +109,33 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 
 			eq = new EventQuery();
 			// Iterate over each node found by the previous query and scan them.
-			for (V_GenericNode node : unscannedNodeList) {
+			for (final V_GenericNode node : unscannedNodeList) {
 
-				String valueToSearchOn = node.getIdVal();
+				final String valueToSearchOn = node.getIdVal();
 				// if we haven't scanned
 				if (ValidationUtils.isValid(valueToSearchOn)) {
 					// start scanning this id.
-					logger.debug("::::Scanning valueToSearchOn '"
-							+ valueToSearchOn + "'\t\t " + node);
+					logger.debug("::::Scanning valueToSearchOn '" + valueToSearchOn + "'\t\t " + node);
 					// Make sure there aren't too many edges.
 					long count = 0;
 					try {
 						count = dao.countEdges(valueToSearchOn);
-						logger.debug("Found " + count + " results for value "
-								+ valueToSearchOn);
+						logger.debug("Found " + count + " results for value " + valueToSearchOn);
 						node.setNbrLinks((int) count);
 						if (count > graphQuery.getMaxEdgesPerNode()) {
 							logger.debug("There would be too many links created with this node (max "
-									+ graphQuery.getMaxEdgesPerNode()
-									+ "), setting clustered to true.");
+									+ graphQuery.getMaxEdgesPerNode() + "), setting clustered to true.");
 							node.setCluster(true);
 						} else {
 							// we will search on it.
-							eq.addAttribute(new G_SearchTuple<String>(
-									G_SearchType.COMPARE_EQUALS, nodeTypeAccess
-											.getNodeType(node.getNodeType()),
-									valueToSearchOn));
+							eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeTypeAccess
+									.getNodeType(node.getNodeType()), valueToSearchOn));
 						}
-					} catch (Exception e) {
-						logger.error(e.getMessage());
+					} catch (final Exception e) {
+						logger.error("makeGraphResponse " + e.getMessage());
 					}
 				} else {
-					logger.warn("The value '" + valueToSearchOn
-							+ "' was invalid and was not searched on");
+					logger.warn("The value '" + valueToSearchOn + "' was invalid and was not searched on");
 				}
 				// we're done scanning this id.
 
@@ -159,8 +143,7 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 			// very important!!
 			unscannedNodeList.clear();
 
-			logger.debug("At the end of onehop, " + nodeList.size()
-					+ " nodes and " + edgeMap.size() + " edges");
+			logger.debug("At the end of onehop, " + nodeList.size() + " nodes and " + edgeMap.size() + " edges");
 
 			savNodeList = nodeList.clone();
 			saveEdgeMap = new HashMap<String, V_GenericEdge>(edgeMap);
@@ -172,25 +155,30 @@ public abstract class EventGraphBuilder<T> extends AbstractGraphBuilder<T,V_Grap
 			nodeList = savNodeList;
 			edgeMap = saveEdgeMap;
 			intStatus = 1; // will trigger the message.
-			strStatus = "Returning only " + hop
-					+ " hops, as maximum nodes you requested would be exceeded";
+			strStatus = "Returning only " + hop + " hops, as maximum nodes you requested would be exceeded";
 		}
 
 		// NOW finally add in all those unique edges.
-		for (V_GenericEdge e : edgeMap.values()) {
+		for (final V_GenericEdge e : edgeMap.values()) {
 			edgeList.addEdge(e);
 		}
-		//nodeList.removeOrphans(edgeList);
+		// nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
+		final V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
-		
-		for (V_LegendItem li : legendItems) {
+
+		for (final V_LegendItem li : legendItems) {
 			g.addLegendItem(li);
 		}
-		
+
 		return g;
+	}
+
+	@Override
+	public void performPostProcess(final V_GraphQuery graphQuery) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -107,7 +107,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("getGraphQueries " + e.getMessage());
 		}
 		return returnValue;
 	}
@@ -149,7 +149,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("getQueries " + e.getMessage());
 		}
 		return returnValue;
 
@@ -182,7 +182,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				System.out.println(u);
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("getReportViewEvents " + e.getMessage());
 		}
 		return returnValue;
 	}
@@ -235,9 +235,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				});
 
 			} catch (ExecutionException | InterruptedException | IOException e) {
-				logger.error(e.getMessage());
+				logger.error("recordQuery " + e.getMessage());
 			} catch (final Exception e) {
-				logger.error(e.getMessage());
+				logger.error("recordQuery " + e.getMessage());
 			}
 		} else {
 			logger.error("Attempted to save a null user object!");
@@ -280,9 +280,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				});
 
 			} catch (ExecutionException | InterruptedException | IOException e) {
-				logger.error(e.getMessage());
+				logger.error("recordQuery " + e.getMessage());
 			} catch (final Exception e) {
-				logger.error(e.getMessage());
+				logger.error("recordQuery " + e.getMessage());
 			}
 		} else {
 			logger.error("Attempted to save a null user object!");

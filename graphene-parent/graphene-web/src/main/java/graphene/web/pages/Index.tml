@@ -7,15 +7,13 @@
 <div class="row-fluid">
 
 	<div class="span9">
-<<<<<<< HEAD
+
 		<h1>Welcome to Graphene!</h1>
 		<h2>Please use the search bar above to get started.</h2>
 		<h2>If you would like to learn more about the tool, refer to the user guides in Getting Started or Advanced Help.</h2>
-		<!--
-=======
+		
 		<h1>Use the search bar in the upper right to initiate a search
 			across reports.</h1>
->>>>>>> parent of ff2960d... Temporarily removed all Workspace features
 		<t:if test="workspaces">
 			<p>Available Workspaces:</p>
 

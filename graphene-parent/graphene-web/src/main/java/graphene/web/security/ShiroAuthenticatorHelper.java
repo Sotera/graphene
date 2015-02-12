@@ -42,13 +42,13 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	public static final String AUTH_TOKEN = "authToken";
 
 	// Use this to save the logged in user to the session.
-	private ApplicationStateManager applicationStateManager;
+	private final ApplicationStateManager applicationStateManager;
 
-	private Logger logger;
+	private final Logger logger;
 
-	private SecurityService securityService;
+	private final SecurityService securityService;
 
-	private G_UserDataAccess userDataAccess;
+	private final G_UserDataAccess userDataAccess;
 
 	@SessionState(create = false)
 	private G_User user;
@@ -60,40 +60,57 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	private boolean redirectToSavedUrl;
 
 	@Inject
-	public ShiroAuthenticatorHelper(G_UserDataAccess userDataAccess,
-			ApplicationStateManager applicationStateManager, Logger logger,
-			SecurityService securityService) {
+	public ShiroAuthenticatorHelper(final G_UserDataAccess userDataAccess,
+			final ApplicationStateManager applicationStateManager, final Logger logger,
+			final SecurityService securityService) {
 		this.userDataAccess = userDataAccess;
 		this.securityService = securityService;
 		this.applicationStateManager = applicationStateManager;
 		this.logger = logger;
 	}
 
+	@Override
 	public boolean isUserObjectCreated() {
-		boolean userSsoExists = applicationStateManager.exists(G_User.class);
+		final boolean userSsoExists = applicationStateManager.exists(G_User.class);
 		// Session session = request.getSession(false);
 		// if (session != null) {
 		// return session.getAttribute(AUTH_TOKEN) != null;
 		// }
 		// return false;
-		logger.debug(userSsoExists ? "User SSO exists."
-				: "User SSO does not exist.");
+		logger.debug(userSsoExists ? "User SSO exists." : "User SSO does not exist.");
 		return userSsoExists;
 	}
 
 	@Override
-	public Object loginAndRedirect(String grapheneLogin,
-			String graphenePassword, boolean grapheneRememberMe,
-			RequestGlobals requestGlobals,
-			LoginContextService loginContextService, Response response,
-			Messages messages, AlertManager alertManager) {
+	public void login(final String username, final String password) throws AvroRemoteException, BusinessException {
 
-		Subject currentUser = securityService.getSubject();
+		G_User user = userDataAccess.getByUsername(username);
+		if (ValidationUtils.isValid(user)) {
+			if (ValidationUtils.isValid(user.getId())) {
+				user = userDataAccess.loginUser(user.getId(), password);
+				applicationStateManager.set(G_User.class, user);
+				// request.getSession(true).setAttribute(AUTH_TOKEN, user);
+			} else {
+				logger.error("The user object was lacking an id for username: " + username);
+				throw new BusinessException("Could not login user with username " + username);
+			}
+		} else {
+			logger.error("Could not login user with username " + username);
+			throw new BusinessException("Could not login user with username " + username);
+		}
+	}
+
+	@Override
+	public Object loginAndRedirect(final String grapheneLogin, final String graphenePassword,
+			final boolean grapheneRememberMe, final RequestGlobals requestGlobals,
+			final LoginContextService loginContextService, final Response response, final Messages messages,
+			final AlertManager alertManager) {
+
+		final Subject currentUser = securityService.getSubject();
 
 		if (currentUser == null) {
 			logger.error("Subject can't be null");
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("AuthenticationError"));
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("AuthenticationError"));
 			return null;
 		}
 
@@ -102,19 +119,15 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 		 * compared to the hashed version using whatever hashing routine is set
 		 * in the Realm.
 		 */
-		UsernamePasswordToken token = new UsernamePasswordToken(grapheneLogin,
-				graphenePassword);
+		final UsernamePasswordToken token = new UsernamePasswordToken(grapheneLogin, graphenePassword);
 		token.setRememberMe(grapheneRememberMe);
 
 		try {
 			currentUser.login(token);
 			login(grapheneLogin, graphenePassword);
-			SavedRequest savedRequest = WebUtils
-					.getAndClearSavedRequest(requestGlobals
-							.getHTTPServletRequest());
+			final SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(requestGlobals.getHTTPServletRequest());
 
-			if (savedRequest != null
-					&& savedRequest.getMethod().equalsIgnoreCase("GET")) {
+			if ((savedRequest != null) && savedRequest.getMethod().equalsIgnoreCase("GET")) {
 				if (ValidationUtils.isValid(savedRequest.getRequestUrl())) {
 					response.sendRedirect(savedRequest.getRequestUrl());
 					logger.debug("A redirect request was sent, returning null response for authentication helper.");
@@ -143,45 +156,23 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 			// return null;
 			// }
 			return loginContextService.getSuccessPage();
-		} catch (UnknownAccountException e) {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("AccountDoesNotExist"));
-		} catch (IncorrectCredentialsException e) {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("WrongPassword"));
-		} catch (LockedAccountException e) {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("AccountLocked"));
-		} catch (AvroRemoteException e) {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("InternalAuthenticationError"));
+		} catch (final UnknownAccountException e) {
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("AccountDoesNotExist"));
+		} catch (final IncorrectCredentialsException e) {
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("WrongPassword"));
+		} catch (final LockedAccountException e) {
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("AccountLocked"));
+		} catch (final AvroRemoteException e) {
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("InternalAuthenticationError"));
 			logger.error(e.getMessage());
-		} catch (BusinessException e) {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("InternalAuthenticationError"));
+		} catch (final BusinessException e) {
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("InternalAuthenticationError"));
 			logger.error(e.getMessage());
-		} catch (IOException e) {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					messages.get("InternalAuthenticationError"));
+		} catch (final IOException e) {
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, messages.get("InternalAuthenticationError"));
 			logger.error(e.getMessage());
 		}
 		return null;
-	}
-
-	public void login(String username, String password)
-			throws AvroRemoteException, BusinessException {
-
-		G_User user = userDataAccess.getByUsername(username);
-		if (ValidationUtils.isValid(user)
-				&& ValidationUtils.isValid(user.getId())) {
-			user = userDataAccess.loginUser(user.getId(), password);
-
-			applicationStateManager.set(G_User.class, user);
-			// request.getSession(true).setAttribute(AUTH_TOKEN, user);
-		} else {
-			logger.error("Could not login user with username " + username);
-			throw new BusinessException("Could not login user with username " + username);
-		}
 	}
 
 	/**
@@ -190,7 +181,7 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	 * @param username
 	 */
 	@Override
-	public void loginAuthenticatedUser(String username) {
+	public void loginAuthenticatedUser(final String username) {
 		G_User user;
 		try {
 			user = userDataAccess.getByUsername(username);
@@ -200,16 +191,16 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 				applicationStateManager.set(G_User.class, user);
 				// request.getSession(true).setAttribute(AUTH_TOKEN, user);
 			}
-		} catch (AvroRemoteException e) {
+		} catch (final AvroRemoteException e) {
 			logger.error(e.getMessage());
 		}
 	}
 
+	@Override
 	public void logout() {
 		logger.debug(securityService.isAuthenticated() ? "During Logout: User is authenticated"
 				: "During Logout: User is not authenticated");
-		logger.debug(userExists ? "During Logout: User SSO exists"
-				: "During Logout: User SSO does not exist");
+		logger.debug(userExists ? "During Logout: User SSO exists" : "During Logout: User SSO does not exist");
 
 		// this removes the session state object.
 		applicationStateManager.set(G_User.class, null);

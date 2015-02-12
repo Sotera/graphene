@@ -45,7 +45,7 @@ table td {
 						</span>
 						<h2>Results</h2>
 						<h2>[ Showing ${results.numberOfResultsReturned} hits out of
-							${results.numberOtResultsTotal} ] for ${searchValue} in ${searchTypeFilter}</h2>
+							${results.numberOfResultsTotal} ] for ${searchValue} in ${searchTypeFilter}</h2>
 						<t:graphene.ui.searchlegend />
 					</header>
 					<!-- widget div-->

@@ -75,7 +75,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				client.execute(new CreateIndex.Builder(indexName).build());
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("createIndex " + e.getMessage());
 		}
 	}
 
@@ -91,7 +91,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				client.execute(new CreateIndex.Builder(indexName).build());
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("createIndex " + e.getMessage());
 		}
 	}
 
@@ -104,7 +104,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			result = client.execute(action);
 			resultString = result.getJsonString();
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("executeAction " + e.getMessage());
 		}
 		return resultString;
 	}
@@ -177,7 +177,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			logger.debug("Found a count of: " + longCount);
 			return longCount;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("performCount " + e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}
@@ -261,7 +261,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				}
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("performQuery " + e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}
@@ -276,7 +276,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final SearchResult result = client.execute(action);
 			retval = result.getJsonString();
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("performQuery " + e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}
@@ -295,7 +295,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 					.setParameter("from", from).setParameter("size", size);
 			return executeAction(sb);
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("performQuery " + e.getMessage());
 			throw new DataAccessException(
 					"Could not connect to one of the external resources needed for your request: " + e.getMessage());
 		}

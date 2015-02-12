@@ -1,12 +1,17 @@
 package graphene.dao.es;
 
+import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
+import io.searchbox.core.Index;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.DeleteIndex;
 import io.searchbox.indices.IndicesExists;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -49,7 +54,7 @@ public class BasicESDAO {
 			jestClient.execute((new Delete.Builder(id)).index(index).type(type).build());
 			success = true;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("delete " + e.getMessage());
 		}
 		return success;
 	}
@@ -80,7 +85,7 @@ public class BasicESDAO {
 				final JestResult result = jestClient.execute(new IndicesExists.Builder(index).build());
 				success = result.isSucceeded();
 			} catch (final Exception e) {
-				logger.error(e.getMessage());
+				logger.error("indexExists " + e.getMessage());
 			}
 		}
 		return success;
@@ -92,7 +97,7 @@ public class BasicESDAO {
 			try {
 				createIndex(jestClient, index);
 			} catch (final Exception e) {
-				logger.error(e.getMessage());
+				logger.error("initialize " + e.getMessage());
 			}
 		}
 	}
@@ -101,13 +106,40 @@ public class BasicESDAO {
 		try {
 			deleteIndex(jestClient, index);
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("recreateIndex " + e.getMessage());
 		}
 		try {
 			createIndex(jestClient, index);
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("recreateIndex " + e.getMessage());
 		}
+	}
+
+	public String saveObject(final Object g, final String id, final String indexName, final String type) {
+		Index saveAction;
+		if (id == null) {
+			saveAction = new Index.Builder(g).index(indexName).type(type).build();
+		} else {
+			saveAction = new Index.Builder(g).index(indexName).id(id).type(type).build();
+		}
+		String generatedId = null;
+		try {
+
+			final JestResult result = jestClient.execute(saveAction);
+			final Object oid = result.getValue("_id");
+			if (ValidationUtils.isValid(oid)) {
+				generatedId = (StringUtils.firstNonNullToString(oid));
+				Thread.sleep(ES_READ_DELAY_MS);
+			} else {
+				logger.error("Error getting saved object: " + result.getJsonString());
+				generatedId = null;
+			}
+		} catch (ExecutionException | InterruptedException | IOException e) {
+			logger.error("saveObject " + e.getMessage());
+		} catch (final Exception e) {
+			logger.error("saveObject " + e.getMessage());
+		}
+		return generatedId;
 	}
 
 	public void setIndex(final String index) {

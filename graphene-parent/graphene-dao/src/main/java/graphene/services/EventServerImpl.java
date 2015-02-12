@@ -43,11 +43,11 @@ public class EventServerImpl implements EventServer {
 	@Inject
 	private Logger logger;
 
-	private TransactionDAO eventDAO;
+	private final TransactionDAO eventDAO;
 
 	@Inject
-	public EventServerImpl(@InjectService("Primary") TransactionDAO dao) {
-		this.eventDAO = dao;
+	public EventServerImpl(@InjectService("Primary") final TransactionDAO dao) {
+		eventDAO = dao;
 	}
 
 	/**
@@ -56,14 +56,14 @@ public class EventServerImpl implements EventServer {
 	 * @param rows
 	 * @return
 	 */
-	private List<DirectedEventRow> deDupeRows(List<DirectedEventRow> rows) {
-		List<DirectedEventRow> newRows = new ArrayList<DirectedEventRow>();
+	private List<DirectedEventRow> deDupeRows(final List<DirectedEventRow> rows) {
+		final List<DirectedEventRow> newRows = new ArrayList<DirectedEventRow>();
 		// Set<TransferRow> set = new HashSet<TransferRow>();
 		// set.addAll(rows);
 		// newRows.addAll(set);
 
 		// MFM The input data is already sorted
-		for (DirectedEventRow rec : rows) {
+		for (final DirectedEventRow rec : rows) {
 			if (!newRows.contains(rec)) {
 				newRows.add(rec);
 			}
@@ -78,15 +78,14 @@ public class EventServerImpl implements EventServer {
 	 * graphene.services.EventServer#getEvents(graphene.model.query.EventQuery)
 	 */
 	@Override
-	public DirectedEvents getEvents(EventQuery q) {
+	public DirectedEvents getEvents(final EventQuery q) {
 		logger.debug("q=" + q.toString());
 		DirectedEvents transactions = new DirectedEvents();
 		List<DirectedEventRow> allRows = null;
 		try {
 			if (q.getIdList().size() > 1) {
 				allRows = processIntersections(q);
-			} else if (q.isSingleId()
-					&& ValidationUtils.isValid(q.getComments())) {
+			} else if (q.isSingleId() && ValidationUtils.isValid(q.getComments())) {
 				logger.debug("Processing single account");
 				transactions = processSingleAccount(q);
 				// updateBalances(allRows);
@@ -98,15 +97,14 @@ public class EventServerImpl implements EventServer {
 				transactions = processMultiAccount(q);
 			}
 			if (transactions.getRows() != null) {
-				logger.debug("Returning " + transactions.getRows().size()
-						+ " rows");
+				logger.debug("Returning " + transactions.getRows().size() + " rows");
 			}
 
 			if (allRows != null) {
 				logger.debug("Out of total count " + allRows.size());
 			}
-		} catch (Exception e) {
-			logger.error(e.getMessage());
+		} catch (final Exception e) {
+			logger.error("getEvents " + e.getMessage());
 		}
 		return transactions;
 	}
@@ -121,13 +119,11 @@ public class EventServerImpl implements EventServer {
 	 * @return List of TransferRows matching the query
 	 * @throws Exception
 	 */
-	private List<DirectedEventRow> processIntersections(EventQuery q)
-			throws Exception {
+	private List<DirectedEventRow> processIntersections(final EventQuery q) throws Exception {
 
 		List<DirectedEventRow> rows;
 
-		logger.debug("Starting process transfer intersections with query "
-				+ q.getIdList());
+		logger.debug("Starting process transfer intersections with query " + q.getIdList());
 
 		// We now get all the transactions if it's a single account, so that we
 		// can get
@@ -141,7 +137,7 @@ public class EventServerImpl implements EventServer {
 		return rows;
 	}
 
-	private DirectedEvents processMultiAccount(EventQuery q) throws Exception {
+	private DirectedEvents processMultiAccount(final EventQuery q) throws Exception {
 		List<DirectedEventRow> rows;
 		// If we have a new query, perform it. Else we look at the previous full
 		// results;
@@ -151,7 +147,7 @@ public class EventServerImpl implements EventServer {
 		// MFM The below BREAKs column sorting
 		// Collections.sort(rows);
 		// return rows;
-		DirectedEvents transactions = new DirectedEvents();
+		final DirectedEvents transactions = new DirectedEvents();
 		transactions.setResultCount(rows.size());
 		transactions.setRows(rows);
 		return transactions;
@@ -171,15 +167,14 @@ public class EventServerImpl implements EventServer {
 	 * @return List of LedgerPairRows matching the query
 	 * @throws Exception
 	 */
-	private DirectedEvents processSingleAccount(EventQuery q) throws Exception {
-		DirectedEvents transactions = new DirectedEvents();
+	private DirectedEvents processSingleAccount(final EventQuery q) throws Exception {
+		final DirectedEvents transactions = new DirectedEvents();
 
 		List<DirectedEventRow> rows = eventDAO.getEvents(q);
 		double localUnitBalance = 0;
 		double unitBalance = 0;
 
-		logger.debug("Starting process single account with query "
-				+ q.toString());
+		logger.debug("Starting process single account with query " + q.toString());
 
 		// We now get all the transactions if it's a single account, so that we
 		// can get
@@ -198,25 +193,27 @@ public class EventServerImpl implements EventServer {
 		String lastUnit = null;
 		boolean transitionFound = false;
 
-		for (DirectedEventRow e : rows) {
+		for (final DirectedEventRow e : rows) {
 			if (lastUnit == null) {
 				lastUnit = e.getUnit();
 			} else if (!lastUnit.equals(e.getUnit())) {
 				multiUnit = true;
 			}
 
-			DateTime dt = new DateTime(e.getDate());
+			final DateTime dt = new DateTime(e.getDate());
 
-			if (!transitionFound && dt.getYear() == 2010) {
+			if (!transitionFound && (dt.getYear() == 2010)) {
 				localUnitBalance = 0;
 				unitBalance = 0;
 				transitionFound = true;
 			}
 
-			if ((q.getMinSecs() != 0) && (dt.getMillis() < q.getMinSecs()))
+			if ((q.getMinSecs() != 0) && (dt.getMillis() < q.getMinSecs())) {
 				continue;
-			if ((q.getMaxSecs() != 0) && (dt.getMillis() > q.getMaxSecs()))
+			}
+			if ((q.getMaxSecs() != 0) && (dt.getMillis() > q.getMaxSecs())) {
 				continue;
+			}
 			// TODO: should we set balances for all accounts earlier on?
 			// DirectedEventRow l = funnel.from(e);
 			e.setLocalUnitBalance(localUnitBalance);
@@ -224,7 +221,7 @@ public class EventServerImpl implements EventServer {
 			// rows.add(l);
 		}
 
-		EventStatistics stats = new EventStatistics();
+		final EventStatistics stats = new EventStatistics();
 		stats.setAccount(q.getSingleId());
 
 		if (multiUnit) {
@@ -234,8 +231,9 @@ public class EventServerImpl implements EventServer {
 
 		rows = deDupeRows(rows);
 		if (transactions.isMultiUnit()) {
-			for (DirectedEventRow r : rows)
+			for (final DirectedEventRow r : rows) {
 				r.setBalance(0);
+			}
 		}
 		// MFM The below BREAKs column sorting
 		// Collections.sort(rows);
@@ -248,12 +246,10 @@ public class EventServerImpl implements EventServer {
 	}
 
 	// XXX: GET RID OF THIS
-	private List<DirectedEventRow> slice(List<DirectedEventRow> rows,
-			long start, long limit) {
-		logger.debug("Slicing from total: " + rows.size() + " start: " + start
-				+ " limit: " + limit);
-		List<DirectedEventRow> newRows = new ArrayList<DirectedEventRow>();
-		if (start == 0 && limit == 0) {
+	private List<DirectedEventRow> slice(final List<DirectedEventRow> rows, final long start, final long limit) {
+		logger.debug("Slicing from total: " + rows.size() + " start: " + start + " limit: " + limit);
+		final List<DirectedEventRow> newRows = new ArrayList<DirectedEventRow>();
+		if ((start == 0) && (limit == 0)) {
 			return rows;
 		}
 		if (start < 0) { // Seems to be an ExtJS bug
@@ -263,13 +259,14 @@ public class EventServerImpl implements EventServer {
 		int offset = 0;
 		int count = 0;
 
-		for (DirectedEventRow r : rows) {
+		for (final DirectedEventRow r : rows) {
 			if (offset < start) {
 				++offset;
 				continue;
 			}
-			if (count >= limit)
+			if (count >= limit) {
 				break;
+			}
 			newRows.add(r);
 			++count;
 			++offset;

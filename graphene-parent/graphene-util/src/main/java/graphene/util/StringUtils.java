@@ -102,8 +102,7 @@ public class StringUtils {
 	 * @param threshold
 	 * @return
 	 */
-	public static String cleanUpAllCaps(final String input,
-			final double threshold) {
+	public static String cleanUpAllCaps(final String input, final double threshold) {
 		int numUpper = 0;
 		for (int i = 0; i < input.length(); i++) {
 			if (Character.isUpperCase(input.charAt(i))) {
@@ -178,17 +177,14 @@ public class StringUtils {
 	 * @param locale
 	 * @return
 	 */
-	public static List<String> convertToSentences(final String input,
-			final Locale locale) {
-		final BreakIterator iterator = BreakIterator
-				.getSentenceInstance(locale);
+	public static List<String> convertToSentences(final String input, final Locale locale) {
+		final BreakIterator iterator = BreakIterator.getSentenceInstance(locale);
 		iterator.setText(input);
 		final ArrayList<String> sentences = new ArrayList<String>();
 
 		int start = iterator.first();
 
-		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator
-				.next()) {
+		for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
 			sentences.add(input.substring(start, end));
 		}
 		return sentences;
@@ -198,8 +194,7 @@ public class StringUtils {
 		return (String) (ValidationUtils.firstNonNull(values));
 	}
 
-	public static String firstNonNullDefault(final String defaultString,
-			final String... values) {
+	public static String firstNonNullDefault(final String defaultString, final String... values) {
 		final String s = firstNonNull(values);
 		if (s == null) {
 			return defaultString;
@@ -286,8 +281,7 @@ public class StringUtils {
 	 * @param delimiter
 	 * @return
 	 */
-	public static String[] split(final boolean enable, final String value,
-			final char delimiter) {
+	public static String[] split(final boolean enable, final String value, final char delimiter) {
 		String[] values;
 		// Something like valueType.contains("list")
 		if (enable) {
@@ -306,13 +300,12 @@ public class StringUtils {
 		return split(line, delimiter, DEFAULT_QUOTE_CHAR);
 	}
 
-	public static String[] split(final String line, final char delimiter,
-			final char quoteChar) {
+	public static String[] split(final String line, final char delimiter, final char quoteChar) {
 		return split(line, delimiter, quoteChar, quoteChar);
 	}
 
-	public static String[] split(final String line, final char delimiter,
-			final char beginQuoteChar, final char endQuoteChar) {
+	public static String[] split(final String line, final char delimiter, final char beginQuoteChar,
+			final char endQuoteChar) {
 		return split(line, delimiter, beginQuoteChar, endQuoteChar, false, true);
 	}
 
@@ -350,9 +343,8 @@ public class StringUtils {
 	 * @return the tokens discovered from parsing the given delimited
 	 *         <tt>line</tt>.
 	 */
-	public static String[] split(final String aLine, final char delimiter,
-			final char beginQuoteChar, final char endQuoteChar,
-			final boolean retainQuotes, final boolean trimTokens) {
+	public static String[] split(final String aLine, final char delimiter, final char beginQuoteChar,
+			final char endQuoteChar, final boolean retainQuotes, final boolean trimTokens) {
 		final String line = clean(aLine);
 		if (line == null) {
 			return null;
@@ -414,8 +406,7 @@ public class StringUtils {
 		return tokens.toArray(new String[tokens.size()]);
 	}
 
-	public static String[] splitKeyValue(final String aLine)
-			throws ParseException {
+	public static String[] splitKeyValue(final String aLine) throws ParseException {
 		final String line = clean(aLine);
 		if (line == null) {
 			return null;
@@ -425,10 +416,8 @@ public class StringUtils {
 			// fallback to checking for an equals sign
 			split = line.split("=", 2);
 			if (split.length != 2) {
-				final String msg = "Unable to determine Key/Value pair from line ["
-						+ line
-						+ "].  There is no space from "
-						+ "which the split location could be determined.";
+				final String msg = "Unable to determine Key/Value pair from line [" + line
+						+ "].  There is no space from " + "which the split location could be determined.";
 				throw new ParseException(msg, 0);
 			}
 
@@ -445,13 +434,12 @@ public class StringUtils {
 		}
 
 		if (split[0] == null) {
-			final String msg = "No valid key could be found in line [" + line
-					+ "] to form a key/value pair.";
+			final String msg = "No valid key could be found in line [" + line + "] to form a key/value pair.";
 			throw new ParseException(msg, 0);
 		}
 		if (split[1] == null) {
-			final String msg = "No corresponding value could be found in line ["
-					+ line + "] for key [" + split[0] + "]";
+			final String msg = "No corresponding value could be found in line [" + line + "] for key [" + split[0]
+					+ "]";
 			throw new ParseException(msg, 0);
 		}
 
@@ -474,8 +462,7 @@ public class StringUtils {
 	 *         case), <code>false</code> if it does not.
 	 * @see java.lang.String#startsWith
 	 */
-	public static boolean startsWithIgnoreCase(final String str,
-			final String prefix) {
+	public static boolean startsWithIgnoreCase(final String str, final String prefix) {
 		if ((str == null) || (prefix == null)) {
 			return false;
 		}
@@ -502,8 +489,7 @@ public class StringUtils {
 	 * @return a single string, delimited by the specified {@code delimiter}.
 	 * @since 1.0
 	 */
-	public static String toDelimitedString(final Object[] array,
-			final String delimiter) {
+	public static String toDelimitedString(final Object[] array, final String delimiter) {
 		if ((array == null) || (array.length == 0)) {
 			return EMPTY_STRING;
 		}
@@ -539,8 +525,7 @@ public class StringUtils {
 	 * @see java.util.StringTokenizer
 	 * @see java.lang.String#trim()
 	 */
-	public static String[] tokenizeToStringArray(final String str,
-			final String delimiters) {
+	public static String[] tokenizeToStringArray(final String str, final String delimiters) {
 		return tokenizeToStringArray(str, delimiters, true, true);
 	}
 
@@ -572,8 +557,7 @@ public class StringUtils {
 	 * @see java.util.StringTokenizer
 	 * @see java.lang.String#trim()
 	 */
-	public static String[] tokenizeToStringArray(final String str,
-			final String delimiters, final boolean trimTokens,
+	public static String[] tokenizeToStringArray(final String str, final String delimiters, final boolean trimTokens,
 			final boolean ignoreEmptyTokens) {
 
 		if (str == null) {
@@ -601,14 +585,12 @@ public class StringUtils {
 	 * @param delimiters
 	 * @return A collection of zero or more Strings, or null if the str was null
 	 */
-	public static Collection<? extends String> tokenizeToStringCollection(
-			final String str, final String delimiters) {
+	public static Collection<? extends String> tokenizeToStringCollection(final String str, final String delimiters) {
 
 		return tokenizeToStringCollection(str, delimiters, true, true);
 	}
 
-	public static Collection<? extends String> tokenizeToStringCollection(
-			final String str, final String delimiters,
+	public static Collection<? extends String> tokenizeToStringCollection(final String str, final String delimiters,
 			final boolean trimTokens, final boolean ignoreEmptyTokens) {
 		if (str == null) {
 			return null;

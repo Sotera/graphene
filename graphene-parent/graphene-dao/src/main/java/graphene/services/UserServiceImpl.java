@@ -142,6 +142,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 	@Override
 	public boolean deleteUser(final String userId) {
+		final List<G_Workspace> workspacesForUser = getWorkspacesForUser(userId);
+		for (final G_Workspace w : workspacesForUser) {
+			try {
+				deleteWorkspaceIfUnused(userId, w.getId());
+			} catch (final Exception e) {
+				logger.error("Could not delete workspace " + w.getId(), e);
+			}
+		}
 		return uDao.delete(userId);
 	}
 
@@ -162,8 +170,8 @@ public class UserServiceImpl implements G_UserDataAccess {
 	public boolean deleteWorkspaceIfUnused(final String userId, final String workspaceId)
 			throws UnauthorizedActionException {
 		if (uwDao.hasRelationship(userId, workspaceId, G_UserSpaceRelationshipType.CREATOR_OF)) {
-			wDao.delete(workspaceId);
 			uwDao.deleteWorkspaceRelations(workspaceId);
+			wDao.delete(workspaceId);
 			return true;
 		} else {
 			final String errorStr = "User " + userId + " did not have permission to delete Workspace " + workspaceId
@@ -274,16 +282,17 @@ public class UserServiceImpl implements G_UserDataAccess {
 				final String hash = passwordHasher.createHash(password);
 				d.setHashedpassword(hash);
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-				logger.error("Could not store hashed password for new user registration " +e.getMessage());
+				logger.error("Could not store hashed password for new user registration " + e.getMessage());
 			}
 			d.setActive(true);
 			d.setLastlogin(0l);
 			d.setNumberlogins(0);
+			logger.debug("Saving a new user...");
 			d = uDao.save(d);
 			if (ValidationUtils.isValid(d)) {
 				logger.debug("User registered!");
-
 				if (createWorkspace) {
+
 					final G_Workspace w = createFirstWorkspaceForUser(d.getId());
 					if (w == null) {
 						logger.error("Error creating new workspace for newly registered user!");
@@ -353,7 +362,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			hash = passwordHasher.createHash(newPassword);
 			success = uDao.updatePasswordHash(userId, hash);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			logger.error(e.getMessage());
+			logger.error("setUserPassword " + e.getMessage());
 		}
 		if (!success) {
 			logger.error("Problem saving password hash");

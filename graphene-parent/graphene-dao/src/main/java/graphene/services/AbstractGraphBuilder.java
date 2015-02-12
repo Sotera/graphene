@@ -99,9 +99,10 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		try {
 			// for now, prevent the log-based increase on node dimensions
 			/*
-			reportNode.setSize(getLogSize(((Double) properties.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
-					MIN_NODE_SIZE, MAX_NODE_SIZE));
-			*/
+			 * reportNode.setSize(getLogSize(((Double)
+			 * properties.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
+			 * MIN_NODE_SIZE, MAX_NODE_SIZE));
+			 */
 
 			reportNode.addData("Amount involved", (String) properties.get(DocumentGraphParser.TOTALAMOUNTSTR));
 
@@ -125,7 +126,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 				}
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error("addReportDetails " + e.getMessage());
 		}
 	}
 
@@ -210,7 +211,8 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		if (linkGenerator != null) {
 			logger.debug("Search page is defined");
 			final Link link = linkGenerator.set(null, null, null, identifier, defaultMaxResults);
-			return "<a href=\"" + link.toRedirectURI() + "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+			return "<a href=\"" + link.toRedirectURI() + "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >"
+					+ identifier + "</a>";
 		} else {
 			logger.warn("No linkGenerator search page defined");
 			final String encodedIdentifier = encoder.encode(identifier);
@@ -218,7 +220,8 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 			if (nodeType.contains("ADDRESS")) {
 				matchType = "COMPARE_EQUALS";
 			}
-			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentifier + "&match=" + matchType + "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentifier + "&match=" + matchType
+					+ "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
 		}
 	}
 

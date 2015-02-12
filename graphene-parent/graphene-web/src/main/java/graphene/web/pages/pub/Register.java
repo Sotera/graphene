@@ -148,7 +148,7 @@ public class Register {
 
 					// tell the user what's about to happen.
 					alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "You are being logged in.");
-					Thread.sleep(1000);
+
 					// do the login with the newly created user.
 					return authenticatorHelper.loginAndRedirect(username, password, rememberMe, requestGlobals,
 							loginContextService, response, messages, alertManager);
