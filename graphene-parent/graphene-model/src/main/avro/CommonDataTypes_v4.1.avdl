@@ -63,6 +63,7 @@ protocol G_CommonDataTypes {
 	IMPORTANCE,				//(411, "Importance", "importance"),
 	JSONVALUE,				//(414, "JSON", "json"),
 	LINK,					//(415, "Link", "link"),
+	MEDIA,
 	METRIC_CERTAINTY,		//(100, "Certainty", "certainty"),
 	METRIC_IMPUTED,			//(412, "Imputed", "imputed"),
 	METRIC_IMPUTEDFROM,		//(413, "Imputed From", "imputedFrom"),

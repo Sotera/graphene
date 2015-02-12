@@ -81,6 +81,17 @@ public interface DocumentGraphParser<T> {
 	 */
 	public static final String TOTALAMOUNTSTR = "totalamountinvolved";
 	public static final String CARDINAL_ORDER = "cardinalOrder";
+	
+	
+	public static final String MEDIA_ID = "mediaid";
+	public static final String MEDIA_LABEL = "medialabel";
+	public static final String MEDIA_LINK = "medialink";
+	public static final String MEDIA_OWNER = "mediaowner";
+	public static final String MEDIA_CREATED_TIME = "mediacreatedtime";
+	public static final String MEDIA_CAPTION_TEXT = "mediacaptiontext";
+	public static final String MEDIA_LIKE_COUNT = "medialikecount";
+	public static final String MEDIA_COMMENT_COUNT = "mediacommentcount";
+	public static final String MEDIA_LOCATION = "medialocation";	
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 

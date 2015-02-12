@@ -46,7 +46,7 @@ table td {
 						<h2>Results</h2>
 						<h2>[ Showing ${results.numberOfResultsReturned} hits out of
 							${results.numberOtResultsTotal} ] for ${searchValue} in ${searchTypeFilter}</h2>
-						<t:graphene.ui.searchlegend />
+						<!-- <t:graphene.ui.searchlegend /> -->
 					</header>
 					<!-- widget div-->
 					<div>
@@ -63,65 +63,45 @@ table td {
 								<p:rankCell>
 									 ${rank}
 								</p:rankCell>
+								
 								<p:actionsCell>
-									<t:if test="reportPageLink">
-										<a href="${reportPageLink}" class="btn btn-action" page="prop:reportPageLink"
-											context="reportId" target="reportId"  title="${score}">
-											<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
+									<t:if test="mediaPageLink">
+										<a href="${mediaPageLink}" class="btn btn-action" page="prop:mediaPageLink"
+											context="mediaId" target="mediaId"  title="${score}">
+											<i class="fa fa-folder-open-o"/> ${mediaId}
 										</a>
 										<br />
 										<p:else>Report View Unavailable</p:else>
 									</t:if>
 
-									<a class="btn btn-action" href="${extLink}" target="graph-${reportId}">
+									<a class="btn btn-action" href="${extLink}" target="graph-${mediaId}">
 										<i class="fa fa-code-fork"> </i> Graph
 									</a>
 								</p:actionsCell>
 
-								<p:informationIconsCell>
-									<t:loop source="iconList" value="currentIcon">
-										<span class="${currentIcon.first} label alert-info"
-											title="${currentIcon.second}">&nbsp; </span>
-									</t:loop>
-								</p:informationIconsCell>
-								<p:dateCell>
-									${currentEntity.get('firstDate')}
-								</p:dateCell>
-								<p:amountCell>
-<!-- 									${formattedAmount} -->
-								</p:amountCell>
-								<p:subjectsCell>
-									<t:loop source="nameList" value="currentName">
-										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentName)}"
-											href="${getNamePivotLink(currentName.third)}"> ${currentName.second} </a>
-										<br />
-										<br />
-									</t:loop>
-								</p:subjectsCell>
-								<p:addressListCell>
-									<t:loop source="addressList" value="currentAddress">
-										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentAddress)}"
-											href="${getAddressPivotLink(currentAddress.third)}"> ${currentAddress.second}
-										</a>
-										<br />
-									</t:loop>
-								</p:addressListCell>
-								<p:communicationIdentifierListCell>
-									<t:loop source="cIdentifierList" value="currentCommunicationId">
-										<a
-											class="btn btn-xs pivotlink"  style="${getStyleFor(currentCommunicationId)}"
-											href="${getPivotLink(currentCommunicationId.third)}">
-											${currentCommunicationId.second}</a>
-									</t:loop>
-								</p:communicationIdentifierListCell>
-								<p:identifierListCell>
-									<t:loop source="identifierList" value="currentIdentifier">
-										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentIdentifier)}"
-											href="${getPivotLink(currentIdentifier.third)}">
-											${currentIdentifier.second}</a>
-
-									</t:loop>
-								</p:identifierListCell>
+ 								<p:usernameCell>
+ 									${mediaOwner}
+								</p:usernameCell>
+								
+								<p:createdTimeCell>
+									${mediaCreatedTime}
+								</p:createdTimeCell>
+								
+ 								<p:captionTextCell>
+ 									${mediaCaption}
+								</p:captionTextCell>
+								
+								<p:likeCountCell>
+									${mediaLikeCount}
+								</p:likeCountCell>
+								
+								<p:commentCountCell>
+									${mediaCommentCount}
+								</p:commentCountCell>
+								
+								<p:locationCell>
+								</p:locationCell>
+							
 							</t:jquery.datatable>
 
 							<t:block t:id="emptyResults">

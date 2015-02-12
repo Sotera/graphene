@@ -308,7 +308,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * @return
 	 */
 	public String getExtLink() {
-		return extPath + getReportId();
+		return extPath + getMediaId();
 	}
 
 	/**
@@ -328,24 +328,21 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
 		model.addEmpty("rank");
 		model.addEmpty("actions");
+		model.addEmpty("username");
+		model.addEmpty("createdTime");
+		model.addEmpty("captionText");
+		model.addEmpty("likeCount");
+		model.addEmpty("commentCount");
+		model.addEmpty("location");
 
-		model.addEmpty("informationIcons");
-		model.addEmpty("date");
-		model.addEmpty("amount");
-		model.addEmpty("subjects");
-		model.addEmpty("addressList");
-		model.addEmpty("communicationIdentifierList");
-		model.addEmpty("identifierList");
-
-		model.getById("informationIcons").sortable(false);
 		model.getById("rank").sortable(true);
-		model.getById("amount").sortable(true);
-		model.getById("date").sortable(true);
-		model.getById("actions").sortable(true);
-		model.getById("subjects").sortable(true);
-		model.getById("addressList").sortable(true);
-		model.getById("communicationIdentifierList").sortable(true);
-		model.getById("identifierList").sortable(true);
+		model.getById("actions").sortable(false);
+		model.getById("username").sortable(true);
+		model.getById("createdTime").sortable(true);
+		model.getById("captionText").sortable(true);
+		model.getById("likeCount").sortable(true);
+		model.getById("commentCount").sortable(true);
+		model.getById("location").sortable(true);
 
 		return model;
 	}
@@ -453,7 +450,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 		//json.put("sScrollX", "100%");
 		//json.put("bScrollCollapse", false);
-		json.put("aoColumns", columnArray);
+//		json.put("aoColumns", columnArray);
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
 		
 		return json;
@@ -471,13 +468,41 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public String getReportId() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_ID);
 	}
+	
+	public String getMediaId() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
+	}
 
 	public String getReportPageLink() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_LINK);
 	}
+	
+	public String getMediaPageLink() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
+	}
+	
+	public String getMediaOwner() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
+	}
+	
+	public String getMediaCaption() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
+	}
+	
+	public String getMediaLikeCount() {
+		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
+	}
+	
+	public String getMediaCommentCount() {
+		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
+	}
 
 	public String getReportType() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_TYPE);
+	}
+	
+	public Object getMediaCreatedTime() {
+		return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
 	}
 
 	public String getScore() {
