@@ -372,7 +372,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 	public Link getNamePivotLink(final String term) {
 		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+		final Link l = searchPage.set(null, "media", G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
 		return l;
 	}
 
@@ -505,6 +505,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	
 	public String getMediaCommentCount() {
 		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
+	}
+	
+	public String getMediaLocationLatLon() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
+	}
+	
+	public String getMediaLocationName() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
 	}
 
 	public String getReportType() {

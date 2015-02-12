@@ -80,7 +80,9 @@ table td {
 								</p:actionsCell>
 
  								<p:usernameCell>
- 									${mediaOwner}
+ 									<a href="${getNamePivotLink(mediaOwner)}" class="btn btn-xs pivotlink">
+										${mediaOwner}
+									</a>
 								</p:usernameCell>
 								
 								<p:createdTimeCell>
@@ -101,12 +103,12 @@ table td {
 								
 								<p:hashtagsCell>
 									<t:loop source="hashTagsInComments" value="currentHashTag">
-										<a class="btn btn-xs pivotlink">
+										<a href="${getNamePivotLink(currentHashTag.first)}" class="btn btn-xs pivotlink">
 											${currentHashTag.first}
 										</a>
 									</t:loop>
 									<t:loop source="hashTagsInCaption" value="currentHashTag">
-										<a class="btn btn-xs pivotlink">
+										<a href="${getNamePivotLink(currentHashTag.first)}" class="btn btn-xs pivotlink">
 											${currentHashTag.first}
 										</a>
 									</t:loop>
@@ -114,18 +116,22 @@ table td {
 								
 								<p:atsCell>
 									<t:loop source="atsInComments" value="currentAt">
-										<a class="btn btn-xs pivotlink">
+										<a href="${getNamePivotLink(currentAt.first)}" class="btn btn-xs pivotlink">
 											${currentAt.first}
 										</a>
 									</t:loop>
 									<t:loop source="atsInCaption" value="currentAt">
-										<a class="btn btn-xs pivotlink">
+										<a href="${getNamePivotLink(currentAt.first)}" class="btn btn-xs pivotlink">
 											${currentAt.first}
 										</a>
 									</t:loop>
 								</p:atsCell>
 								
 								<p:locationCell>
+									${mediaLocationName}
+									<t:if test="mediaLocationLatLon">
+									<br/>${mediaLocationLatLon}
+									</t:if>
 								</p:locationCell>
 
 								
