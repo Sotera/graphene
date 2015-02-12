@@ -261,7 +261,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 						// valueToSearchOn));
 						// }
 					} catch (final Exception e) {
-						logger.error(e.getMessage());
+						logger.error("makeGraphResponse " + e.getMessage());
 					}
 					// we're done scanning this id.
 				}

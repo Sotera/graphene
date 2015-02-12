@@ -7,7 +7,7 @@ import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idlhelper.PropertyHelper;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -20,25 +20,27 @@ public class AccountExtractor extends AbstractExtractor {
 	}
 
 	@Override
-	public String getIdType() {
-		return "Potential Account";
-	}
-
 	public List<G_EntityTag> getEntityTags() {
-		List<G_EntityTag> tags = Collections.EMPTY_LIST;
+		final List<G_EntityTag> tags = new ArrayList<G_EntityTag>();
 		tags.add(G_EntityTag.ACCOUNT);
 		return tags;
 	}
 
-	public List<G_Property> getProperties() {
-		List<G_Property> tags = Collections.EMPTY_LIST;
-		tags.add(new PropertyHelper(G_PropertyTag.TYPE, getNodetype()));
-		return tags;
+	@Override
+	public String getIdType() {
+		return "Potential Account";
 	}
 
 	@Override
 	public String getNodetype() {
 		return "Extracted" + G_CanonicalPropertyType.ACCOUNT.name();
+	}
+
+	@Override
+	public List<G_Property> getProperties() {
+		final List<G_Property> tags = new ArrayList<G_Property>();
+		tags.add(new PropertyHelper(G_PropertyTag.TYPE, getNodetype()));
+		return tags;
 	}
 
 	@Override

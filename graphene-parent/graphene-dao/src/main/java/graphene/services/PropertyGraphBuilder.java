@@ -32,7 +32,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_GraphQuery> {
+public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T, V_GraphQuery> {
 
 	@Inject
 	private Logger logger;
@@ -64,52 +64,46 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 	 * @throws Exception
 	 */
 	@Override
-	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery)
-			throws Exception {
+	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery) throws Exception {
 		if (graphQuery.getMaxHops() <= 0) {
 			return new V_GenericGraph();
 		} else {
-			logger.debug("Attempting a graph for query "
-					+ graphQuery.toString());
+			logger.debug("Attempting a graph for query " + graphQuery.toString());
 		}
 
-		this.nodeList = new V_NodeList();
+		nodeList = new V_NodeList();
 
-		this.edgeMap = new HashMap<String, V_GenericEdge>();
+		edgeMap = new HashMap<String, V_GenericEdge>();
 
 		int intStatus = 0;
 		String strStatus = "Graph Loaded";
-		Set<String> scannedActors = new HashSet<String>();
+		final Set<String> scannedActors = new HashSet<String>();
 
 		// V_EdgeList savEdgeList = edgeList.clone();
 
 		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
-		G_IdType nodeType = nodeTypeAccess
-				.getCommonNodeType(G_CanonicalPropertyType.ANY);
-		for (String id : graphQuery.getSearchIds()) {
+		final G_IdType nodeType = nodeTypeAccess.getCommonNodeType(G_CanonicalPropertyType.ANY);
+		for (final String id : graphQuery.getSearchIds()) {
 
-			eq.addAttribute(new G_SearchTuple<String>(
-					G_SearchType.COMPARE_EQUALS, nodeType, id));
+			eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
 		V_NodeList savNodeList = new V_NodeList();
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
 		int currentDegree = 0;
-		for (currentDegree = 0; currentDegree < graphQuery.getMaxHops()
-				&& nodeList.getNodes().size() < graphQuery.getMaxNodes()
-				&& eq.getAttributeList().size() > 0; currentDegree++) {
+		for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
+				&& (nodeList.getNodes().size() < graphQuery.getMaxNodes()) && (eq.getAttributeList().size() > 0); currentDegree++) {
 
 			savNodeList = nodeList.clone(); // concurrent modification error!!
 			logger.debug("Processing degree " + currentDegree);
 
 			if (eq.getAttributeList().size() > 0) {
-				logger.debug("Found " + eq.getAttributeList().size()
-						+ " unscanned nodes to query on");
+				logger.debug("Found " + eq.getAttributeList().size() + " unscanned nodes to query on");
 
 				dao.performCallback(0, 0, this, eq);
 
-				for (G_SearchTuple<String> tuple : eq.getAttributeList()) {
+				for (final G_SearchTuple<String> tuple : eq.getAttributeList()) {
 					scannedActors.add(tuple.getValue());
 				}
 
@@ -117,9 +111,9 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 
 			eq = new EntityQuery();
 			// Iterate over each node found by the previous query and scan them.
-			for (V_GenericNode node : unscannedNodeList) {
+			for (final V_GenericNode node : unscannedNodeList) {
 
-				String valueToSearchOn = node.getIdVal();
+				final String valueToSearchOn = node.getIdVal();
 				// start scanning this id.
 				// logger.debug("::::Scanning valueToSearchOn " +
 				// valueToSearchOn
@@ -135,16 +129,11 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 						node.setCluster(true);
 					} else {
 						// we will search on it.
-						eq.addAttribute(
-							new G_SearchTuple<String>(
-								G_SearchType.COMPARE_EQUALS, 
-								nodeTypeAccess.getNodeType(node.getNodeType()),
-								valueToSearchOn
-							)
-						);
+						eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeTypeAccess
+								.getNodeType(node.getNodeType()), valueToSearchOn));
 					}
-				} catch (Exception e) {
-					logger.error(e.getMessage());
+				} catch (final Exception e) {
+					logger.error("makeGraphResponse " + e.getMessage());
 				}
 				// we're done scanning this id.
 
@@ -152,8 +141,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 			// very important!!
 			unscannedNodeList.clear();
 
-			logger.debug("At the end of degree " + currentDegree
-					+ ", there are" + nodeList.size() + " nodes and "
+			logger.debug("At the end of degree " + currentDegree + ", there are" + nodeList.size() + " nodes and "
 					+ edgeMap.size() + " edges");
 
 			// savNodeList = nodeList;//.clone();
@@ -166,26 +154,25 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 			nodeList = savNodeList;
 			edgeMap = saveEdgeMap;
 			intStatus = 1; // will trigger the message.
-			strStatus = "Returning only " + currentDegree
-					+ " hops, as maximum nodes you requested would be exceeded";
+			strStatus = "Returning only " + currentDegree + " hops, as maximum nodes you requested would be exceeded";
 		}
 
 		// NOW finally add in all those unique edges.
-		this.edgeList = new V_EdgeList(graphQuery);
-		for (V_GenericEdge e : edgeMap.values()) {
+		edgeList = new V_EdgeList(graphQuery);
+		for (final V_GenericEdge e : edgeMap.values()) {
 			edgeList.addEdge(e);
 		}
 
-		//nodeList.removeOrphans(edgeList);
+		// nodeList.removeOrphans(edgeList);
 		performPostProcess(graphQuery);
-		V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
+		final V_GenericGraph g = new V_GenericGraph(nodeList.getNodes(), edgeList.getEdges());
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
-		
-		for (V_LegendItem li : legendItems) {
+
+		for (final V_LegendItem li : legendItems) {
 			g.addLegendItem(li);
 		}
-		
+
 		return g;
 	}
 
@@ -196,7 +183,8 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T,V_G
 	 * 
 	 * @param graphQuery
 	 */
-	public void performPostProcess(V_GraphQuery graphQuery) {
+	@Override
+	public void performPostProcess(final V_GraphQuery graphQuery) {
 
 	}
 
