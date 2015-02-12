@@ -96,7 +96,7 @@ public class GlobalSearch {
 			selectedMaxResults = defaultMaxResults;
 		}
 		if (!ValidationUtils.isValid(selectedType)) {
-			selectedType = DataSourceListDAO.ALL_REPORTS;
+			selectedType = "media";
 		}
 		if (!ValidationUtils.isValid(availableTypes)) {
 			availableTypes = dao.getAvailableTypes();
