@@ -24,8 +24,7 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.slf4j.Logger;
 
 @PluginPage(visualType = G_VisualType.EXPERIMENTAL, menuName = "Sentiment", icon = "fa fa-lg fa-fw fa-comments")
-@Import(library = { "context:core/js/plugin/dropzone/dropzone.js",
-		"context:/core/js/startdropzone.js" })
+@Import(library = { "context:core/js/plugin/dropzone/dropzone.js", "context:/core/js/startdropzone.js" })
 public class Sentiment {
 	@Inject
 	private Request request;
@@ -40,19 +39,35 @@ public class Sentiment {
 	@Property
 	private StringWithSentiment currentSentiment;
 
+	@Property
+	@Persist
+	private boolean highlightZoneUpdates;
+
+	@InjectComponent
+	private Zone listZone;
+
+	@Inject
+	private AjaxResponseRenderer ajaxResponseRenderer;
+	@Persist
+	@Property
+	private SentimentResult sr;
+
+	public String getZoneUpdateFunction() {
+		return highlightZoneUpdates ? "highlight" : "show";
+	}
+
 	public Object onSuccessFromMydropzone() {
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				file.getStream()));
+		final BufferedReader br = new BufferedReader(new InputStreamReader(file.getStream()));
 		String line;
-		List<StringWithSentiment> list = new ArrayList<StringWithSentiment>();
+		final List<StringWithSentiment> list = new ArrayList<StringWithSentiment>();
 		try {
 			while ((line = br.readLine()) != null) {
 				logger.debug(line);
 				list.add(sa.findSentiment(line));
 			}
-		} catch (IOException e) {
-			logger.error(e.getMessage());
+		} catch (final IOException e) {
+			logger.error("onSuccessFromMydropzone" + e.getMessage());
 		}
 		sr = new SentimentResult("asdf", list);
 
@@ -62,19 +77,4 @@ public class Sentiment {
 		}
 		return this;
 	}
-
-	public String getZoneUpdateFunction() {
-		return highlightZoneUpdates ? "highlight" : "show";
-	}
-
-	@Property
-	@Persist
-	private boolean highlightZoneUpdates;
-	@InjectComponent
-	private Zone listZone;
-	@Inject
-	private AjaxResponseRenderer ajaxResponseRenderer;
-	@Persist
-	@Property
-	private SentimentResult sr;
 }

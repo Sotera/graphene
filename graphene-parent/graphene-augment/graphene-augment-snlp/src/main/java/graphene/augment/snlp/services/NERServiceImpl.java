@@ -14,18 +14,20 @@ public class NERServiceImpl implements NERService {
 	@Inject
 	private CRFClassifier<CoreLabel> classifier;
 
-	/* (non-Javadoc)
-	 * @see graphene.augment.snlp.services.NERService#getResults(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * graphene.augment.snlp.services.NERService#getResults(java.lang.String)
 	 */
 	@Override
-	public List<NERResult> getResults(String text) {
-		List<List<CoreLabel>> classify = classifier.classify(text);
-		List<NERResult> results = new ArrayList<NERResult>();
-		for (List<CoreLabel> coreLabels : classify) {
-			for (CoreLabel coreLabel : coreLabels) {
-				String word = coreLabel.word();
-				String answer = coreLabel
-						.get(CoreAnnotations.AnswerAnnotation.class);
+	public List<NERResult> getResults(final String text) {
+		final List<List<CoreLabel>> classify = classifier.classify(text);
+		final List<NERResult> results = new ArrayList<NERResult>();
+		for (final List<CoreLabel> coreLabels : classify) {
+			for (final CoreLabel coreLabel : coreLabels) {
+				final String word = coreLabel.word();
+				final String answer = coreLabel.get(CoreAnnotations.AnswerAnnotation.class);
 				if (!"O".equals(answer)) {
 					results.add(new NERResult(word, answer));
 				}
