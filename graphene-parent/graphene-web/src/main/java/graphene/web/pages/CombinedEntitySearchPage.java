@@ -514,6 +514,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public String getMediaLocationName() {
 		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
 	}
+	
+	public String getMediaThumbnail() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
+	}
 
 	public String getReportType() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_TYPE);

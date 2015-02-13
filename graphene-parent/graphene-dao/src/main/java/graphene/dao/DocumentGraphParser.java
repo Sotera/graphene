@@ -92,7 +92,8 @@ public interface DocumentGraphParser<T> {
 	public static final String MEDIA_LIKE_COUNT = "medialikecount";
 	public static final String MEDIA_COMMENT_COUNT = "mediacommentcount";
 	public static final String MEDIA_LOCATION_LATLON = "medialocationlatlon";
-	public static final String MEDIA_LOCATION_NAME = "medialocationname";	
+	public static final String MEDIA_LOCATION_NAME = "medialocationname";
+	public static final String MEDIA_THUMBNAIL = "mediathumbnail";
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 

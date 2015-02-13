@@ -66,9 +66,11 @@ table td {
 								
 								<p:actionsCell>
 									<t:if test="mediaPageLink">
-										<a href="${mediaPageLink}" class="btn btn-action" page="prop:mediaPageLink"
+										<a href="${mediaPageLink}" page="prop:mediaPageLink"
 											context="mediaId" target="mediaId"  title="${score}">
-											<i class="fa fa-folder-open-o"/> ${mediaId}
+											<img height="150" width="150" src="${mediaThumbnail}">
+											</img>
+											<!-- <i class="fa fa-folder-open-o"/> ${mediaId} -->
 										</a>
 										<br />
 										<p:else>Report View Unavailable</p:else>
