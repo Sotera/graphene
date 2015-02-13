@@ -133,8 +133,6 @@ table td {
 									<br/>${mediaLocationLatLon}
 									</t:if>
 								</p:locationCell>
-
-								
 								
 							</t:jquery.datatable>
 
@@ -151,7 +149,5 @@ table td {
 			<!-- end results area -->
 		</article>
 	</div>
-
-
 </section>
 </html>
