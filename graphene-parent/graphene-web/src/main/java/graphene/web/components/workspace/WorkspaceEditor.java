@@ -325,15 +325,19 @@ public class WorkspaceEditor {
 	}
 
 	boolean onFailureFromConfirmDeleteForm() {
-		// versionFlash = workspace.getVersion();
-		dateFlash = JodaTimeUtil.toDateTime(workspace.getModified());
-		// Rather than letting "failure" bubble up which doesn't say what you
-		// were trying to do, we trigger new event
-		// "failedDelete". It will bubble up because we don't have a handler
-		// method for it.
-		componentResources.triggerEvent(FAILED_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
-		// We don't want "failure" to bubble up, so we return true to say we've
-		// handled it.
+		if (ValidationUtils.isValid(workspace)) {
+			// versionFlash = workspace.getVersion();
+			dateFlash = JodaTimeUtil.toDateTime(workspace.getModified());
+			// Rather than letting "failure" bubble up which doesn't say what
+			// you
+			// were trying to do, we trigger new event
+			// "failedDelete". It will bubble up because we don't have a handler
+			// method for it.
+			componentResources.triggerEvent(FAILED_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
+			// We don't want "failure" to bubble up, so we return true to say
+			// we've
+			// handled it.
+		}
 		return true;
 	}
 
@@ -446,7 +450,7 @@ public class WorkspaceEditor {
 		// deleted, so we trigger new event
 		// "successfulDelete" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		if (workspace != null) {
+		if (userExists && ValidationUtils.isValid(workspace)) {
 			boolean deleted = false;
 			try {
 				deleted = userDataAccess.deleteWorkspace(user.getId(), workspace.getId());
@@ -464,7 +468,7 @@ public class WorkspaceEditor {
 			// handled it.
 			return true;
 		} else {
-			logger.error("Tried to delete a null workspace");
+			logger.error("Tried to delete a null workspace, or user does not exist");
 			// We don't want "success" to bubble up, so we return true to say
 			// we've
 			// handled it.
@@ -483,8 +487,9 @@ public class WorkspaceEditor {
 		// created, so we trigger new event
 		// "successfulCreate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		componentResources.triggerEvent(SUCCESSFUL_CREATE, new Object[] { workspace.getId() }, null);
-
+		if (ValidationUtils.isValid(workspace)) {
+			componentResources.triggerEvent(SUCCESSFUL_CREATE, new Object[] { workspace.getId() }, null);
+		}
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
 
@@ -554,7 +559,7 @@ public class WorkspaceEditor {
 
 		try {
 			workspace = userDataAccess.addNewWorkspaceForUser(user.getId(), workspace);
-			if (workspace != null) {
+			if (ValidationUtils.isValid(workspace)) {
 				logger.info("Successfully created workspace " + workspace.getId());
 				alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Successfully created workspace");
 			} else {
@@ -575,7 +580,7 @@ public class WorkspaceEditor {
 
 		try {
 			workspace = userDataAccess.saveWorkspace(user.getId(), workspace);
-			if (workspace != null) {
+			if (ValidationUtils.isValid(workspace)) {
 				if (workspace.getId().equals(currentSelectedWorkspace.getId())) {
 					currentSelectedWorkspace = workspace;
 				}

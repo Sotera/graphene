@@ -4,11 +4,13 @@ import graphene.dao.FederatedEventGraphServer;
 import graphene.dao.LoggingDAO;
 import graphene.dao.WorkspaceDAO;
 import graphene.model.graph.G_PersistedGraph;
+import graphene.model.idl.G_GraphViewEvent;
+import graphene.model.idl.G_SymbolConstants;
+import graphene.model.idl.G_User;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
-import graphene.util.ExceptionUtil;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
@@ -22,8 +24,10 @@ import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
@@ -39,10 +43,22 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@InjectService("HyperProperty")
 	private HyperGraphBuilder propertyGraphBuilder;
+	@SessionState(create = false)
+	protected G_User user;
 
+	protected boolean userExists;
 	@Inject
 	protected LoggingDAO loggingDao;
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_GRAPH_TRAVERSAL_DEGREE)
+	private int defaultMaxDegrees;
 
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_GRAPH_NODES)
+	private int defaultMaxNodes;
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_GRAPH_EDGES_PER_NODE)
+	private int defaultMaxEdgesPerNode;
 	@Inject
 	private WorkspaceDAO wdao;
 
@@ -51,11 +67,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	}
 
 	@Override
-	public V_CSGraph getEvents(final String objectType, final String[] value,
-			final String valueType, final String degree, final String maxNodes,
-			final String maxEdgesPerNode, final boolean showIcons,
-			final String minSecs, final String maxSecs,
-			final String minimumWeight, final boolean useSaved) {
+	public V_CSGraph getEvents(final String objectType, final String[] value, final String valueType,
+			final String degree, final String maxNodes, final String maxEdgesPerNode, final boolean showIcons,
+			final String minSecs, final String maxSecs, final String minimumWeight, final boolean useSaved) {
 		logger.debug("-------");
 		logger.debug("get Interaction Graph for type " + objectType);
 		logger.debug("Value     " + Arrays.toString(value));
@@ -68,12 +82,10 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("maxSecs " + maxSecs);
 		logger.debug("minimumWeight " + minimumWeight);
 		logger.debug("useSaved " + useSaved);
-		final int maxdegree = FastNumberUtils.parseIntWithCheck(degree, 3);
-		final int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
-		final int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode,
-				1000);
-		final int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight,
-				0);
+		final int maxdegree = FastNumberUtils.parseIntWithCheck(degree, defaultMaxDegrees);
+		final int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes);
+		final int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode);
+		final int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);
 		final long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
 		final long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);
 
@@ -91,16 +103,13 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		if (ValidationUtils.isValid(value)) {
 			try {
 				V_GenericGraph g = null;
-				final EventGraphBuilder gb = feg
-						.getGraphBuilderForDataSource(objectType);
+				final EventGraphBuilder gb = feg.getGraphBuilderForDataSource(objectType);
 				if (gb != null) {
-					logger.debug("Found Graph Builder for " + objectType + ": "
-							+ gb.getClass().getName());
+					logger.debug("Found Graph Builder for " + objectType + ": " + gb.getClass().getName());
 					loggingDao.recordQuery(q);
 					g = gb.makeGraphResponse(q);
 				} else {
-					logger.error("Unable to handle graph request for type "
-							+ objectType);
+					logger.error("Unable to handle graph request for type " + objectType);
 				}
 
 				m = new V_CSGraph(g, true);
@@ -117,11 +126,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	}
 
 	@Override
-	public V_CSGraph getProperties(final String type, final String[] value,
-			final String maxDegree, final String maxNodes,
-			final String maxEdgesPerNode, final boolean bipartite,
-			final boolean leafNodes, final boolean showNameNodes,
-			final boolean showIcons, final boolean useSaved) {
+	public V_CSGraph getProperties(final String type, final String[] value, final String maxDegree,
+			final String maxNodes, final String maxEdgesPerNode, final boolean bipartite, final boolean leafNodes,
+			final boolean showNameNodes, final boolean showIcons, final boolean useSaved) {
 		logger.debug("-------");
 		logger.debug("get property graph for type " + type);
 		logger.debug("Value     " + StringUtils.toString(value));
@@ -134,40 +141,45 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("showNameNodes " + showNameNodes);
 		logger.debug("useSaved " + useSaved);
 
-		final int maxDegreeInt = FastNumberUtils
-				.parseIntWithCheck(maxDegree, 6);
-		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes,
-				1000);
-		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(
-				maxEdgesPerNode, 100);
+		final int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, defaultMaxDegrees);
+		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes);
+		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode);
+		String userId = null;
+		String username = null;
+		if (userExists) {
+			userId = user.getId();
+			username = user.getUsername();
+		}
 		V_CSGraph m = null;
 		if (ValidationUtils.isValid(value) && !"null".equals(value[0])) {
+			final String firstValue = value[0];
+			final G_GraphViewEvent gve = new G_GraphViewEvent();
+			gve.setReportId(firstValue);
+			gve.setUserId(userId);
+			gve.setUserName(username);
+
 			if (useSaved) {
-				final String firstValue = value[0];
+
 				try {
 					// TODO: fix which key is going to be used as the seed
-					final G_PersistedGraph existingGraph = wdao
-							.getExistingGraph(firstValue, null, null);
+					final G_PersistedGraph existingGraph = wdao.getExistingGraph(firstValue, userId, username);
 					final ObjectMapper mapper = new ObjectMapper();
 					if (existingGraph != null) {
-						m = mapper.readValue(existingGraph.getGraphJSONdata(),
-								V_CSGraph.class);
+						m = mapper.readValue(existingGraph.getGraphJSONdata(), V_CSGraph.class);
 						if (m == null) {
 							logger.error("Could not parse existing graph from a previous save, will regenerate.");
 						} else {
-							loggingDao.recordQuery("Opened existing graph for "
-									+ firstValue);
+							gve.setReportType("Existing");
+							loggingDao.recordGraphViewEvent(gve);
 							m.setStrStatus("This graph was previously saved on "
-									+ DataFormatConstants
-											.formatDate(existingGraph
-													.getModified()));
+									+ DataFormatConstants.formatDate(existingGraph.getModified()));
 						}
 					} else {
 						logger.info("Could not find previously saved graph, will regenerate");
 					}
 
 				} catch (final Exception e) {
-					logger.error(e.getMessage());
+					logger.error("Error building graph at rest service: ", e);
 				}
 			}
 			// If pulling from cache didn't work, get a new graph
@@ -180,11 +192,17 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					q.setMaxNodes(maxNodesInt);
 					q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
 					q.setMaxHops(maxDegreeInt);
-					loggingDao.recordQuery(q);
+					if (userExists) {
+						q.setUserId(user.getId());
+						q.setUserName(user.getUsername());
+					}
+					gve.setQueryObject(q);
+					gve.setReportType("New");
+					loggingDao.recordGraphViewEvent(gve);
 					g = propertyGraphBuilder.makeGraphResponse(q);
 					m = new V_CSGraph(g, true);
 				} catch (final Exception e) {
-					logger.error(e.getMessage());
+					logger.error("Error building graph at rest service: ", e);
 				}
 			}
 
@@ -207,13 +225,11 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	}
 
 	@Override
-	public V_CSGraph getTemporalEvents(final String objectType,
-			final String[] ids, final String valueType, final String maxHops,
-			final String maxNodes, final String maxEdgesPerNode,
-			final boolean showIcons, final String minSecs,
-			final String maxSecs, final String minLinksPairOverall,
-			final String minValueAnyInteraction, final boolean daily,
-			final boolean monthly, final boolean yearly, final boolean directed)
+	public V_CSGraph getTemporalEvents(final String objectType, final String[] ids, final String valueType,
+			final String maxHops, final String maxNodes, final String maxEdgesPerNode, final boolean showIcons,
+			final String minSecs, final String maxSecs, final String minLinksPairOverall,
+			final String minValueAnyInteraction, final boolean daily, final boolean monthly, final boolean yearly,
+			final boolean directed)
 
 	{
 		logger.debug("-------");
@@ -231,15 +247,13 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 		final TemporalGraphQuery q = new TemporalGraphQuery();
 
-		q.setMaxHops(FastNumberUtils.parseIntWithCheck(maxHops, 3));
-		q.setMaxNodes(FastNumberUtils.parseIntWithCheck(maxNodes, 500));
-		q.setMaxEdgesPerNode(FastNumberUtils.parseIntWithCheck(maxEdgesPerNode,
-				50));
+		q.setMaxHops(FastNumberUtils.parseIntWithCheck(maxHops, defaultMaxDegrees));
+		q.setMaxNodes(FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes));
+		q.setMaxEdgesPerNode(FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode));
 		q.setMinLinks(FastNumberUtils.parseIntWithCheck(minLinksPairOverall, 2));
-		q.setMinTransValue(FastNumberUtils.parseIntWithCheck(
-				minValueAnyInteraction, 0));
-		q.setMinEdgeValue(FastNumberUtils.parseIntWithCheck(
-				minValueAnyInteraction, 0)); // new, djue
+		q.setMinTransValue(FastNumberUtils.parseIntWithCheck(minValueAnyInteraction, 0));
+		q.setMinEdgeValue(FastNumberUtils.parseIntWithCheck(minValueAnyInteraction, 0)); // new,
+																							// djue
 		q.setByMonth(monthly);
 		q.setByDay(daily);
 		q.setByYear(yearly);
@@ -258,32 +272,27 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			try {
 				// V_GenericGraph g = eventGraphBuilder.makeGraphResponse(gq);
 				V_GenericGraph g = null;
-				final EventGraphBuilder gb = feg
-						.getGraphBuilderForDataSource(objectType);
+				final EventGraphBuilder gb = feg.getGraphBuilderForDataSource(objectType);
 				if (gb != null) {
-					logger.debug("Found Graph Builder for " + objectType + ": "
-							+ gb.getClass().getName());
+					logger.debug("Found Graph Builder for " + objectType + ": " + gb.getClass().getName());
 					g = gb.makeGraphResponse(q);
 					if (ValidationUtils.isValid(g)) {
 						m = new V_CSGraph(g, true);
 						if (ValidationUtils.isValid(g.getNodes(), g.getEdges())) {
-							logger.debug("Made graph with "
-									+ g.getNodes().size() + " Nodes and "
-									+ g.getEdges().size() + " Edges");
+							logger.debug("Made graph with " + g.getNodes().size() + " Nodes and " + g.getEdges().size()
+									+ " Edges");
 						}
 					} else {
 						logger.error("Problem creating graph response.");
 					}
 				} else {
-					logger.error("Unable to handle graph request for type "
-							+ objectType);
+					logger.error("Unable to handle graph request for type " + objectType);
 				}
 
 			} catch (final Exception e) {
-				logger.error(e.getMessage());
-				m.setStrStatus("An error occurred when creating the graph: "
-						+ e.getMessage());
-			
+				logger.error("Error building graph: ", e);
+				m.setStrStatus("An error occurred when creating the graph: " + e.getMessage());
+
 			}
 		} else {
 			m = new V_CSGraph();
@@ -294,8 +303,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	}
 
 	@Override
-	public Response saveGraph(final String graphSeed, final String userName,
-			final String timeStamp, final String graph) {
+	public Response saveGraph(final String graphSeed, final String userName, final String timeStamp, final String graph) {
 		final G_PersistedGraph pg = new G_PersistedGraph();
 		pg.setCreated(DateTime.now().getMillis());
 		pg.setModified(DateTime.now().getMillis());
@@ -306,12 +314,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("json: " + graph);
 		final G_PersistedGraph saveGraph = wdao.saveGraph(pg);
 		if (saveGraph != null) {
-			return Response.status(200)
-					.entity("Saved " + graphSeed + " as " + saveGraph.getId())
-					.build();
+			return Response.status(200).entity("Saved " + graphSeed + " as " + saveGraph.getId()).build();
 		} else {
-			return Response.status(200).entity("Unable to save " + graphSeed)
-					.build();
+			return Response.status(200).entity("Unable to save " + graphSeed).build();
 		}
 	}
 

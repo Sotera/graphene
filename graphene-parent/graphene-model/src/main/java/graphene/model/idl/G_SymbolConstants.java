@@ -59,6 +59,24 @@ public class G_SymbolConstants {
 
 	public static final String ENABLE_DELETE_WORKSPACES = "graphene.enable-delete-workspaces";
 
+	public static final String ENABLE_DELETE_USERS = "graphene.enable-delete-users";
+
+	public static final String ENABLE_DELETE_GROUPS = "graphene.enable-delete-groups";
+
+	public static final String DEFAULT_ADMIN_ACCOUNT = "graphene.default-admin-account";
+	public static final String DEFAULT_ADMIN_PASSWORD = "graphene.default-admin-password";
+	public static final String DEFAULT_ADMIN_EMAIL = "graphene.default-admin-email";
+
+	public static final String DEFAULT_GRAPH_TRAVERSAL_DEGREE = "graphene.default-graph-traversal-degree";
+
+	public static final String DEFAULT_MAX_GRAPH_NODES = "graphene.default-max-graph-nodes";
+
+	public static final String DEFAULT_MAX_GRAPH_EDGES_PER_NODE = "graphene.default-max-graph-edges-per-node";
+
+	public static final String DEFAULT_ADMIN_GROUP_NAME = "graphene.default-admin-group-name";
+	public static final String ENABLE_AUTO_LOGIN = "graphene.enable-auto-login";
+	public static final String AUTO_LOGIN_USERNAME = "graphene.auto-login-name";
+
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}

@@ -121,9 +121,9 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 				}
 				// now we have a valid node. Attach it to the other node
 				// provided.
-				if (ValidationUtils.isValid(attachTo)) {
+				if (ValidationUtils.isValid(a, attachTo)) {
 					final String key = generateEdgeId(attachTo.getId(), relationType, a.getId());
-					if ((key != null) && !edgeMap.containsKey(key)) {
+					if ((key != null) && (edgeMap.get(key) == null)) {
 						final V_GenericEdge edge = new V_GenericEdge(a, attachTo);
 						edge.setIdType(relationType);
 						edge.setLabel(null);

@@ -1,6 +1,7 @@
 package graphene.web.services;
 
 import graphene.dao.DAOModule;
+import graphene.dao.StartupProcedures;
 import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.view.events.DirectedEventRow;
@@ -21,11 +22,14 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.services.ClasspathResourceSymbolProvider;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.EditBlockContribution;
@@ -119,9 +123,13 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.ENABLE_TAG_CLOUDS, false);
 		configuration.add(G_SymbolConstants.ENABLE_FEDERATED_LOGIN, false);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS, 200);
+		configuration.add(G_SymbolConstants.DEFAULT_GRAPH_TRAVERSAL_DEGREE, 1);
+		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_NODES, 1000);
+		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_EDGES_PER_NODE, 100);
+
 		configuration.add(G_SymbolConstants.ENABLE_FREE_TEXT_EXTRACTION, true);
 		configuration.add(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH, true);
-		configuration.add(G_SymbolConstants.ENABLE_DELETE_WORKSPACES, true);
+
 	}
 
 	@Contribute(AtmosphereHttpServletRequestFilter.class)
@@ -168,11 +176,6 @@ public class GrapheneModule {
 		configuration.add(LocalDateTime.class, "localDateTime");
 		configuration.add(LocalDate.class, "localDate");
 		configuration.add(LocalTime.class, "localTime");
-	}
-
-	public static void contributeSymbolSource(final OrderedConfiguration<SymbolProvider> configuration,
-			@InjectService("VersionSymbolProvider") final SymbolProvider c) {
-		configuration.add("VersionPropertiesFile", c, "after:SystemProperties", "before:ApplicationDefaults");
 	}
 
 	public static void contributeTopicAuthorizer(final OrderedConfiguration<TopicAuthorizer> config) {
@@ -272,9 +275,26 @@ public class GrapheneModule {
 		// End DateTime ///////////////////////////
 	}
 
+	@Contribute(SymbolSource.class)
+	public static void contributeUserConfiguration(final OrderedConfiguration<SymbolProvider> configuration) {
+		configuration.add("UserConfiguration", new ClasspathResourceSymbolProvider("users.properties"),
+				"after:SystemProperties", "before:ApplicationDefaults");
+	}
+
+	@Contribute(SymbolSource.class)
+	public static void contributeVersionSymbolProvider(final OrderedConfiguration<SymbolProvider> configuration,
+			@InjectService("VersionSymbolProvider") final SymbolProvider c) {
+		configuration.add("VersionPropertiesFile", c, "after:SystemProperties", "before:ApplicationDefaults");
+	}
+
 	@Contribute(MarkupRenderer.class)
 	public static void deactivateDefaultCSS(final OrderedConfiguration<MarkupRendererFilter> config) {
 		config.override("InjectDefaultStylesheet", null);
+	}
+
+	@Startup
+	public static void performStartupProcedures(@Inject final StartupProcedures sp) {
+		sp.initialize();
 	}
 
 	@Contribute(ValueEncoderSource.class)

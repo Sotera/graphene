@@ -1,6 +1,5 @@
 <!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
-<html t:type="graphene/layout" title="${appName}"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html t:type="graphene/layout" title="${appName}" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 <!-- Most of the page content, including <head>, <body>, etc. tags, comes 
 		from Layout.tml -->
@@ -11,22 +10,22 @@
 		<h1>Welcome to Graphene!</h1>
 		<h2>Please use the search bar above to get started.</h2>
 		<h2>If you would like to learn more about the tool, refer to the user guides in Getting Started or Advanced Help.</h2>
-		
-		<h1>Use the search bar in the upper right to initiate a search
-			across reports.</h1>
+
+		<h1>Use the search bar in the upper right to initiate a search across reports.</h1>
 		<t:if test="workspaces">
 			<p>Available Workspaces:</p>
 
-			<ul t:type="loop" source="workspaces" value="currentWorkspace">
-				<a t:type="pagelink" page="graphene/workspace/view"
-					context="currentWorkspace.id">${currentWorkspace.title}</a>
-				<t:graphene.jodatimeoutput value="currentWorkspace.modified"
-					style="LL" />
-			</ul>
-			<p:else>
-				<p>Workspaces are not available in this version or are disabled.</p>
-				<p>You are using ${appName} ${appVersion}</p>
-			</p:else>
+			<div t:type="loop" source="workspaces" value="currentWorkspace">
+				<div class="row">
+					<div class="col-md-6">
+						<a t:type="pagelink" page="graphene/workspace/view" context="currentWorkspace.id" title="Click to switch to this workspace">${currentWorkspace.title} </a>
+					</div>
+					<div class="col-md-6">
+						<t:graphene.jodatimeoutput value="currentWorkspace.modified" style="LL" />
+					</div>
+				</div>
+			</div>
+
 		</t:if>
 	</div>
 </div>

@@ -2,12 +2,10 @@ package graphene.dao.es;
 
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
-import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Index;
 import io.searchbox.indices.CreateIndex;
-import io.searchbox.indices.DeleteIndex;
 import io.searchbox.indices.IndicesExists;
 
 import java.io.IOException;
@@ -24,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BasicESDAO {
 
-	protected JestClient jestClient;
 	protected ObjectMapper mapper;
 	private String index;
 	protected Logger logger;
@@ -35,23 +32,28 @@ public class BasicESDAO {
 	@Inject
 	@Symbol(JestModule.ES_READ_DELAY_MS)
 	protected long ES_READ_DELAY_MS;
+	@Inject
+	@Symbol(JestModule.ES_DEFAULT_TIMEOUT)
+	protected String defaultESTimeout;
 
-	protected void createIndex(final JestClient jestClient, final String indexName) throws Exception {
-		logger.debug("Creating index " + indexName + " with client " + jestClient.toString());
+	protected void createIndex(final String indexName) throws Exception {
+		logger.debug("Creating index " + indexName + " with client " + c.getClient().toString());
 		// create new index (if u have this in elasticsearch.yml and prefer
 		// those defaults, then leave this out
 		final ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
 		settings.put("number_of_shards", 3);
 		settings.put("number_of_replicas", 0);
-		final JestResult execute = jestClient.execute(new CreateIndex.Builder(indexName).settings(
-				settings.build().getAsMap()).build());
+		final JestResult execute = c.getClient().execute(
+				new CreateIndex.Builder(indexName).settings(settings.build().getAsMap())
+						.setParameter("timeout", defaultESTimeout).build());
 		logger.debug(execute.toString());
 	}
 
 	public boolean delete(final String id) {
 		boolean success = false;
 		try {
-			jestClient.execute((new Delete.Builder(id)).index(index).type(type).build());
+			c.getClient().execute(
+					(new Delete.Builder(id)).index(index).type(type).setParameter("timeout", defaultESTimeout).build());
 			success = true;
 		} catch (final Exception e) {
 			logger.error("delete " + e.getMessage());
@@ -59,9 +61,8 @@ public class BasicESDAO {
 		return success;
 	}
 
-	protected void deleteIndex(final JestClient jestClient, final String indexName) throws Exception {
-		final DeleteIndex deleteIndex = new DeleteIndex.Builder(indexName).build();
-		jestClient.execute(deleteIndex);
+	protected void deleteIndex(final String indexName) throws Exception {
+		c.deleteIndex(indexName);
 	}
 
 	public String getIndex() {
@@ -82,7 +83,7 @@ public class BasicESDAO {
 			logger.warn("Index was not initialized! Cannot check for existence.");
 		} else {
 			try {
-				final JestResult result = jestClient.execute(new IndicesExists.Builder(index).build());
+				final JestResult result = c.getClient().execute(new IndicesExists.Builder(index).build());
 				success = result.isSucceeded();
 			} catch (final Exception e) {
 				logger.error("indexExists " + e.getMessage());
@@ -95,7 +96,7 @@ public class BasicESDAO {
 	public void initialize() {
 		if (!indexExists() && ValidationUtils.isValid(index)) {
 			try {
-				createIndex(jestClient, index);
+				createIndex(index);
 			} catch (final Exception e) {
 				logger.error("initialize " + e.getMessage());
 			}
@@ -104,12 +105,12 @@ public class BasicESDAO {
 
 	public void recreateIndex() {
 		try {
-			deleteIndex(jestClient, index);
+			deleteIndex(index);
 		} catch (final Exception e) {
 			logger.error("recreateIndex " + e.getMessage());
 		}
 		try {
-			createIndex(jestClient, index);
+			createIndex(index);
 		} catch (final Exception e) {
 			logger.error("recreateIndex " + e.getMessage());
 		}
@@ -117,15 +118,17 @@ public class BasicESDAO {
 
 	public String saveObject(final Object g, final String id, final String indexName, final String type) {
 		Index saveAction;
-		if (id == null) {
-			saveAction = new Index.Builder(g).index(indexName).type(type).build();
+		if (!ValidationUtils.isValid(id)) {
+			saveAction = new Index.Builder(g).index(indexName).type(type).setParameter("timeout", defaultESTimeout)
+					.build();
 		} else {
-			saveAction = new Index.Builder(g).index(indexName).id(id).type(type).build();
+			saveAction = new Index.Builder(g).index(indexName).id(id).type(type)
+					.setParameter("timeout", defaultESTimeout).build();
 		}
 		String generatedId = null;
 		try {
 
-			final JestResult result = jestClient.execute(saveAction);
+			final JestResult result = c.getClient().execute(saveAction);
 			final Object oid = result.getValue("_id");
 			if (ValidationUtils.isValid(oid)) {
 				generatedId = (StringUtils.firstNonNullToString(oid));

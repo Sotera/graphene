@@ -1,7 +1,10 @@
 package graphene.web.components.navigation;
 
+import graphene.dao.GroupDAO;
+import graphene.dao.UserGroupDAO;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
+import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.util.Triple;
 import graphene.web.annotations.PluginPage;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -30,7 +34,8 @@ public class Menu {
 	private AssetSource assetSource;
 	@Inject
 	private ComponentClassResolver componentClassResolver;
-
+	@Inject
+	private G_UserDataAccess userDataAccess;
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_ADMIN)
 	@Property
@@ -71,6 +76,16 @@ public class Menu {
 	private G_User user;
 
 	private boolean userExists;
+
+	@Inject
+	private UserGroupDAO ugDao;
+
+	@Inject
+	private GroupDAO gDao;
+
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME)
+	private String adminGroupName;
 
 	public Collection<Triple<String, String, String>> getActionPages() {
 		return menuHierarchy.get(MenuType.ACTION);
@@ -160,6 +175,23 @@ public class Menu {
 			}
 
 		}
+	}
+
+	public boolean isAdmin() {
+		boolean userIsAnAdmin = false;
+		if (userExists) {
+			try {
+				userIsAnAdmin = userDataAccess.isAdmin(user.getId());
+			} catch (final AvroRemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return userIsAnAdmin;
+	}
+
+	public boolean isShowAdmin() {
+		return enableAdmin && isAdmin();
 	}
 
 	private Class loadClass(final String className) {

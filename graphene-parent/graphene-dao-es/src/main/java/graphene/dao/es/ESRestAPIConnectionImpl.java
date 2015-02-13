@@ -13,6 +13,7 @@ import io.searchbox.core.Search;
 import io.searchbox.core.Search.Builder;
 import io.searchbox.core.SearchResult;
 import io.searchbox.indices.CreateIndex;
+import io.searchbox.indices.DeleteIndex;
 
 import javax.annotation.Nullable;
 
@@ -69,10 +70,11 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				final ImmutableSettings.Builder sb = ImmutableSettings.settingsBuilder();
 				sb.put("number_of_shards", shards);
 				sb.put("number_of_replicas", replicas);
-				client.execute(new CreateIndex.Builder(indexName).settings(sb.build().getAsMap()).build());
+				client.execute(new CreateIndex.Builder(indexName).settings(sb.build().getAsMap())
+						.setParameter("timeout", defaultESTimeout).build());
 			} else {
 				logger.debug("Creating index " + indexName + " with default settings");
-				client.execute(new CreateIndex.Builder(indexName).build());
+				client.execute(new CreateIndex.Builder(indexName).setParameter("timeout", defaultESTimeout).build());
 			}
 		} catch (final Exception e) {
 			logger.error("createIndex " + e.getMessage());
@@ -95,14 +97,25 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 		}
 	}
 
+	@Override
+	public void deleteIndex(final String indexName) throws Exception {
+		final DeleteIndex deleteIndex = new DeleteIndex.Builder(indexName).setParameter("timeout", defaultESTimeout)
+				.build();
+		client.execute(deleteIndex);
+	}
+
 	private String executeAction(final Builder sb) {
-		final Search action = sb.build();
+		final Search action = sb.setParameter("timeout", defaultESTimeout).build();
 		logger.debug("Action:\n" + action.toString());
 		SearchResult result;
 		String resultString = null;
 		try {
 			result = client.execute(action);
-			resultString = result.getJsonString();
+			if (result != null) {
+				resultString = result.getJsonString();
+			} else {
+				logger.error("Result string was null for action " + action.toString());
+			}
 		} catch (final Exception e) {
 			logger.error("executeAction " + e.getMessage());
 		}
@@ -171,7 +184,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			final QueryBuilder qb = QueryBuilders.matchQuery(fieldName, term);
 			final SearchSourceBuilder query = searchSourceBuilder.query(qb);
-			final Count action = new Count.Builder().addIndex(index).query(query.toString()).build();
+			final Count action = new Count.Builder().addIndex(index).query(query.toString())
+					.setParameter("timeout", defaultESTimeout).build();
 			final CountResult result = client.execute(action);
 			final long longCount = result.getCount().longValue();
 			logger.debug("Found a count of: " + longCount);
@@ -194,7 +208,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			schema = indexName;
 		}
 		final Builder sb = new Search.Builder("").addIndex(schema).setParameter("from", q.getFirstResult())
-				.setParameter("size", q.getMaxResult());
+				.setParameter("timeout", defaultESTimeout).setParameter("size", q.getMaxResult());
 		if (ValidationUtils.isValid(q.getFilters())) {
 			sb.addType(q.getFilters());
 		}
@@ -292,7 +306,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final QueryBuilder qb = QueryBuilders.matchQuery(fieldName, term);
 			searchSourceBuilder.query(qb);
 			final Builder sb = new Search.Builder(searchSourceBuilder.toString()).addIndex(index)
-					.setParameter("from", from).setParameter("size", size);
+					.setParameter("timeout", defaultESTimeout).setParameter("from", from).setParameter("size", size);
 			return executeAction(sb);
 		} catch (final Exception e) {
 			logger.error("performQuery " + e.getMessage());

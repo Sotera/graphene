@@ -13,8 +13,6 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.util.SavedRequest;
-import org.apache.shiro.web.util.WebUtils;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
@@ -125,35 +123,44 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 		try {
 			currentUser.login(token);
 			login(grapheneLogin, graphenePassword);
-			final SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(requestGlobals.getHTTPServletRequest());
+			// final SavedRequest savedRequest =
+			// WebUtils.getAndClearSavedRequest(requestGlobals.getHTTPServletRequest());
+			//
+			// if ((savedRequest != null) &&
+			// savedRequest.getMethod().equalsIgnoreCase("GET")) {
+			// if (ValidationUtils.isValid(savedRequest.getRequestUrl())) {
+			// response.sendRedirect(savedRequest.getRequestUrl());
+			// logger.debug("A redirect request was sent, returning null response for authentication helper.");
+			// //
+			// loginContextService.redirectToSavedRequest(savedRequest.getRequestUrl());
+			// // return savedRequest.getRequestUrl();
+			// return null;
+			// } else {
+			// logger.warn("Can't redirect to saved request.");
+			// return loginContextService.getSuccessPage();
+			// }
+			// }
 
-			if ((savedRequest != null) && savedRequest.getMethod().equalsIgnoreCase("GET")) {
-				if (ValidationUtils.isValid(savedRequest.getRequestUrl())) {
-					response.sendRedirect(savedRequest.getRequestUrl());
-					logger.debug("A redirect request was sent, returning null response for authentication helper.");
-					// loginContextService.redirectToSavedRequest(savedRequest.getRequestUrl());
-					return null;
-				} else {
-					logger.warn("Can't redirect to saved request.");
-					return loginContextService.getSuccessPage();
-				}
-			} else if (redirectToSavedUrl) {
+			if (redirectToSavedUrl) {
 				String requestUri = loginContextService.getSuccessPage();
 				if (!requestUri.startsWith("/")) {
 					requestUri = "/" + requestUri;
 				}
-				// loginContextService.redirectToSavedRequest(requestUri);
+				loginContextService.redirectToSavedRequest(requestUri);
 				// this isn't working but should: return requestUri;
-				return loginContextService.getSuccessPage();
+				// return loginContextService.getSuccessPage();
+				return null;
 			}
-			// Cookie[] cookies =
 			// requestGlobals.getHTTPServletRequest().getCookies();
-			// if (cookies != null) for (Cookie cookie : cookies) if
-			// (WebUtils.SAVED_REQUEST_KEY.equals(cookie.getName())) {
-			// String requestUri = cookie.getValue();
+			// if (cookies != null) {
+			// for (final Cookie cookie : cookies) {
+			// if (WebUtils.SAVED_REQUEST_KEY.equals(cookie.getName())) {
+			// final String requestUri = cookie.getValue();
 			// WebUtils.issueRedirect(requestGlobals.getHTTPServletRequest(),
 			// requestGlobals.getHTTPServletResponse(), requestUri);
 			// return null;
+			// }
+			// }
 			// }
 			return loginContextService.getSuccessPage();
 		} catch (final UnknownAccountException e) {

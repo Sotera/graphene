@@ -22,24 +22,20 @@ import org.tynamo.security.services.impl.SecurityFilterChain;
 
 @SubModule({ SecurityModule.class })
 public class NoSecurityModule {
-	public static void bind(ServiceBinder binder) {
-		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class)
-				.eagerLoad();
+	public static void bind(final ServiceBinder binder) {
+		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class).eagerLoad();
 		binder.bind(Realm.class, NoSecurityRealm.class).eagerLoad();
 	}
 
 	@Contribute(ValidatorMacro.class)
-	public static void combineValidators(
-			MappedConfiguration<String, String> configuration) {
+	public static void combineValidators(final MappedConfiguration<String, String> configuration) {
 		configuration.add("username", "required, minlength=3, maxlength=15");
 		configuration.add("password", "required, minlength=6, maxlength=12");
 	}
 
-	public static void contributeApplicationDefaults(
-			MappedConfiguration<String, String> configuration) {
+	public static void contributeApplicationDefaults(final MappedConfiguration<String, String> configuration) {
 		configuration.add(SecuritySymbols.LOGIN_URL, "/graphene/pub/login");
-		configuration.add(SecuritySymbols.UNAUTHORIZED_URL,
-				"/graphene/infrastructure/pagedenied");
+		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/infrastructure/pagedenied");
 		configuration.add(SecuritySymbols.SUCCESS_URL, "/graphene/index");
 		configuration.add(SecuritySymbols.REDIRECT_TO_SAVED_URL, "true");
 
@@ -51,12 +47,6 @@ public class NoSecurityModule {
 		configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "1");
 	}
 
-	@Contribute(WebSecurityManager.class)
-	public static void contributeWebSecurityManager(
-			Configuration<Realm> configuration, Realm grapheneSecurityRealm) {
-		configuration.add(grapheneSecurityRealm);
-	}
-
 	// @Contribute(HttpServletRequestFilter.class)
 	// @Marker(Security.class)
 	// public static void setupSecurity(
@@ -66,13 +56,17 @@ public class NoSecurityModule {
 	// // Set everything to anonymous access
 	// configuration.add(factory.createChain("/**").add(factory.anon()).build());
 	// }
-	public static void contributeSecurityConfiguration(
-			Configuration<SecurityFilterChain> configuration,
-			SecurityFilterChainFactory factory) {
+	public static void contributeSecurityConfiguration(final Configuration<SecurityFilterChain> configuration,
+			final SecurityFilterChainFactory factory) {
 		// /authc/** rule covers /authc , /authc?q=name /authc#anchor urls as
 		// well
-		configuration.add(factory.createChain("/**").add(factory.anon())
-				.build());
+		configuration.add(factory.createChain("/**").add(factory.anon()).build());
+	}
+
+	@Contribute(WebSecurityManager.class)
+	public static void contributeWebSecurityManager(final Configuration<Realm> configuration,
+			final Realm grapheneSecurityRealm) {
+		configuration.add(grapheneSecurityRealm);
 	}
 
 	/**
@@ -81,14 +75,14 @@ public class NoSecurityModule {
 	 * @param config
 	 */
 	@Contribute(ApplicationStateManager.class)
-	public void provideStateCreators(
-			MappedConfiguration<Class, ApplicationStateContribution> config) {
-		ApplicationStateCreator<G_Workspace> creator = new ApplicationStateCreator<G_Workspace>() {
+	public void provideStateCreators(final MappedConfiguration<Class, ApplicationStateContribution> config) {
+		final ApplicationStateCreator<G_Workspace> creator = new ApplicationStateCreator<G_Workspace>() {
+			@Override
 			public G_Workspace create() {
 				return new G_Workspace();
 			}
 		};
-		ApplicationStateContribution contribution = new ApplicationStateContribution(
+		final ApplicationStateContribution contribution = new ApplicationStateContribution(
 				PersistenceConstants.SESSION, creator);
 		config.add(G_Workspace.class, contribution);
 	}

@@ -8,7 +8,7 @@ import graphene.model.idl.G_Property;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PhoneExtractor  extends AbstractExtractor {
+public class PhoneExtractor extends AbstractExtractor {
 	/*
 	 * http://stackoverflow.com/questions/2113908/what-regular-expression-will-match
 	 * -valid-international-phone-numbers
@@ -41,12 +41,17 @@ public class PhoneExtractor  extends AbstractExtractor {
 	 */
 	private final static String RE_PHONE5 = "(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[\\-\\.\\ \\\\\\/]?)?((?:\\(?\\d{1,}\\)?[\\-\\.\\ \\\\\\/]?){0,})(?:[\\-\\.\\ \\\\\\/]?(?:#|ext\\.?|extension|x)[\\-\\.\\ \\\\\\/]?(\\d+))?";
 
-private final static String RE_PHONE6 = "((\\d{1,5}[\\s-.]*){2,5}})";
+	private final static String RE_PHONE6 = "((\\d{1,5}[\\s-.]*){2,5}})";
+
 	public PhoneExtractor() {
 		p = Pattern.compile(RE_PHONE6);
 	}
 
-	
+	@Override
+	public List<G_EntityTag> getEntityTags() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public String getIdType() {
@@ -55,7 +60,13 @@ private final static String RE_PHONE6 = "((\\d{1,5}[\\s-.]*){2,5}})";
 
 	@Override
 	public String getNodetype() {
-		return "Extracted"+ G_CanonicalPropertyType.PHONE.name();
+		return "Extracted" + G_CanonicalPropertyType.PHONE.name();
+	}
+
+	@Override
+	public List<G_Property> getProperties() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -66,21 +77,5 @@ private final static String RE_PHONE6 = "((\\d{1,5}[\\s-.]*){2,5}})";
 	@Override
 	public String getRelationValue() {
 		return "Potential Phone Number";
-	}
-
-
-
-	@Override
-	public List<G_EntityTag> getEntityTags() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-	@Override
-	public List<G_Property> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

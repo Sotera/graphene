@@ -130,6 +130,10 @@ protocol G_UserDataAccess {
 	 * @return a user object.
 	 */
 	 G_User registerUser(G_User d, string password, boolean createWorkspace);
+	/**
+	 * Adds admin group to the user.
+	 */
+	 G_User makeAdmin(G_User d);
 
 	 /**
 	  * Remove all relationships between the supplied username and the supplied workspace id
@@ -181,6 +185,11 @@ protocol G_UserDataAccess {
 	  */
 	 boolean usernameExists(string username);
 	 
+	 	 /**
+	  * Return true if the userid is an admin, false otherwise
+	  */
+	 boolean isAdmin(string userid);
+	 
 	 /**
 	  * Given a partial username, return results between offset and offset+limit
 	  */
@@ -194,7 +203,10 @@ protocol G_UserDataAccess {
 	  * Given an id, return a list of Roles
 	  */
 	 array<G_Role> getRolesByUser(string userId);
-	
+		/**
+	  * Given a string role, return a list of G_Permission
+	  */
+	 array<G_Group> getGroupsByUserId(string userid);
 	/**
 	  * Given a string role, return a list of G_Permission
 	  */

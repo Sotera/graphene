@@ -3,7 +3,9 @@
  */
 package graphene.dao;
 
+import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
+import graphene.model.idl.G_UserLoginEvent;
 import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityQuery;
 
@@ -11,8 +13,6 @@ import java.util.List;
 
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
-
-import org.joda.time.DateTime;
 
 /**
  * An empty implementation of the logging interface.
@@ -30,6 +30,12 @@ public class LoggingDAONullImpl implements LoggingDAO {
 
 	@Override
 	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int limit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_GraphViewEvent> getGraphViewEvents(final String userId, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -55,6 +61,13 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see graphene.dao.LoggingDAO#recordLogin(java.lang.String,
+	 * org.joda.time.DateTime)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see graphene.dao.LoggingDAO#recordExport(java.lang.String)
 	 */
 	@Override
@@ -63,16 +76,16 @@ public class LoggingDAONullImpl implements LoggingDAO {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see graphene.dao.LoggingDAO#recordLogin(java.lang.String,
-	 * org.joda.time.DateTime)
-	 */
 	@Override
-	public boolean recordLogin(final String userName, final DateTime date) {
+	public void recordGraphViewEvent(final G_GraphViewEvent q) {
 		// TODO Auto-generated method stub
-		return false;
+
+	}
+
+	@Override
+	public void recordLoginEvent(final G_UserLoginEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/*
@@ -85,17 +98,6 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	public void recordQuery(final BasicQuery sq) {
 		// TODO Auto-generated method stub
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see graphene.dao.LoggingDAO#recordQuery(java.lang.String)
-	 */
-	@Override
-	public boolean recordQuery(final String queryString) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * Start page of application.
  */
 
-@PluginPage(visualType = G_VisualType.TOP, menuName = "Workspaces", icon = "fa fa-lg fa-fw fa-home")
+@PluginPage(visualType = G_VisualType.HIDDEN, menuName = "Workspaces", icon = "fa fa-lg fa-fw fa-home")
 public class Index extends SimpleBasePage {
 
 	@Property

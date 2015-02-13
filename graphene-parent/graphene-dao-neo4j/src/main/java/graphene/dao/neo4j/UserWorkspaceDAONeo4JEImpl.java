@@ -22,16 +22,20 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
-public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE
-		implements UserWorkspaceDAO {
+public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements UserWorkspaceDAO {
+
+	@Inject
+	private WorkspaceDAO workspaceDAO;
+
+	@Inject
+	private UserDAO userDAO;
 
 	@Override
-	public boolean addRelationToWorkspace(String userId,
-			G_UserSpaceRelationshipType rel, String id) {
+	public boolean addRelationToWorkspace(final String userId, final G_UserSpaceRelationshipType rel, final String id) {
 		boolean success = false;
 		boolean createRelationship = true;
-		Node u = getUserNodeById(userId);
-		Node w = getWorkspaceNodeById(id);
+		final Node u = getUserNodeById(userId);
+		final Node w = getWorkspaceNodeById(id);
 		if (u == null) {
 			logger.error("Could not find user " + userId);
 			return false;
@@ -40,7 +44,7 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE
 			return false;
 		}
 		try (Transaction tx = beginTx()) {
-			for (Relationship r : u.getRelationships(relfunnel.to(rel))) {
+			for (final Relationship r : u.getRelationships(relfunnel.to(rel))) {
 				logger.debug("r.getEndNode().getId() " + r.getEndNode().getId());
 				logger.debug("wNode.getId() " + u.getId());
 				if (r.getEndNode().getId() == w.getId()) {
@@ -66,20 +70,41 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE
 	}
 
 	@Override
-	public List<G_Workspace> getWorkspacesForUser(String userId) {
-		List<G_Workspace> list = new ArrayList<G_Workspace>();
+	public int countUsersForWorkspace(final String workspaceId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean deleteWorkspaceRelations(final String workspaceId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<G_UserWorkspace> getAllWorkspaceRelations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_User> getUsersForWorkspace(final String workspaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_Workspace> getWorkspacesForUser(final String userId) {
+		final List<G_Workspace> list = new ArrayList<G_Workspace>();
 		try (Transaction tx = beginTx()) {
-			String queryString = "match (n:"
-					+ GrapheneNeo4JConstants.userLabel.name() + ")-[r:"
-					+ G_UserSpaceRelationshipType.EDITOR_OF.name()
-					+ "]-w where n." + G_UserFields.id + " = '" + userId
+			final String queryString = "match (n:" + GrapheneNeo4JConstants.userLabel.name() + ")-[r:"
+					+ G_UserSpaceRelationshipType.EDITOR_OF.name() + "]-w where n." + G_UserFields.id + " = '" + userId
 					+ "' return w";
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			ResourceIterator<Object> resultIterator = n4jService
-					.getExecutionEngine().execute(queryString, parameters)
-					.columnAs("w");
+			final Map<String, Object> parameters = new HashMap<String, Object>();
+			final ResourceIterator<Object> resultIterator = n4jService.getExecutionEngine()
+					.execute(queryString, parameters).columnAs("w");
 			while (resultIterator.hasNext()) {
-				G_Workspace d = workspaceFunnel.from((Node) resultIterator.next());
+				final G_Workspace d = workspaceFunnel.from((Node) resultIterator.next());
 				if (d != null) {
 					list.add(d);
 				}
@@ -92,54 +117,45 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE
 	}
 
 	@Override
-	public boolean hasRelationship(String userId, String id,
-			G_UserSpaceRelationshipType... rel) {
-		Node u = getUserNodeById(userId);
-		Node w = getWorkspaceNodeById(id);
-		if (u == null || w == null) {
+	public boolean hasRelationship(final String userId, final String id, final G_UserSpaceRelationshipType... rel) {
+		final Node u = getUserNodeById(userId);
+		final Node w = getWorkspaceNodeById(id);
+		if ((u == null) || (w == null)) {
 			logger.warn("Could not find the user or workspace requested.");
 			return false;
 		}
 		boolean has = false;
 		try (Transaction tx = beginTx()) {
 			// iterate through all the relationships of the given types.
-			List<RelationshipType> relList = new ArrayList<RelationshipType>();
-			for (G_UserSpaceRelationshipType r : rel) {
+			final List<RelationshipType> relList = new ArrayList<RelationshipType>();
+			for (final G_UserSpaceRelationshipType r : rel) {
 				relList.add(relfunnel.to(r));
 			}
-			Iterable<Relationship> matchingRels = w.getRelationships(relList
-					.toArray(new RelationshipType[0]));
-			for (Relationship r : matchingRels) {
+			final Iterable<Relationship> matchingRels = w.getRelationships(relList.toArray(new RelationshipType[0]));
+			for (final Relationship r : matchingRels) {
 				if (r.getStartNode().getId() == u.getId()) {
 					has = true;
 					break;
 				}
 			}
 			tx.success();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error(ExceptionUtil.getRootCauseMessage(e));
 		}
 		return has;
 	}
 
-	@Inject
-	private WorkspaceDAO workspaceDAO;
-	@Inject
-	private UserDAO userDAO;
-
 	@Override
-	public boolean removeUserFromWorkspace(String userId, String workspaceId) {
+	public boolean removeUserFromWorkspace(final String userId, final String workspaceId) {
 		boolean success = false;
 		Node uNode, wNode;
 		uNode = getUserNodeById(userId);
 		wNode = getWorkspaceNodeById(workspaceId);
-		if (uNode != null && wNode != null) {
+		if ((uNode != null) && (wNode != null)) {
 			try (Transaction tx = beginTx()) {
 
-				for (Relationship r : uNode.getRelationships(relfunnel
-						.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
-					logger.debug("r.getEndNode().getId() "
-							+ r.getEndNode().getId());
+				for (final Relationship r : uNode.getRelationships(relfunnel.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
+					logger.debug("r.getEndNode().getId() " + r.getEndNode().getId());
 					logger.debug("wNode.getId() " + wNode.getId());
 					if (r.getEndNode().getId() == wNode.getId()) {
 						r.delete();
@@ -154,21 +170,18 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE
 	}
 
 	@Override
-	public boolean removeUserPermissionFromWorkspace(String userId,
-			String permission, String workspaceId) {
+	public boolean removeUserPermissionFromWorkspace(final String userId, final String permission,
+			final String workspaceId) {
 		boolean success = false;
 		Node uNode, wNode;
 		uNode = getUserNodeById(userId);
 		wNode = getWorkspaceNodeById(workspaceId);
-		G_UserSpaceRelationshipType rel = G_UserSpaceRelationshipType
-				.valueOf(permission);
-		if (uNode != null && wNode != null) {
+		final G_UserSpaceRelationshipType rel = G_UserSpaceRelationshipType.valueOf(permission);
+		if ((uNode != null) && (wNode != null)) {
 			try (Transaction tx = beginTx()) {
-				for (Relationship r : uNode.getRelationships(relfunnel
-						.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
+				for (final Relationship r : uNode.getRelationships(relfunnel.to(G_UserSpaceRelationshipType.EDITOR_OF))) {
 					if (r.getOtherNode(uNode).equals(wNode)) {
-						logger.info("Removing relationship '" + rel
-								+ "' between " + userId + " and " + workspaceId);
+						logger.info("Removing relationship '" + rel + "' between " + userId + " and " + workspaceId);
 						r.delete();
 						success = true;
 						break;
@@ -181,27 +194,9 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE
 	}
 
 	@Override
-	public G_UserWorkspace save(G_UserWorkspace g) {
+	public G_UserWorkspace save(final G_UserWorkspace g) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public List<G_User> getUsersForWorkspace(String workspaceId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int countUsersForWorkspace(String workspaceId) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean deleteWorkspaceRelations(String workspaceId) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

@@ -18,8 +18,21 @@ public interface UserWorkspaceDAO {
 	 * @param workspaceid
 	 * @return
 	 */
-	public boolean addRelationToWorkspace(String userid,
-			G_UserSpaceRelationshipType rel, String workspaceid);
+	public boolean addRelationToWorkspace(String userid, G_UserSpaceRelationshipType rel, String workspaceid);
+
+	public int countUsersForWorkspace(String workspaceId);
+
+	/**
+	 * Usually called when deleting a workspace, we want to cascade the deletion
+	 * of any relations to the deleted workspace!
+	 * 
+	 * @param workspaceId
+	 */
+	public boolean deleteWorkspaceRelations(String workspaceId);
+
+	public List<G_UserWorkspace> getAllWorkspaceRelations();
+
+	public List<G_User> getUsersForWorkspace(String workspaceId);
 
 	public List<G_Workspace> getWorkspacesForUser(String userId);
 
@@ -33,27 +46,13 @@ public interface UserWorkspaceDAO {
 	 * @param rel
 	 * @return true if the user had one or more of the rels to the workspace
 	 */
-	public boolean hasRelationship(String userId, String workspaceid,
-			G_UserSpaceRelationshipType... rel);
-
-	public boolean removeUserFromWorkspace(String userId, String workspaceId);
-
-	public boolean removeUserPermissionFromWorkspace(String userId,
-			String permission, String workspaceId);
+	public boolean hasRelationship(String userId, String workspaceid, G_UserSpaceRelationshipType... rel);
 
 	public void initialize() throws DataAccessException;
 
+	public boolean removeUserFromWorkspace(String userId, String workspaceId);
+
+	public boolean removeUserPermissionFromWorkspace(String userId, String permission, String workspaceId);
+
 	public G_UserWorkspace save(G_UserWorkspace g);
-
-	public List<G_User> getUsersForWorkspace(String workspaceId);
-
-	public int countUsersForWorkspace(String workspaceId);
-
-	/**
-	 * Usually called when deleting a workspace, we want to cascade the deletion
-	 * of any relations to the deleted workspace!
-	 * 
-	 * @param workspaceId
-	 */
-	public boolean deleteWorkspaceRelations(String workspaceId);
 }

@@ -9,15 +9,21 @@ import java.util.List;
 
 public interface UserGroupDAO {
 
-	public boolean addToGroup(String username, String groupname);
+	public boolean addToGroup(String userId, String groupId);
 
-	public List<G_User> getUsersByGroup(String groupName);
+	public abstract List<G_UserGroup> getGroupMembershipsForGroupId(String groupId);
 
-	public List<G_Group> getGroupsForUser(String username);
+	public abstract List<G_UserGroup> getGroupMembershipsForUserIdAndGroupId(final String userId, final String groupId);
+
+	public List<G_UserGroup> getGroupMembershipsForUserId(String userId);
+
+	public List<G_Group> getGroupsForUserId(String userId);
+
+	public List<G_User> getUsersByGroupId(String groupId);
+
+	public void initialize() throws DataAccessException;
 
 	public boolean removeFromGroup(String userId, String groupId);
-
-	public void initialize()  throws DataAccessException;
 
 	public G_UserGroup save(G_UserGroup g);
 }

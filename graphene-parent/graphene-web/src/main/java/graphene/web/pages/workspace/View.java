@@ -175,8 +175,12 @@ public class View extends SimpleBasePage {
 
 	@SetupRender
 	private void loadQueries() {
-		searchQueryList = currentSelectedWorkspace.getQueryObjects();
-		reportViewList = currentSelectedWorkspace.getSavedReports();
+		if (currentSelectedWorkspaceExists) {
+			searchQueryList = currentSelectedWorkspace.getQueryObjects();
+			reportViewList = currentSelectedWorkspace.getSavedReports();
+		} else {
+			logger.warn("No current workspace selected, so viewer will not show anything.");
+		}
 	}
 
 	void onActivate(final String workspaceId) {

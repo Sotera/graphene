@@ -48,7 +48,7 @@
 							</li>
 						</ul></li>
 				</t:if>
-				<t:if test="enableAdmin">
+				<t:if test="showAdmin">
 					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
 							<span class="menu-item-parent">Admin</span>
 					</a>

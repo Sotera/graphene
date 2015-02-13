@@ -289,7 +289,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	public boolean removeEdge(final String fromId, final String relationType, final String toId,
 			final String relationValue) {
-		if (ValidationUtils.isValid(fromId, toId)) {
+		if (ValidationUtils.isValid(fromId, relationType, toId)) {
 			final String key = generateEdgeId(fromId, relationType, toId);
 			final V_GenericEdge removedEdge = edgeMap.remove(key);
 			if (removedEdge != null) {

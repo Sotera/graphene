@@ -40,12 +40,9 @@ public interface CSGraphServerRS {
 	@Produces("application/json")
 	public abstract V_CSGraph getEvents(
 			@PathParam("objectType") String objectType, // Dataset name etc
-			@PathParam("value") String[] value,
-			@QueryParam("Type") String valueType,
-			@QueryParam("degree") @DefaultValue(value = "3") String degree,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-			@QueryParam("showIcons") boolean showIcons,
+			@PathParam("value") String[] value, @QueryParam("Type") String valueType,
+			@QueryParam("degree") String degree, @QueryParam("maxNodes") String maxNodes,
+			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode, @QueryParam("showIcons") boolean showIcons,
 			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
 			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
 			@QueryParam("minWeight") String minimumWeight,
@@ -69,15 +66,10 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/json")
-	public abstract V_CSGraph getProperties(
-			@PathParam("type") String type,
-			@PathParam("value") String[] value,
-			@QueryParam("degree") @DefaultValue(value = "3") String degree,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-			@QueryParam("bipartite") boolean bipartite,
-			@QueryParam("showLeafNodes") boolean leafNodes,
-			@QueryParam("showNameNodes") boolean showNameNodes,
+	public abstract V_CSGraph getProperties(@PathParam("type") String type, @PathParam("value") String[] value,
+			@QueryParam("degree") String degree, @QueryParam("maxNodes") String maxNodes,
+			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode, @QueryParam("bipartite") boolean bipartite,
+			@QueryParam("showLeafNodes") boolean leafNodes, @QueryParam("showNameNodes") boolean showNameNodes,
 			@QueryParam("showIcons") boolean showIcons,
 			@QueryParam("useSaved") @DefaultValue(value = "true") boolean useSaved);
 
@@ -112,13 +104,9 @@ public interface CSGraphServerRS {
 	@GET
 	@Path("/interactiongraph/{objectType}")
 	@Produces("application/json")
-	public V_CSGraph getTemporalEvents(
-			@PathParam("objectType") String objectType,
-			@QueryParam("ids") String[] ids,
-			@QueryParam("Type") String valueType,
-			@QueryParam("maxHops") @DefaultValue(value = "3") String maxHops,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
+	public V_CSGraph getTemporalEvents(@PathParam("objectType") String objectType, @QueryParam("ids") String[] ids,
+			@QueryParam("Type") String valueType, @QueryParam("maxHops") String maxHops,
+			@QueryParam("maxNodes") String maxNodes, @QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
 			@QueryParam("showIcons") boolean showIcons,
 			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
 			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
@@ -135,9 +123,7 @@ public interface CSGraphServerRS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/save")
 	@Produces("text/plain")
-	Response saveGraph(
-			@QueryParam("seed") @DefaultValue(value = "unknown") String graphSeed,
+	Response saveGraph(@QueryParam("seed") @DefaultValue(value = "unknown") String graphSeed,
 			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
-			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
-			String graph);
+			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp, String graph);
 }

@@ -11,8 +11,10 @@ import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_Permission;
 import graphene.model.idl.G_Role;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idl.G_UserGroup;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
@@ -25,6 +27,7 @@ import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
@@ -53,6 +56,10 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Inject
 	private WorkspaceDAO wDao;
 
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME)
+	private String adminGroupName;
+
 	@Override
 	public G_Workspace addNewWorkspaceForUser(final String userId, final G_Workspace workspace) {
 		// save the workspace
@@ -69,7 +76,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			}
 
 		} catch (final Exception e) {
-			logger.error("Could not create editor relationship for workspace " + e.getMessage());
+			logger.error("Could not create editor relationship for workspace ", e);
 		}
 		return workspace;
 	}
@@ -201,6 +208,12 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
+	public List<G_Group> getGroupsByUserId(final String userId) throws AvroRemoteException {
+
+		return ugDao.getGroupsForUserId(userId);
+	}
+
+	@Override
 	public List<G_Permission> getPermissionsByRole(final G_Role role) throws AvroRemoteException {
 		return pDao.getForRole(role);
 	}
@@ -256,6 +269,23 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
+	public boolean isAdmin(final String userId) {
+		boolean userIsAnAdmin = false;
+
+		final G_Group group = gDao.getGroupByGroupname(adminGroupName);
+		if (ValidationUtils.isValid(group)) {
+
+			final List<G_UserGroup> list = ugDao.getGroupMembershipsForUserIdAndGroupId(userId, group.getId());
+			if (ValidationUtils.isValid(list)) {
+				userIsAnAdmin = true;
+			}
+		} else {
+			logger.error("Could not find admin group with name " + adminGroupName);
+		}
+		return userIsAnAdmin;
+	}
+
+	@Override
 	public G_User loginAuthenticatedUser(final String userId) throws AvroRemoteException, AuthenticationException {
 		return uDao.loginAuthenticatedUser(userId);
 	}
@@ -267,6 +297,25 @@ public class UserServiceImpl implements G_UserDataAccess {
 			throw new AuthenticationException("Could not login user " + userId + ".  Check username and password.");
 		}
 		return u;
+	}
+
+	@Override
+	public G_User makeAdmin(final G_User d) throws AvroRemoteException {
+		if (ValidationUtils.isValid(d)) {
+			final G_Group group = gDao.getGroupByGroupname(adminGroupName);
+			if (ValidationUtils.isValid(group)) {
+				if (ugDao.addToGroup(d.getId(), group.getId())) {
+					logger.debug("Added user " + d + " to " + adminGroupName);
+				} else {
+					logger.error("Could not add user " + d + " to " + adminGroupName);
+				}
+			} else {
+				logger.error("Could not find a group with groupname " + adminGroupName);
+			}
+		} else {
+			logger.error("Invalid user given to add to admin group");
+		}
+		return d;
 	}
 
 	@Override
@@ -287,6 +336,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			d.setActive(true);
 			d.setLastlogin(0l);
 			d.setNumberlogins(0);
+			d.setId(null);
 			logger.debug("Saving a new user...");
 			d = uDao.save(d);
 			if (ValidationUtils.isValid(d)) {

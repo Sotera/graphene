@@ -34,24 +34,11 @@
 										option from the report actions cell of the result you are
 										interested in.</p>
 								</td>
-
-							</tr>
-							<tr>
-								<td>
-									<h1>View a single result in detail</h1>
-									<p>
-										An abbreviation of the word attribute is <abbr
-											title="attribute">attr</abbr>.
-									</p>
-
-								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
-
-			<div class="col-sm-6"></div>
 		</div>
 		<p>Create a workspace, or choose from a previous one</p>
 		<p>Make changes to your workspace. Changes are saved
