@@ -38,10 +38,12 @@ import java.util.Map;
 
 public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 
-	public static PropertyMatchDescriptorHelper from(G_PropertyMatchDescriptor descriptor) {
-		if (descriptor instanceof PropertyMatchDescriptorHelper) return (PropertyMatchDescriptorHelper)descriptor;
-		
-		PropertyMatchDescriptorHelper helper = new PropertyMatchDescriptorHelper();
+	public static PropertyMatchDescriptorHelper from(final G_PropertyMatchDescriptor descriptor) {
+		if (descriptor instanceof PropertyMatchDescriptorHelper) {
+			return (PropertyMatchDescriptorHelper) descriptor;
+		}
+
+		final PropertyMatchDescriptorHelper helper = new PropertyMatchDescriptorHelper();
 		helper.setKey(descriptor.getKey());
 		helper.setConstraint(descriptor.getConstraint());
 		helper.setVariable(descriptor.getVariable());
@@ -49,32 +51,34 @@ public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 		helper.setRange(descriptor.getRange());
 		return helper;
 	}
-	
-	public String toJson() throws IOException {
-		return SerializationHelper.toJson(this);
-	}
-	
-	public static String toJson(G_PropertyMatchDescriptor descriptor) throws IOException {
-		return SerializationHelper.toJson(descriptor);
-	}
-	
-	public static String toJson(List<G_PropertyMatchDescriptor> descriptors) throws IOException {
-		return SerializationHelper.toJson(descriptors, G_PropertyMatchDescriptor.getClassSchema());
-	}
 
-	public static String toJson(Map<String, List<G_PropertyMatchDescriptor>> map) throws IOException {
-		return SerializationHelper.toJson(map, G_PropertyMatchDescriptor.getClassSchema());
-	}
-	
-	public static G_PropertyMatchDescriptor fromJson(String json) throws IOException {
+	public static G_PropertyMatchDescriptor fromJson(final String json) throws IOException {
 		return SerializationHelper.fromJson(json, G_PropertyMatchDescriptor.getClassSchema());
 	}
-	
-	public static List<G_PropertyMatchDescriptor> listFromJson(String json) throws IOException {
+
+	/**
+	 * Returns true if the match descriptor is exclusive, accounting for both
+	 * the include property and the NOT constraint.
+	 * 
+	 * Match descriptors have a NOT constraint which is redundant with the
+	 * include boolean for searches other than pattern searches. Here we
+	 * interpret "NOT exclude" as "NOT/exclude", since otherwise the criteria
+	 * would have no effect at all.
+	 * 
+	 * @param descriptor
+	 *            The match specification
+	 * 
+	 * @return true if an exclusion
+	 */
+	public static boolean isExclusion(final G_PropertyMatchDescriptor descriptor) {
+		return G_Constraint.NOT.equals(descriptor.getConstraint()) || !descriptor.getInclude();
+	}
+
+	public static List<G_PropertyMatchDescriptor> listFromJson(final String json) throws IOException {
 		return SerializationHelper.listFromJson(json, G_PropertyMatchDescriptor.getClassSchema());
 	}
-	
-	public static Map<String, List<G_PropertyMatchDescriptor>> mapFromJson(String json) throws IOException {
+
+	public static Map<String, List<G_PropertyMatchDescriptor>> mapFromJson(final String json) throws IOException {
 		return SerializationHelper.mapFromJson(json, G_PropertyMatchDescriptor.getClassSchema());
 	}
 
@@ -82,85 +86,73 @@ public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 	 * Returns an G_*Range Object representing a set of basic string terms
 	 * 
 	 * @param terms
-	 * 		the terms to represent
-	 * @return
-	 * 		an G_*Range Object - either a singleton or list
+	 *            the terms to represent
+	 * @return an G_*Range Object - either a singleton or list
 	 */
-	public static Object rangeFromBasicTerms(String terms) {
-		
+	public static Object rangeFromBasicTerms(final String terms) {
+
 		// if quoted, return as one term
 		if (terms.charAt(0) == '"') {
-			int end = terms.length() 
-					- (terms.charAt(terms.length()-1) == '"'? 1: 0);
-			
-			return G_SingletonRange.newBuilder()
-				.setType(G_PropertyType.STRING)
-				.setValue(terms.substring(1, end))
-				.build();
+			final int end = terms.length() - (terms.charAt(terms.length() - 1) == '"' ? 1 : 0);
+
+			return G_SingletonRange.newBuilder().setType(G_PropertyType.STRING).setValue(terms.substring(1, end))
+					.build();
 		}
-		
+
 		final String tokens[] = terms.split("\\s+");
 
 		// else break by whitespace
 		switch (tokens.length) {
 		case 0:
 			return null;
-			
+
 		case 1:
-			return G_SingletonRange.newBuilder()
-				.setType(G_PropertyType.STRING)
-				.setValue(tokens[0])
-				.build();
-			
+			return G_SingletonRange.newBuilder().setType(G_PropertyType.STRING).setValue(tokens[0]).build();
+
 		default:
-			return G_ListRange.newBuilder()
-				.setType(G_PropertyType.STRING)
-				.setValues(Arrays.asList(Arrays.copyOf(tokens, tokens.length, Object[].class)))
-				.build();
+			return G_ListRange.newBuilder().setType(G_PropertyType.STRING)
+					.setValues(Arrays.asList(Arrays.copyOf(tokens, tokens.length, Object[].class))).build();
 		}
 	}
-	
-	/**
-	 * Returns true if the match descriptor is exclusive, accounting for both the include
-	 * property and the NOT constraint. 
-	 * 
-	 * Match descriptors have a NOT constraint which is redundant with the include boolean
-	 * for searches other than pattern searches. Here we interpret "NOT exclude" as "NOT/exclude", since
-	 * otherwise the criteria would have no effect at all.
-	 * 
-	 * @param descriptor
-	 * 		The match specification
-	 * 
-	 * @return
-	 * 		true if an exclusion
-	 */
-	public static boolean isExclusion(G_PropertyMatchDescriptor descriptor) {
-		return G_Constraint.NOT.equals(descriptor) || !descriptor.getInclude();
+
+	public static String toJson(final G_PropertyMatchDescriptor descriptor) throws IOException {
+		return SerializationHelper.toJson(descriptor);
 	}
-	
+
+	public static String toJson(final List<G_PropertyMatchDescriptor> descriptors) throws IOException {
+		return SerializationHelper.toJson(descriptors, G_PropertyMatchDescriptor.getClassSchema());
+	}
+
+	public static String toJson(final Map<String, List<G_PropertyMatchDescriptor>> map) throws IOException {
+		return SerializationHelper.toJson(map, G_PropertyMatchDescriptor.getClassSchema());
+	}
+
 	public G_PropertyType getType() {
-		Object range = getRange();
-		if (range instanceof G_SingletonRange)
-			return ((G_SingletonRange)range).getType();
-		else if (range instanceof G_ListRange)
-			return ((G_ListRange)range).getType();
-		else if (range instanceof G_BoundedRange)
-			return ((G_BoundedRange)range).getType();
+		final Object range = getRange();
+		if (range instanceof G_SingletonRange) {
+			return ((G_SingletonRange) range).getType();
+		} else if (range instanceof G_ListRange) {
+			return ((G_ListRange) range).getType();
+		} else if (range instanceof G_BoundedRange) {
+			return ((G_BoundedRange) range).getType();
+		}
 		return null;
 	}
 
 	public Object getValue() {
-		Object range = getRange();
+		final Object range = getRange();
 		if (range instanceof G_SingletonRange) {
-			return ((G_SingletonRange)range).getValue();
-		}
-		else if (range instanceof G_ListRange) {
-			return ((G_ListRange)range).getValues().iterator().next();
-		}
-		else if (range instanceof G_BoundedRange) {
-			G_BoundedRange bounded = (G_BoundedRange)range;
+			return ((G_SingletonRange) range).getValue();
+		} else if (range instanceof G_ListRange) {
+			return ((G_ListRange) range).getValues().iterator().next();
+		} else if (range instanceof G_BoundedRange) {
+			final G_BoundedRange bounded = (G_BoundedRange) range;
 			return bounded.getStart() != null ? bounded.getStart() : bounded.getEnd();
 		}
 		return null;
+	}
+
+	public String toJson() throws IOException {
+		return SerializationHelper.toJson(this);
 	}
 }
