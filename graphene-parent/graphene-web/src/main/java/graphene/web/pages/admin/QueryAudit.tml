@@ -29,110 +29,63 @@ table td {
 <section id="widget-grid" class="">
 	<div class="row">
 		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<!-- Start results area -->
-			<t:if test="searchQueryList">
-				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-					data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-					data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
-					<header>
-						<span class="widget-icon"> <i class="fa fa-table"></i>
-						</span>
-						<h2>Search Queries</h2>
-					</header>
-					<!-- widget div-->
-					<div>
-						<!-- widget content -->
-						<div class="widget-body no-padding">
 
-							<div class="widget-body-toolbar"></div>
-							<t:jquery.datatable t:id="queryList" t:source="searchQueryList" t:row="currentQuery" t:model="entityquerymodel"
-								t:options="options" class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="200"
-								t:empty="block:emptyQueryList">
+			<!-- new widget -->
+			<div class="jarviswidget" id="wid-id-0" data-widget-sortable="false" data-widget-deletebutton="false"
+				data-widget-editbutton="false" data-widget-colorbutton="false" data-widget-collapsebutton="false"
+				data-widget-fullscreenbutton="false">
 
-								<p:attributeListCell>
-									<t:loop source="currentQuery.attributeList" value="currentTuple">
-						${currentTuple.searchType}: ${currentTuple.value} <br />
-									</t:loop>
-								</p:attributeListCell>
+				<header>
+					<span class="widget-icon"> <i class="glyphicon glyphicon-stats txt-color-darken"></i>
+					</span>
+					<h2>Auditing</h2>
 
-								<p:filtersCell>
-									<t:if test="! currentQuery.filters.empty">
-										<t:loop source="currentQuery.filters" value="currentFilter">
-										${currentFilter} <br />
-										</t:loop>
-										<p:else>All Types</p:else>
-									</t:if>
-								</p:filtersCell>
-								<p:timeInitiatedCell>
-									<t:graphene.jodatimeoutput value="currentQuery.timeInitiated" formatter="ISODate" />
-								</p:timeInitiatedCell>
-							
-										[Grid here]
-							</t:jquery.datatable>
-							<t:block t:id="emptyQueryList">
-								<div id="noqueries">(No queries found)</div>
-							</t:block>
+					<ul class="nav nav-tabs pull-right in" id="myTab">
+						<li class="active"><a data-toggle="tab" href="#s0"> <i class="fa fa-clock-o"></i> <span
+								class="hidden-mobile hidden-tablet"> System Status</span>
+						</a></li>
+						<li class="active"><a data-toggle="tab" href="#s1"> <i class="fa fa-search"></i> <span
+								class="hidden-mobile hidden-tablet"> Search Queries</span>
+						</a></li>
+
+						<li><a data-toggle="tab" href="#s2"> <i class="fa fa-list-alt"></i> <span
+								class="hidden-mobile hidden-tablet"> Report Views</span>
+						</a></li>
+
+						<li><a data-toggle="tab" href="#s3"> <i class="fa fa-code-fork"></i> <span
+								class="hidden-mobile hidden-tablet"> Graph Queries</span>
+						</a></li>
+						<li><a data-toggle="tab" href="#s4"> <i class="fa fa-sign-in"></i> <span
+								class="hidden-mobile hidden-tablet"> User Logins</span>
+						</a></li>
+					</ul>
+
+				</header>
+
+				<!-- widget div -->
+				<div class="no-padding">
+					<div class="widget-body">
+						<!-- content -->
+						<div id="myTabContent" class="tab-content">
+							<div class="tab-pane fade" id="s0">
+								<t:graphene.admin.systemstatus />
+							</div>
+							<div class="tab-pane fade" id="s1">
+								<t:graphene.admin.entityquerylist />
+							</div>
+							<div class="tab-pane fade" id="s2">
+								<t:graphene.admin.reportviewlist />
+							</div>
+							<div class="tab-pane fade" id="s3">
+								<t:graphene.admin.graphquerylist />
+							</div>
+							<div class="tab-pane fade" id="s4">
+								<t:graphene.admin.userloginlist />
+							</div>
 						</div>
-						<!-- end widget content -->
 					</div>
-					<!-- end widget div -->
 				</div>
-				<p:else>
-					<div id="noqueries">(No queries found)</div>
-				</p:else>
-			</t:if>
-			<!-- end results area -->
-
-
-
-
-
-
-
-
-			<!-- Start report view area -->
-			<t:if test="reportViewList">
-				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-2" data-widget-sortable="false"
-					data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-					data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
-					<header>
-						<span class="widget-icon"> <i class="fa fa-table"></i>
-						</span>
-						<h2>Report Views</h2>
-					</header>
-					<!-- widget div-->
-					<div>
-						<!-- widget content -->
-						<div class="widget-body no-padding">
-
-							<div class="widget-body-toolbar"></div>
-							<t:jquery.datatable t:id="reportViewList" t:source="reportViewList" t:row="currentReportView"
-								t:model="reportviewmodel" t:options="options"
-								class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="200"
-								t:empty="block:emptyReportViewList">
-
-								<p:timeInitiatedCell>
-									<t:graphene.jodatimeoutput value="currentReportView.timeInitiated" formatter="ISODate" />
-								</p:timeInitiatedCell>
-							
-										[Grid here]
-							</t:jquery.datatable>
-							<t:block t:id="emptyReportViewList">
-								<div id="noreportviews">(No report views found)</div>
-							</t:block>
-						</div>
-						<!-- end widget content -->
-					</div>
-					<!-- end widget div -->
-				</div>
-				<p:else>
-					<div id="noreportviews">(No report views found)</div>
-				</p:else>
-			</t:if>
-			<!-- end results area -->
-
-
-
+			</div>
 		</article>
 	</div>
 

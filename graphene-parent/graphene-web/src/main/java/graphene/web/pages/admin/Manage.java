@@ -62,7 +62,9 @@ public class Manage extends SimpleBasePage {
 	@Property
 	@Persist
 	private List<G_User> userList;
+	@Persist
 	private BeanModel<G_User> userModel;
+	@Persist
 	private BeanModel<G_UserWorkspace> userWorkspaceModel;
 	@Inject
 	private ComponentResources resources;
@@ -120,20 +122,23 @@ public class Manage extends SimpleBasePage {
 
 	// Generally useful bits and pieces
 	public BeanModel<G_User> getUserModel() {
-		// TODO: Move the initialization to setupRender
-		userModel = beanModelSource.createDisplayModel(G_User.class, resources.getMessages());
-		userModel.exclude("schema", "hashedpassword", "avatar");
-		userModel.addEmpty("action");
-		userModel.reorder("action", "username", "id", "email", "fullname", "modified");
+		if (userModel == null) {
+			userModel = beanModelSource.createDisplayModel(G_User.class, resources.getMessages());
+			userModel.exclude("schema", "hashedpassword", "avatar");
+			userModel.addEmpty("action");
+			userModel.reorder("action", "username", "id", "email", "fullname", "modified");
+		}
 		return userModel;
 	}
 
 	public BeanModel<G_UserWorkspace> getUserWorkspaceModel() {
-		userWorkspaceModel = beanModelSource.createDisplayModel(G_UserWorkspace.class, resources.getMessages());
-		userWorkspaceModel.exclude("schema", "hashedpassword");
+		if (userWorkspaceModel == null) {
+			userWorkspaceModel = beanModelSource.createDisplayModel(G_UserWorkspace.class, resources.getMessages());
+			userWorkspaceModel.exclude("schema", "hashedpassword");
 
-		userWorkspaceModel.addEmpty("action");
-		userWorkspaceModel.reorder("action", "id", "userId", "role", "workspaceId", "modified");
+			userWorkspaceModel.addEmpty("action");
+			userWorkspaceModel.reorder("action", "id", "userId", "role", "workspaceId", "modified");
+		}
 		return userWorkspaceModel;
 	}
 

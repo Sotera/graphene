@@ -63,13 +63,14 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<Object> getAllEvents(final String userId, final String partialTerm, final int limit) {
+	public List<Object> getAllEvents(final String userId, final String partialTerm, final int offset, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int limit) {
+	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int offset,
+			final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
@@ -91,8 +92,8 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(true);
 
-		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).toString()).addIndex(indexName)
-				.setParameter("timeout", defaultESTimeout).addType(graphQueryType).build();
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
+				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(graphQueryType).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
 		List<TemporalGraphQuery> returnValue = new ArrayList<TemporalGraphQuery>(0);
@@ -109,16 +110,35 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<G_GraphViewEvent> getGraphViewEvents(final String userId, final int limit) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<G_GraphViewEvent> getGraphViewEvents(final String userId, final int offset, final int limit) {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		if (ValidationUtils.isValid(userId)) {
+			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
+		} else {
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+		}
+		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(false);
+
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
+				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(graphQueryType)
+				.setParameter("from", 0).setParameter("size", limit).build();
+		System.out.println(searchSourceBuilder.toString());
+		JestResult result;
+		List<G_GraphViewEvent> returnValue = new ArrayList<G_GraphViewEvent>(0);
+		try {
+			result = c.getClient().execute(search);
+			returnValue = result.getSourceAsObjectList(G_GraphViewEvent.class);
+		} catch (final Exception e) {
+			logger.error("getGraphViewEvents " + e.getMessage());
+		}
+		return returnValue;
+
 	}
 
 	@Override
 	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
-
 			if (ValidationUtils.isValid(partialTerm)) {
 				// use the partial name to filter
 				searchSourceBuilder.query(QueryBuilders.filteredQuery(QueryBuilders.fuzzyQuery("value", partialTerm),
@@ -137,9 +157,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(false);
 
-		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).toString()).addIndex(indexName)
-				.setParameter("timeout", defaultESTimeout).addType(searchQueryType).setParameter("from", offset)
-				.setParameter("size", limit).build();
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
+				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(searchQueryType)
+				.setParameter("from", offset).setParameter("size", limit).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
 		List<EntityQuery> returnValue = new ArrayList<EntityQuery>(0);
@@ -159,22 +179,22 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<G_ReportViewEvent> getReportViewEvents(final String userId, final int limit) {
+	public List<G_ReportViewEvent> getReportViewEvents(final String userId, final int offset, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 
 			// don't filter on name, get all of them.
-			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId)).size(limit);
+			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
 
 		} else {
 
-			searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(limit);
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(true);
 
-		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).toString()).addIndex(indexName)
-				.setParameter("timeout", defaultESTimeout).addType(reportViewType).build();
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
+				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(reportViewType).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
 		List<G_ReportViewEvent> returnValue = new ArrayList<G_ReportViewEvent>(0);
@@ -186,6 +206,31 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			// }
 		} catch (final Exception e) {
 			logger.error("getReportViewEvents " + e.getMessage());
+		}
+		return returnValue;
+	}
+
+	@Override
+	public List<G_UserLoginEvent> getUserLoginEvents(final String userId, final int offset, final int limit) {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		if (ValidationUtils.isValid(userId)) {
+			searchSourceBuilder.query(QueryBuilders.matchQuery("userId", userId));
+		} else {
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+		}
+		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(false);
+
+		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
+				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(userLoginType)
+				.setParameter("from", offset).setParameter("size", limit).build();
+		System.out.println(searchSourceBuilder.toString());
+		JestResult result;
+		List<G_UserLoginEvent> returnValue = new ArrayList<G_UserLoginEvent>(0);
+		try {
+			result = c.getClient().execute(search);
+			returnValue = result.getSourceAsObjectList(G_UserLoginEvent.class);
+		} catch (final Exception e) {
+			logger.error("getGraphViewEvents " + e.getMessage());
 		}
 		return returnValue;
 	}
@@ -220,7 +265,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public void recordLoginEvent(final G_UserLoginEvent e) {
+	public void recordUserLoginEvent(final G_UserLoginEvent e) {
 		if (ValidationUtils.isValid(e)) {
 			if (e.getId() == null) {
 				e.setId(saveObject(e, e.getId(), indexName, userLoginType));

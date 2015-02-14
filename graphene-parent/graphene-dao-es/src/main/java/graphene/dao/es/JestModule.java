@@ -59,7 +59,7 @@ public class JestModule {
 			final JestClientFactory factory = new JestClientFactory();
 			final HttpClientConfig clientConfig = new HttpClientConfig.Builder(server)
 					.discoveryFrequency(3600000, TimeUnit.MILLISECONDS).discoveryEnabled(discovery)
-					.multiThreaded(multithreaded).build();
+					.multiThreaded(multithreaded).readTimeout(30000).build();
 
 			factory.setHttpClientConfig(clientConfig);
 

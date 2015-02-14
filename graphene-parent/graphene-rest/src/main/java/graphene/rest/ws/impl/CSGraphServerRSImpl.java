@@ -119,7 +119,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 				final EventGraphBuilder gb = feg.getGraphBuilderForDataSource(objectType);
 				if (gb != null) {
 					logger.debug("Found Graph Builder for " + objectType + ": " + gb.getClass().getName());
-					loggingDao.recordQuery(q);
+					// loggingDao.recordQuery(q);
 					g = gb.makeGraphResponse(q);
 				} else {
 					logger.error("Unable to handle graph request for type " + objectType);

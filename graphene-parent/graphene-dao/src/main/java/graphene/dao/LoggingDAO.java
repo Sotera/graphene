@@ -20,15 +20,17 @@ import mil.darpa.vande.interactions.TemporalGraphQuery;
  */
 public interface LoggingDAO {
 
-	List<Object> getAllEvents(String userId, String partialTerm, int limit);
+	public abstract List<Object> getAllEvents(String userId, String partialTerm, int offset, int limit);
 
-	List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm, int limit);
+	public abstract List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm, int offset, int limit);
 
-	List<G_GraphViewEvent> getGraphViewEvents(String userId, int limit);
+	public abstract List<G_GraphViewEvent> getGraphViewEvents(String userId, int offset, int limit);
 
-	List<EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
+	public abstract List<EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
 
-	List<G_ReportViewEvent> getReportViewEvents(String userId, int limit);
+	public abstract List<G_ReportViewEvent> getReportViewEvents(String userId, int offset, int limit);
+
+	public abstract List<G_UserLoginEvent> getUserLoginEvents(String userId, int offset, int limit);
 
 	/**
 	 * Record an export event and what values were used to initiate the export.
@@ -36,6 +38,7 @@ public interface LoggingDAO {
 	 * @param queryString
 	 * @return
 	 */
+	@Deprecated
 	public abstract boolean recordExport(String queryString);
 
 	public abstract void recordGraphViewEvent(G_GraphViewEvent q);
@@ -46,7 +49,7 @@ public interface LoggingDAO {
 	 * 
 	 * @param e
 	 */
-	public abstract void recordLoginEvent(G_UserLoginEvent e);
+	public abstract void recordUserLoginEvent(G_UserLoginEvent e);
 
 	/**
 	 * For recording query terms (or queries that were executed, with all their
@@ -65,6 +68,7 @@ public interface LoggingDAO {
 	 * @param queryString
 	 * @return
 	 */
+	@Deprecated
 	public abstract void recordQuery(V_GraphQuery q);
 
 	public abstract void recordReportViewEvent(G_ReportViewEvent q);

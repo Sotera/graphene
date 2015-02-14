@@ -25,6 +25,7 @@ import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -72,7 +73,9 @@ public class View extends SimpleBasePage {
 
 	@Property
 	private List<EntityQuery> searchQueryList;
+	@Persist
 	private BeanModel<EntityQuery> entityQuerymodel;
+	@Persist
 	private BeanModel<G_ReportViewEvent> reportViewmodel;
 	@Inject
 	private ComponentResources resources;
@@ -102,15 +105,16 @@ public class View extends SimpleBasePage {
 
 	// Generally useful bits and pieces
 	public BeanModel<EntityQuery> getEntityQueryModel() {
-		// TODO: Move the initialization to setupRender
-		entityQuerymodel = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
-		entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues", "minimumscore",
-				"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userId",
-				"username", "sortascending", "id", "schema");
-		entityQuerymodel.addEmpty("action");
-		entityQuerymodel.get("AttributeList").sortable(true);
-		entityQuerymodel.get("filters").sortable(true);
-		entityQuerymodel.reorder("action", "attributelist", "filters", "timeinitiated");
+		if (entityQuerymodel == null) {
+			entityQuerymodel = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
+			entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues",
+					"minimumscore", "minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult",
+					"datasource", "userId", "username", "sortascending", "id", "schema");
+			entityQuerymodel.addEmpty("action");
+			entityQuerymodel.get("AttributeList").sortable(true);
+			entityQuerymodel.get("filters").sortable(true);
+			entityQuerymodel.reorder("action", "attributelist", "filters", "timeinitiated");
+		}
 		return entityQuerymodel;
 	}
 
@@ -164,12 +168,14 @@ public class View extends SimpleBasePage {
 	}
 
 	public BeanModel<G_ReportViewEvent> getReportViewModel() {
-		reportViewmodel = beanModelSource.createDisplayModel(G_ReportViewEvent.class, resources.getMessages());
-		reportViewmodel.exclude("schema", "id", "userId", "username", "reportpagelink");
+		if (reportViewmodel == null) {
+			reportViewmodel = beanModelSource.createDisplayModel(G_ReportViewEvent.class, resources.getMessages());
+			reportViewmodel.exclude("schema", "id", "userId", "username", "reportpagelink");
 
-		reportViewmodel.addEmpty("action");
-		reportViewmodel.reorder("action", "reportId", "reporttype", "timeinitiated");
-		reportViewmodel.get("action").sortable(true);
+			reportViewmodel.addEmpty("action");
+			reportViewmodel.reorder("action", "reportId", "reporttype", "timeinitiated");
+			reportViewmodel.get("action").sortable(true);
+		}
 		return reportViewmodel;
 	}
 

@@ -113,8 +113,9 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 		final Subject currentUser = securityService.getSubject();
 		final G_UserLoginEvent ule = new G_UserLoginEvent();
 		ule.setTimeInitiated(DateTime.now().getMillis());
+		ule.setUserName(grapheneLogin);
 		ule.setUserId(grapheneLogin);
-		loggingDao.recordLoginEvent(ule);
+		loggingDao.recordUserLoginEvent(ule);
 
 		if (currentUser == null) {
 			logger.error("Subject can't be null");

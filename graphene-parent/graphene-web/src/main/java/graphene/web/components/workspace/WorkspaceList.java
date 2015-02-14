@@ -13,6 +13,7 @@ import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
@@ -55,6 +56,7 @@ public class WorkspaceList {
 	@Inject
 	private AlertManager alertManager;
 
+	@Persist
 	private BeanModel<G_Workspace> model;
 
 	// Screen fields
@@ -96,6 +98,7 @@ public class WorkspaceList {
 		List<G_Workspace> list = null;
 		if (userExists) {
 			try {
+				logger.debug("Updating list of workspaces");
 				list = userDataAccess.getWorkspacesForUser(user.getId());
 			} catch (final AvroRemoteException e) {
 				logger.error(e.getMessage());
@@ -109,10 +112,12 @@ public class WorkspaceList {
 
 	// Generally useful bits and pieces
 	public BeanModel<G_Workspace> getModel() {
-		// TODO: Move the initialization to setupRender
-		model = beanModelSource.createDisplayModel(G_Workspace.class, resources.getMessages());
-		model.exclude("schema", "active", "reports", "id");
-		model.reorder("title", "description", "savedreports", "queryObjects", "modified", "created");
+		if (model == null) {
+			// TODO: Move the initialization to setupRender
+			model = beanModelSource.createDisplayModel(G_Workspace.class, resources.getMessages());
+			model.exclude("schema", "active", "reports", "id");
+			model.reorder("title", "description", "savedreports", "queryObjects", "modified", "created");
+		}
 		return model;
 	}
 
@@ -155,7 +160,7 @@ public class WorkspaceList {
 
 		// json.put("aoColumns", columnArray);
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
-		
+
 		return json;
 	}
 

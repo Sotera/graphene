@@ -275,10 +275,12 @@ public class Manage {
 
 	void onToConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.CONFIRM_DELETE;
-		editorWorkspaceId = workspaceId;
-
+		// editorWorkspaceId = workspaceId;
+		editorMode = null;
+		editorWorkspaceId = null;
+		listWorkspaceId = null;
 		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
+			ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
 		}
 	}
 

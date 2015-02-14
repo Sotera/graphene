@@ -23,29 +23,24 @@ import mil.darpa.vande.interactions.TemporalGraphQuery;
 public class LoggingDAONullImpl implements LoggingDAO {
 
 	@Override
-	public List<Object> getAllEvents(final String userId, final String partialTerm, final int limit) {
+	public List<Object> getAllEvents(final String userId, final String partialTerm, final int offset, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int limit) {
+	public List<TemporalGraphQuery> getGraphQueries(final String userId, final String partialTerm, final int offset,
+			final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<G_GraphViewEvent> getGraphViewEvents(final String userId, final int limit) {
+	public List<G_GraphViewEvent> getGraphViewEvents(final String userId, final int offset, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see graphene.dao.LoggingDAO#getQueries(java.lang.String,
-	 * java.lang.String, int)
-	 */
 	@Override
 	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
 		// TODO Auto-generated method stub
@@ -53,23 +48,17 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
-	public List<G_ReportViewEvent> getReportViewEvents(final String userId, final int limit) {
+	public List<G_ReportViewEvent> getReportViewEvents(final String userId, final int offset, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see graphene.dao.LoggingDAO#recordLogin(java.lang.String,
-	 * org.joda.time.DateTime)
-	 */
+	@Override
+	public List<G_UserLoginEvent> getUserLoginEvents(final String userId, final int offset, final int limit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see graphene.dao.LoggingDAO#recordExport(java.lang.String)
-	 */
 	@Override
 	public boolean recordExport(final String queryString) {
 		// TODO Auto-generated method stub
@@ -83,17 +72,11 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
-	public void recordLoginEvent(final G_UserLoginEvent e) {
+	public void recordUserLoginEvent(final G_UserLoginEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * graphene.dao.LoggingDAO#recordQuery(graphene.model.query.EntityQuery)
-	 */
 	@Override
 	public void recordQuery(final BasicQuery sq) {
 		// TODO Auto-generated method stub
@@ -111,5 +94,4 @@ public class LoggingDAONullImpl implements LoggingDAO {
 		// TODO Auto-generated method stub
 
 	}
-
 }

@@ -38,6 +38,7 @@ import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
@@ -189,6 +190,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Inject
 	private StyleService style;
 
+	@Persist
+	private BeanModel<Object> model;
+
 	public Collection<Triple<String, String, String>> getAddressList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTADDRESSLIST);
 	}
@@ -335,28 +339,29 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	}
 
 	public BeanModel getModel() {
-		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
-		model.addEmpty("rank");
-		model.addEmpty("actions");
+		if (model == null) {
+			model = beanModelSource.createEditModel(Object.class, messages);
+			model.addEmpty("rank");
+			model.addEmpty("actions");
 
-		model.addEmpty("informationIcons");
-		model.addEmpty("date");
-		model.addEmpty("amount");
-		model.addEmpty("subjects");
-		model.addEmpty("addressList");
-		model.addEmpty("communicationIdentifierList");
-		model.addEmpty("identifierList");
+			model.addEmpty("informationIcons");
+			model.addEmpty("date");
+			model.addEmpty("amount");
+			model.addEmpty("subjects");
+			model.addEmpty("addressList");
+			model.addEmpty("communicationIdentifierList");
+			model.addEmpty("identifierList");
 
-		model.getById("informationIcons").sortable(false);
-		model.getById("rank").sortable(true);
-		model.getById("amount").sortable(true);
-		model.getById("date").sortable(true);
-		model.getById("actions").sortable(true);
-		model.getById("subjects").sortable(true);
-		model.getById("addressList").sortable(true);
-		model.getById("communicationIdentifierList").sortable(true);
-		model.getById("identifierList").sortable(true);
-
+			model.getById("informationIcons").sortable(false);
+			model.getById("rank").sortable(true);
+			model.getById("amount").sortable(true);
+			model.getById("date").sortable(true);
+			model.getById("actions").sortable(true);
+			model.getById("subjects").sortable(true);
+			model.getById("addressList").sortable(true);
+			model.getById("communicationIdentifierList").sortable(true);
+			model.getById("identifierList").sortable(true);
+		}
 		return model;
 	}
 
