@@ -1,0 +1,27 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<!-- Subject tree button -->
+	<span class="label" style="${style}"> <i
+		class="fa fa-lg fa-minus-circle"></i>
+		<h5>
+			<div class="row">
+				<div class="col-md-12">${typeName}
+					${additionalProperties?.get('number')}:</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<b>${additionalProperties?.get('label')}</b>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<b>${additionalProperties?.get('label2')}</b>
+				</div>
+			</div>
+		</h5>
+	</span>
+
+</t:container>
