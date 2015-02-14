@@ -34,6 +34,8 @@
 		<dependency>
 			<groupId>graphene</groupId>
 			<artifactId>graphene-web</artifactId>
+			<type>jar</type>
+			<classifier>classes</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
