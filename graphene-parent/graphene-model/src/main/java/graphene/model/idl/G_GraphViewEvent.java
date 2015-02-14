@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_GraphViewEvent\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"queryObject\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"mil.darpa.vande.generic.V_GraphQuery\"},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_GraphViewEvent\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"queryObject\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"mil.darpa.vande.generic.V_GraphQuery\"},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
    private java.lang.String reportId;
@@ -15,7 +15,7 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
    private java.lang.String reportPageLink;
    private long timeInitiated;
    private java.lang.String userId;
-   private java.lang.String username;
+   private java.lang.String userName;
    private mil.darpa.vande.generic.V_GraphQuery queryObject;
 
   /**
@@ -28,14 +28,14 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
   /**
    * All-args constructor.
    */
-  public G_GraphViewEvent(java.lang.String id, java.lang.String reportId, java.lang.String reportType, java.lang.String reportPageLink, java.lang.Long timeInitiated, java.lang.String userId, java.lang.String username, mil.darpa.vande.generic.V_GraphQuery queryObject) {
+  public G_GraphViewEvent(java.lang.String id, java.lang.String reportId, java.lang.String reportType, java.lang.String reportPageLink, java.lang.Long timeInitiated, java.lang.String userId, java.lang.String userName, mil.darpa.vande.generic.V_GraphQuery queryObject) {
     this.id = id;
     this.reportId = reportId;
     this.reportType = reportType;
     this.reportPageLink = reportPageLink;
     this.timeInitiated = timeInitiated;
     this.userId = userId;
-    this.username = username;
+    this.userName = userName;
     this.queryObject = queryObject;
   }
 
@@ -49,7 +49,7 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
     case 3: return reportPageLink;
     case 4: return timeInitiated;
     case 5: return userId;
-    case 6: return username;
+    case 6: return userName;
     case 7: return queryObject;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -64,7 +64,7 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
     case 3: reportPageLink = (java.lang.String)value$; break;
     case 4: timeInitiated = (java.lang.Long)value$; break;
     case 5: userId = (java.lang.String)value$; break;
-    case 6: username = (java.lang.String)value$; break;
+    case 6: userName = (java.lang.String)value$; break;
     case 7: queryObject = (mil.darpa.vande.generic.V_GraphQuery)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -161,18 +161,18 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
   }
 
   /**
-   * Gets the value of the 'username' field.
+   * Gets the value of the 'userName' field.
    */
   public java.lang.String getUserName() {
-    return username;
+    return userName;
   }
 
   /**
-   * Sets the value of the 'username' field.
+   * Sets the value of the 'userName' field.
    * @param value the value to set.
    */
   public void setUserName(java.lang.String value) {
-    this.username = value;
+    this.userName = value;
   }
 
   /**
@@ -217,7 +217,7 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
     private java.lang.String reportPageLink;
     private long timeInitiated;
     private java.lang.String userId;
-    private java.lang.String username;
+    private java.lang.String userName;
     private mil.darpa.vande.generic.V_GraphQuery queryObject;
 
     /** Creates a new Builder */
@@ -252,8 +252,8 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
         this.userId = data().deepCopy(fields()[5].schema(), other.userId);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.username)) {
-        this.username = data().deepCopy(fields()[6].schema(), other.username);
+      if (isValidValue(fields()[6], other.userName)) {
+        this.userName = data().deepCopy(fields()[6].schema(), other.userName);
         fieldSetFlags()[6] = true;
       }
       if (isValidValue(fields()[7], other.queryObject)) {
@@ -289,8 +289,8 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
         this.userId = data().deepCopy(fields()[5].schema(), other.userId);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.username)) {
-        this.username = data().deepCopy(fields()[6].schema(), other.username);
+      if (isValidValue(fields()[6], other.userName)) {
+        this.userName = data().deepCopy(fields()[6].schema(), other.userName);
         fieldSetFlags()[6] = true;
       }
       if (isValidValue(fields()[7], other.queryObject)) {
@@ -448,27 +448,27 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Gets the value of the 'username' field */
+    /** Gets the value of the 'userName' field */
     public java.lang.String getUserName() {
-      return username;
+      return userName;
     }
     
-    /** Sets the value of the 'username' field */
+    /** Sets the value of the 'userName' field */
     public graphene.model.idl.G_GraphViewEvent.Builder setUserName(java.lang.String value) {
       validate(fields()[6], value);
-      this.username = value;
+      this.userName = value;
       fieldSetFlags()[6] = true;
       return this; 
     }
     
-    /** Checks whether the 'username' field has been set */
+    /** Checks whether the 'userName' field has been set */
     public boolean hasUserName() {
       return fieldSetFlags()[6];
     }
     
-    /** Clears the value of the 'username' field */
+    /** Clears the value of the 'userName' field */
     public graphene.model.idl.G_GraphViewEvent.Builder clearUserName() {
-      username = null;
+      userName = null;
       fieldSetFlags()[6] = false;
       return this;
     }
@@ -508,7 +508,7 @@ public class G_GraphViewEvent extends org.apache.avro.specific.SpecificRecordBas
         record.reportPageLink = fieldSetFlags()[3] ? this.reportPageLink : (java.lang.String) defaultValue(fields()[3]);
         record.timeInitiated = fieldSetFlags()[4] ? this.timeInitiated : (java.lang.Long) defaultValue(fields()[4]);
         record.userId = fieldSetFlags()[5] ? this.userId : (java.lang.String) defaultValue(fields()[5]);
-        record.username = fieldSetFlags()[6] ? this.username : (java.lang.String) defaultValue(fields()[6]);
+        record.userName = fieldSetFlags()[6] ? this.userName : (java.lang.String) defaultValue(fields()[6]);
         record.queryObject = fieldSetFlags()[7] ? this.queryObject : (mil.darpa.vande.generic.V_GraphQuery) defaultValue(fields()[7]);
         return record;
       } catch (Exception e) {

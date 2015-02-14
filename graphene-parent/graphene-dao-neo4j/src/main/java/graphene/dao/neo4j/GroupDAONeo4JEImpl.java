@@ -14,15 +14,14 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
-public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
-		GroupDAO {
-	private Neo4JEmbeddedService n4jService;
+public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements GroupDAO {
+	private final Neo4JEmbeddedService n4jService;
 
-	public GroupDAONeo4JEImpl(@UserGraph Neo4JEmbeddedService service) {
-		this.n4jService = service;
+	public GroupDAONeo4JEImpl(@UserGraph final Neo4JEmbeddedService service) {
+		n4jService = service;
 	}
 
-	private G_Group createDetached(Node u) {
+	private G_Group createDetached(final Node u) {
 		G_Group d = null;
 		try (Transaction tx = beginTx()) {
 			d = groupFunnel.from(u);
@@ -32,7 +31,7 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public G_Group createGroup(G_Group gd) {
+	public G_Group createGroup(final G_Group gd) {
 		G_Group g = null;
 		Node n;
 		try (Transaction tx = beginTx()) {
@@ -44,25 +43,30 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public void deleteGroup(G_Group g) {
+	public boolean delete(final String id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void deleteGroup(final G_Group g) {
 
 	}
 
 	@Override
 	public List<G_Group> getAllGroups() {
-		List<G_Group> list = new ArrayList<G_Group>();
+		final List<G_Group> list = new ArrayList<G_Group>();
 		try (Transaction tx = beginTx()) {
 			try (ResourceIterator<Node> iter = n4jService.getGgo()
-					.getAllNodesWithLabel(GrapheneNeo4JConstants.groupLabel)
-					.iterator()) {
+					.getAllNodesWithLabel(GrapheneNeo4JConstants.groupLabel).iterator()) {
 				while (iter.hasNext()) {
-					G_Group d = createDetached(iter.next());
+					final G_Group d = createDetached(iter.next());
 					if (d != null) {
 						list.add(d);
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			return null;
 		}
@@ -70,50 +74,42 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public G_Group getGroupByGroupname(String groupname) {
+	public G_Group getGroupByGroupname(final String groupname) {
 		return createDetached(getGroupNodeByGroupname(groupname));
 	}
 
-	
+	@Override
+	public G_Group getGroupById(final String id) {
+		return createDetached(getGroupNode(id));
+	}
 
-
-	//@PostInjection
+	// @PostInjection
+	@Override
 	public void initialize() {
 		if (n4jService.connectToGraph()) {
-			logger.debug("Constructing GroupDAONeo4jImpl hooked up to "
-					+ n4jService.getLocation());
-			n4jService.createNewIndex(GrapheneNeo4JConstants.groupLabel,
-					G_GroupFields.name.name());
+			logger.debug("Constructing GroupDAONeo4jImpl hooked up to " + n4jService.getLocation());
+			n4jService.createNewIndex(GrapheneNeo4JConstants.groupLabel, G_GroupFields.name.name());
 
 		} else {
 			logger.error("Could not connect to graph, so GroupDAONeo4jImpl was not constructed.");
 		}
 	}
 
-
 	@Override
 	public G_Group save(G_Group g) {
 		ResourceIterator<Node> resultIterator = null;
 		try (Transaction tx = beginTx()) {
-			String queryString = "MERGE (n:"
-					+ GrapheneNeo4JConstants.groupLabel.name() + " {"
+			final String queryString = "MERGE (n:" + GrapheneNeo4JConstants.groupLabel.name() + " {"
 					+ G_GroupFields.name.name() + ": {var}}) RETURN n";
-			Map<String, Object> parameters = new HashMap<>();
+			final Map<String, Object> parameters = new HashMap<>();
 			parameters.put("var", g.getName());
-			resultIterator = n4jService.getExecutionEngine()
-					.execute(queryString, parameters).columnAs("n");
-			Node n = resultIterator.next();
+			resultIterator = n4jService.getExecutionEngine().execute(queryString, parameters).columnAs("n");
+			final Node n = resultIterator.next();
 			n.setProperty(G_GroupFields.name.name(), g.getName());
 			g = createDetached(n);
 			tx.success();
 		}
 		return g;
 	}
-
-	@Override
-	public G_Group getGroupById(String id) {
-		return createDetached(getGroupNode(id));
-	}
-
 
 }

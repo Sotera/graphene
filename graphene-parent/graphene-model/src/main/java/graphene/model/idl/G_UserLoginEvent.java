@@ -7,12 +7,12 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_UserLoginEvent\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_UserLoginEvent\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
    private long timeInitiated;
    private java.lang.String userId;
-   private java.lang.String username;
+   private java.lang.String userName;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -24,11 +24,11 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
   /**
    * All-args constructor.
    */
-  public G_UserLoginEvent(java.lang.String id, java.lang.Long timeInitiated, java.lang.String userId, java.lang.String username) {
+  public G_UserLoginEvent(java.lang.String id, java.lang.Long timeInitiated, java.lang.String userId, java.lang.String userName) {
     this.id = id;
     this.timeInitiated = timeInitiated;
     this.userId = userId;
-    this.username = username;
+    this.userName = userName;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -38,7 +38,7 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
     case 0: return id;
     case 1: return timeInitiated;
     case 2: return userId;
-    case 3: return username;
+    case 3: return userName;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -49,7 +49,7 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
     case 0: id = (java.lang.String)value$; break;
     case 1: timeInitiated = (java.lang.Long)value$; break;
     case 2: userId = (java.lang.String)value$; break;
-    case 3: username = (java.lang.String)value$; break;
+    case 3: userName = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -100,18 +100,18 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
   }
 
   /**
-   * Gets the value of the 'username' field.
+   * Gets the value of the 'userName' field.
    */
   public java.lang.String getUserName() {
-    return username;
+    return userName;
   }
 
   /**
-   * Sets the value of the 'username' field.
+   * Sets the value of the 'userName' field.
    * @param value the value to set.
    */
   public void setUserName(java.lang.String value) {
-    this.username = value;
+    this.userName = value;
   }
 
   /** Creates a new G_UserLoginEvent RecordBuilder */
@@ -138,7 +138,7 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
     private java.lang.String id;
     private long timeInitiated;
     private java.lang.String userId;
-    private java.lang.String username;
+    private java.lang.String userName;
 
     /** Creates a new Builder */
     private Builder() {
@@ -160,8 +160,8 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
         this.userId = data().deepCopy(fields()[2].schema(), other.userId);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.username)) {
-        this.username = data().deepCopy(fields()[3].schema(), other.username);
+      if (isValidValue(fields()[3], other.userName)) {
+        this.userName = data().deepCopy(fields()[3].schema(), other.userName);
         fieldSetFlags()[3] = true;
       }
     }
@@ -181,8 +181,8 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
         this.userId = data().deepCopy(fields()[2].schema(), other.userId);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.username)) {
-        this.username = data().deepCopy(fields()[3].schema(), other.username);
+      if (isValidValue(fields()[3], other.userName)) {
+        this.userName = data().deepCopy(fields()[3].schema(), other.userName);
         fieldSetFlags()[3] = true;
       }
     }
@@ -261,27 +261,27 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Gets the value of the 'username' field */
+    /** Gets the value of the 'userName' field */
     public java.lang.String getUserName() {
-      return username;
+      return userName;
     }
     
-    /** Sets the value of the 'username' field */
+    /** Sets the value of the 'userName' field */
     public graphene.model.idl.G_UserLoginEvent.Builder setUserName(java.lang.String value) {
       validate(fields()[3], value);
-      this.username = value;
+      this.userName = value;
       fieldSetFlags()[3] = true;
       return this; 
     }
     
-    /** Checks whether the 'username' field has been set */
+    /** Checks whether the 'userName' field has been set */
     public boolean hasUserName() {
       return fieldSetFlags()[3];
     }
     
-    /** Clears the value of the 'username' field */
+    /** Clears the value of the 'userName' field */
     public graphene.model.idl.G_UserLoginEvent.Builder clearUserName() {
-      username = null;
+      userName = null;
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -293,7 +293,7 @@ public class G_UserLoginEvent extends org.apache.avro.specific.SpecificRecordBas
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.String) defaultValue(fields()[0]);
         record.timeInitiated = fieldSetFlags()[1] ? this.timeInitiated : (java.lang.Long) defaultValue(fields()[1]);
         record.userId = fieldSetFlags()[2] ? this.userId : (java.lang.String) defaultValue(fields()[2]);
-        record.username = fieldSetFlags()[3] ? this.username : (java.lang.String) defaultValue(fields()[3]);
+        record.userName = fieldSetFlags()[3] ? this.userName : (java.lang.String) defaultValue(fields()[3]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
