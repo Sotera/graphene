@@ -206,7 +206,7 @@ protocol G_UserDataAccess {
 		/**
 	  * Given a string role, return a list of G_Permission
 	  */
-	 array<G_Group> getGroupsByuserId(string userId);
+	 array<G_Group> getGroupsByUserId(string userId);
 	/**
 	  * Given a string role, return a list of G_Permission
 	  */
