@@ -80,7 +80,7 @@ protocol G_UserDataAccess {
 			int offset, int limit);
 
 	/**
-	 * Return the user specified by the userid
+	 * Return the user specified by the userId
 	 */
 	 G_User getUser(string userId);
 
@@ -186,9 +186,9 @@ protocol G_UserDataAccess {
 	 boolean usernameExists(string username);
 	 
 	 	 /**
-	  * Return true if the userid is an admin, false otherwise
+	  * Return true if the userId is an admin, false otherwise
 	  */
-	 boolean isAdmin(string userid);
+	 boolean isAdmin(string userId);
 	 
 	 /**
 	  * Given a partial username, return results between offset and offset+limit
@@ -206,7 +206,7 @@ protocol G_UserDataAccess {
 		/**
 	  * Given a string role, return a list of G_Permission
 	  */
-	 array<G_Group> getGroupsByUserId(string userid);
+	 array<G_Group> getGroupsByuserId(string userId);
 	/**
 	  * Given a string role, return a list of G_Permission
 	  */
