@@ -26,7 +26,7 @@ public class DBConnectionPoolService {
 
 	private Logger logger;
 
-	private String userName, url, password;
+	private String username, url, password;
 
 	/**
 	 * Construct a connection pool object.
@@ -34,16 +34,16 @@ public class DBConnectionPoolService {
 	 * @param l
 	 * @param util
 	 * @param url
-	 * @param userName
+	 * @param username
 	 * @param password
 	 * @param lazy
 	 * @throws Exception
 	 */
 	public DBConnectionPoolService(Logger l, JDBCUtil util, String url,
-			String userName, String password, boolean lazy) throws Exception {
+			String username, String password, boolean lazy) throws Exception {
 		logger = l;
 		this.util = util;
-		this.userName = userName;
+		this.username = username;
 		this.password = password;
 		this.url = FileUtils.convertSystemProperties(url);
 		if (!lazy && databaseEnabled) {
@@ -116,14 +116,14 @@ public class DBConnectionPoolService {
 	}
 
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 
 	public void init() throws Exception {
 		// setup the connection pool
 		BoneCPConfig config = new BoneCPConfig();
 		config.setJdbcUrl(url);
-		config.setUsername(userName);
+		config.setUsername(username);
 		config.setPassword(password);
 		config.setConnectionTimeoutInMs(500);
 		config.setMinConnectionsPerPartition(5);
@@ -197,7 +197,7 @@ public class DBConnectionPoolService {
 	}
 
 	public void setUserName(String username) {
-		this.userName = username;
+		this.username = username;
 	}
 
 	/**

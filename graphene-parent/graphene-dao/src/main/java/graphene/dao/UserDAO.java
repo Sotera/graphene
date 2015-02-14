@@ -53,7 +53,7 @@ public interface UserDAO {
 			int limit);
 
 	// Find and return a user, do not create
-	public G_User getByUsername(String userName);
+	public G_User getByUsername(String username);
 
 	/**
 	 * 

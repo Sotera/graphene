@@ -4,6 +4,7 @@ import graphene.util.time.JodaTimeUtil;
 
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -21,8 +22,8 @@ public class DataFormatConstants {
 	public static final String WHOLE_NUMBER_FORMAT_STRING = "###########";
 	public static final String SCORE_FORMAT_STRING = "0.000";
 	public static final String PERCENT_FORMAT_STRING = "##0.0";
-	private static Logger logger = LoggerFactory
-			.getLogger(DataFormatConstants.class);
+	private static Logger logger = LoggerFactory.getLogger(DataFormatConstants.class);
+	public final static NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
 	/**
 	 * Given milliseconds since epoch, return a standard ISO formatted date
@@ -32,14 +33,20 @@ public class DataFormatConstants {
 	 * @return
 	 */
 	public static String formatDate(final long milliseconds) {
-		final SimpleDateFormat sdf = new SimpleDateFormat(
-				DataFormatConstants.ISO_DATE_FORMAT);
+		final SimpleDateFormat sdf = new SimpleDateFormat(DataFormatConstants.ISO_DATE_FORMAT);
 		return sdf.format(JodaTimeUtil.toDateTime(milliseconds).toDate());
 	}
 
+	public static String formatMoney(final Double d) {
+		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(d);
+	}
+
+	public static String formatMoney(final Integer i) {
+		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(i);
+	}
+
 	public static String formatMoney(final Long l) {
-		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
-				.format(l);
+		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(l);
 	}
 
 	/**
@@ -50,28 +57,23 @@ public class DataFormatConstants {
 	 * @return
 	 */
 	public static String formatPercent(final double d) {
-		return new DecimalFormat(DataFormatConstants.PERCENT_FORMAT_STRING)
-				.format(d);
+		return new DecimalFormat(DataFormatConstants.PERCENT_FORMAT_STRING).format(d);
 	}
 
 	public static String formatScore(final Double d) {
-		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING)
-				.format(d);
+		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING).format(d);
 	}
 
 	public static Format getMoneyFormat() {
 		return new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING);
 	}
 
-	public static String reformatDate(final String formatYouThinkItIsIn,
-			final String toFormat) {
+	public static String reformatDate(final String formatYouThinkItIsIn, final String toFormat) {
 		try {
-			return new SimpleDateFormat(DataFormatConstants.DATE_FORMAT_STRING)
-					.format(new SimpleDateFormat(formatYouThinkItIsIn)
-							.parse(toFormat));
+			return new SimpleDateFormat(DataFormatConstants.DATE_FORMAT_STRING).format(new SimpleDateFormat(
+					formatYouThinkItIsIn).parse(toFormat));
 		} catch (final ParseException e) {
-			logger.error("Could not reformate the date identifier " + toFormat
-					+ " with format " + formatYouThinkItIsIn);
+			logger.error("Could not reformate the date identifier " + toFormat + " with format " + formatYouThinkItIsIn);
 			return toFormat;
 		}
 	}

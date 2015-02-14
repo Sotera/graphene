@@ -112,7 +112,7 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.DATABASE_PROPERTIES_LOCATION, "");
 		configuration.add(G_SymbolConstants.GRAPHENE_WEB_CORE_PREFIX, "graphene");
 		configuration.add(SymbolConstants.HMAC_PASSPHRASE, "ad4c17c4ec6da4afe3aad15660abaf8e");
-
+		configuration.add(G_SymbolConstants.REQUIRE_AUTHENTICATION, false);
 		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
 		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
 

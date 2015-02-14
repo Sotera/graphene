@@ -34,7 +34,7 @@ public interface ExportGraphRS {
 	 * 
 	 * @param fileName
 	 * @param fileExt
-	 * @param userName
+	 * @param username
 	 * @param timeStamp
 	 *            this is the client timestamp in millisecs as a string
 	 * @param graphJSONdata
@@ -47,7 +47,7 @@ public interface ExportGraphRS {
 	Response exportGraphAsXML(
 			@QueryParam("fileName") @DefaultValue(value = "") String fileName,
 			@QueryParam("fileExt") @DefaultValue(value = ".xml") String fileExt,
-			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
+			@QueryParam("username") @DefaultValue(value = "unknown") String username,
 			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
 
 			String graphJSONdata);
@@ -72,7 +72,7 @@ public interface ExportGraphRS {
 	 * 
 	 * @param fileName
 	 * @param fileExt
-	 * @param userName
+	 * @param username
 	 * @param timeStamp
 	 *            this is the client timestamp in millisecs as a string
 	 * @param graphJSONdata
@@ -85,7 +85,7 @@ public interface ExportGraphRS {
 	Response exportGraphAsJSON(
 			@QueryParam("fileName") @DefaultValue(value = "") String fileName,
 			@QueryParam("fileExt") @DefaultValue(value = ".xml") String fileExt,
-			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
+			@QueryParam("username") @DefaultValue(value = "unknown") String username,
 			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp,
 			/*
 			 * this is the client timestamp in millisecs as a string

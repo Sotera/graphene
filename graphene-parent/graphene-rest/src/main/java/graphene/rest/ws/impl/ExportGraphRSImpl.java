@@ -44,7 +44,7 @@ public class ExportGraphRSImpl implements ExportGraphRS {
 	@Override
 	public Response exportGraphAsXML(@QueryParam("fileName") String fileName,
 			@QueryParam("fileExt") String fileExt,
-			@QueryParam("userName") String userName,
+			@QueryParam("username") String username,
 			@QueryParam("timeStamp") String timeStamp, // this is the client
 														// timestamp in
 														// millisecs as a string
@@ -59,7 +59,7 @@ public class ExportGraphRSImpl implements ExportGraphRS {
 
 		/* NOT YET IMPLEMENTED FOR XML */
 
-		return exportGraphAsJSON(fileName, fileExt, userName, timeStamp,
+		return exportGraphAsJSON(fileName, fileExt, username, timeStamp,
 				graphJSONdata);
 	}
 
@@ -81,7 +81,7 @@ public class ExportGraphRSImpl implements ExportGraphRS {
 	//@Override
 	public Response exportGraphAsJSON(@QueryParam("fileName") String fileName,
 			@QueryParam("fileExt") String fileExt,
-			@QueryParam("userName") String userName,
+			@QueryParam("username") String username,
 			@QueryParam("timeStamp") String timeStamp, // this is the client
 														// timestamp in
 														// millisecs as a string
@@ -122,7 +122,7 @@ public class ExportGraphRSImpl implements ExportGraphRS {
 		}
 
 		String path = null;
-		String serverfileName = "GraphExport" + "_" + userName + "_"
+		String serverfileName = "GraphExport" + "_" + username + "_"
 				+ timeStamp + "_" + fileName + fileExt;
 
 		if (servletContext != null) {

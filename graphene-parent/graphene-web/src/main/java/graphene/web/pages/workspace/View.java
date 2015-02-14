@@ -105,7 +105,7 @@ public class View extends SimpleBasePage {
 		// TODO: Move the initialization to setupRender
 		entityQuerymodel = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
 		entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues", "minimumscore",
-				"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userid",
+				"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userId",
 				"username", "sortascending", "id", "schema");
 		entityQuerymodel.addEmpty("action");
 		entityQuerymodel.get("AttributeList").sortable(true);
@@ -165,10 +165,10 @@ public class View extends SimpleBasePage {
 
 	public BeanModel<G_ReportViewEvent> getReportViewModel() {
 		reportViewmodel = beanModelSource.createDisplayModel(G_ReportViewEvent.class, resources.getMessages());
-		reportViewmodel.exclude("schema", "id", "userid", "username", "reportpagelink");
+		reportViewmodel.exclude("schema", "id", "userId", "username", "reportpagelink");
 
 		reportViewmodel.addEmpty("action");
-		reportViewmodel.reorder("action", "reportid", "reporttype", "timeinitiated");
+		reportViewmodel.reorder("action", "reportId", "reporttype", "timeinitiated");
 		reportViewmodel.get("action").sortable(true);
 		return reportViewmodel;
 	}

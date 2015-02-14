@@ -46,8 +46,7 @@ import org.tynamo.security.services.SecurityService;
  */
 public class LoginForm {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LoginForm.class);
+	private static final Logger logger = LoggerFactory.getLogger(LoginForm.class);
 
 	@Property
 	private String grapheneLogin;
@@ -88,22 +87,22 @@ public class LoginForm {
 	@Inject
 	private AlertManager alertManager;
 
-	public Object onActionFromGrapheneLoginForm() throws IOException {
-		return authenticatorHelper.loginAndRedirect(
-				grapheneLogin, graphenePassword, grapheneRememberMe,
-				requestGlobals, loginContextService, response, messages, alertManager);
-
-	}
-
-	public void setLoginMessage(String loginMessage) {
-		this.loginMessage = loginMessage;
-	}
-
 	public String getLoginMessage() {
 		if (StringUtils.hasText(loginMessage)) {
 			return loginMessage;
 		} else {
 			return " ";
 		}
+	}
+
+	public Object onActionFromGrapheneLoginForm() throws IOException {
+
+		return authenticatorHelper.loginAndRedirect(grapheneLogin, graphenePassword, grapheneRememberMe,
+				requestGlobals, loginContextService, response, messages, alertManager);
+
+	}
+
+	public void setLoginMessage(final String loginMessage) {
+		this.loginMessage = loginMessage;
 	}
 }

@@ -15,10 +15,10 @@ public class Note implements Serializable {
 
 	private Date createdOn;
 
-	private String userName;
+	private String username;
 
-	public Note(final String userName, final String note) {
-		this.userName = userName;
+	public Note(final String username, final String note) {
+		this.username = username;
 		this.note = note;
 		this.createdOn = new Date();
 	}
@@ -48,17 +48,17 @@ public class Note implements Serializable {
 	}
 
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUserName(String username) {
+		this.username = username;
 	}
 
 	@Override
 	public String toString() {
 		return "Note [id=" + id + ", note=" + note + ", createdOn=" + createdOn
-				+ ", userName=" + userName + "]";
+				+ ", username=" + username + "]";
 	}
 
 }

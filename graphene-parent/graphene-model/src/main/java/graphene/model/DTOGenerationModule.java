@@ -31,7 +31,7 @@ public class DTOGenerationModule {
 	 * 
 	 * 
 	 * @param serverUrl
-	 * @param userName
+	 * @param username
 	 * @param userPassword
 	 * @param logger
 	 * @param util
@@ -40,12 +40,12 @@ public class DTOGenerationModule {
 	@Marker(MainDB.class)
 	public static DBConnectionPoolService buildMainDBConnectionPool(
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_URL) String serverUrl,
-			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) String userName,
+			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) String username,
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_PASSWORD) String userPassword,
 			final Logger logger, JDBCUtil util) {
 		try {
 			return new DBConnectionPoolService(logger, util, serverUrl,
-					userName, userPassword, true);
+					username, userPassword, true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
@@ -59,7 +59,7 @@ public class DTOGenerationModule {
 	 * 
 	 * 
 	 * @param serverUrl
-	 * @param userName
+	 * @param username
 	 * @param userPassword
 	 * @param logger
 	 * @param util
@@ -68,12 +68,12 @@ public class DTOGenerationModule {
 	@Marker(SecondaryDB.class)
 	public static DBConnectionPoolService buildSecondaryConnectionPool(
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER2_URL) String serverUrl,
-			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER2_USERNAME) String userName,
+			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER2_USERNAME) String username,
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER2_PASSWORD) String userPassword,
 			final Logger logger, JDBCUtil util) {
 		try {
 			return new DBConnectionPoolService(logger, util, serverUrl,
-					userName, userPassword, true);
+					username, userPassword, true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;

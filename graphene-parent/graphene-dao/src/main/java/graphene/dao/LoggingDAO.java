@@ -43,9 +43,8 @@ public interface LoggingDAO {
 	/**
 	 * Record the event of a user logging in.
 	 * 
-	 * @param userName
-	 * @param date
-	 * @return
+	 * 
+	 * @param e
 	 */
 	public abstract void recordLoginEvent(G_UserLoginEvent e);
 

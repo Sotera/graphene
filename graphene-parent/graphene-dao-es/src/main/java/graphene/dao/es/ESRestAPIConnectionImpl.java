@@ -26,7 +26,6 @@ import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 
@@ -154,11 +153,9 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-			final HighlightBuilder h = new HighlightBuilder().field("NARR");
-			searchSourceBuilder.query(qbc).highlight(h).minScore((float) q.getMinimumScore())
-					.sort(SortBuilders.scoreSort());
+			// final HighlightBuilder h = new HighlightBuilder().field("NARR");
+			searchSourceBuilder.query(qbc).minScore((float) q.getMinimumScore()).sort(SortBuilders.scoreSort());
 			if (q.getMaxResult() == 0) {
-				logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to 200.");
 				q.setMaxResult(maxSearchResults);
 			}
 			logger.debug("SSB: \n" + searchSourceBuilder.toString());

@@ -76,6 +76,12 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implem
 	}
 
 	@Override
+	public boolean delete(final String id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public boolean deleteWorkspaceRelations(final String workspaceId) {
 		// TODO Auto-generated method stub
 		return false;

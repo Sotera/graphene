@@ -258,7 +258,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public G_PersistedGraph getExistingGraph(final String graphSeed, final String userName, final String timeStamp) {
+	public G_PersistedGraph getExistingGraph(final String graphSeed, final String username, final String timeStamp) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -54,7 +54,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 
 	private String userId = "None";
 
-	private String userName = "None";
+	private String username = "None";
 
 	/**
 	 * 
@@ -125,11 +125,11 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 		} else if (!userId.equals(other.userId)) {
 			return false;
 		}
-		if (userName == null) {
-			if (other.userName != null) {
+		if (username == null) {
+			if (other.username != null) {
 				return false;
 			}
-		} else if (!userName.equals(other.userName)) {
+		} else if (!username.equals(other.username)) {
 			return false;
 		}
 		return true;
@@ -209,7 +209,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 	}
 
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 
 	@Override
@@ -230,7 +230,7 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 				+ ((sortField == null) ? 0 : sortField.hashCode());
 		result = (prime * result) + ((userId == null) ? 0 : userId.hashCode());
 		result = (prime * result)
-				+ ((userName == null) ? 0 : userName.hashCode());
+				+ ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 
@@ -344,8 +344,8 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 		this.userId = userId;
 	}
 
-	public void setUserName(final String userName) {
-		this.userName = userName;
+	public void setUserName(final String username) {
+		this.username = username;
 	}
 
 	@Override
@@ -355,6 +355,6 @@ public abstract class BasicQuery implements SortableQuery, PageableQuery {
 				+ maxSecs + ", minSecs=" + minSecs + ", schema=" + schema
 				+ ", sortAscending=" + sortAscending + ", sortColumn="
 				+ sortColumn + ", sortField=" + sortField + ", userId="
-				+ userId + ", userName=" + userName + "]";
+				+ userId + ", username=" + username + "]";
 	}
 }

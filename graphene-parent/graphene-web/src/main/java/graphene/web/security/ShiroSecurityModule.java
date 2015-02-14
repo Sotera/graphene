@@ -8,8 +8,10 @@ import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.IOCSymbols;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateCreator;
@@ -66,6 +68,13 @@ public class ShiroSecurityModule {
 		configuration.add(factory.createChain("/core/**").add(factory.anon()).build());
 		configuration.add(factory.createChain("/**").add(factory.authc()).build());
 
+	}
+
+	public static void contributeHttpServletRequestHandler(
+			@InjectService("SecurityConfiguration") final HttpServletRequestFilter securityConfiguration,
+			final OrderedConfiguration<HttpServletRequestFilter> filters) {
+		filters.override("SecurityConfiguration", securityConfiguration,
+				"before:ResteasyRequestFilter,after:StoreIntoGlobals");
 	}
 
 	@Contribute(WebSecurityManager.class)

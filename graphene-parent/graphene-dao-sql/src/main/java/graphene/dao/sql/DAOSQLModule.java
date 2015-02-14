@@ -47,7 +47,7 @@ public class DAOSQLModule {
 	 * @param serverName
 	 * @param serverPort
 	 * @param databaseName
-	 * @param userName
+	 * @param username
 	 * @param userPassword
 	 * @param logger
 	 * @return
@@ -56,11 +56,11 @@ public class DAOSQLModule {
 	@Marker(MainDB.class)
 	public static DBConnectionPoolService buildGrapheneConnectionPool(final RegistryShutdownHub ptm,
 			@Inject final JDBCUtil util, @Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_URL) final String serverUrl,
-			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) final String userName,
+			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_USERNAME) final String username,
 			@Inject @Symbol(G_SymbolConstants.MIDTIER_SERVER_PASSWORD) final String userPassword, final Logger logger)
 			throws Exception {
 
-		final DBConnectionPoolService cps = new DBConnectionPoolService(logger, util, serverUrl, userName,
+		final DBConnectionPoolService cps = new DBConnectionPoolService(logger, util, serverUrl, username,
 				userPassword, true);
 
 		ptm.addRegistryShutdownListener(new Runnable() {

@@ -8,14 +8,15 @@ import graphene.model.idl.G_UserGroup;
 import java.util.List;
 
 public interface UserGroupDAO {
-
 	public boolean addToGroup(String userId, String groupId);
+
+	public boolean delete(String id);
 
 	public abstract List<G_UserGroup> getGroupMembershipsForGroupId(String groupId);
 
-	public abstract List<G_UserGroup> getGroupMembershipsForUserIdAndGroupId(final String userId, final String groupId);
-
 	public List<G_UserGroup> getGroupMembershipsForUserId(String userId);
+
+	public abstract List<G_UserGroup> getGroupMembershipsForUserIdAndGroupId(final String userId, final String groupId);
 
 	public List<G_Group> getGroupsForUserId(String userId);
 

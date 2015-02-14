@@ -1,8 +1,10 @@
 package graphene.web.security;
 
 import graphene.business.commons.exception.BusinessException;
+import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idl.G_UserLoginEvent;
 import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.tynamo.security.SecuritySymbols;
 import org.tynamo.security.internal.services.LoginContextService;
@@ -56,6 +59,9 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	@Inject
 	@Symbol(SecuritySymbols.REDIRECT_TO_SAVED_URL)
 	private boolean redirectToSavedUrl;
+
+	@Inject
+	protected LoggingDAO loggingDao;
 
 	@Inject
 	public ShiroAuthenticatorHelper(final G_UserDataAccess userDataAccess,
@@ -105,6 +111,10 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 			final AlertManager alertManager) {
 
 		final Subject currentUser = securityService.getSubject();
+		final G_UserLoginEvent ule = new G_UserLoginEvent();
+		ule.setTimeInitiated(DateTime.now().getMillis());
+		ule.setUserId(grapheneLogin);
+		loggingDao.recordLoginEvent(ule);
 
 		if (currentUser == null) {
 			logger.error("Subject can't be null");

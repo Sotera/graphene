@@ -28,11 +28,10 @@ public interface WorkspaceDAO {
 	 * @param limit
 	 * @return
 	 */
-	public List<G_Workspace> findWorkspaces(String partialName, int offset,
-			int limit);
+	public List<G_Workspace> findWorkspaces(String partialName, int offset, int limit);
 
 	/**
-	 * Find workspaces by partial name where the userid is an editor of the
+	 * Find workspaces by partial name where the userId is an editor of the
 	 * workspace.
 	 * 
 	 * @param userId
@@ -41,14 +40,17 @@ public interface WorkspaceDAO {
 	 * @param limit
 	 * @return
 	 */
-	public List<G_Workspace> findWorkspaces(String userId, String partialName,
-			int offset, int limit);
+	public List<G_Workspace> findWorkspaces(String userId, String partialName, int offset, int limit);
 
 	public List<G_Workspace> getAllWorkspaces();
 
 	// public G_Workspace getOrCreateWorkspace(G_Workspace g);
 
 	public G_Workspace getById(String id);
+
+	public G_PersistedGraph getExistingGraph(String graphSeed, String username, String timeStamp);
+
+	public void initialize() throws DataAccessException;
 
 	/**
 	 * Make sure that the creation date and modified date are set.
@@ -61,18 +63,14 @@ public interface WorkspaceDAO {
 	 */
 	public G_Workspace save(G_Workspace g);
 
-	public void initialize() throws DataAccessException;
-
 	/**
 	 * Used to persist a graph to a backend.
 	 * 
 	 * @param graphSeed
-	 * @param userName
+	 * @param username
 	 * @param timeStamp
 	 * @param graphJSONdata
-	 * @return 
+	 * @return
 	 */
 	public G_PersistedGraph saveGraph(G_PersistedGraph pg);
-
-	public G_PersistedGraph getExistingGraph(String graphSeed, String userName, String timeStamp);
 }

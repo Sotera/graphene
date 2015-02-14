@@ -7,6 +7,7 @@ import graphene.model.graph.G_PersistedGraph;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
+import graphene.model.idl.G_UserDataAccess;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
@@ -30,6 +31,7 @@ import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
+import org.tynamo.security.services.SecurityService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,8 +45,13 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@InjectService("HyperProperty")
 	private HyperGraphBuilder propertyGraphBuilder;
+
 	@SessionState(create = false)
 	protected G_User user;
+
+	@Inject
+	@Symbol(G_SymbolConstants.REQUIRE_AUTHENTICATION)
+	private boolean requireAuthentication;
 
 	protected boolean userExists;
 	@Inject
@@ -61,6 +68,12 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	private int defaultMaxEdgesPerNode;
 	@Inject
 	private WorkspaceDAO wdao;
+
+	@Inject
+	private G_UserDataAccess userDataAccess;
+
+	@Inject
+	private SecurityService securityService;
 
 	public CSGraphServerRSImpl() {
 
@@ -140,85 +153,109 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("Bipartite " + bipartite);
 		logger.debug("showNameNodes " + showNameNodes);
 		logger.debug("useSaved " + useSaved);
-
-		final int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, defaultMaxDegrees);
-		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes);
-		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode);
-		String userId = null;
-		String username = null;
-		if (userExists) {
-			userId = user.getId();
-			username = user.getUsername();
-		}
 		V_CSGraph m = null;
-		if (ValidationUtils.isValid(value) && !"null".equals(value[0])) {
-			final String firstValue = value[0];
-			final G_GraphViewEvent gve = new G_GraphViewEvent();
-			gve.setReportId(firstValue);
-			gve.setUserId(userId);
-			gve.setUserName(username);
-
-			if (useSaved) {
-
-				try {
-					// TODO: fix which key is going to be used as the seed
-					final G_PersistedGraph existingGraph = wdao.getExistingGraph(firstValue, userId, username);
-					final ObjectMapper mapper = new ObjectMapper();
-					if (existingGraph != null) {
-						m = mapper.readValue(existingGraph.getGraphJSONdata(), V_CSGraph.class);
-						if (m == null) {
-							logger.error("Could not parse existing graph from a previous save, will regenerate.");
-						} else {
-							gve.setReportType("Existing");
-							loggingDao.recordGraphViewEvent(gve);
-							m.setStrStatus("This graph was previously saved on "
-									+ DataFormatConstants.formatDate(existingGraph.getModified()));
-						}
-					} else {
-						logger.info("Could not find previously saved graph, will regenerate");
-					}
-
-				} catch (final Exception e) {
-					logger.error("Error building graph at rest service: ", e);
-				}
-			}
-			// If pulling from cache didn't work, get a new graph
-			if (m == null) {
-				V_GenericGraph g = null;
-				try {
-					final V_GraphQuery q = new V_GraphQuery();
-					q.addSearchIds(value);
-					q.setDirected(false);
-					q.setMaxNodes(maxNodesInt);
-					q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
-					q.setMaxHops(maxDegreeInt);
-					if (userExists) {
-						q.setUserId(user.getId());
-						q.setUserName(user.getUsername());
-					}
-					gve.setQueryObject(q);
-					gve.setReportType("New");
-					loggingDao.recordGraphViewEvent(gve);
-					g = propertyGraphBuilder.makeGraphResponse(q);
-					m = new V_CSGraph(g, true);
-				} catch (final Exception e) {
-					logger.error("Error building graph at rest service: ", e);
-				}
-			}
-
-		} else {
+		if (requireAuthentication && !securityService.isAuthenticated()) {
+			// The user needs to be authenticated.
 			m = new V_CSGraph();
-			String errorMessage;
-			if (useSaved) {
-				errorMessage = "Tried to recover an existing graph, but no valid id was provided to the server: ["
-						+ StringUtils.toString(value) + "]";
-			} else {
-				errorMessage = "Tried to generate a new graph, but no valid id was provided to the server: ["
-						+ StringUtils.toString(value) + "]";
-			}
-			logger.error(errorMessage);
 			m.setIntStatus(1);
+			final String errorMessage = "You must be authenticated in order to get the graph.";
 			m.setStrStatus(errorMessage);
+			m.setUserId("Unknown");
+			m.setUserName("Unknown");
+		} else {
+			// Either we don't need authentication or the user is
+			// authenticated.
+
+			String userId = null;
+			String username = null;
+			if (ValidationUtils.isValid(securityService.getSubject())) {
+				try {
+					username = (String) securityService.getSubject().getPrincipal();
+					final G_User byUsername = userDataAccess.getByUsername(username);
+					userId = byUsername.getId();
+				} catch (final Exception e) {
+					logger.error("Error getting user information during rest call: ", e);
+					// e.printStackTrace();
+				}
+			} else {
+				logger.debug("User was not authenticated");
+			}
+
+			final int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, defaultMaxDegrees);
+			final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes);
+			final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode);
+
+			if (ValidationUtils.isValid(value) && !"null".equals(value[0])) {
+				final String firstValue = value[0];
+				final G_GraphViewEvent gve = new G_GraphViewEvent();
+				gve.setReportId(firstValue);
+				gve.setUserId(userId);
+				gve.setUserName(username);
+				gve.setTimeInitiated(DateTime.now().getMillis());
+				if (useSaved) {
+					try {
+						// TODO: fix which key is going to be used as the seed
+						final G_PersistedGraph existingGraph = wdao.getExistingGraph(firstValue, userId, username);
+						final ObjectMapper mapper = new ObjectMapper();
+						if (existingGraph != null) {
+							m = mapper.readValue(existingGraph.getGraphJSONdata(), V_CSGraph.class);
+							if (m == null) {
+								logger.error("Could not parse existing graph from a previous save, will regenerate.");
+							} else {
+								gve.setReportType("Existing");
+								loggingDao.recordGraphViewEvent(gve);
+								m.setStrStatus("This graph was previously saved on "
+										+ DataFormatConstants.formatDate(existingGraph.getModified()));
+							}
+						} else {
+							logger.info("Could not find previously saved graph, will regenerate");
+						}
+
+					} catch (final Exception e) {
+						logger.error("Error building graph at rest service: ", e);
+					}
+				}
+				// If pulling from cache didn't work, get a new graph
+				if (m == null) {
+					V_GenericGraph g = null;
+					try {
+						final V_GraphQuery q = new V_GraphQuery();
+						q.addSearchIds(value);
+						q.setDirected(false);
+						q.setMaxNodes(maxNodesInt);
+						q.setMaxEdgesPerNode(maxEdgesPerNodeInt);
+						q.setMaxHops(maxDegreeInt);
+						q.setUserId(userId);
+						q.setUsername(username);
+						gve.setQueryObject(q);
+						gve.setReportType("New");
+						loggingDao.recordGraphViewEvent(gve);
+						g = propertyGraphBuilder.makeGraphResponse(q);
+						g.setUserId(userId);
+						g.setUserName(username);
+						m = new V_CSGraph(g, true);
+
+					} catch (final Exception e) {
+						logger.error("Error building graph at rest service: ", e);
+					}
+				}
+
+			} else {
+				m = new V_CSGraph();
+				String errorMessage;
+				m.setUserId(userId);
+				m.setUserName(username);
+				if (useSaved) {
+					errorMessage = "Tried to recover an existing graph, but no valid id was provided to the server: ["
+							+ StringUtils.toString(value) + "]";
+				} else {
+					errorMessage = "Tried to generate a new graph, but no valid id was provided to the server: ["
+							+ StringUtils.toString(value) + "]";
+				}
+				logger.error(errorMessage);
+				m.setIntStatus(1);
+				m.setStrStatus(errorMessage);
+			}
 		}
 		return m;
 
@@ -303,20 +340,42 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	}
 
 	@Override
-	public Response saveGraph(final String graphSeed, final String userName, final String timeStamp, final String graph) {
-		final G_PersistedGraph pg = new G_PersistedGraph();
-		pg.setCreated(DateTime.now().getMillis());
-		pg.setModified(DateTime.now().getMillis());
-		pg.setGraphSeed(graphSeed);
-		pg.setUserName(userName);
-		pg.setGraphJSONdata(graph);
-		logger.debug("seed: " + graphSeed);
-		logger.debug("json: " + graph);
-		final G_PersistedGraph saveGraph = wdao.saveGraph(pg);
-		if (saveGraph != null) {
-			return Response.status(200).entity("Saved " + graphSeed + " as " + saveGraph.getId()).build();
+	public Response saveGraph(final String graphSeed, final String username, final String timeStamp, final String graph) {
+		if (requireAuthentication && !securityService.isAuthenticated()) {
+			// The user needs to be authenticated.
+			logger.error("User must be logged in to save a graph.");
+			return Response.status(200).entity("Unable to save, you must be logged in. ").build();
 		} else {
-			return Response.status(200).entity("Unable to save " + graphSeed).build();
+			String authenticatedUsername = username;
+			if (ValidationUtils.isValid(securityService.getSubject())) {
+				try {
+					authenticatedUsername = (String) securityService.getSubject().getPrincipal();
+					// final G_User byUsername =
+					// userDataAccess.getByUsername(authenticatedUsername);
+					// byUsername.getId();
+
+				} catch (final Exception e) {
+					logger.error("Error getting user information during rest call: ", e);
+					// e.printStackTrace();
+				}
+			} else {
+				logger.debug("User was not authenticated");
+			}
+
+			final G_PersistedGraph pg = new G_PersistedGraph();
+			pg.setCreated(DateTime.now().getMillis());
+			pg.setModified(DateTime.now().getMillis());
+			pg.setGraphSeed(graphSeed);
+			pg.setUserName(authenticatedUsername);
+			pg.setGraphJSONdata(graph);
+			logger.debug("seed: " + graphSeed);
+			logger.debug("json: " + graph);
+			final G_PersistedGraph saveGraph = wdao.saveGraph(pg);
+			if (saveGraph != null) {
+				return Response.status(200).entity("Saved " + graphSeed + " as " + saveGraph.getId()).build();
+			} else {
+				return Response.status(200).entity("Unable to save " + graphSeed).build();
+			}
 		}
 	}
 

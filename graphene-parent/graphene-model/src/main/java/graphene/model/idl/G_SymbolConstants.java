@@ -77,6 +77,8 @@ public class G_SymbolConstants {
 	public static final String ENABLE_AUTO_LOGIN = "graphene.enable-auto-login";
 	public static final String AUTO_LOGIN_USERNAME = "graphene.auto-login-name";
 
+	public static final String REQUIRE_AUTHENTICATION = "graphene.require-authentication";
+
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}

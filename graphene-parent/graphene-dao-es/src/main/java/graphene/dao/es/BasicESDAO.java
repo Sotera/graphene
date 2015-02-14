@@ -52,12 +52,19 @@ public class BasicESDAO {
 	public boolean delete(final String id) {
 		boolean success = false;
 		try {
-			c.getClient().execute(
+			final JestResult result = c.getClient().execute(
 					(new Delete.Builder(id)).index(index).type(type).setParameter("timeout", defaultESTimeout).build());
-			success = true;
+
+			success = result.isSucceeded();
+			if (success) {
+				logger.debug("Successfully deleted id " + id);
+			} else {
+				logger.error("Could not delete id '" + id + "' : " + result.getJsonString());
+			}
 		} catch (final Exception e) {
 			logger.error("delete " + e.getMessage());
 		}
+
 		return success;
 	}
 

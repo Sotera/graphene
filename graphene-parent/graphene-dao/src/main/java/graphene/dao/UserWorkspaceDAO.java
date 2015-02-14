@@ -15,12 +15,14 @@ public interface UserWorkspaceDAO {
 	 * 
 	 * @param username
 	 * @param rel
-	 * @param workspaceid
+	 * @param workspaceId
 	 * @return
 	 */
-	public boolean addRelationToWorkspace(String userid, G_UserSpaceRelationshipType rel, String workspaceid);
+	public boolean addRelationToWorkspace(String userId, G_UserSpaceRelationshipType rel, String workspaceId);
 
 	public int countUsersForWorkspace(String workspaceId);
+
+	public boolean delete(String id);
 
 	/**
 	 * Usually called when deleting a workspace, we want to cascade the deletion

@@ -209,12 +209,14 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	protected String getCombinedSearchLink(final String nodeType, final String identifier) {
 		if (linkGenerator != null) {
-			logger.debug("Search page is defined");
+			// FIXME: Need to find a way to inject the page into the builder, so
+			// we can call set()
+			logger.debug("Search page is defined when making a link for " + identifier);
 			final Link link = linkGenerator.set(null, null, null, identifier, defaultMaxResults);
 			return "<a href=\"" + link.toRedirectURI() + "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >"
 					+ identifier + "</a>";
 		} else {
-			logger.warn("No linkGenerator search page defined");
+			logger.warn("No linkGenerator search page defined when making a link for " + identifier);
 			final String encodedIdentifier = encoder.encode(identifier);
 			String matchType = "COMPARE_CONTAINS";
 			if (nodeType.contains("ADDRESS")) {

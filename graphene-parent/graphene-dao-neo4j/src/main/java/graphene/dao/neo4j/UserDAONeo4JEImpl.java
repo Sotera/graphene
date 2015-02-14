@@ -187,7 +187,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	// }
 
 	@Override
-	public G_User getByUsername(String userName) {
+	public G_User getByUsername(String username) {
 		// TODO Auto-generated method stub
 		return null;
 	}

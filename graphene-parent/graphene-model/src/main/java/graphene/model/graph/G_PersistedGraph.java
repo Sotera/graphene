@@ -12,7 +12,7 @@ public class G_PersistedGraph {
 	}
 
 	String graphSeed;
-	String userName;
+	String username;
 	/** workspace's modified datetime */
 	private java.lang.Long modified;
 
@@ -44,11 +44,11 @@ public class G_PersistedGraph {
 	}
 
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUserName(String username) {
+		this.username = username;
 	}
 
 

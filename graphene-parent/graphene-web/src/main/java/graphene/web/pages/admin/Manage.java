@@ -133,7 +133,7 @@ public class Manage extends SimpleBasePage {
 		userWorkspaceModel.exclude("schema", "hashedpassword");
 
 		userWorkspaceModel.addEmpty("action");
-		userWorkspaceModel.reorder("action", "id", "userid", "role", "workspaceid", "modified");
+		userWorkspaceModel.reorder("action", "id", "userId", "role", "workspaceId", "modified");
 		return userWorkspaceModel;
 	}
 
@@ -203,30 +203,19 @@ public class Manage extends SimpleBasePage {
 
 	@OnEvent("deleteuserworkspace")
 	void onDeleteUserWorkspace(final String id) {
-		G_UserWorkspace thingToDelete = null;
-		for (final G_UserWorkspace x : userWorkspaceList) {
-			if (x.getId().equals(id)) {
-				thingToDelete = x;
-			}
-		}
-		if (thingToDelete != null) {
-			final boolean success = userWorkspaceList.remove(thingToDelete);
+		if (ValidationUtils.isValid(id)) {
+			final boolean success = userWorkspaceDao.delete(id);
 			if (success) {
 				alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Removed workspace relation " + id);
 			} else {
+				logger.error("Could not delete workspace relation with id: " + id);
 				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Could not remove workspace relation " + id);
 			}
 		} else {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
-					"Could not find workspace relation to remove with id " + id);
+			logger.error("Could not delete workspace relation because no id was provided.");
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "No valid workspace relation to delete");
 		}
-
-		try {
-			Thread.sleep(1000);
-		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// refresh the list.
 		userWorkspaceList = userWorkspaceDao.getAllWorkspaceRelations();
 		if (request.isXHR()) {
 			ajax.addRender(userWorkspaceListZone);

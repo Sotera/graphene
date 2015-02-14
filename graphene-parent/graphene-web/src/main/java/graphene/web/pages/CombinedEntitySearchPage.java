@@ -23,7 +23,6 @@ import graphene.web.annotations.PluginPage;
 import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +51,7 @@ import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
 /**
@@ -202,15 +202,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public Double getAmount() {
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
-	
-	public String getFormattedAmount() {
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
-		String amount = formatter.format(getAmount());
-		//if (amount.charAt(0) == '$') {
-		//	amount = amount.substring(1, amount.length());
-		//}
-		return amount;
-	}
 
 	public Collection<Triple<String, String, String>> getCIdentifierList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTCIDLIST);
@@ -256,7 +247,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				sq.setUserId(getUser().getId());
 				sq.setUserName(getUser().getUsername());
 			}
-
+			sq.setTimeInitiated(DateTime.now().getMillis());
 			try {
 				loggingDao.recordQuery(sq);
 				if (currentSelectedWorkspaceExists) {
@@ -309,6 +300,25 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 */
 	public String getExtLink() {
 		return extPath + getReportId();
+	}
+
+	public String getFormattedAmount() {
+		String amount = null;
+		try {
+			// final String amount =
+			// DataFormatConstants.formatMoney(getAmount());
+
+			// DataFormatConstants.formatter.setParseIntegerOnly(true);
+			amount = DataFormatConstants.formatter.format(getAmount());
+
+			// XXX: Hack to remove cents and decimal
+			amount = amount.subSequence(0, amount.length() - 3).toString();
+
+			return amount;
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return amount;
 	}
 
 	/**
@@ -372,12 +382,15 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public JSONObject getOptions() {
 
 		final JSONObject json = new JSONObject(
-			"bJQueryUI", "true",
-			"bAutoWidth", "true",
-			"sDom", "<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>"
-		);
+				"bJQueryUI",
+				"true",
+				"bAutoWidth",
+				"true",
+				"sDom",
+				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
-		json.put("aaSorting", new JSONArray().put(new JSONArray().put(0).put("asc")).put(new JSONArray().put(3).put("desc")));
+		json.put("aaSorting",
+				new JSONArray().put(new JSONArray().put(0).put("asc")).put(new JSONArray().put(3).put("desc")));
 
 		final JSONArray columnArray = new JSONArray();
 
@@ -387,75 +400,38 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				{ "date", "7%" }, { "amount", "7%" }, { "subjects", "12%" }, { "addressList", "25%" },
 				{ "communicationIdentifierList", "15%" }, { "identifierList", "15%" } };
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "numeric"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "numeric"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "false", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "html"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "false",
+				"sWidth", properties[columnArray.length()][1], "sType", "html"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "date"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "date"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"type", "currency",
-			"sType", "currency"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "type", "currency", "sType", "currency"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
+		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
+				properties[columnArray.length()][1], "sType", "string"));
 
-		//json.put("sScrollX", "100%");
-		//json.put("bScrollCollapse", false);
+		// json.put("sScrollX", "100%");
+		// json.put("bScrollCollapse", false);
 		json.put("aoColumns", columnArray);
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
-		
+
 		return json;
 	}
 
@@ -495,10 +471,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public String getStyleFor(final Triple<String, String, String> currentThing) {
 		boolean containsTerm = false;
 		// splits on " ", "/", and "\" in the search term.
-		// FIXME: tokenize based on " and use the substring between them as a single term
-		String[] searchTerms = currentSearchValue.split("[ \\/]+");
-		for (String term : searchTerms) {
-			// term.replaceAll() looks for all " characters and removes them for the sake of comparison
+		// FIXME: tokenize based on " and use the substring between them as a
+		// single term
+		final String[] searchTerms = currentSearchValue.split("[ \\/]+");
+		for (final String term : searchTerms) {
+			// term.replaceAll() looks for all " characters and removes them for
+			// the sake of comparison
 			if (StringUtils.containsIgnoreCase(currentThing.getThird(), term.replaceAll("[\"]+", ""))) {
 				containsTerm = true;
 				break;

@@ -60,7 +60,7 @@ public class QueryAudit extends SimpleBasePage {
 		// TODO: Move the initialization to setupRender
 		entityQuerymodel = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
 		entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues", "minimumscore",
-				"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userid",
+				"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userId",
 				"sortascending", "id", "schema");
 
 		entityQuerymodel.get("AttributeList").sortable(true);
@@ -91,9 +91,9 @@ public class QueryAudit extends SimpleBasePage {
 	public BeanModel<G_ReportViewEvent> getReportViewModel() {
 
 		reportViewmodel = beanModelSource.createDisplayModel(G_ReportViewEvent.class, resources.getMessages());
-		reportViewmodel.exclude("schema", "userid", "id");
+		reportViewmodel.exclude("schema", "userId", "id");
 
-		reportViewmodel.reorder("timeinitiated", "username", "reportid", "reporttype", "reportpagelink");
+		reportViewmodel.reorder("timeinitiated", "username", "reportId", "reporttype", "reportpagelink");
 
 		return reportViewmodel;
 	}

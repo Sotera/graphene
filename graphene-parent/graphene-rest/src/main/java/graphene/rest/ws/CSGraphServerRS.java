@@ -124,6 +124,6 @@ public interface CSGraphServerRS {
 	@Path("/save")
 	@Produces("text/plain")
 	Response saveGraph(@QueryParam("seed") @DefaultValue(value = "unknown") String graphSeed,
-			@QueryParam("userName") @DefaultValue(value = "unknown") String userName,
+			@QueryParam("username") @DefaultValue(value = "unknown") String username,
 			@QueryParam("timeStamp") @DefaultValue(value = "0") String timeStamp, String graph);
 }

@@ -59,8 +59,8 @@ public class UDSessionRSImpl implements UDSessionRS {
 	}
 
 	// Returns a unique session id for the specified parameters
-	private String createSessionId(final String userid, final String sessionName, final String lastUpdated) {
-		return userid.trim() + "_" + sessionName.trim() + "_" + lastUpdated.trim();
+	private String createSessionId(final String userId, final String sessionName, final String lastUpdated) {
+		return userId.trim() + "_" + sessionName.trim() + "_" + lastUpdated.trim();
 	}
 
 	// deleteSession - Delete the specified session for the specified user id
@@ -84,7 +84,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 
 		// Verify that the sessionId is not null and valid
 		// sessionId has this format:
-		// userid + "_" + sessionname + "_" + new Date().getTime()).toString()
+		// userId + "_" + sessionname + "_" + new Date().getTime()).toString()
 		if ((sessionId == null) || (sessionId.length() < 5) || (sessionId.indexOf("_") < 0)) {
 			final String errormsg = "deleteSession: The specified session id is null or invalid";
 			logger.error(errormsg);
@@ -118,9 +118,9 @@ public class UDSessionRSImpl implements UDSessionRS {
 		return sessions;
 	}
 
-	// Returns the list of all userids having saved sessions
-	private List<String> getAllSessionUserIds(final String rootName) {
-		final List<String> userids = new ArrayList<String>();
+	// Returns the list of all userIds having saved sessions
+	private List<String> getAllSessionuserIds(final String rootName) {
+		final List<String> userIds = new ArrayList<String>();
 
 		if (useFileStore) {
 			String basePath = null, filePath;
@@ -138,22 +138,22 @@ public class UDSessionRSImpl implements UDSessionRS {
 			}
 			filePath = basePath + "/" + rootName; // within this folder there
 													// can be subfolders for
-													// earh userid
+													// earh userId
 			FileFolder = new File(filePath);
 			final String[] fileNames = FileFolder.list();
 
 			for (final String fileName : fileNames) {
 				if (new File(FileFolder + "/" + fileName).isDirectory()) {
-					userids.add(fileName);
+					userIds.add(fileName);
 				}
 			}
 
 			// DEBUG
-			logger.debug("getAllSessionUserIds: userids = " + userids.toString());
+			logger.debug("getAllSessionuserIds: userIds = " + userIds.toString());
 		} else {
 			// TODO from DB or other store
 		}
-		return userids;
+		return userIds;
 	}
 
 	// getSession - Get session data for the specified session id
@@ -164,7 +164,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	 * Input/Query parameters: id: Unique session identifier
 	 * 
 	 * Returns: Application/json. JSON object containing the session data. { id:
-	 * - Internal id name: - Name of the session userid: - unique user id (or
+	 * - Internal id name: - Name of the session userId: - unique user id (or
 	 * username) for the associated user lastUpdated: - Date and timestamp (in
 	 * milliseconds) when the session was saved by the user sessionActions:
 	 * [action1, action2, ... actionN] - List of user defined Actions and
@@ -195,7 +195,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 
 		// Verify that the sessionId is not null and valid
 		// sessionId has this format:
-		// userid + "_" + sessionname + "_" + new Date().getTime()).toString()
+		// userId + "_" + sessionname + "_" + new Date().getTime()).toString()
 		if ((sessionId == null) || (sessionId.length() < 5) || (sessionId.indexOf("_") < 0)) {
 			final String errormsg = "getSession: The specified session id is null or invalid";
 			logger.error(errormsg);
@@ -220,7 +220,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	 */
 	private String getSessionFromDB(final String rootName, final String sessionId) {
 		// sessionId has this format:
-		// userid + "_" + sessionname + "_" + new Date().getTime()).toString()
+		// userId + "_" + sessionname + "_" + new Date().getTime()).toString()
 
 		final String sessionData = "{ }";
 
@@ -231,7 +231,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	// Return the session data (from the File Store) for the specified sessionId
 	private String getSessionFromFile(final String rootName, final String sessionId) {
 		// sessionId has this format:
-		// userid + "_" + sessionname + "_" + new Date().getTime()).toString()
+		// userId + "_" + sessionname + "_" + new Date().getTime()).toString()
 
 		String sessionData = "{ }";
 		String filePath = null;
@@ -239,7 +239,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 		FileInputStream inStream = null;
 
 		final int firstDelimPos = sessionId.indexOf("_");
-		final String userid = sessionId.substring(0, firstDelimPos);
+		final String userId = sessionId.substring(0, firstDelimPos);
 		final String sessionFileName = sessionId.substring(firstDelimPos + 1);
 
 		if (servletContext != null) {
@@ -251,7 +251,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 			// TODO - handle case if the Server is Linux instead of Windows
 			filePath = "C:/Windows/Temp"; // Temp hack
 		}
-		fullFileName = filePath + "/" + rootName + "/" + userid + "/" + sessionFileName + ".txt";
+		fullFileName = filePath + "/" + rootName + "/" + userId + "/" + sessionFileName + ".txt";
 
 		// DEBUG
 		logger.debug("getSessionFromFile: fullFileName = " + fullFileName);
@@ -281,7 +281,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	 * 
 	 * [ session1, session2, ... sessionN ]
 	 * 
-	 * Where each session object consists of: { id: <internal id>, userid: <user
+	 * Where each session object consists of: { id: <internal id>, userId: <user
 	 * id>, name: <name of the session>, lastUpdated: <Date and timestamp (in
 	 * milliseconds)> }
 	 * 
@@ -328,7 +328,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	 * 
 	 * [ session1, session2, ... sessionN ]
 	 * 
-	 * Where each session object consists of: { id: <internal id>, userid: <user
+	 * Where each session object consists of: { id: <internal id>, userId: <user
 	 * id>, name: <name of the session>, lastUpdated: <Date and timestamp (in
 	 * milliseconds)> }
 	 * 
@@ -422,7 +422,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	 * 
 	 * [ session1, session2, ... sessionN ]
 	 * 
-	 * Where each session object consists of: { id: <internal id>, userid: <user
+	 * Where each session object consists of: { id: <internal id>, userId: <user
 	 * id>, name: <name of the session>, lastUpdated: <Date and timestamp (in
 	 * milliseconds)> }
 	 * 
@@ -484,28 +484,28 @@ public class UDSessionRSImpl implements UDSessionRS {
 
 	// =============== Public Methods ================
 
-	// getSessionsByUserId - Get the list of user-defined sessions for the
-	// specified userid
+	// getSessionsByuserId - Get the list of user-defined sessions for the
+	// specified userId
 	// @GET
-	// @Path("/getSessionsByUserId/{userid}")
+	// @Path("/getSessionsByuserId/{userId}")
 	// @Produces("application/json")
 	/*
-	 * Input/Query parameters: userid: Userid
+	 * Input/Query parameters: userId: userId
 	 * 
 	 * Returns: Application/json. JSON object containing an array of saved
 	 * sessions.
 	 * 
 	 * [ session1, session2, ... sessionN ]
 	 * 
-	 * Where each session object consists of: { id: <internal id>, userid: <user
+	 * Where each session object consists of: { id: <internal id>, userId: <user
 	 * id>, name: <name of the session>, lastUpdated: <Date and timestamp (in
 	 * milliseconds)> }
 	 * 
 	 * Returns an empty array [] , if no user-defined sessions exist for the
-	 * specified userid
+	 * specified userId
 	 */
 	@Override
-	public Response getSessionsByUserId(@PathParam("userid") final String userId) {
+	public Response getSessionsByuserId(@PathParam("userId") final String userId) {
 
 		String sessionList = "[]";
 		ResponseBuilder response = null;
@@ -514,20 +514,20 @@ public class UDSessionRSImpl implements UDSessionRS {
 			try {
 				servletContext = globals.getServletContext();
 			} catch (final Exception se) {
-				logger.error("getSessionsByUserId: ServletContext is null.");
+				logger.error("getSessionsByuserId: ServletContext is null.");
 				// not a hard error, keep going
 			}
 		}
 
-		// Verify that the userid is not null and valid
+		// Verify that the userId is not null and valid
 		if ((userId == null) || (userId.length() < 1)) {
-			final String errormsg = "getSessionsByUserId: The specified user id is null or invalid";
+			final String errormsg = "getSessionsByuserId: The specified user id is null or invalid";
 			logger.error(errormsg);
 			// response = Response.serverError();
 			response = Response.status(Response.Status.BAD_REQUEST).entity(errormsg);
 		} else {
 			// get the list of user defined sessions (not including any session
-			// data) for the userid
+			// data) for the userId
 			if (useFileStore) {
 				sessionList = getSessionsFromFile(ROOTNAME, userId);
 			} else {
@@ -541,7 +541,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 		return responseOut;
 	}
 
-	private List<String> getSessionsForUserid(final String rootName, final String userid) {
+	private List<String> getSessionsForuserId(final String rootName, final String userId) {
 		final List<String> sessions = new ArrayList<String>();
 
 		if (useFileStore) {
@@ -558,7 +558,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 				// TODO - handle case if the Server is Linux instead of Windows
 				basePath = "C:/Windows/Temp"; // Temp hack
 			}
-			filePath = basePath + "/" + rootName + "/" + userid; // within this
+			filePath = basePath + "/" + rootName + "/" + userId; // within this
 																	// folder
 																	// there can
 																	// saved
@@ -583,8 +583,8 @@ public class UDSessionRSImpl implements UDSessionRS {
 					if ((indx1 > 0) && (indx2 > 0)) {
 						sessionName = fileName.substring(0, indx1);
 						lastUpdated = fileName.substring(indx1 + 1, indx2);
-						sessionId = createSessionId(userid, sessionName, lastUpdated);
-						sessionInfoObject = "{ id: \"" + sessionId + "\", userid: \"" + userid + "\", lastUpdated: \""
+						sessionId = createSessionId(userId, sessionName, lastUpdated);
+						sessionInfoObject = "{ id: \"" + sessionId + "\", userId: \"" + userId + "\", lastUpdated: \""
 								+ lastUpdated + "\" }";
 						sessions.add(sessionInfoObject);
 					}
@@ -594,15 +594,15 @@ public class UDSessionRSImpl implements UDSessionRS {
 			}
 
 			// DEBUG
-			logger.debug("getSessionsForUserid: sessions = " + sessions.toString());
+			logger.debug("getSessionsForuserId: sessions = " + sessions.toString());
 		} else {
 			// TODO from DB or other store
 		}
 		return sessions;
 	}
 
-	// userid can be "all"
-	private String getSessionsFromDB(final String rootName, final String userid) {
+	// userId can be "all"
+	private String getSessionsFromDB(final String rootName, final String userId) {
 
 		final String sessions = "[ ]";
 		// TODO Implement
@@ -613,20 +613,20 @@ public class UDSessionRSImpl implements UDSessionRS {
 	 * Returns: Application/json. JSON object containing an array of info about
 	 * saved session. [ session1, session2, ... sessionN ]
 	 * 
-	 * Where each session object consists of: { id: <internal id>, userid: <user
+	 * Where each session object consists of: { id: <internal id>, userId: <user
 	 * id>, name: <name of the session>, lastUpdated: <Date and timestamp (in
 	 * milliseconds)> }
 	 * 
 	 * Returns an empty array [] , if no user-defined sessions exist for the
-	 * specified userid
+	 * specified userId
 	 */
-	private String getSessionsFromFile(final String rootName, final String userid) { // userid
+	private String getSessionsFromFile(final String rootName, final String userId) { // userId
 																						// can
 																						// be
 																						// "all"
 
 		String response = "[ ]";
-		List<String> userids = new ArrayList<String>();
+		List<String> userIds = new ArrayList<String>();
 		List<String> sessionsList = new ArrayList<String>();
 		final StringBuilder responsesb = new StringBuilder();
 		String sessionInfo;
@@ -634,10 +634,10 @@ public class UDSessionRSImpl implements UDSessionRS {
 
 		responsesb.append("[");
 
-		if (userid.equalsIgnoreCase("all")) {
-			userids = getAllSessionUserIds(rootName);
-			for (i = 0; i < userids.size(); i++) {
-				sessionsList = getSessionsForUserid(rootName, userids.get(i));
+		if (userId.equalsIgnoreCase("all")) {
+			userIds = getAllSessionuserIds(rootName);
+			for (i = 0; i < userIds.size(); i++) {
+				sessionsList = getSessionsForuserId(rootName, userIds.get(i));
 
 				for (j = 0; j < sessionsList.size(); j++) {
 					sessionInfo = sessionsList.get(j);
@@ -648,7 +648,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 				}
 			}
 		} else {
-			sessionsList = getSessionsForUserid(rootName, userid);
+			sessionsList = getSessionsForuserId(rootName, userId);
 
 			for (j = 0; j < sessionsList.size(); j++) {
 				sessionInfo = sessionsList.get(j);
@@ -671,7 +671,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 	// @Produces("application/json")
 	/*
 	 * Input/Query parameters: NONE POST Data: JSON object containing the
-	 * session data to save. { name: - Name of the session userid: - unique user
+	 * session data to save. { name: - Name of the session userId: - unique user
 	 * id for the associated user lastUpdated: - Date and timestamp (in
 	 * milliseconds) when the session was saved by the user sessionActions:
 	 * [action1, action2, ... actionN] - List of user defined Actions and
@@ -762,38 +762,38 @@ public class UDSessionRSImpl implements UDSessionRS {
 		File file = null;
 
 		// sessionId has this format:
-		// userid + "_" + sessionname + "_" + new Date().getTime()).toString()
+		// userId + "_" + sessionname + "_" + new Date().getTime()).toString()
 
 		String basepath = null;
 
 		// sessionData should contain the following at the beginning
 		// {
 		// name: "xxx", - Name of the session
-		// userid: "yyy", - unique user id for the associated user
+		// userId: "yyy", - unique user id for the associated user
 		// lastUpdated: "zzz", - Date and timestamp (in milliseconds) when the
 		// session was saved by the user
 		// sessionActions: ....
 
 		final int indxName = sessionData.indexOf("name");
-		final int indxUserid = sessionData.indexOf("userid");
+		final int indxuserId = sessionData.indexOf("userId");
 		final int indxDate = sessionData.indexOf("lastUpdated");
 		final int indxAfterDate = sessionData.indexOf("sessionActions");
-		if ((indxName < 0) || (indxUserid < 0) || (indxDate < 0) || (indxAfterDate < 0)) {
+		if ((indxName < 0) || (indxuserId < 0) || (indxDate < 0) || (indxAfterDate < 0)) {
 			errormsg = "saveSessionToFile: Invalid session data was received, unable to save it.";
 			logger.error(errormsg);
 			response = "{ id: \"-1\", error:\"" + errormsg + "\" }";
 			return response;
 		}
 
-		String sessionName = sessionData.substring(indxName + 5, indxUserid - 1);
+		String sessionName = sessionData.substring(indxName + 5, indxuserId - 1);
 		sessionName = sessionName.replace("\"", "");
 		sessionName = sessionName.replace(",", "");
 		sessionName = sessionName.trim();
 
-		String userid = sessionData.substring(indxUserid + 7, indxDate - 1);
-		userid = userid.replace("\"", "");
-		userid = userid.replace(",", "");
-		userid = userid.trim();
+		String userId = sessionData.substring(indxuserId + 7, indxDate - 1);
+		userId = userId.replace("\"", "");
+		userId = userId.replace(",", "");
+		userId = userId.trim();
 
 		String lastUpdated = sessionData.substring(indxDate + 12, indxAfterDate - 1);
 		lastUpdated = lastUpdated.replace("\"", "");
@@ -834,8 +834,8 @@ public class UDSessionRSImpl implements UDSessionRS {
 		}
 
 		// Files are written as:
-		// <basepath>/UDS/<userid>/<sessionname>_<date>
-		final String serverPathName = basepath + "/" + rootName + "/" + userid;
+		// <basepath>/UDS/<userId>/<sessionname>_<date>
+		final String serverPathName = basepath + "/" + rootName + "/" + userId;
 		final String serverfileName = sessionName + "_" + lastUpdated + ".txt";
 
 		// DEBUG
@@ -862,7 +862,7 @@ public class UDSessionRSImpl implements UDSessionRS {
 		}
 
 		// set the unique id of the response
-		final String sessionId = createSessionId(userid, sessionName, lastUpdated);
+		final String sessionId = createSessionId(userId, sessionName, lastUpdated);
 
 		response = "{ id: \"" + sessionId + "\", error:\"no error\" }";
 		return response;

@@ -40,12 +40,12 @@ public interface UDSessionRS {
                 @PathParam("todt") @DefaultValue(value = "0") String todt
                 );
         
-        // getSessions - Get the list of user-defined sessions for the specified userid 
+        // getSessions - Get the list of user-defined sessions for the specified userId 
 	@GET
-	@Path("/getSessionsByUserId/{userid}")
+	@Path("/getSessionsByuserId/{userId}")
 	@Produces("application/json")
-	public abstract Response getSessionsByUserId(
-                @PathParam("userid") String userId
+	public abstract Response getSessionsByuserId(
+                @PathParam("userId") String userId
                 );
         
         // getSessionsByName - Get the list of user-defined sessions for the specified session name 
