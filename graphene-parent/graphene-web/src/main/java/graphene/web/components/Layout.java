@@ -13,6 +13,7 @@ import java.util.Locale;
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
@@ -25,6 +26,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.slf4j.Logger;
 import org.tynamo.security.services.SecurityService;
@@ -40,13 +42,10 @@ import com.trsvax.bootstrap.annotations.Exclude;
 @Import(stylesheet = { "context:/core/css/t5default.css", "context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css", "context:/core/css/graphene-production.css",
 		"context:/core/css/pace-radar.css", "context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
-		"context:/core/css/googlefonts.css" })
+		"context:/core/css/googlefonts.css" }, library = {
+		"classpath:/com/trsvax/bootstrap/assets/bootstrap/js/bootstrap.js", "context:/core/js/logout.js" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
 public class Layout {
-	@SessionState(create = false)
-	private G_User user;
-
-	private boolean userExists;
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
@@ -56,22 +55,23 @@ public class Layout {
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
-
 	@Inject
 	private AssetSource assetSource;
 
 	@Inject
-	@Property
-	private SecurityService securityService;
+	private AuthenticatorHelper authenticatorHelper;
 
 	@Inject
 	private ComponentClassResolver componentClassResolver;
 
+	@Environmental
+	protected JavaScriptSupport jss;
+
 	@Inject
 	private Locale locale;
+
 	@Inject
 	private Logger logger;
-
 	@Inject
 	private Messages messages;
 
@@ -82,13 +82,23 @@ public class Layout {
 	private ComponentResources resources;
 
 	@Inject
-	private G_UserDataAccess userDataAccess;
+	@Property
+	private SecurityService securityService;
+
+	@SessionState(create = false)
+	private G_User user;
 
 	@Inject
-	private AuthenticatorHelper authenticatorHelper;
+	private G_UserDataAccess userDataAccess;
+	private boolean userExists;
+
 	@Property
 	@SessionState(create = false)
 	private List<G_Workspace> workspaces;
+
+	void afterRender() {
+		jss.addInitializerCall("makeLogout", "logout");
+	}
 
 	public JSONObject getJgrowlParams() {
 		final JSONObject json = new JSONObject("position", "bottom-right");
