@@ -43,7 +43,7 @@ public class Settings {
 
 	@SessionState(create = false)
 	private G_User user;
-
+	private boolean userExists;
 	@Inject
 	private Logger logger;
 
@@ -51,32 +51,34 @@ public class Settings {
 	private SecurityService securityService;
 
 	public Object onSuccess() {
-		if (!verifyPassword.equals(password)) {
-			settingsForm.recordError(messages.get("error.verifypassword"));
-			return null;
-		} else {
-			settingsForm.clearErrors();
-		}
-		boolean success = false;
-		try {
-			success = userDataAccess.setUserPassword(user.getId(), password);
+		if (userExists) {
+			if (!verifyPassword.equals(password)) {
+				settingsForm.recordError(messages.get("error.verifypassword"));
+				return null;
+			} else {
+				settingsForm.clearErrors();
+			}
+			boolean success = false;
+			try {
+				success = userDataAccess.setUserPassword(user.getId(), password);
 
-		} catch (final Exception e) {
-			// if the DAO didn't update successfully, tell them so.
-			logger.error("Unable to update password for user "
-					+ user.getUsername() + " Error: " + e.getMessage());
-		}
-		if (success) {
-			loginPage
-					.setFlashMessage(messages.get("settings.password-changed"));
-		} else {
-			loginPage.setFlashMessage(messages
-					.get("settings.password-not-changed"));
-		}
+			} catch (final Exception e) {
+				// if the DAO didn't update successfully, tell them so.
+				logger.error("Unable to update password for user " + user.getUsername() + " Error: " + e.getMessage());
+			}
+			if (success) {
+				loginPage.setFlashMessage(messages.get("settings.password-changed"));
+			} else {
+				loginPage.setFlashMessage(messages.get("settings.password-not-changed"));
+			}
 
-		// authenticator.logout();
-		user = null;
-		securityService.getSubject().logout();
+			// authenticator.logout();
+			user = null;
+			securityService.getSubject().logout();
+		} else {
+			logger.error("A user tried to change a password without being logged in.");
+			loginPage.setFlashMessage(messages.get("settings.password-not-changed"));
+		}
 		// Send the user to the login page.
 		return loginPage;
 	}
