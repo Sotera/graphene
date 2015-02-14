@@ -1,30 +1,7 @@
 <!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
 <html t:type="graphene/layout" title="Manage Workspaces" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
-<style>
-<!--
--->
-.ui-buttonset .ui-button {
-	margin-left: 0;
-	margin-right: 0em;
-}
 
-table {
-	border: none;
-	border-collapse: collapse;
-}
-
-table td {
-	border-right: 1px solid #EEEEEE;
-	border-left: 1px solid #EEEEEE;
-	border-bottom: 1px solid #888888;
-}
-
-.pivotlink {
-	max-width: 200px;
-	white-space: normal;
-}
-</style>
 <div class="row">
 	<div class="col-xs-2 col-sm-5 col-md-5 col-lg-4">
 		<h1 class="page-title txt-color-blueDark">
