@@ -28,7 +28,7 @@ $(document)
         }
 
         //TODO: was moved from window.load due to IE not firing consist
-        nav_page_height()
+        nav_page_height();
 
         // INITIALIZE LEFT NAV
         if (!null) {
@@ -40,7 +40,7 @@ $(document)
                     openedSign: '<em class="fa fa-collapse-o"></em>'
                 });
         } else {
-            alert("Error - menu anchor does not exist")
+            alert("Error - menu anchor does not exist");
         }
 
         // COLLAPSE LEFT NAV
@@ -75,9 +75,9 @@ $(document)
         $('#show-shortcut')
             .click(function (e) {
                 if ($.shortcut_dropdown.is(":visible")) {
-                    shortcut_buttons_hide()
+                    shortcut_buttons_hide();
                 } else {
-                    shortcut_buttons_show()
+                    shortcut_buttons_show();
                 }
                 e.preventDefault();
             });
@@ -116,12 +116,12 @@ $(document)
                 } else {
                     $this.next('.ajax-dropdown')
                         .fadeOut(150);
-                    $this.removeClass('active')
+                    $this.removeClass('active');
                 }
 
-                var mytest = $this.next('.ajax-dropdown')
-                    .find('.btn-group > .active > input')
-                    .attr('id');
+//                var mytest = $this.next('.ajax-dropdown')
+//                    .find('.btn-group > .active > input')
+//                    .attr('id');
                 //console.log(mytest)
 
                 e.preventDefault();
@@ -150,17 +150,17 @@ $(document)
                         .fadeOut(150);
                     $('.ajax-dropdown')
                         .prev()
-                        .removeClass("active")
+                        .removeClass("active");
                 }
             });
 
         $('button[data-loading-text]')
             .on('click', function () {
-                var btn = $(this)
-                btn.button('loading')
+                var btn = $(this);
+                btn.button('loading');
                 setTimeout(function () {
-                    btn.button('reset')
-                }, 3000)
+                    btn.button('reset');
+                }, 3000);
             });
 
         // NOTIFICATION IS PRESENT
@@ -169,7 +169,7 @@ $(document)
             $this = $('#activity > .badge');
 
             if (parseInt($this.text()) > 0) {
-                $this.addClass("bg-color-red bounceIn animated")
+                $this.addClass("bg-color-red bounceIn animated");
             }
         }
 
@@ -192,37 +192,6 @@ $(document)
                 e.preventDefault();
             });
 
-        // LOGOUT BUTTON
-        $('#logout a')
-            .click(function (e) {
-                //get the link
-                $.loginURL = $(this)
-                    .attr('href');
-
-                // ask verification
-                $.SmartMessageBox({
-                    title: "<i class='fa fa-sign-out txt-color-orangeDark'></i> Logout <span class='txt-color-orangeDark'><strong>" +
-                        $('#show-shortcut')
-                        .text() + "</strong></span> ?",
-                    content: "You can improve your security further after logging out by closing this opened browser",
-                    buttons: '[No][Yes]'
-
-                }, function (ButtonPressed) {
-                    if (ButtonPressed == "Yes") {
-                        $.root_.addClass('animated fadeOutUp');
-                        setTimeout(logout, 1000)
-                    }
-                });
-                e.preventDefault();
-            });
-
-        /*
-         * LOGOUT ACTION
-                 function logout() {
-        
-            window.location = $.loginURL;
-        }
-         */
 
 
 
@@ -248,7 +217,7 @@ $(document)
                 if (!$.shortcut_dropdown.is(e.target) // if the target of the click isn't the container...
                     && $.shortcut_dropdown.has(e.target)
                     .length === 0) {
-                    shortcut_buttons_hide()
+                    shortcut_buttons_hide();
                 }
             });
 
@@ -265,7 +234,7 @@ $(document)
         function shortcut_buttons_show() {
             $.shortcut_dropdown.animate({
                 height: "show"
-            }, 200, "easeOutCirc")
+            }, 200, "easeOutCirc");
             $.root_.addClass('shortcut-on');
         }
 
@@ -396,17 +365,17 @@ $('#main')
     .resize(function () {
         nav_page_height();
         check_if_mobile_width();
-    })
+    });
 
 $('nav')
     .resize(function () {
         nav_page_height();
-    })
+    });
 
 function check_if_mobile_width() {
     if ($(window)
         .width() < 979) {
-        $.root_.addClass('mobile-view-activated')
+        $.root_.addClass('mobile-view-activated');
     } else if ($.root_.hasClass('mobile-view-activated')) {
         $.root_.removeClass('mobile-view-activated');
     }
@@ -507,7 +476,7 @@ $.fn.extend({
                 $(this)
                     .parents("ul")
                     .parent("li")
-                    .addClass("open")
+                    .addClass("open");
             });
 
         $this.find("li a")
@@ -648,8 +617,8 @@ function runAllForms() {
                     showSearchInput: _showSearchInput,
                     allowClear: true,
                     width: width
-                })
-            })
+                });
+            });
     }
 
     /*
@@ -668,7 +637,7 @@ function runAllForms() {
                 $this.mask(mask, {
                     placeholder: mask_placeholder
                 });
-            })
+            });
     }
 
     /*
@@ -688,7 +657,7 @@ function runAllForms() {
                 $this.autocomplete({
                     source: availableTags
                 });
-            })
+            });
     }
 
     /*
@@ -709,7 +678,7 @@ function runAllForms() {
                     prevText: '<i class="fa fa-chevron-left"></i>',
                     nextText: '<i class="fa fa-chevron-right"></i>',
                 });
-            })
+            });
     }
 
     /*
@@ -718,11 +687,11 @@ function runAllForms() {
      */
     $('button[data-loading-text]')
         .on('click', function () {
-            var btn = $(this)
-            btn.button('loading')
+            var btn = $(this);
+            btn.button('loading');
             setTimeout(function () {
-                btn.button('reset')
-            }, 3000)
+                btn.button('reset');
+            }, 3000);
         });
 
 }
@@ -893,7 +862,7 @@ function runAllCharts() {
                         medianColor: thisBoxMedianColor,
                         targetColor: thisBoxTargetColor
 
-                    })
+                    });
 
                 }
 
@@ -907,7 +876,7 @@ function runAllCharts() {
                             '#3030f0',
                         thisBulletRangeColors = $this.data('sparkline-bulletrange-color') || ["#d3dafe",
                             "#a8b6ff", "#7f94ff"
-                        ]
+                        ];
 
                         $this.sparkline('html', {
 
@@ -918,7 +887,7 @@ function runAllCharts() {
                             performanceColor: thisBulletPerformanceColor,
                             rangeColors: thisBulletRangeColors
 
-                        })
+                        });
 
                 }
 
@@ -942,7 +911,7 @@ function runAllCharts() {
                         thresholdValue: thisDiscreteThrushold,
                         thresholdColor: thisDiscreteThrusholdColor
 
-                    })
+                    });
 
                 }
 
@@ -968,7 +937,7 @@ function runAllCharts() {
                         barSpacing: thisTristateBarSpacing,
                         zeroAxis: thisZeroAxis
 
-                    })
+                    });
 
                 }
 
@@ -980,7 +949,7 @@ function runAllCharts() {
                         sparklineBarWidth = $this.data('sparkline-barwidth') || 3,
                         thisLineWidth = $this.data('sparkline-line-width') || 1,
                         thisLineColor = $this.data('sparkline-color-top') || '#ed1c24',
-                        thisBarColor = $this.data('sparkline-color-bottom') || '#333333'
+                        thisBarColor = $this.data('sparkline-color-bottom') || '#333333';
 
                     $this.sparkline($this.data('sparkline-bar-val'), {
 
@@ -991,7 +960,7 @@ function runAllCharts() {
                         barWidth: sparklineBarWidth
                         //barSpacing: 5
 
-                    })
+                    });
 
                     $this.sparkline($this.data('sparkline-line-val'), {
 
@@ -1002,7 +971,7 @@ function runAllCharts() {
                         composite: true,
                         fillColor: false
 
-                    })
+                    });
 
                 }
 
@@ -1057,7 +1026,7 @@ function runAllCharts() {
                         lineColor: thisLineColor1,
                         fillColor: thisFillColor1
 
-                    })
+                    });
 
                     $this.sparkline($this.data('sparkline-line-val'), {
 
@@ -1079,7 +1048,7 @@ function runAllCharts() {
                         composite: true,
                         fillColor: thisFillColor2
 
-                    })
+                    });
 
                 }
 
@@ -1189,10 +1158,10 @@ function setup_widgets_desktop() {
                 customButton: false,
                 customClass: 'folder-10 | next-10',
                 customStart: function () {
-                    alert('Hello you, this is a custom button...')
+                    alert('Hello you, this is a custom button...');
                 },
                 customEnd: function () {
-                    alert('bye, till next time...')
+                    alert('bye, till next time...');
                 },
                 // order
                 buttonOrder: '%refresh% %custom% %edit% %toggle% %fullscreen% %delete%',
@@ -1231,7 +1200,7 @@ window.gMapsCallback = function () {
     gMapsLoaded = true;
     $(window)
         .trigger('gMapsLoaded');
-}
+};
 window.loadGoogleMaps = function () {
     if (gMapsLoaded)
         return window.gMapsCallback();
@@ -1240,7 +1209,7 @@ window.loadGoogleMaps = function () {
     script_tag.setAttribute("src", "http://maps.google.com/maps/api/js?sensor=false&callback=gMapsCallback");
     (document.getElementsByTagName("head")[0] || document.documentElement)
         .appendChild(script_tag);
-}
+};
 /* ~ END: GOOGLE MAPS */
 
 /*

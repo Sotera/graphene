@@ -28,4 +28,4 @@
 			$.MakeTree();
 		}
 	});
-})(jQuery)
+})(jQuery);
