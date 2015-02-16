@@ -1,9 +1,11 @@
 package graphene.web.pages.workspace;
 
 import graphene.dao.DataSourceListDAO;
+import graphene.dao.UserWorkspaceDAO;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
@@ -45,6 +47,7 @@ public class View extends SimpleBasePage {
 	@SessionState(create = false)
 	private G_Workspace currentSelectedWorkspace;
 
+	@Property
 	private boolean currentSelectedWorkspaceExists;
 
 	@Inject
@@ -102,6 +105,9 @@ public class View extends SimpleBasePage {
 	private Zone reportViewListZone;
 	@InjectComponent
 	private Zone searchQueryListZone;
+
+	@Inject
+	private UserWorkspaceDAO uwDao;
 
 	// Generally useful bits and pieces
 	public BeanModel<EntityQuery> getEntityQueryModel() {
@@ -182,8 +188,18 @@ public class View extends SimpleBasePage {
 	@SetupRender
 	private void loadQueries() {
 		if (currentSelectedWorkspaceExists) {
-			searchQueryList = currentSelectedWorkspace.getQueryObjects();
-			reportViewList = currentSelectedWorkspace.getSavedReports();
+			logger.debug("Current workspace exists, making sure user still has access rights.");
+			if (uwDao.hasRelationship(user.getId(), currentSelectedWorkspace.getId(),
+					G_UserSpaceRelationshipType.EDITOR_OF, G_UserSpaceRelationshipType.REVIEWER_OF)) {
+				searchQueryList = currentSelectedWorkspace.getQueryObjects();
+				reportViewList = currentSelectedWorkspace.getSavedReports();
+			} else {
+				logger.error("User tried to view a workspace without rights to it.");
+				// User is no longer an editor or reviewer of this workspace.
+				currentSelectedWorkspace = null;
+				searchQueryList = null;
+				reportViewList = null;
+			}
 		} else {
 			logger.warn("No current workspace selected, so viewer will not show anything.");
 		}
