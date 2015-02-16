@@ -48,6 +48,18 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
+	public List<G_UserGroup> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public G_UserGroup getById(final String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public List<G_UserGroup> getGroupMembershipsForGroupId(final String groupId) {
 		// TODO Auto-generated method stub
 		return null;

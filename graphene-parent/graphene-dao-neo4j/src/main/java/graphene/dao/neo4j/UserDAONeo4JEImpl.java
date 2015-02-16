@@ -143,32 +143,6 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements User
 		return g;
 	}
 
-	@Override
-	public List<G_User> getByPartialUsername(final String partialName, final int offset, final int limit) {
-		final List<G_User> list = new ArrayList<G_User>();
-
-		try (Transaction tx = beginTx()) {
-			String queryString = "start n = node(*) where n." + G_UserFields.username + " =~ '.*" + partialName
-					+ ".*' return n order by n." + G_UserFields.username;
-
-			if (offset > 0) {
-				queryString += " skip " + offset;
-			}
-			if (limit > 0) {
-				queryString += " limit " + limit;
-			}
-
-			final Map<String, Object> parameters = new HashMap<String, Object>();
-			final ResourceIterator<Object> resultIterator = n4jService.getExecutionEngine()
-					.execute(queryString, parameters).columnAs("n");
-			while (resultIterator.hasNext()) {
-				list.add(userFunnel.from((Node) resultIterator.next()));
-			}
-			tx.success();
-		}
-		return list;
-	}
-
 	// @Override
 	// public G_User getByUser(int id) {
 	// Node n = getUserNodeById(id);

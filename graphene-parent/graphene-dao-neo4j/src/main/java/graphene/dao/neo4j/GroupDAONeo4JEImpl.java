@@ -49,11 +49,6 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements Gro
 	}
 
 	@Override
-	public void deleteGroup(final G_Group g) {
-
-	}
-
-	@Override
 	public List<G_Group> getAll() {
 		final List<G_Group> list = new ArrayList<G_Group>();
 		try (Transaction tx = beginTx()) {
@@ -74,13 +69,14 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements Gro
 	}
 
 	@Override
-	public G_Group getGroupByGroupname(final String groupname) {
-		return createDetached(getGroupNodeByGroupname(groupname));
+	public G_Group getById(final String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public G_Group getGroupById(final String id) {
-		return createDetached(getGroupNode(id));
+	public G_Group getGroupByGroupname(final String groupname) {
+		return createDetached(getGroupNodeByGroupname(groupname));
 	}
 
 	// @PostInjection

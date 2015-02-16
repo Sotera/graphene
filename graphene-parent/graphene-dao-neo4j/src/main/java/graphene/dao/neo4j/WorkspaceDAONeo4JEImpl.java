@@ -26,28 +26,6 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public long countWorkspaces(final String partialName) {
-		long n = 0;
-		try (Transaction tx = beginTx()) {
-			String filterOnTitle = "";
-			{
-				if (ValidationUtils.isValid(partialName)) {
-					filterOnTitle = " where w." + G_WorkspaceFields.title + " =~ '.*" + partialName + ".*' ";
-				}
-			}
-			final String queryString = "match (w:" + GrapheneNeo4JConstants.workspaceLabel.name() + ") "
-					+ filterOnTitle + " return count(*) as c;";
-			final Map<String, Object> parameters = new HashMap<String, Object>();
-			final ResourceIterator<Object> resultIterator = n4jService.getExecutionEngine()
-					.execute(queryString, parameters).columnAs("c");
-			n = (long) resultIterator.next();
-			tx.success();
-		}
-
-		return n;
-	}
-
-	@Override
 	public long countWorkspaces(final String userId, final String partialName) {
 		long n = 0;
 
@@ -131,78 +109,6 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	// }
 	// return success;
 	// }
-
-	@Override
-	public List<G_Workspace> findWorkspaces(final String partialName, final int startIndex, final int i) {
-		final List<G_Workspace> list = new ArrayList<G_Workspace>();
-
-		// MATCH (n:GUser {username:'djue'})-[r]->(w:GWorkspace) where
-		// w.title
-		// =~ '.*New.*' RETURN n,r,w LIMIT 25
-
-		try (Transaction tx = beginTx()) {
-			String filterOnTitle = "";
-			{
-				if (ValidationUtils.isValid(partialName)) {
-					filterOnTitle = " where w." + G_WorkspaceFields.title + " =~ '.*" + partialName + ".*' ";
-				}
-			}
-			final String queryString = "match (w:" + GrapheneNeo4JConstants.workspaceLabel.name() + ") "
-					+ filterOnTitle + " return w";
-			final Map<String, Object> parameters = new HashMap<String, Object>();
-			final ResourceIterator<Object> resultIterator = n4jService.getExecutionEngine()
-					.execute(queryString, parameters).columnAs("w");
-			while (resultIterator.hasNext()) {
-				final G_Workspace d = workspaceFunnel.from((Node) resultIterator.next());
-				if (d != null) {
-					list.add(d);
-				}
-			}
-			resultIterator.close();
-			// tx.success(); //FIXME: this causes an error, although in
-			// similar
-			// RO cases it hasn't caused an error.
-
-		}
-		return list;
-	}
-
-	@Override
-	public List<G_Workspace> findWorkspaces(final String userId, final String partialName, final int startIndex,
-			final int i) {
-		// MATCH (n:GUser {username:'djue'})-[r]->(m:GWorkspace) where m.title
-		// =~ '.*New.*' RETURN n,r,m LIMIT 25
-		final List<G_Workspace> list = new ArrayList<G_Workspace>();
-		try (Transaction tx = beginTx()) {
-			String filterOnTitle = "";
-			{
-				if (ValidationUtils.isValid(partialName)) {
-					filterOnTitle = " where w." + G_WorkspaceFields.title + " =~ '.*" + partialName + ".*' ";
-				}
-			}// match (u:GUser {username:'sam'})-[r:EDITOR_OF]-(w:GWorkspace)
-				// return count(*) as c
-			final String queryString = "match (u:" + GrapheneNeo4JConstants.userLabel.name() + " {" + G_UserFields.id
-					+ ":'" + userId + "'})-[r:" + G_UserSpaceRelationshipType.EDITOR_OF + "]-(w:"
-					+ GrapheneNeo4JConstants.workspaceLabel + ") " + filterOnTitle + " return w";
-
-			final Map<String, Object> parameters = new HashMap<String, Object>();
-			final ResourceIterator<Object> resultIterator = n4jService.getExecutionEngine()
-					.execute(queryString, parameters).columnAs("w");
-			while (resultIterator.hasNext()) {
-
-				final G_Workspace d = workspaceFunnel.from((Node) resultIterator.next());// createDetached((Node)
-																							// resultIterator.next());
-				if (d != null) {
-					list.add(d);
-				}
-			}
-			resultIterator.close();
-			// tx.success(); //FIXME: this causes an error, although in similar
-			// RO cases it hasn't caused an error.
-		}
-
-		return list;
-	}
 
 	@Override
 	public List<G_Workspace> getAll() {

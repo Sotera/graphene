@@ -94,6 +94,30 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implem
 	}
 
 	@Override
+	public G_UserWorkspace getById(final String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_UserWorkspace> getByUserId(final String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_UserWorkspace> getByUserIdAndWorkspaceId(final String userId, final String workspaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_UserWorkspace> getByWorkspaceId(final String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public List<G_User> getUsersForWorkspace(final String workspaceId) {
 		// TODO Auto-generated method stub
 		return null;
