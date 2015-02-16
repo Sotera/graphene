@@ -7,7 +7,7 @@
     
     <t:if test="!loggedIn">
     	<t:form t:id="loginForm">
-    		<strong>Please select a username and a chat room</strong><br /><br />
+    		<strong>Please select a username and a workspace chat room</strong><br /><br />
     		<t:errors />
     		
     		<t:label for="user">User</t:label>
@@ -26,7 +26,7 @@
 		    	<div class="span5">
 			    	<h4>Logged in as &quot;${user}&quot;, in room &quot;${room}&quot;</h4>
 			    	
-					Other Chat Rooms:    
+					Other Live Workspaces:    
 			    	<ul>
 				    	<t:loop source="rooms" value="currentRoom">
 				    		<t:if test="otherRoom">
@@ -35,7 +35,7 @@
 				    	</t:loop>
 					</ul>
 					
-			    	Users in room ${room}:
+			    	Users in workspace ${room}:
 			    	<atmos:pushTarget
 			    		topics="rooms/${room}/users" 
 			    		event="usersChange"
@@ -59,7 +59,7 @@
 			    	</t:zone>
 			    </div>
 			    <div class="span5">
-			    	<h4>Room Messages</h4>
+			    	<h4>Workspace Messages</h4>
 			    	<atmos:pushTarget
 			    		topics="prop:messageTopics"
 			    		event="chatMessage"
@@ -86,17 +86,4 @@
     		</t:loop>
     	</ul>
     </t:block>
-    
-	<h3>Source</h3>
-	<t:stitch.tabGroup>
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/pages/ChatDemo.tml" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/pages/ChatDemo.java" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/services/ChatManager.java" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/services/ChatManagerImpl.java" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/services/ChatTopicAuthorizer.java" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/services/ChatTopicListener.java" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/services/ChatHttpSessionListener.java" />
-		<t:stitch.codeTab source="classpath:org/lazan/t5/atmosphere/demo/services/AppModule.java" />
-		<t:stitch.codeTab source="classpath:WEB-INF/web.xml" />
-	</t:stitch.tabGroup>
 </t:layout>
