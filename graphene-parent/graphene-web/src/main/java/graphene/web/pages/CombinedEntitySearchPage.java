@@ -309,12 +309,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		try {
 			// amount = DataFormatConstants.formatMoney(getAmount());
 
-			amount = formatter.format(getAmount());
+			// amount = formatter.format(getAmount());
 			// DataFormatConstants.formatter.setParseIntegerOnly(true);
-			// amount = DataFormatConstants.formatter.format(getAmount());
+			amount = DataFormatConstants.formatter.format(getAmount());
 
 			// XXX: Hack to remove cents and decimal
-			// amount = amount.subSequence(0, amount.length() - 3).toString();
+			amount = amount.subSequence(0, amount.length() - 3).toString();
 
 			return amount;
 		} catch (final Exception e) {
