@@ -15,6 +15,7 @@ import graphene.web.pages.SimpleBasePage;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
@@ -35,6 +36,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 @PluginPage(visualType = G_VisualType.ADMIN, menuName = "Manage Users", icon = "fa fa-lg fa-fw fa-list-alt")
+@RequiresRoles("admin")
 public class Manage extends SimpleBasePage {
 
 	@Inject
@@ -143,9 +145,9 @@ public class Manage extends SimpleBasePage {
 	}
 
 	@SetupRender
-	private void loadQueries() {
-		userList = userDao.getAllUsers();
-		userWorkspaceList = userWorkspaceDao.getAllWorkspaceRelations();
+	private void loadData() {
+		userList = userDao.getAll();
+		userWorkspaceList = userWorkspaceDao.getAll();
 	}
 
 	@OnEvent("delete")
@@ -198,7 +200,7 @@ public class Manage extends SimpleBasePage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		userList = userDao.getAllUsers();
+		userList = userDao.getAll();
 		if (request.isXHR()) {
 
 			ajax.addRender(userListZone);
@@ -221,7 +223,7 @@ public class Manage extends SimpleBasePage {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "No valid workspace relation to delete");
 		}
 		// refresh the list.
-		userWorkspaceList = userWorkspaceDao.getAllWorkspaceRelations();
+		userWorkspaceList = userWorkspaceDao.getAll();
 		if (request.isXHR()) {
 			ajax.addRender(userWorkspaceListZone);
 		}
