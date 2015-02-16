@@ -1308,7 +1308,7 @@ z-index
 }
 </style>
 <![endif]-->
-	<t:if test="productionMode">
+
 
 		<div id="main" role="main">
 			<!-- MAIN CONTENT -->
@@ -1344,9 +1344,6 @@ z-index
 				</div>
 			</div>
 		</div>
-		<p:else>
-			<t:renderobject object="request" />
-		</p:else>
-	</t:if>
+		
 </body>
 </html>
