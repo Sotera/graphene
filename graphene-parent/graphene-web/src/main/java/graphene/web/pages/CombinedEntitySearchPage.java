@@ -20,9 +20,9 @@ import graphene.util.Tuple;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
-import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +42,6 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -105,9 +104,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 	@Inject
 	private JavaScriptSupport javaScriptSupport;
-
-	@Property
-	private final GridDataSource gds = new CombinedEntityDataSource(dao);
 
 	@Inject
 	private Logger logger;
@@ -192,6 +188,8 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 	@Persist
 	private BeanModel<Object> model;
+
+	final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
 	public Collection<Triple<String, String, String>> getAddressList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTADDRESSLIST);
@@ -309,14 +307,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public String getFormattedAmount() {
 		String amount = null;
 		try {
-			// final String amount =
-			// DataFormatConstants.formatMoney(getAmount());
+			// amount = DataFormatConstants.formatMoney(getAmount());
 
+			amount = formatter.format(getAmount());
 			// DataFormatConstants.formatter.setParseIntegerOnly(true);
-			amount = DataFormatConstants.formatter.format(getAmount());
+			// amount = DataFormatConstants.formatter.format(getAmount());
 
 			// XXX: Hack to remove cents and decimal
-			amount = amount.subSequence(0, amount.length() - 3).toString();
+			// amount = amount.subSequence(0, amount.length() - 3).toString();
 
 			return amount;
 		} catch (final Exception e) {
@@ -343,7 +341,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			model = beanModelSource.createEditModel(Object.class, messages);
 			model.addEmpty("rank");
 			model.addEmpty("actions");
-
 			model.addEmpty("informationIcons");
 			model.addEmpty("date");
 			model.addEmpty("amount");
@@ -352,11 +349,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			model.addEmpty("communicationIdentifierList");
 			model.addEmpty("identifierList");
 
-			model.getById("informationIcons").sortable(false);
 			model.getById("rank").sortable(true);
-			model.getById("amount").sortable(true);
-			model.getById("date").sortable(true);
 			model.getById("actions").sortable(true);
+			model.getById("informationIcons").sortable(false);
+			model.getById("date").sortable(true);
+			model.getById("amount").sortable(true);
 			model.getById("subjects").sortable(true);
 			model.getById("addressList").sortable(true);
 			model.getById("communicationIdentifierList").sortable(true);

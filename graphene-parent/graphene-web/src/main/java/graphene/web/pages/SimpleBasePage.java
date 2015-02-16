@@ -8,6 +8,7 @@ import graphene.model.idl.G_Workspace;
 import java.util.List;
 
 import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
@@ -22,7 +23,10 @@ public class SimpleBasePage {
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
 	protected String appName;
-
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
+	protected String workspacesEnabled;
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
@@ -37,6 +41,10 @@ public class SimpleBasePage {
 
 	@Inject
 	protected AlertManager alertManager;
+
+	@Property
+	@Persist
+	private boolean highlightZoneUpdates;
 
 	@SessionState(create = false)
 	protected G_User user;
@@ -61,6 +69,10 @@ public class SimpleBasePage {
 	 */
 	public final G_User getUser() {
 		return user;
+	}
+
+	public String getZoneUpdateFunction() {
+		return highlightZoneUpdates ? "highlight" : "show";
 	}
 
 	/**

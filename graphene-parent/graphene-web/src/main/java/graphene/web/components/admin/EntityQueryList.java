@@ -38,7 +38,8 @@ public class EntityQueryList extends BasicDataTable {
 					"userId", "sortascending", "id", "schema");
 
 			model.get("AttributeList").sortable(true);
-			model.reorder("timeinitiated", "username", "AttributeList");
+			model.reorder("timeinitiated", "username", "AttributeList", "filters");
+			model.get("filters").sortable(true);
 		}
 		return model;
 	}
