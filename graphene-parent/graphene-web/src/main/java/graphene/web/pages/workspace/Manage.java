@@ -1,8 +1,11 @@
 package graphene.web.pages.workspace;
 
 import graphene.model.idl.G_VisualType;
+import graphene.model.idl.G_Workspace;
 import graphene.web.annotations.PluginPage;
 import graphene.web.components.workspace.WorkspaceEditor.Mode;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -10,6 +13,7 @@ import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
@@ -18,7 +22,6 @@ import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 public class Manage {
 
 	// The activation context
-
 	@Inject
 	private AjaxResponseRenderer ajaxResponseRenderer;
 
@@ -34,15 +37,16 @@ public class Manage {
 
 	@InjectComponent
 	private Zone editorZone;
-	// @InjectComponent
-	// private RecentWorkspaces recentWorkspaces;
 
 	@Property
 	@Persist
 	private boolean highlightZoneUpdates;
 
 	// Generally useful bits and pieces
+	@SessionState(create = false)
+	private List<G_Workspace> workspaces;
 
+	private boolean workspacesExists;
 	@Property
 	private String listWorkspaceId;
 
@@ -178,31 +182,6 @@ public class Manage {
 			ajaxResponseRenderer.addRender(listZone);
 		}
 	}
-
-	// Handle event "cancelUpdate" from component "editor"
-
-	// Object[] onPassivate() {
-	//
-	// if (request.isXHR()) {
-	// arpEditorMode = editorMode;
-	// arpEditorWorkspaceId = editorWorkspaceId;
-	//
-	// return null;
-	// } else {
-	//
-	// if (editorMode == null) {
-	// return null;
-	// } else if (editorMode == Mode.CREATE) {
-	// return new Object[] { editorMode };
-	// } else if ((editorMode == Mode.REVIEW) || (editorMode == Mode.UPDATE)
-	// || (editorMode == Mode.CONFIRM_DELETE)) {
-	// return new Object[] { editorMode, editorWorkspaceId };
-	// } else {
-	// throw new IllegalStateException(editorMode.toString());
-	// }
-	// }
-	//
-	// }
 
 	// Handle event "successfulUpdate" from component "editor"
 

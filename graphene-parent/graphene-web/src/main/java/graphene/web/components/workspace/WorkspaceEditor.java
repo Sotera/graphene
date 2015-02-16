@@ -287,8 +287,9 @@ public class WorkspaceEditor {
 					// TODO: It would be a wise idea to allow revisions of the
 					// workspaces, for history's sake.
 					successfulDelete = userDataAccess.removeUserFromWorkspace(user.getId(), workspaceId);
-					// dao.deleteWorkspaceById(workspaceId);// ,
-					// workspaceVersion);
+					if (userDataAccess.deleteWorkspaceIfUnused(null, workspaceId)) {
+						logger.debug("Deleted workspace because it was unused.");
+					}
 
 				} catch (final Exception e) {
 					// Display the cause. In a real system we would try harder
@@ -454,6 +455,10 @@ public class WorkspaceEditor {
 			boolean deleted = false;
 			try {
 				deleted = userDataAccess.deleteWorkspace(user.getId(), workspace.getId());
+				// Reset the current selected workspace to NOTHING
+				if (currentSelectedWorkspaceExists && currentSelectedWorkspace.getId().equals(workspace.getId())) {
+					currentSelectedWorkspace = null;
+				}
 				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
 			} catch (final AvroRemoteException e) {
 				logger.error(ExceptionUtil.getRootCauseMessage(e));
@@ -581,7 +586,7 @@ public class WorkspaceEditor {
 		try {
 			workspace = userDataAccess.saveWorkspace(user.getId(), workspace);
 			if (ValidationUtils.isValid(workspace)) {
-				if (workspace.getId().equals(currentSelectedWorkspace.getId())) {
+				if (currentSelectedWorkspaceExists && workspace.getId().equals(currentSelectedWorkspace.getId())) {
 					currentSelectedWorkspace = workspace;
 				}
 				logger.info("Successfully updated workspace " + workspace.getId());

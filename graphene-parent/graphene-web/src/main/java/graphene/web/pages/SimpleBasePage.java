@@ -30,6 +30,8 @@ public class SimpleBasePage {
 	@Property
 	@SessionState(create = false)
 	protected List<G_Workspace> workspaces;
+
+	protected boolean workspacesExists;
 	@Inject
 	protected LoggingDAO loggingDao;
 

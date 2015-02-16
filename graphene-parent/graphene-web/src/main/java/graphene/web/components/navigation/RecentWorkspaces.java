@@ -76,10 +76,8 @@ public class RecentWorkspaces {
 
 	@SetupRender
 	boolean listWorkspaces() {
-		if (userExists && !workspacesExists) {
-			updateListOfWorkspaces();
-		}
-		if (workspacesExists && !currentSelectedWorkspaceExists) {
+		if (userExists) {
+			// updateListOfWorkspaces();
 			selectMostRecentWorkspace();
 		}
 		return workspaces != null ? true : false;
@@ -127,14 +125,6 @@ public class RecentWorkspaces {
 			ajaxResponseRenderer.addRender(recentWorkspacesZone);
 		}
 	}
-
-	// void onSuccessfulUpdateFromEditor(final String workspaceId) {
-	// if (currentSelectedWorkspaceExists &&
-	// currentSelectedWorkspace.getId().equals(workspaceId)) {
-	// updateListOfWorkspaces();
-	// makeCurrent(workspaceId);
-	// }
-	// }
 
 	private void selectMostRecentWorkspace() {
 		Long modified = 0l;

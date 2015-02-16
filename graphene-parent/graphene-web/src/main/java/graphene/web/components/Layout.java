@@ -124,9 +124,6 @@ public class Layout {
 		if (userExists) {
 			try {
 				workspaces = userDataAccess.getWorkspacesForUser(user.getId());
-				// workspaces =
-				// userDataAccess.getWorkspacesOrCreateNewForUser(user
-				// .getId());
 			} catch (final AvroRemoteException e) {
 				logger.error(e.getMessage());
 			}
