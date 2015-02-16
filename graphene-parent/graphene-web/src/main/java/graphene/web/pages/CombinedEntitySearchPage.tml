@@ -19,13 +19,23 @@ table {
 	border-collapse: collapse;
 }
 
+table th {
+	padding: 8px;
+}
+
 table td {
 	border-right: 1px solid #EEEEEE;
 	border-bottom: 1px solid #888888;
+	padding: 8px;
+	max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.legend{
+
+.legend {
 	margin-right: 3px;
 }
+
 .pivotlink {
 	max-width: 400px;
 	white-space: normal;
