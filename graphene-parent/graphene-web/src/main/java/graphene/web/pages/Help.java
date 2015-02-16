@@ -12,6 +12,10 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 public class Help {
 	@Property
 	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
+	private boolean workspacesEnabled;
+	@Property
+	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
 	private String appName;
 
