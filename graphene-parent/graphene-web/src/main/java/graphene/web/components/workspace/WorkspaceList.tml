@@ -7,20 +7,21 @@
 
 		<!-- NEW WIDGET START -->
 		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<t:zone t:id="listZone" id="listZone" t:update="show">
+				<t:if test="listofworkspaces">
+					<!-- Widget ID (each widget will need unique ID) -->
+					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
+						data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
+						data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+						<header>
+							<span class="widget-icon"> <i class="fa fa-table"></i>
+							</span>
+							<h2>My Workspaces</h2>
 
-			<!-- Widget ID (each widget will need unique ID) -->
-			<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-				data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-				data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
-				<header>
-					<span class="widget-icon"> <i class="fa fa-table"></i>
-					</span>
-					<h2>My Workspaces</h2>
+						</header>
 
-				</header>
 
-				<t:zone t:id="listZone" id="listZone" t:update="show">
-					<t:if test="listofworkspaces">
+
 						<!-- widget div -->
 						<div>
 
@@ -69,15 +70,17 @@
 
 						</div>
 						<!-- end widget div -->
-					</t:if>
-					<!-- end if not displaying widget -->
-					<t:block t:id="emptyWorkspaces">
-						<div id="noWorkspaces">(No workspaces found)</div>
-					</t:block>
-				</t:zone>
-			</div>
-			<!-- end widget -->
 
+						<!-- end if not displaying widget -->
+						<t:block t:id="emptyWorkspaces">
+							<div id="noWorkspaces">(No workspaces found)</div>
+						</t:block>
+
+					</div>
+					<!-- end widget -->
+					<p:else>There are no workspaces connected to your account.  Please create one now using the button above.</p:else>
+				</t:if>
+			</t:zone>
 		</article>
 		<!-- WIDGET END -->
 

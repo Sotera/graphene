@@ -86,8 +86,14 @@ public class WorkspaceList {
 	@Property
 	private G_Workspace workspace;
 
+	@Property
+	@SessionState(create = false)
+	private List<G_Workspace> workspaces;
+
+	private boolean workspacesExists;
+
 	public String getLinkCSSClass() {
-		if ((workspace != null) && (workspace.getId() == selectedWorkspaceId)) {
+		if ((workspace != null) && (workspace.getId().equals(selectedWorkspaceId))) {
 			return "active";
 		} else {
 			return "";
@@ -95,19 +101,18 @@ public class WorkspaceList {
 	}
 
 	public List<G_Workspace> getListOfWorkspaces() {
-		List<G_Workspace> list = null;
 		if (userExists) {
 			try {
 				logger.debug("Updating list of workspaces");
-				list = userDataAccess.getWorkspacesForUser(user.getId());
+				workspaces = userDataAccess.getWorkspacesForUser(user.getId());
 			} catch (final AvroRemoteException e) {
 				logger.error(e.getMessage());
 			}
 		} else {
 			logger.error("No user name to get workspaces for.");
-
+			workspaces = null;
 		}
-		return list;
+		return workspaces;
 	}
 
 	// Generally useful bits and pieces
@@ -160,7 +165,6 @@ public class WorkspaceList {
 
 		// json.put("aoColumns", columnArray);
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
-
 		return json;
 	}
 
