@@ -6,8 +6,8 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.ProtectedPage;
 import graphene.web.commons.IIntermediatePage;
-import graphene.web.pages.infrastructure.PageDenied;
 import graphene.web.pages.pub.Login;
+import graphene.web.pages.pub.PageDenied;
 import graphene.web.pages.pub.Register;
 
 import java.io.IOException;
