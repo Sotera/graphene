@@ -17,12 +17,11 @@
 			<!-- <t:graphene.navigation.useractivity /> -->
 
 		</div>
-
+<t:if test="workspacesEnabled">
 		<!-- projects dropdown -->
 		<div t:type="graphene/navigation/recentworkspaces" t:user="user"></div>
 		<!-- end projects dropdown -->
-
-
+</t:if>
 
 
 

@@ -167,39 +167,41 @@ public class Manage extends SimpleBasePage {
 				e.printStackTrace();
 			}
 		} else if (ValidationUtils.isValid(username)) {
-			G_User user2 = userDao.getByUsername(username);
-			user2.setId("TaggedForDeletion");
-			user2 = userDao.save(user2);
-			if (ValidationUtils.isValid(user2)) {
+			/*
+			 * This was added because in some prototype code, users would be
+			 * created without the id field being re-saved properly, thus we
+			 * only had the username to look it up by. GetByUsername now stores
+			 * the id in the return object, so we can delete it.
+			 */
+			final G_User userByUsername = userDao.getByUsername(username);
+			// user2.setId("TaggedForDeletion");
+			// user2 = userDao.save(user2);
+			if (ValidationUtils.isValid(userByUsername)) {
 				try {
-					success = userDataAccess.deleteUser(user2.getId());
+					success = userDataAccess.deleteUser(userByUsername.getId());
 					if (success) {
-						alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Removed user " + user2.getId());
+						alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS,
+								"Removed user " + userByUsername.getId());
 					} else {
-
-						alertManager
-								.alert(Duration.TRANSIENT, Severity.ERROR, "Could not remove user " + user2.getId());
+						alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Could not remove user "
+								+ userByUsername.getId());
 					}
 				} catch (final AvroRemoteException e) {
 					logger.error("Error removing user", e);
+					alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
 				}
 			} else {
-				logger.error("Could not remove user " + user2.getId());
-				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Could not remove user with username "
-						+ username);
+				final String errorMsg = "Could not remove user with username " + username + " or userid "
+						+ userByUsername.getId();
+				logger.error(errorMsg);
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, errorMsg);
 			}
 		} else {
-			logger.error("Could not find user to remove with username " + username);
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Could not find user to remove with username "
-					+ username);
+			final String errorMsg = "Could not find user to remove with username " + username + " or userid " + userId;
+			logger.error(errorMsg);
+			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, errorMsg);
 		}
 
-		try {
-			Thread.sleep(1000);
-		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		userList = userDao.getAll();
 		if (request.isXHR()) {
 

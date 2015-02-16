@@ -44,7 +44,7 @@ import com.trsvax.bootstrap.annotations.Exclude;
 		"context:/core/css/pace-radar.css", "context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
 		"context:/core/css/googlefonts.css" }, library = {
 		"classpath:/com/trsvax/bootstrap/assets/bootstrap/js/bootstrap.js", "context:/core/js/logout.js" })
-@ImportJQueryUI(theme = "context:/core/js/libs/jquery-ui-1.10.3.min.js")
+@ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 public class Layout {
 	@Property
 	@Inject

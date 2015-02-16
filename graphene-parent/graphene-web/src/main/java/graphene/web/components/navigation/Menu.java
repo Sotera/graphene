@@ -63,7 +63,10 @@ public class Menu {
 	@Inject
 	private Logger logger;
 	boolean onlyPluginPages = false;
-
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
+	protected boolean workspacesEnabled;
 	@Property
 	private Triple<String, String, String> page;
 
@@ -86,10 +89,6 @@ public class Menu {
 	private GroupDAO gDao;
 	@Inject
 	private UserRoleDAO urDao;
-
-	// @Inject
-	// @Symbol(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME)
-	// private String adminGroupName;
 
 	public Collection<Triple<String, String, String>> getActionPages() {
 		return menuHierarchy.get(MenuType.ACTION);
@@ -157,7 +156,10 @@ public class Menu {
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 
 						}
-						if (vtlist.contains(G_VisualType.HELP)) {
+						if (workspacesEnabled && vtlist.contains(G_VisualType.VIEW_WORKSPACE)) {
+							menuHierarchy.get(MenuType.ACTION).add(
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
+						} else if (vtlist.contains(G_VisualType.HELP)) {
 							menuHierarchy.get(MenuType.LASTACTION).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 
@@ -165,6 +167,9 @@ public class Menu {
 							menuHierarchy.get(MenuType.META).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 						} else if (vtlist.contains(G_VisualType.SETTINGS)) {
+							menuHierarchy.get(MenuType.SETTINGS).add(
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
+						} else if (workspacesEnabled && vtlist.contains(G_VisualType.MANAGE_WORKSPACES)) {
 							menuHierarchy.get(MenuType.SETTINGS).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 

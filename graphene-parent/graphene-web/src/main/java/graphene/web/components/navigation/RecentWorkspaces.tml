@@ -32,8 +32,8 @@
 		<t:if test="currentSelectedWorkspaceExists">
 			<div>
 				<h1>
-					&nbsp;&nbsp; <small>Current Workspace:</small>&nbsp;&nbsp; <a t:type="pagelink" page="graphene/workspace/view"
-						context="currentSelectedWorkspace?.id">${currentSelectedWorkspace?.title} </a>
+					&nbsp;&nbsp; <small>Current Workspace:</small>&nbsp;&nbsp; <strong><a t:type="pagelink" page="graphene/workspace/view"
+						context="currentSelectedWorkspace?.id">${currentSelectedWorkspace?.title} </a></strong>
 				</h1>
 			</div>
 		</t:if>

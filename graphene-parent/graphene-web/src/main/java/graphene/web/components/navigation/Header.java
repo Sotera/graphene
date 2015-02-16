@@ -13,7 +13,10 @@ public class Header {
 	@Path("context:/core/img/logo_graphene_dark_wide.png")
 	@Property
 	private Asset imgLogoWideDark;
-
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
+	private boolean workspacesEnabled;
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)

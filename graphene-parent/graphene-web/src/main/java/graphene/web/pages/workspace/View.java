@@ -41,7 +41,7 @@ import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-@PluginPage(visualType = G_VisualType.TOP, menuName = "View Workspace", icon = "fa fa-lg fa-fw fa-list-alt")
+@PluginPage(visualType = G_VisualType.VIEW_WORKSPACE, menuName = "View Workspace", icon = "fa fa-lg fa-fw fa-list-alt")
 public class View extends SimpleBasePage {
 	@Property
 	@SessionState(create = false)

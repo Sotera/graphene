@@ -1,11 +1,9 @@
 package graphene.web.pages.workspace;
 
 import graphene.model.idl.G_VisualType;
-import graphene.model.idl.G_Workspace;
 import graphene.web.annotations.PluginPage;
 import graphene.web.components.workspace.WorkspaceEditor.Mode;
-
-import java.util.List;
+import graphene.web.pages.SimpleBasePage;
 
 import javax.inject.Inject;
 
@@ -13,13 +11,11 @@ import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 
-@PluginPage(visualType = G_VisualType.SETTINGS, menuName = "Manage Workspaces", icon = "fa fa-lg fa-fw fa-list-alt")
-public class Manage {
+@PluginPage(visualType = G_VisualType.MANAGE_WORKSPACES, menuName = "Manage Workspaces", icon = "fa fa-lg fa-fw fa-list-alt")
+public class Manage extends SimpleBasePage {
 
 	// The activation context
 	@Inject
@@ -30,7 +26,6 @@ public class Manage {
 	private Mode editorMode;
 
 	// Screen fields
-
 	@Property
 	@ActivationRequestParameter
 	private String editorWorkspaceId;
@@ -38,15 +33,6 @@ public class Manage {
 	@InjectComponent
 	private Zone editorZone;
 
-	@Property
-	@Persist
-	private boolean highlightZoneUpdates;
-
-	// Generally useful bits and pieces
-	@SessionState(create = false)
-	private List<G_Workspace> workspaces;
-
-	private boolean workspacesExists;
 	@Property
 	private String listWorkspaceId;
 
@@ -67,17 +53,10 @@ public class Manage {
 	@Persist
 	private String partialName;
 
-	@Inject
-	private Request request;
-
 	// The code
 
 	// onPassivate() is called by Tapestry to get the activation context to put
 	// in the URL.
-
-	public String getZoneUpdateFunction() {
-		return highlightZoneUpdates ? "highlight" : "show";
-	}
 
 	// onActivate() is called by Tapestry to pass in the activation context from
 	// the URL.
