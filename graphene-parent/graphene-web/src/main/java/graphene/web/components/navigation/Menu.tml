@@ -1,7 +1,6 @@
 <!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 
 <t:content>
@@ -11,11 +10,9 @@
 
 		<!-- User info -->
 		<div class="login-info">
-			<span> <!-- User image size is adjusted inside CSS, it should stay as it -->
-
-				<img src="${avatar}" alt="me" class="online" /> <a
-				href="javascript:void(0);" id="show-shortcut">${user?.fullname}
-					<i class="fa fa-angle-down"></i>
+			<span> <!-- User image size is adjusted inside CSS, it should stay as it --> <img src="${avatar}" alt="me"
+				class="online" /> <a href="javascript:void(0);" id="show-shortcut">${user?.fullname} <i
+					class="fa fa-angle-down"></i>
 			</a>
 			</span>
 		</div>
@@ -30,65 +27,54 @@
 					documentation for details. -->
 
 			<ul>
-				<li class="" t:type="loop" source="actionPages" value="page"><t:pagelink
-						page="prop:page.first">
+				<li class="" t:type="loop" source="actionPages" value="page"><t:pagelink page="prop:page.first">
 						<i class="${page.second}"></i>
 						<span class="menu-item-parent"> ${page.third}</span>
 					</t:pagelink></li>
 				<t:if test="enableSettings">
-					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
-							<span class="menu-item-parent">Settings</span>
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i> <span class="menu-item-parent">Settings</span>
 					</a>
 						<ul>
-							<li class="" t:type="loop" source="settingsPages" value="page">
-								<t:pagelink page="prop:page.first">
-									<i class="${page.second}"></i>
-									<span class="menu-item-parent"> ${page.third}</span>
-								</t:pagelink>
-							</li>
-						</ul></li>
-				</t:if>
-				<t:if test="showAdmin">
-					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
-							<span class="menu-item-parent">Admin</span>
-					</a>
-						<ul>
-							<li class="" t:type="loop" source="adminPages" value="page">
-								<t:pagelink page="prop:page.first">
-									<i class="${page.second}"></i>
-									<span class="menu-item-parent"> ${page.third}</span>
-								</t:pagelink>
-							</li>
-						</ul></li>
-				</t:if>
-				<t:if test="enableMisc">
-					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i>
-							<span class="menu-item-parent">Miscellaneous</span>
-					</a>
-						<ul>
-							<li class="" t:type="loop" source="metaPages" value="page">
-								<t:pagelink page="prop:page.first">
-									<i class="${page.second}"></i>
-									<span class="menu-item-parent"> ${page.third}</span>
-								</t:pagelink>
-							</li>
-						</ul></li>
-				</t:if>
-				
-				<t:if test="enableExperimental">
-					<li><a href="#"> <i class="fa fa-lg fa-fw fa-cog"></i> <span
-							class="menu-item-parent">Labs</span>
-					</a>
-						<ul>
-							<li class="" t:type="loop" source="experimentalPages"
-								value="page"><t:pagelink page="prop:page.first">
+							<li class="" t:type="loop" source="settingsPages" value="page"><t:pagelink page="prop:page.first">
 									<i class="${page.second}"></i>
 									<span class="menu-item-parent"> ${page.third}</span>
 								</t:pagelink></li>
 						</ul></li>
 				</t:if>
-				<li class="" t:type="loop" source="lastactionPages" value="page"><t:pagelink
-						page="prop:page.first">
+				<t:if test="enableAdmin">
+					<t:security.hasRole role="admin">
+						<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i> <span class="menu-item-parent">Admin</span>
+						</a>
+							<ul>
+								<li class="" t:type="loop" source="adminPages" value="page"><t:pagelink page="prop:page.first">
+										<i class="${page.second}"></i>
+										<span class="menu-item-parent"> ${page.third}</span>
+									</t:pagelink></li>
+							</ul></li>
+					</t:security.hasRole>
+				</t:if>
+				<t:if test="enableMisc">
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-windows"></i> <span class="menu-item-parent">Miscellaneous</span>
+					</a>
+						<ul>
+							<li class="" t:type="loop" source="metaPages" value="page"><t:pagelink page="prop:page.first">
+									<i class="${page.second}"></i>
+									<span class="menu-item-parent"> ${page.third}</span>
+								</t:pagelink></li>
+						</ul></li>
+				</t:if>
+
+				<t:if test="enableExperimental">
+					<li><a href="#"> <i class="fa fa-lg fa-fw fa-cog"></i> <span class="menu-item-parent">Labs</span>
+					</a>
+						<ul>
+							<li class="" t:type="loop" source="experimentalPages" value="page"><t:pagelink page="prop:page.first">
+									<i class="${page.second}"></i>
+									<span class="menu-item-parent"> ${page.third}</span>
+								</t:pagelink></li>
+						</ul></li>
+				</t:if>
+				<li class="" t:type="loop" source="lastactionPages" value="page"><t:pagelink page="prop:page.first">
 						<i class="${page.second}"></i>
 						<span class="menu-item-parent"> ${page.third}</span>
 					</t:pagelink></li>

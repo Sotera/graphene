@@ -2,6 +2,8 @@ package graphene.web.components.navigation;
 
 import graphene.dao.GroupDAO;
 import graphene.dao.UserGroupDAO;
+import graphene.dao.UserRoleDAO;
+import graphene.model.idl.G_Role;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
@@ -18,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -36,6 +37,7 @@ public class Menu {
 	private ComponentClassResolver componentClassResolver;
 	@Inject
 	private G_UserDataAccess userDataAccess;
+
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_ADMIN)
 	@Property
@@ -82,10 +84,12 @@ public class Menu {
 
 	@Inject
 	private GroupDAO gDao;
-
 	@Inject
-	@Symbol(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME)
-	private String adminGroupName;
+	private UserRoleDAO urDao;
+
+	// @Inject
+	// @Symbol(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME)
+	// private String adminGroupName;
 
 	public Collection<Triple<String, String, String>> getActionPages() {
 		return menuHierarchy.get(MenuType.ACTION);
@@ -121,6 +125,12 @@ public class Menu {
 
 	@SetupRender
 	void initializeValue() {
+		if (userExists) {
+			final List<G_Role> rolesForUserId = urDao.getRolesForUserId(user.getId());
+			for (final G_Role r : rolesForUserId) {
+				logger.debug("User has role " + r.getName());
+			}
+		}
 		if (menuHierarchy == null) {
 			logger.info("Constructing page links for side menu items.");
 			final List<String> pageList = componentClassResolver.getPageNames();
@@ -177,22 +187,22 @@ public class Menu {
 		}
 	}
 
-	public boolean isAdmin() {
-		boolean userIsAnAdmin = false;
-		if (userExists) {
-			try {
-				userIsAnAdmin = userDataAccess.isAdmin(user.getId());
-			} catch (final AvroRemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return userIsAnAdmin;
-	}
+	// public boolean isAdmin() {
+	// boolean userIsAnAdmin = false;
+	// if (userExists) {
+	// try {
+	// userIsAnAdmin = userDataAccess.isAdmin(user.getId());
+	// } catch (final AvroRemoteException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// return userIsAnAdmin;
+	// }
 
-	public boolean isShowAdmin() {
-		return enableAdmin && isAdmin();
-	}
+	// public boolean isShowAdmin() {
+	// return enableAdmin && isAdmin();
+	// }
 
 	private Class loadClass(final String className) {
 		try {
