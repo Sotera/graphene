@@ -20,7 +20,7 @@
 	</div>
 	
 	<div id="personList">
-		<table t:type="grid" t:id="list" t:source="persons" t:row="person"
+		<table t:type="grid" t:id="list" t:source="list" t:row="current"
 			t:exclude="id,version,fullName,region,created" t:add="name"
 			t:rowsPerPage="4" t:pagerPosition="bottom"
 			t:class="personGrid" t:empty="block:emptyPersons" t:inplace="ajax">[Grid here]
