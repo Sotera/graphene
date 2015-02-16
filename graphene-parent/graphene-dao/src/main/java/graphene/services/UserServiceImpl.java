@@ -401,6 +401,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 		// save the workspace
 		if (uwDao.hasRelationship(userId, workspace.getId(), G_UserSpaceRelationshipType.CREATOR_OF,
 				G_UserSpaceRelationshipType.EDITOR_OF)) {
+			logger.debug("User has permission to save to this workspace.");
 			workspace.setModified(DateTime.now().getMillis());
 			return wDao.save(workspace);
 		} else {

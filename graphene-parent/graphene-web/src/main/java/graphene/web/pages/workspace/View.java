@@ -134,7 +134,7 @@ public class View extends SimpleBasePage {
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
-		json.put("aaSorting", new JSONArray().put(new JSONArray().put(1).put("desc")));
+		json.put("aaSorting", new JSONArray().put(new JSONArray().put(3).put("desc")));
 		// new JSONObject().put("aTargets", new JSONArray().put(0, 4));
 		// final JSONObject sortType = new JSONObject("sType", "formatted-num");
 		// final JSONArray columnArray = new JSONArray();
