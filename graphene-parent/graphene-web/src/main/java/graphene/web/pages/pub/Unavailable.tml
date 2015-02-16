@@ -1,8 +1,8 @@
 <!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
-<html t:type="graphene/unauthenticatedlayout" title="Registration"
+<html t:type="graphene/unauthenticatedlayout" title="Unavailable"
 	t:pageTitle="Register" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
 	xmlns:p="tapestry:parameter">
-	<body id="login">
+	<body id="unavailable">
 
 		<!-- possible classes: minified, no-right-panel, fixed-ribbon, fixed-header, 
 			fixed-width -->
