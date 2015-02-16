@@ -64,6 +64,9 @@ public class WorkspaceList {
 	@Parameter(required = true)
 	@Property
 	private String partialName;
+	@Parameter(required = false)
+	@Property
+	private String title;
 
 	@Inject
 	private Request request;

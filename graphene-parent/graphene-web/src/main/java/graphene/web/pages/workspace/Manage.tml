@@ -15,7 +15,7 @@
 	<div class="row">
 		<div class="col-xs-2 col-sm-5 col-md-5 col-lg-4">
 			<h1 class="page-title txt-color-blueDark">
-				<a class="btn btn-action" t:type="eventLink" t:event="toCreate" t:zone="editorZone" href="#"><i
+				<a class="btn btn-sm btn-default" t:type="eventLink" t:event="toCreate" t:zone="editorZone" href="#"><i
 					class="fa fa-plus" /> Create New Workspace</a>
 			</h1>
 		</div>

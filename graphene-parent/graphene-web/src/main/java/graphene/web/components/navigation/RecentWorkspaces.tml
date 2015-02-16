@@ -2,41 +2,41 @@
 
 <t:container xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
+
+	<!-- projects dropdown -->
+	<div id="project-context">
+
+		<span class="label">Workspaces:</span> <span id="project-selector" class="popover-trigger-element dropdown-toggle"
+			data-toggle="dropdown"> Recent workspaces <i class="fa fa-angle-down"></i>
+		</span>
+
+		<!-- Suggestion: populate this list with fetch and push technique -->
+		<ul class="dropdown-menu">
+			<t:if test="workspaces">
+				<li t:type="loop" source="workspaces" value="currentListItem"><a t:type="eventlink" event="makecurrent"
+					context="currentListItem.id"> <t:graphene.jodatimeoutput value="currentListItem.modified" formatter="ISODate" />
+						- ${currentListItem?.title}
+				</a></li>
+				<li class="divider"></li>
+				<li><a href="javascript:void(0);"> <i class="fa fa-power-off"></i> Clear
+				</a></li>
+				<p:else>
+					<li>No recent workspaces</li>
+				</p:else>
+			</t:if>
+		</ul>
+		<!-- end dropdown-menu -->
+	</div>
 	<t:zone t:id="recentWorkspacesZone">
-		<!-- projects dropdown -->
-		<div id="project-context">
-
-			<span class="label">Workspaces:</span> <span id="project-selector" class="popover-trigger-element dropdown-toggle"
-				data-toggle="dropdown"> Recent workspaces <i class="fa fa-angle-down"></i>
-			</span>
-
-			<!-- Suggestion: populate this list with fetch and push technique -->
-			<ul class="dropdown-menu">
-				<t:if test="workspaces">
-					<li t:type="loop" source="workspaces" value="currentWorkspace"><a t:type="eventlink" event="makecurrent"
-						context="currentWorkspace.id"> <t:graphene.jodatimeoutput value="currentWorkspace.modified"
-								formatter="ISODate" /> - ${currentWorkspace?.title}
-					</a></li>
-					<li class="divider"></li>
-					<li><a href="javascript:void(0);"> <i class="fa fa-power-off"></i> Clear
-					</a></li>
-					<p:else>
-						<li>No recent workspaces</li>
-					</p:else>
-				</t:if>
-			</ul>
-			<!-- end dropdown-menu -->
-		</div>
-</t:zone>
 		<!-- current workspace label -->
 		<t:if test="currentSelectedWorkspaceExists">
 			<div>
 				<h1>
-					&nbsp;&nbsp; <small>Current Workspace:</small>&nbsp;&nbsp; <strong><a t:type="pagelink" page="graphene/workspace/view"
-						context="currentSelectedWorkspace?.id">${currentSelectedWorkspace?.title} </a></strong>
+					&nbsp;&nbsp; <small>Current Workspace:</small>&nbsp;&nbsp; <strong><a t:type="pagelink"
+						page="graphene/workspace/view" context="currentSelectedWorkspace?.id">${currentSelectedWorkspace?.title} </a></strong>
 				</h1>
 			</div>
 		</t:if>
 		<!-- end current workspace label -->
-	
+	</t:zone>
 </t:container>

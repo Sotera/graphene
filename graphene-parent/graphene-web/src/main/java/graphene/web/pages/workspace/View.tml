@@ -47,9 +47,7 @@
 					<!-- Start report view area -->
 					<t:if test="reportViewList">
 						<t:zone t:id="reportViewListZone">
-							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-								data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-								data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 								<header>
 									<span class="widget-icon"> <i class="fa fa-table"></i>
 									</span>
@@ -96,10 +94,11 @@
 								</div>
 								<!-- end widget div -->
 							</div>
-							<p:else>
-								<div id="noreportviews">(No report views found)</div>
-							</p:else>
+							
 						</t:zone>
+						<p:else>
+								<div id="noreportviews"><strong>(No report views found)</strong></div>
+							</p:else>
 					</t:if>
 					<!-- end report view area -->
 
@@ -107,9 +106,7 @@
 					<!-- Start results area -->
 					<t:if test="searchQueryList">
 						<t:zone t:id="searchQueryListZone">
-							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-								data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-								data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 								<header>
 									<span class="widget-icon"> <i class="fa fa-search"></i>
 									</span>
@@ -164,10 +161,11 @@
 								</div>
 								<!-- end widget div -->
 							</div>
-							<p:else>
-								<div id="noqueries">(No queries found)</div>
-							</p:else>
+							
 						</t:zone>
+						<p:else>
+								<div id="noqueries"><strong>(No queries found)</strong></div>
+						</p:else>
 					</t:if>
 					<!-- end results area -->
 				</article>

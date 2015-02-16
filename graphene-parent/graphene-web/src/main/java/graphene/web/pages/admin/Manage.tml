@@ -29,9 +29,7 @@
 			<!-- Start report view area -->
 			<t:if test="userList">
 				<t:zone t:id="userListZone">
-					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-						data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-						data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 						<header>
 							<span class="widget-icon"> <i class="fa fa-table"></i>
 							</span>
@@ -78,9 +76,7 @@
 			<!-- Start results area -->
 			<t:if test="userWorkspaceList">
 				<t:zone t:id="userWorkspaceListZone">
-					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-						data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-						data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 						<header>
 							<span class="widget-icon"> <i class="fa fa-search"></i>
 							</span>
