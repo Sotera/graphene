@@ -21,7 +21,7 @@
 						<li class="active"><a data-toggle="tab" href="#s0"> <i class="fa fa-clock-o"></i> <span
 								class="hidden-mobile hidden-tablet"> System Status</span>
 						</a></li>
-						<li class="active"><a data-toggle="tab" href="#s1"> <i class="fa fa-search"></i> <span
+						<li><a data-toggle="tab" href="#s1"> <i class="fa fa-search"></i> <span
 								class="hidden-mobile hidden-tablet"> Search Queries</span>
 						</a></li>
 
