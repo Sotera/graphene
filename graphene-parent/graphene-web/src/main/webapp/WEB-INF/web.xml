@@ -25,38 +25,6 @@
 		</param-value>
 	</context-param>
 
-	<context-param>
-		<param-name>indexNames</param-name>
-		<param-value>false</param-value>
-	</context-param>
-	<context-param>
-		<param-name>indexPhones</param-name>
-		<param-value>false</param-value>
-	</context-param>
-	<context-param>
-		<param-name>indexAddresses</param-name>
-		<param-value>false</param-value>
-	</context-param>
-	<context-param>
-		<param-name>maxIndexRecords</param-name>
-		<param-value>200000</param-value>
-	</context-param>
-	<context-param><!-- set false for fast server load but will not handle regex 
-			soundex or case sensitive search -->
-		<param-name>indexAll</param-name>
-		<param-value>false</param-value>
-	</context-param>
-	<context-param>
-		<param-name>useMemDB</param-name>
-		<param-value>true</param-value>
-		<!-- <param-value>${useMemDB}</param-value> -->
-	</context-param>
-	<context-param>
-		<param-name>maxResults</param-name>
-		<param-value>1000</param-value>
-	</context-param>
-
-
 	<filter>
 		<filter-name>graphene</filter-name>
 		<filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
