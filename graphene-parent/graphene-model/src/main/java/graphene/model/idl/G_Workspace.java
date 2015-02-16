@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"savedReports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_ReportViewEvent\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"graphene.model.query.EntityQuery\"}}},{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":[\"long\",\"null\"],\"doc\":\"workspace's created datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"savedReports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_ReportViewEvent\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"graphene.model.query.EntityQuery\"}}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":\"long\",\"doc\":\"workspace's created datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private boolean active;
    private java.lang.String description;
@@ -17,9 +17,9 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
    private java.util.List<graphene.model.query.EntityQuery> queryObjects;
    private java.lang.String id;
   /** workspace's modified datetime */
-   private java.lang.Long modified;
+   private long modified;
   /** workspace's created datetime */
-   private java.lang.Long created;
+   private long created;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -239,8 +239,8 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     private java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports;
     private java.util.List<graphene.model.query.EntityQuery> queryObjects;
     private java.lang.String id;
-    private java.lang.Long modified;
-    private java.lang.Long created;
+    private long modified;
+    private long created;
 
     /** Creates a new Builder */
     private Builder() {
@@ -509,7 +509,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Sets the value of the 'modified' field */
-    public graphene.model.idl.G_Workspace.Builder setModified(java.lang.Long value) {
+    public graphene.model.idl.G_Workspace.Builder setModified(long value) {
       validate(fields()[7], value);
       this.modified = value;
       fieldSetFlags()[7] = true;
@@ -523,7 +523,6 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Clears the value of the 'modified' field */
     public graphene.model.idl.G_Workspace.Builder clearModified() {
-      modified = null;
       fieldSetFlags()[7] = false;
       return this;
     }
@@ -534,7 +533,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Sets the value of the 'created' field */
-    public graphene.model.idl.G_Workspace.Builder setCreated(java.lang.Long value) {
+    public graphene.model.idl.G_Workspace.Builder setCreated(long value) {
       validate(fields()[8], value);
       this.created = value;
       fieldSetFlags()[8] = true;
@@ -548,7 +547,6 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Clears the value of the 'created' field */
     public graphene.model.idl.G_Workspace.Builder clearCreated() {
-      created = null;
       fieldSetFlags()[8] = false;
       return this;
     }

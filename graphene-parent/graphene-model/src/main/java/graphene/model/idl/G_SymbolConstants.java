@@ -58,11 +58,22 @@ public class G_SymbolConstants {
 	public static final String ENABLE_GRAPH_QUERY_PATH = "graphene.enable-graph-query-path";
 
 	public static final String ENABLE_DELETE_WORKSPACES = "graphene.enable-delete-workspaces";
-
+	public static final String ENABLE_DELETE_UNUSED_WORKSPACES = "graphene.enable-delete-unused-workspaces";
 	public static final String ENABLE_DELETE_USERS = "graphene.enable-delete-users";
 
 	public static final String ENABLE_DELETE_GROUPS = "graphene.enable-delete-groups";
 
+	public static final String ENABLE_DELETE_LOGS = "graphene.enable-delete-logs";
+
+	public static final String ENABLE_DELETE_DATASOURCES = "graphene.enable-delete-datasources";
+
+	public static final String ENABLE_DELETE_USER_GROUP = "graphene.enable-delete-user-groups";
+
+	public static final String ENABLE_DELETE_USER_WORKSPACES = "graphene.enable-delete-user-workspaces";
+
+	public static final String ENABLE_DELETE_ROLES = "graphene.enable-delete-roles";
+
+	public static final String ENABLE_DELETE_USER_ROLE = "graphene.enable-delete-user-roles";
 	public static final String DEFAULT_ADMIN_ACCOUNT = "graphene.default-admin-account";
 	public static final String DEFAULT_ADMIN_PASSWORD = "graphene.default-admin-password";
 	public static final String DEFAULT_ADMIN_EMAIL = "graphene.default-admin-email";

@@ -45,9 +45,19 @@ public class DAOModule {
 	}
 
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
-		configuration.add(G_SymbolConstants.ENABLE_DELETE_WORKSPACES, true);
-		configuration.add(G_SymbolConstants.ENABLE_DELETE_GROUPS, true);
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_USERS, true);
+
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_GROUPS, true);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_WORKSPACES, true);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_UNUSED_WORKSPACES, true);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_ROLES, false);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_USER_GROUP, true);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_USER_WORKSPACES, true);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_USER_ROLE, true);
+
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_LOGS, false);
+		configuration.add(G_SymbolConstants.ENABLE_DELETE_DATASOURCES, false);
+
 		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME, "Admins");
 		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_ACCOUNT, "admin");
 		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_EMAIL, "admin@mycompany.com");

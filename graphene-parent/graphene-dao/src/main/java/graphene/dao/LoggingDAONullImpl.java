@@ -60,6 +60,12 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
+	public void initialize() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public boolean recordExport(final String queryString) {
 		// TODO Auto-generated method stub
 		return false;
@@ -67,12 +73,6 @@ public class LoggingDAONullImpl implements LoggingDAO {
 
 	@Override
 	public void recordGraphViewEvent(final G_GraphViewEvent q) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void recordUserLoginEvent(final G_UserLoginEvent e) {
 		// TODO Auto-generated method stub
 
 	}
@@ -91,6 +91,12 @@ public class LoggingDAONullImpl implements LoggingDAO {
 
 	@Override
 	public void recordReportViewEvent(final G_ReportViewEvent q) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void recordUserLoginEvent(final G_UserLoginEvent e) {
 		// TODO Auto-generated method stub
 
 	}

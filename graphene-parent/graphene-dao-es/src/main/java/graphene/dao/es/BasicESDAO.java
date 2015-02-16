@@ -1,10 +1,12 @@
 package graphene.dao.es;
 
-import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
+import io.searchbox.core.Count;
+import io.searchbox.core.CountResult;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Index;
+import io.searchbox.core.Search;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.IndicesExists;
 
@@ -14,6 +16,8 @@ import java.util.concurrent.ExecutionException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -28,13 +32,25 @@ public class BasicESDAO {
 	protected ESRestAPIConnection c;
 	protected String auth = null;
 	protected String type = "defaultType";
-
 	@Inject
 	@Symbol(JestModule.ES_READ_DELAY_MS)
 	protected long ES_READ_DELAY_MS;
 	@Inject
 	@Symbol(JestModule.ES_DEFAULT_TIMEOUT)
 	protected String defaultESTimeout;
+
+	public long count() {
+		final String query = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).toString();
+		try {
+			final CountResult result = c.getClient().execute(
+					new Count.Builder().query(query).addIndex(index).addType(type)
+							.setParameter("timeout", defaultESTimeout).build());
+			return result.getCount().longValue();
+		} catch (final Exception e) {
+			logger.error("Error counting users " + e.getMessage());
+		}
+		return 0;
+	}
 
 	protected void createIndex(final String indexName) throws Exception {
 		logger.debug("Creating index " + indexName + " with client " + c.getClient().toString());
@@ -72,6 +88,58 @@ public class BasicESDAO {
 		c.deleteIndex(indexName);
 	}
 
+	protected JestResult getAllResults() {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(200000);
+		// .sort("modified")
+		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
+				.setParameter("timeout", defaultESTimeout).build();
+		logger.debug(searchSourceBuilder.toString());
+		JestResult result = new JestResult(null);
+		try {
+			result = c.getClient().execute(search);
+		} catch (final Exception e) {
+			logger.error("Get all: " + e.getMessage());
+		}
+		return result;
+	}
+
+	public JestResult getByField(final String field, final String value) {
+		JestResult result = new JestResult(null);
+		if (ValidationUtils.isValid(field, value)) {
+			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+			// Use the match phrase query so it doesn't tokenize the value.
+			searchSourceBuilder.query(QueryBuilders.matchPhraseQuery(field, value));
+			final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
+					.setParameter("timeout", defaultESTimeout).build();
+			logger.debug(searchSourceBuilder.toString());
+
+			try {
+				result = c.getClient().execute(search);
+			} catch (final Exception e) {
+				logger.error("Problem getting by field: " + field + " value: " + value, e.getMessage());
+			}
+		} else {
+			logger.error("A null field or value was provided.");
+		}
+		return result;
+	}
+
+	public JestResult getByJoinFields(final String field1, final String value1, final String field2, final String value2) {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery(field1, value1))
+				.must(QueryBuilders.matchQuery(field2, value2)));
+		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
+				.setParameter("timeout", defaultESTimeout).build();
+		JestResult result = new JestResult(null);
+		try {
+			result = c.getClient().execute(search);
+		} catch (final Exception e) {
+			logger.error("User Roles for user: " + e.getMessage());
+		}
+		return result;
+	}
+
 	public String getIndex() {
 		return index;
 	}
@@ -80,14 +148,29 @@ public class BasicESDAO {
 		return DateTime.now(DateTimeZone.UTC).getMillis();
 	}
 
+	protected JestResult getResultsById(final String id) {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchQuery("_id", id));
+
+		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
+				.setParameter("timeout", defaultESTimeout).build();
+		JestResult result = new JestResult(null);
+		try {
+			result = c.getClient().execute(search);
+		} catch (final Exception e) {
+			logger.error("getResultsById: " + e.getMessage());
+		}
+		return result;
+	}
+
 	public String getType() {
 		return type;
 	}
 
 	public boolean indexExists() {
 		boolean success = false;
-		if (index == null) {
-			logger.warn("Index was not initialized! Cannot check for existence.");
+		if (!ValidationUtils.isValid(index)) {
+			logger.warn("Index variable was not initialized! Cannot check for existence.");
 		} else {
 			try {
 				final JestResult result = c.getClient().execute(new IndicesExists.Builder(index).build());
@@ -101,12 +184,18 @@ public class BasicESDAO {
 	}
 
 	public void initialize() {
-		if (!indexExists() && ValidationUtils.isValid(index)) {
-			try {
-				createIndex(index);
-			} catch (final Exception e) {
-				logger.error("initialize " + e.getMessage());
+		if (ValidationUtils.isValid(index)) {
+			if (indexExists()) {
+				logger.debug("Index " + index + " already exists.  This is fine.");
+			} else {
+				try {
+					createIndex(index);
+				} catch (final Exception e) {
+					logger.error("Problem initializing index: ", e);
+				}
 			}
+		} else {
+			logger.error("Could not check for existance of index because index variable was not defined.");
 		}
 	}
 
@@ -138,8 +227,10 @@ public class BasicESDAO {
 			final JestResult result = c.getClient().execute(saveAction);
 			final Object oid = result.getValue("_id");
 			if (ValidationUtils.isValid(oid)) {
-				generatedId = (StringUtils.firstNonNullToString(oid));
-				Thread.sleep(ES_READ_DELAY_MS);
+				generatedId = oid.toString();
+				if (ES_READ_DELAY_MS > 0) {
+					Thread.sleep(ES_READ_DELAY_MS);
+				}
 			} else {
 				logger.error("Error getting saved object: " + result.getJsonString());
 				generatedId = null;

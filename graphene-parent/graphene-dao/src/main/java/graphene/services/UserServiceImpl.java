@@ -5,6 +5,7 @@ import graphene.dao.PermissionDAO;
 import graphene.dao.RoleDAO;
 import graphene.dao.UserDAO;
 import graphene.dao.UserGroupDAO;
+import graphene.dao.UserRoleDAO;
 import graphene.dao.UserWorkspaceDAO;
 import graphene.dao.WorkspaceDAO;
 import graphene.model.idl.AuthenticationException;
@@ -14,7 +15,7 @@ import graphene.model.idl.G_Role;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
-import graphene.model.idl.G_UserGroup;
+import graphene.model.idl.G_UserRole;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
@@ -23,6 +24,7 @@ import graphene.util.validator.ValidationUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
@@ -52,13 +54,21 @@ public class UserServiceImpl implements G_UserDataAccess {
 	private UserGroupDAO ugDao;
 	@Inject
 	private UserWorkspaceDAO uwDao;
-
+	@Inject
+	private UserRoleDAO urDao;
 	@Inject
 	private WorkspaceDAO wDao;
 
 	@Inject
 	@Symbol(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME)
 	private String adminGroupName;
+
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_DELETE_UNUSED_WORKSPACES)
+	private boolean deleteUnusedWorkspaces;
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_DELETE_WORKSPACES)
+	private boolean deleteWorkspaces;
 
 	@Override
 	public G_Workspace addNewWorkspaceForUser(final String userId, final G_Workspace workspace) {
@@ -82,31 +92,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public int countUsers(final String partialName) {
-		// TODO: Put business logic here to let admins see all users.
-		final long lcount = uDao.countUsers(partialName);
-		if (lcount > Integer.MAX_VALUE) {
-			// I know this won't ever happen, but I want to make the static code
-			// checkers happy.
-			logger.error("Too many workspaces");
-			return Integer.MAX_VALUE;
+	public boolean addRole(final G_User d, final G_Role r) throws AvroRemoteException {
+		boolean success = false;
+		if (ValidationUtils.isValid(d, r)) {
+			success = urDao.add(d.getId(), r.getId());
 		} else {
-			return (int) lcount;
+			logger.error("User or Role was null, user '" + d + "', role '" + r + "'");
 		}
-	}
-
-	@Override
-	public int countWorkspaces(final String userId, final String partialWorkspaceName) {
-		// TODO: Put business logic here to let admins see all workspaces.
-		final long lcount = wDao.countWorkspaces(userId, partialWorkspaceName);
-		if (lcount > Integer.MAX_VALUE) {
-			// I know this won't ever happen, but I want to make the static code
-			// checkers happy.
-			logger.error("Too many workspaces");
-			return Integer.MAX_VALUE;
-		} else {
-			return (int) lcount;
-		}
+		return success;
 	}
 
 	@Override
@@ -139,7 +132,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			w.setCreated(time.getMillis());
 			w.setModified(time.getMillis());
 			w.setDescription("New Workspace");
-			w.setTitle(user.getUsername() + "-Workspace" + time.toString("YYYYmmDD-HHMMSS"));
+			w.setTitle(user.getUsername() + " - Workspace" + time.toString("YYYYmmDD-HHMMSS"));
 
 		} else {
 			logger.error("Could not find user " + userId + " to create a temp workspace for.");
@@ -149,12 +142,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 	@Override
 	public boolean deleteUser(final String userId) {
-		final List<G_Workspace> workspacesForUser = getWorkspacesForUser(userId);
-		for (final G_Workspace w : workspacesForUser) {
-			try {
-				deleteWorkspaceIfUnused(userId, w.getId());
-			} catch (final Exception e) {
-				logger.error("Could not delete workspace " + w.getId(), e);
+		if (deleteWorkspaces) {
+			final List<G_Workspace> workspacesForUser = getWorkspacesForUser(userId);
+			for (final G_Workspace w : workspacesForUser) {
+				try {
+					deleteWorkspaceIfUnused(userId, w.getId());
+				} catch (final Exception e) {
+					logger.error("Could not delete workspace " + w.getId(), e);
+				}
 			}
 		}
 		return uDao.delete(userId);
@@ -176,51 +171,67 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Override
 	public boolean deleteWorkspaceIfUnused(final String userId, final String workspaceId)
 			throws UnauthorizedActionException {
-		if (uwDao.hasRelationship(userId, workspaceId, G_UserSpaceRelationshipType.CREATOR_OF)) {
-			uwDao.deleteWorkspaceRelations(workspaceId);
-			wDao.delete(workspaceId);
-			return true;
+		boolean success = false;
+		if (deleteUnusedWorkspaces) {
+			if (ValidationUtils.isValid(userId)
+					&& uwDao.hasRelationship(userId, workspaceId, G_UserSpaceRelationshipType.CREATOR_OF)) {
+				uwDao.deleteWorkspaceRelations(workspaceId);
+				wDao.delete(workspaceId);
+				success = true;
+			} else if (uwDao.countUsersForWorkspace(workspaceId) == 0) {
+				// when no user id is provided.
+				wDao.delete(workspaceId);
+				success = true;
+			} else {
+				final String errorStr = "User " + userId + " did not have permission to delete Workspace "
+						+ workspaceId + ".";
+				logger.error(errorStr);
+				throw new UnauthorizedActionException(errorStr);
+			}
 		} else {
-			final String errorStr = "User " + userId + " did not have permission to delete Workspace " + workspaceId
-					+ ".";
-			logger.error(errorStr);
-			throw new UnauthorizedActionException(errorStr);
+			logger.debug("Delete unused workspaces disabled.");
 		}
-	}
-
-	@Override
-	public List<G_Workspace> findWorkspaces(final String userId, final String partialName, final int offset,
-			final int limit) {
-		// TODO: Put business logic here to let admins see all workspaces.
-		return uwDao.getWorkspacesForUser(userId);
-	}
-
-	@Override
-	public List<G_User> getByPartialUsername(final String partialName, final int offset, final int limit) {
-		// TODO: Put business logic here to let admins see all users.
-		return uDao.getByPartialUsername(partialName, offset, limit);
+		return success;
 	}
 
 	@Override
 	public G_User getByUsername(final String username) {
-		// TODO: Put business logic here to let admins see all users.
 		return uDao.getByUsername(username);
 	}
 
 	@Override
 	public List<G_Group> getGroupsByUserId(final String userId) throws AvroRemoteException {
-
 		return ugDao.getGroupsForUserId(userId);
 	}
 
 	@Override
+	public G_Workspace getMostRecentWorkspaceForUserId(final String userId) {
+		Long modified = 0l;
+		final Long mostRecent = 0l;
+		G_Workspace currentSelectedWorkspace = null;
+		for (final G_Workspace w : getWorkspacesForUser(userId)) {
+			modified = w.getModified();
+			if (modified > mostRecent) {
+				currentSelectedWorkspace = w;
+			}
+		}
+		return currentSelectedWorkspace;
+	}
+
+	@Override
 	public List<G_Permission> getPermissionsByRole(final G_Role role) throws AvroRemoteException {
-		return pDao.getForRole(role);
+		List<G_Permission> list = new ArrayList<G_Permission>();
+		if (ValidationUtils.isValid(role)) {
+			list = pDao.getForRole(role);
+		} else {
+			logger.error("No valid role provided to get permissions for.");
+		}
+		return list;
 	}
 
 	@Override
 	public List<G_Role> getRolesByUser(final String id) throws AvroRemoteException {
-		return rDao.getForUser(id);
+		return urDao.getRolesForUserId(id);
 	}
 
 	@Override
@@ -251,7 +262,6 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 	@Override
 	public List<G_Workspace> getWorkspacesForUser(final String userId) {
-		// TODO: Put business logic here to let admins see all workspaces.
 		return uwDao.getWorkspacesForUser(userId);
 	}
 
@@ -271,13 +281,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Override
 	public boolean isAdmin(final String userId) {
 		boolean userIsAnAdmin = false;
+		final G_Role role = rDao.getRoleByRolename("admin");
+		if (ValidationUtils.isValid(userId, role)) {
 
-		final G_Group group = gDao.getGroupByGroupname(adminGroupName);
-		if (ValidationUtils.isValid(group)) {
-
-			final List<G_UserGroup> list = ugDao.getGroupMembershipsForUserIdAndGroupId(userId, group.getId());
+			final List<G_UserRole> list = urDao.getByUserIdAndRoleId(userId, role.getId());
 			if (ValidationUtils.isValid(list)) {
 				userIsAnAdmin = true;
+			} else {
+				logger.debug("Userid " + userId + " does not have role " + role.getName());
 			}
 		} else {
 			logger.error("Could not find admin group with name " + adminGroupName);
@@ -297,25 +308,6 @@ public class UserServiceImpl implements G_UserDataAccess {
 			throw new AuthenticationException("Could not login user " + userId + ".  Check username and password.");
 		}
 		return u;
-	}
-
-	@Override
-	public G_User makeAdmin(final G_User d) throws AvroRemoteException {
-		if (ValidationUtils.isValid(d)) {
-			final G_Group group = gDao.getGroupByGroupname(adminGroupName);
-			if (ValidationUtils.isValid(group)) {
-				if (ugDao.addToGroup(d.getId(), group.getId())) {
-					logger.debug("Added user " + d + " to " + adminGroupName);
-				} else {
-					logger.error("Could not add user " + d + " to " + adminGroupName);
-				}
-			} else {
-				logger.error("Could not find a group with groupname " + adminGroupName);
-			}
-		} else {
-			logger.error("Invalid user given to add to admin group");
-		}
-		return d;
 	}
 
 	@Override
@@ -341,6 +333,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			d = uDao.save(d);
 			if (ValidationUtils.isValid(d)) {
 				logger.debug("User registered!");
+				addRole(d, rDao.getRoleByRolename("user"));
 				if (createWorkspace) {
 
 					final G_Workspace w = createFirstWorkspaceForUser(d.getId());
@@ -360,6 +353,11 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
+	public boolean removeRole(final G_User d, final G_Role r) throws AvroRemoteException {
+		return urDao.removeFromRole(d.getId(), r.getId());
+	}
+
+	@Override
 	public boolean removeUserFromWorkspace(final String userId, final String workspaceId) {
 		return uwDao.removeUserFromWorkspace(userId, workspaceId);
 	}
@@ -367,11 +365,14 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Override
 	public boolean removeUserPermissionFromWorkspace(final String userId, final String permission,
 			final String workspaceId) throws AvroRemoteException {
-		final boolean success = uwDao.removeUserPermissionFromWorkspace(userId, permission, workspaceId);
-		if (success) {
-			if (uwDao.countUsersForWorkspace(workspaceId) == 0) {
-				wDao.delete(workspaceId);
-			}
+		boolean success = false;
+		if (ValidationUtils.isValid(permission)) {
+			success = uwDao.removeUserPermissionFromWorkspace(userId, permission, workspaceId);
+		}
+		if (success && (uwDao.countUsersForWorkspace(workspaceId) == 0)) {
+			wDao.delete(workspaceId);
+		} else {
+			logger.error("Was not able to remove permission " + permission + " from workspace " + workspaceId);
 		}
 		return success;
 	}

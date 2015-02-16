@@ -54,7 +54,7 @@ public class GroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements Gro
 	}
 
 	@Override
-	public List<G_Group> getAllGroups() {
+	public List<G_Group> getAll() {
 		final List<G_Group> list = new ArrayList<G_Group>();
 		try (Transaction tx = beginTx()) {
 			try (ResourceIterator<Node> iter = n4jService.getGgo()

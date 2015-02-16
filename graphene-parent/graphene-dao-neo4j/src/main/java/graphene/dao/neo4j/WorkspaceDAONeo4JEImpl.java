@@ -205,7 +205,7 @@ public class WorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public List<G_Workspace> getAllWorkspaces() {
+	public List<G_Workspace> getAll() {
 		final List<G_Workspace> list = new ArrayList<G_Workspace>();
 		try (Transaction tx = beginTx()) {
 			try (ResourceIterator<Node> iter = n4jService.getGgo()

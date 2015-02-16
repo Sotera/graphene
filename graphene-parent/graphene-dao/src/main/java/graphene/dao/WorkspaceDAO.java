@@ -8,41 +8,11 @@ import java.util.List;
 
 public interface WorkspaceDAO {
 
-	/**
-	 * Count of any workspaces that have the partial title
-	 * 
-	 * @param partialName
-	 * @return
-	 */
-	public long countWorkspaces(String partialName);
-
 	public long countWorkspaces(String id, String partialName);
 
 	public boolean delete(String id);
 
-	/**
-	 * Find workspaces by partial name of the title
-	 * 
-	 * @param partialName
-	 * @param offset
-	 * @param limit
-	 * @return
-	 */
-	public List<G_Workspace> findWorkspaces(String partialName, int offset, int limit);
-
-	/**
-	 * Find workspaces by partial name where the userId is an editor of the
-	 * workspace.
-	 * 
-	 * @param userId
-	 * @param partialName
-	 * @param offset
-	 * @param limit
-	 * @return
-	 */
-	public List<G_Workspace> findWorkspaces(String userId, String partialName, int offset, int limit);
-
-	public List<G_Workspace> getAllWorkspaces();
+	public List<G_Workspace> getAll();
 
 	// public G_Workspace getOrCreateWorkspace(G_Workspace g);
 

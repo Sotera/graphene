@@ -47,14 +47,20 @@ protocol G_SecurityDataTypes {
 	 */
 	record G_Role {
 		/**
+		 * UUID of the role
+		 */
+		string id =null;
+		/**
 		 * Name of the role
 		 */
-		string name = null;
-		
+		union {string, null}  name = null;
 		/**
 		 * For describing the nature of the role
 		 */
-		union {string, null} description = null;
+		union {string, null}  description = null;
+		
+		/** role's modified datetime */
+		long modified = 0;
 	}
 	
 	/**
@@ -63,14 +69,21 @@ protocol G_SecurityDataTypes {
 	 */
 	record G_Permission {
 		/**
+		 * UUID of the permission
+		 */
+		string id =null;
+		/**
 		 * Name of the permission
 		 */
-		string name = null;
+		union {string, null}  name = null;
 		
 		/**
 		 * For describing the nature of the permission
 		 */
 		union {string, null} description = null;
+		
+		/** permission's modified datetime */
+		long modified = 0;
 	}
 	
 	

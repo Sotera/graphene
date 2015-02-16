@@ -10,13 +10,11 @@ public interface GroupDAO {
 
 	public boolean delete(String id);
 
-	public void deleteGroup(G_Group g);
+	public List<G_Group> getAll();
 
-	public List<G_Group> getAllGroups();
+	public G_Group getById(String id);
 
 	public G_Group getGroupByGroupname(String groupname);
-
-	public G_Group getGroupById(String id);
 
 	public void initialize() throws DataAccessException;
 

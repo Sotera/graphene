@@ -12,6 +12,10 @@ public interface UserGroupDAO {
 
 	public boolean delete(String id);
 
+	List<G_UserGroup> getAll();
+
+	public G_UserGroup getById(String id);
+
 	public abstract List<G_UserGroup> getGroupMembershipsForGroupId(String groupId);
 
 	public List<G_UserGroup> getGroupMembershipsForUserId(String userId);

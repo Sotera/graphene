@@ -88,7 +88,7 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implem
 	}
 
 	@Override
-	public List<G_UserWorkspace> getAllWorkspaceRelations() {
+	public List<G_UserWorkspace> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

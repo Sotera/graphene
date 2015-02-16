@@ -10,19 +10,17 @@ import java.util.List;
 
 public interface UserWorkspaceDAO {
 	/**
-	 * TODO: Consider changing this to a string based relation/permission, to
-	 * remove tie to Neo4J
 	 * 
 	 * @param username
 	 * @param rel
 	 * @param workspaceId
 	 * @return
 	 */
-	public boolean addRelationToWorkspace(String userId, G_UserSpaceRelationshipType rel, String workspaceId);
+	boolean addRelationToWorkspace(String userId, G_UserSpaceRelationshipType rel, String workspaceId);
 
-	public int countUsersForWorkspace(String workspaceId);
+	int countUsersForWorkspace(String workspaceId);
 
-	public boolean delete(String id);
+	boolean delete(String id);
 
 	/**
 	 * Usually called when deleting a workspace, we want to cascade the deletion
@@ -30,13 +28,21 @@ public interface UserWorkspaceDAO {
 	 * 
 	 * @param workspaceId
 	 */
-	public boolean deleteWorkspaceRelations(String workspaceId);
+	boolean deleteWorkspaceRelations(String workspaceId);
 
-	public List<G_UserWorkspace> getAllWorkspaceRelations();
+	List<G_UserWorkspace> getAll();
 
-	public List<G_User> getUsersForWorkspace(String workspaceId);
+	G_UserWorkspace getById(String id);
 
-	public List<G_Workspace> getWorkspacesForUser(String userId);
+	List<G_UserWorkspace> getByUserId(String id);
+
+	List<G_UserWorkspace> getByUserIdAndWorkspaceId(String userId, String workspaceId);
+
+	List<G_UserWorkspace> getByWorkspaceId(String id);
+
+	List<G_User> getUsersForWorkspace(String workspaceId);
+
+	List<G_Workspace> getWorkspacesForUser(String userId);
 
 	/**
 	 * Return true if the workspace has any of the provided relations to the
@@ -48,13 +54,13 @@ public interface UserWorkspaceDAO {
 	 * @param rel
 	 * @return true if the user had one or more of the rels to the workspace
 	 */
-	public boolean hasRelationship(String userId, String workspaceid, G_UserSpaceRelationshipType... rel);
+	boolean hasRelationship(String userId, String workspaceid, G_UserSpaceRelationshipType... rel);
 
-	public void initialize() throws DataAccessException;
+	void initialize() throws DataAccessException;
 
-	public boolean removeUserFromWorkspace(String userId, String workspaceId);
+	boolean removeUserFromWorkspace(String userId, String workspaceId);
 
-	public boolean removeUserPermissionFromWorkspace(String userId, String permission, String workspaceId);
+	boolean removeUserPermissionFromWorkspace(String userId, String permission, String workspaceId);
 
-	public G_UserWorkspace save(G_UserWorkspace g);
+	G_UserWorkspace save(G_UserWorkspace g);
 }

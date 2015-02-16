@@ -8,13 +8,13 @@ package graphene.model.idl;
 /** A record indicating a user has access to a workspace */
 @org.apache.avro.specific.AvroGenerated
 public class G_UserWorkspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_UserWorkspace\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A record indicating a user has access to a workspace\",\"fields\":[{\"name\":\"id\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"workspaceId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"userworkspace's modified datetime\",\"default\":0},{\"name\":\"role\",\"type\":{\"type\":\"enum\",\"name\":\"G_UserSpaceRelationshipType\",\"symbols\":[\"CREATOR_OF\",\"EDITOR_OF\",\"REVIEWER_OF\"]}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_UserWorkspace\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A record indicating a user has access to a workspace\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"workspaceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"userId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"userworkspace's modified datetime\",\"default\":0},{\"name\":\"role\",\"type\":{\"type\":\"enum\",\"name\":\"G_UserSpaceRelationshipType\",\"symbols\":[\"CREATOR_OF\",\"EDITOR_OF\",\"REVIEWER_OF\"]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
    private java.lang.String workspaceId;
    private java.lang.String userId;
   /** userworkspace's modified datetime */
-   private java.lang.Long modified;
+   private long modified;
    private graphene.model.idl.G_UserSpaceRelationshipType role;
 
   /**
@@ -159,7 +159,7 @@ public class G_UserWorkspace extends org.apache.avro.specific.SpecificRecordBase
     private java.lang.String id;
     private java.lang.String workspaceId;
     private java.lang.String userId;
-    private java.lang.Long modified;
+    private long modified;
     private graphene.model.idl.G_UserSpaceRelationshipType role;
 
     /** Creates a new Builder */
@@ -298,7 +298,7 @@ public class G_UserWorkspace extends org.apache.avro.specific.SpecificRecordBase
     }
     
     /** Sets the value of the 'modified' field */
-    public graphene.model.idl.G_UserWorkspace.Builder setModified(java.lang.Long value) {
+    public graphene.model.idl.G_UserWorkspace.Builder setModified(long value) {
       validate(fields()[3], value);
       this.modified = value;
       fieldSetFlags()[3] = true;
@@ -312,7 +312,6 @@ public class G_UserWorkspace extends org.apache.avro.specific.SpecificRecordBase
     
     /** Clears the value of the 'modified' field */
     public graphene.model.idl.G_UserWorkspace.Builder clearModified() {
-      modified = null;
       fieldSetFlags()[3] = false;
       return this;
     }

@@ -30,7 +30,7 @@ protocol G_UserSpaceDataTypes {
 	record G_User {
 		/** */
 		boolean active = true;
-		string id =null;
+		string id;
 		union {string, null} username = "notset";
 		/**
 		 * some id of an avatar (could be a file name or other string to look
@@ -65,13 +65,12 @@ protocol G_UserSpaceDataTypes {
 	
 	}
 	
-
 	record G_Group {
 		string id =null;
 		union {string, null}  name = "notset";
 		union {string, null}  description = "notset";
 		/** groups's modified datetime */
-		union { long, null} modified = 0;
+		long modified = 0;
 	}
 	
 	record G_ReportViewEvent {
@@ -108,31 +107,39 @@ protocol G_UserSpaceDataTypes {
 		string title="untitled";
 		array<G_ReportViewEvent> savedReports;
 		array<@java-class("graphene.model.query.EntityQuery") string> queryObjects;
-		union {string, null} id =null;
+		string id =null;
 			
 		 /** workspace's modified datetime */
-		union { long, null} modified = 0;
+		long modified = 0;
 		 /** workspace's created datetime */
-		union { long, null} created = 0;
+		long created = 0;
 			
 	}
 	
 	/** A record indicating a user belongs to a group */
 	record G_UserGroup {
-		union {string, null} id =null;
-		union {string, null}  groupId =null;
-		union {string, null}  userId =null;
+		string id =null;
+		string  groupId =null;
+		string  userId =null;
 		/** usergroups's modified datetime */
-		union { long, null} modified = 0;
+		long modified = 0;
+	}
+		/** A record indicating a user belongs to a role */
+	record G_UserRole {
+		string id =null;
+		string roleId;
+		string userId;
+		/** userrole's modified datetime */
+		long modified = 0;
 	}
 	
 	/** A record indicating a user has access to a workspace */
 	record G_UserWorkspace {
-		union {string, null} id =null;
-		union {string, null}  workspaceId =null;
-		union {string, null}  userId =null;
+		string id =null;
+		string  workspaceId =null;
+		string  userId =null;
 		/** userworkspace's modified datetime */
-		union { long, null} modified = 0;
+		long modified = 0;
 		G_UserSpaceRelationshipType role;
 	}
 	

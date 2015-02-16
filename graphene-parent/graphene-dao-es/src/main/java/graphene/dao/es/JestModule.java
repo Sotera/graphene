@@ -23,9 +23,11 @@ public class JestModule {
 	public final static String ES_SEARCH_INDEX = "graphene.es-search-index";
 	public static final String ES_USER_INDEX = "graphene.es-user-index";
 	public static final String ES_GROUP_INDEX = "graphene.es-group-index";
+	public static final String ES_ROLE_INDEX = "graphene.es-role-index";
 	public static final String ES_WORKSPACE_INDEX = "graphene.es-workspace-index";
 	public static final String ES_USERGROUP_INDEX = "graphene.es-usergroup-index";
 	public static final String ES_USERWORKSPACE_INDEX = "graphene.es-userworkspace-index";
+	public static final String ES_USERROLE_INDEX = "graphene.es-userrole-index";
 
 	public static final String ES_PERSISTED_GRAPH_INDEX = "graphene.es-persisted-graph-index";
 	public static final String ES_PERSISTED_GRAPH_TYPE = "graphene.es-persisted-graph-type";
@@ -39,6 +41,7 @@ public class JestModule {
 	public static final String ES_LOGGING_USER_LOGIN_TYPE = "graphene.es-logging-user-login-type";
 
 	public static final String ES_READ_DELAY_MS = "graphene.es-read-delay-ms";
+
 	private static JestHttpClient c;
 
 	public static void bind(final ServiceBinder binder) {
@@ -85,10 +88,11 @@ public class JestModule {
 		// Userspace defaults
 		configuration.add(JestModule.ES_USER_INDEX, "grapheneuser");
 		configuration.add(JestModule.ES_GROUP_INDEX, "graphenegroup");
+		configuration.add(JestModule.ES_ROLE_INDEX, "graphenerole");
 		configuration.add(JestModule.ES_WORKSPACE_INDEX, "grapheneworkspace");
 		configuration.add(JestModule.ES_USERWORKSPACE_INDEX, "grapheneuserworkspace");
 		configuration.add(JestModule.ES_USERGROUP_INDEX, "grapheneusergroup");
-
+		configuration.add(JestModule.ES_USERROLE_INDEX, "grapheneuserrole");
 		// Logging defaults
 		configuration.add(JestModule.ES_LOGGING_INDEX, "graphenelogging");
 		configuration.add(JestModule.ES_LOGGING_EXPORT_TYPE, "export");

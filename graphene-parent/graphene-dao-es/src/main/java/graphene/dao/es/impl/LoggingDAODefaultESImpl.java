@@ -1,8 +1,12 @@
-package graphene.dao.es;
+package graphene.dao.es.impl;
 
 import graphene.dao.LoggingDAO;
+import graphene.dao.es.BasicESDAO;
+import graphene.dao.es.ESRestAPIConnection;
+import graphene.dao.es.JestModule;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserLoginEvent;
 import graphene.model.query.BasicQuery;
 import graphene.model.query.EntityQuery;
@@ -38,18 +42,20 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_SEARCH_TYPE)
 	private String searchQueryType;
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_DELETE_LOGS)
+	private boolean enableDelete;
 
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_GRAPHQUERY_TYPE)
 	private String graphQueryType;
-
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_REPORT_VIEW_TYPE)
 	private String reportViewType;
+
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_USER_LOGIN_TYPE)
 	private String userLoginType;
-
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_EXPORT_TYPE)
 	private String exportType;
@@ -60,6 +66,16 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		this.c = c;
 		mapper = new ObjectMapper(); // can reuse, share globally
 		this.logger = logger;
+	}
+
+	@Override
+	public boolean delete(final String id) {
+		if (enableDelete) {
+			return super.delete(id);
+		} else {
+			logger.debug("Delete disabled.");
+			return false;
+		}
 	}
 
 	@Override
@@ -235,11 +251,10 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		return returnValue;
 	}
 
-	@PostInjection
 	@Override
+	@PostInjection
 	public void initialize() {
 		setIndex(indexName);
-		// default type, although we can have multiple types
 		setType(searchQueryType);
 		super.initialize();
 	}
@@ -262,19 +277,6 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		}
 		return;
 
-	}
-
-	@Override
-	public void recordUserLoginEvent(final G_UserLoginEvent e) {
-		if (ValidationUtils.isValid(e)) {
-			if (e.getId() == null) {
-				e.setId(saveObject(e, e.getId(), indexName, userLoginType));
-			}
-			saveObject(e, e.getId(), indexName, userLoginType);
-		} else {
-			logger.error("Attempted to save a null G_UserLoginEvent!");
-		}
-		return;
 	}
 
 	@Override
@@ -312,6 +314,19 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			saveObject(q, q.getId(), indexName, reportViewType);
 		} else {
 			logger.error("Attempted to save a null G_ReportViewEvent!");
+		}
+		return;
+	}
+
+	@Override
+	public void recordUserLoginEvent(final G_UserLoginEvent e) {
+		if (ValidationUtils.isValid(e)) {
+			if (e.getId() == null) {
+				e.setId(saveObject(e, e.getId(), indexName, userLoginType));
+			}
+			saveObject(e, e.getId(), indexName, userLoginType);
+		} else {
+			logger.error("Attempted to save a null G_UserLoginEvent!");
 		}
 		return;
 	}

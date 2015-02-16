@@ -43,68 +43,63 @@ public class NoSecurityRealm extends AuthorizingRealm {
 	public NoSecurityRealm() {
 		setName(REALM_NAME);
 		setCredentialsMatcher(new CredentialsMatcher() {
-			private PasswordHash hasher = new PasswordHash();
+			private final PasswordHash hasher = new PasswordHash();
 
 			@Override
-			public boolean doCredentialsMatch(AuthenticationToken token,
-					AuthenticationInfo info) {
+			public boolean doCredentialsMatch(final AuthenticationToken token, final AuthenticationInfo info) {
 				return true;
 			}
 		});
 	}
 
 	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(
-			PrincipalCollection principals) {
-		String username = (String) principals.fromRealm(getName()).iterator()
-				.next();
+	protected AuthenticationInfo doGetAuthenticationInfo(final AuthenticationToken authToken)
+			throws AuthenticationException {
+		final UsernamePasswordToken token = (UsernamePasswordToken) authToken;
+		logger.debug("Getting authentication for " + token);
+		G_User user = null;
+		try {
+			user = userDataAccess.getByUsername(token.getUsername());
+		} catch (final AvroRemoteException e) {
+			logger.error(e.getMessage());
+		}
+		if (user != null) {
+			// We are putting the previously stored hashed password in here.
+			return new SimpleAuthenticationInfo(user.getUsername(), user.getHashedpassword(), getName());
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(final PrincipalCollection principals) {
+		final String username = (String) principals.fromRealm(getName()).iterator().next();
 		logger.debug("Getting authorization for " + username);
 		if (username == null) {
-			throw new AccountException(
-					"Null usernames are not allowed by this realm.");
+			throw new AccountException("Null usernames are not allowed by this realm.");
 		}
 		G_User user = null;
 		try {
 			user = userDataAccess.getByUsername(username);
-		} catch (AvroRemoteException e1) {
+		} catch (final AvroRemoteException e1) {
 			e1.printStackTrace();
 		}
 		SimpleAuthorizationInfo info = null;
 		if (user != null) {
 			try {
 				info = new SimpleAuthorizationInfo();
-				for (G_Role role : userDataAccess.getRolesByUser(user.getId())) {
-					info.addRole(role.getDescription());
-
-					for (G_Permission permission : userDataAccess
-							.getPermissionsByRole(role)) {
-						info.addStringPermission(permission.getDescription());
+				for (final G_Role role : userDataAccess.getRolesByUser(user.getId())) {
+					info.addRole(role.getName());
+					logger.debug("User has role " + role.getName());
+					for (final G_Permission permission : userDataAccess.getPermissionsByRole(role)) {
+						info.addStringPermission(permission.getName());
+						logger.debug("Role has permission " + permission.getName());
 					}
 				}
-			} catch (AvroRemoteException e) {
+			} catch (final AvroRemoteException e) {
 				logger.error(e.getMessage());
 			}
 		}
 		return info;
-	}
-
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(
-			AuthenticationToken authToken) throws AuthenticationException {
-		UsernamePasswordToken token = (UsernamePasswordToken) authToken;
-		logger.debug("Getting authentication for " + token);
-		G_User user = null;
-		try {
-			user = userDataAccess.getByUsername(token.getUsername());
-		} catch (AvroRemoteException e) {
-			logger.error(e.getMessage());
-		}
-		if (user != null) {
-			// We are putting the previously stored hashed password in here.
-			return new SimpleAuthenticationInfo(user.getUsername(),
-					user.getHashedpassword(), getName());
-		} else {
-			return null;
-		}
 	}
 }

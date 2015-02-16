@@ -117,7 +117,7 @@ public class UserDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 	}
 
 	@Override
-	public List<G_User> getAllUsers() {
+	public List<G_User> getAll() {
 		List<G_User> list = new ArrayList<G_User>();
 		try (Transaction tx = beginTx()) {
 			try (ResourceIterator<Node> iter = n4jService.getGgo()

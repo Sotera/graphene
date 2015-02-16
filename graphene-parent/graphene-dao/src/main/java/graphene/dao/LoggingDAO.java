@@ -1,5 +1,6 @@
 package graphene.dao;
 
+import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_UserLoginEvent;
@@ -20,17 +21,19 @@ import mil.darpa.vande.interactions.TemporalGraphQuery;
  */
 public interface LoggingDAO {
 
-	public abstract List<Object> getAllEvents(String userId, String partialTerm, int offset, int limit);
+	List<Object> getAllEvents(String userId, String partialTerm, int offset, int limit);
 
-	public abstract List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm, int offset, int limit);
+	List<TemporalGraphQuery> getGraphQueries(String userId, String partialTerm, int offset, int limit);
 
-	public abstract List<G_GraphViewEvent> getGraphViewEvents(String userId, int offset, int limit);
+	List<G_GraphViewEvent> getGraphViewEvents(String userId, int offset, int limit);
 
-	public abstract List<EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
+	List<EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
 
-	public abstract List<G_ReportViewEvent> getReportViewEvents(String userId, int offset, int limit);
+	List<G_ReportViewEvent> getReportViewEvents(String userId, int offset, int limit);
 
-	public abstract List<G_UserLoginEvent> getUserLoginEvents(String userId, int offset, int limit);
+	List<G_UserLoginEvent> getUserLoginEvents(String userId, int offset, int limit);
+
+	void initialize() throws DataAccessException;;
 
 	/**
 	 * Record an export event and what values were used to initiate the export.
@@ -39,17 +42,9 @@ public interface LoggingDAO {
 	 * @return
 	 */
 	@Deprecated
-	public abstract boolean recordExport(String queryString);
+	boolean recordExport(String queryString);
 
-	public abstract void recordGraphViewEvent(G_GraphViewEvent q);
-
-	/**
-	 * Record the event of a user logging in.
-	 * 
-	 * 
-	 * @param e
-	 */
-	public abstract void recordUserLoginEvent(G_UserLoginEvent e);
+	void recordGraphViewEvent(G_GraphViewEvent q);
 
 	/**
 	 * For recording query terms (or queries that were executed, with all their
@@ -59,7 +54,7 @@ public interface LoggingDAO {
 	 * @param sq
 	 *            The entity query initiated by the user
 	 */
-	public abstract void recordQuery(BasicQuery sq);
+	void recordQuery(BasicQuery sq);
 
 	/**
 	 * For recording query terms (or queries that were executed, with all their
@@ -69,7 +64,15 @@ public interface LoggingDAO {
 	 * @return
 	 */
 	@Deprecated
-	public abstract void recordQuery(V_GraphQuery q);
+	void recordQuery(V_GraphQuery q);
 
-	public abstract void recordReportViewEvent(G_ReportViewEvent q);
+	void recordReportViewEvent(G_ReportViewEvent q);
+
+	/**
+	 * Record the event of a user logging in.
+	 * 
+	 * 
+	 * @param e
+	 */
+	void recordUserLoginEvent(G_UserLoginEvent e);
 }

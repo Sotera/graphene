@@ -7,13 +7,13 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Group extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Group\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"name\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"notset\"},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"notset\"},{\"name\":\"modified\",\"type\":[\"long\",\"null\"],\"doc\":\"groups's modified datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Group\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"name\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"notset\"},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"notset\"},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"groups's modified datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
    private java.lang.String name;
    private java.lang.String description;
   /** groups's modified datetime */
-   private java.lang.Long modified;
+   private long modified;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -139,7 +139,7 @@ public class G_Group extends org.apache.avro.specific.SpecificRecordBase impleme
     private java.lang.String id;
     private java.lang.String name;
     private java.lang.String description;
-    private java.lang.Long modified;
+    private long modified;
 
     /** Creates a new Builder */
     private Builder() {
@@ -269,7 +269,7 @@ public class G_Group extends org.apache.avro.specific.SpecificRecordBase impleme
     }
     
     /** Sets the value of the 'modified' field */
-    public graphene.model.idl.G_Group.Builder setModified(java.lang.Long value) {
+    public graphene.model.idl.G_Group.Builder setModified(long value) {
       validate(fields()[3], value);
       this.modified = value;
       fieldSetFlags()[3] = true;
@@ -283,7 +283,6 @@ public class G_Group extends org.apache.avro.specific.SpecificRecordBase impleme
     
     /** Clears the value of the 'modified' field */
     public graphene.model.idl.G_Group.Builder clearModified() {
-      modified = null;
       fieldSetFlags()[3] = false;
       return this;
     }

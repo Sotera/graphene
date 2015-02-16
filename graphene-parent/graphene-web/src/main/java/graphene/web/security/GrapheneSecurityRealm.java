@@ -109,15 +109,19 @@ public class GrapheneSecurityRealm extends AuthorizingRealm {
 			try {
 				info = new SimpleAuthorizationInfo();
 				for (final G_Role role : userDataAccess.getRolesByUser(user.getId())) {
-					info.addRole(role.getDescription());
-
+					info.addRole(role.getName());
+					logger.debug("User has role " + role.getName());
 					for (final G_Permission permission : userDataAccess.getPermissionsByRole(role)) {
 						info.addStringPermission(permission.getDescription());
+						// logger.debug("Role has permission " +
+						// permission.getName());
 					}
 				}
 			} catch (final AvroRemoteException e) {
 				logger.error(e.getMessage());
 			}
+		} else {
+			logger.error("User was null, could not get authorization info");
 		}
 		return info;
 	}

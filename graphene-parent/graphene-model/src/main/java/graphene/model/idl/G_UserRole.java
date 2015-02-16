@@ -5,15 +5,15 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** A record indicating a user belongs to a group */
+/** A record indicating a user belongs to a role */
 @org.apache.avro.specific.AvroGenerated
-public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_UserGroup\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A record indicating a user belongs to a group\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"groupId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"userId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"usergroups's modified datetime\",\"default\":0}]}");
+public class G_UserRole extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_UserRole\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A record indicating a user belongs to a role\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"roleId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"userId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"userrole's modified datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
-   private java.lang.String groupId;
+   private java.lang.String roleId;
    private java.lang.String userId;
-  /** usergroups's modified datetime */
+  /** userrole's modified datetime */
    private long modified;
 
   /**
@@ -21,14 +21,14 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>. 
    */
-  public G_UserGroup() {}
+  public G_UserRole() {}
 
   /**
    * All-args constructor.
    */
-  public G_UserGroup(java.lang.String id, java.lang.String groupId, java.lang.String userId, java.lang.Long modified) {
+  public G_UserRole(java.lang.String id, java.lang.String roleId, java.lang.String userId, java.lang.Long modified) {
     this.id = id;
-    this.groupId = groupId;
+    this.roleId = roleId;
     this.userId = userId;
     this.modified = modified;
   }
@@ -38,7 +38,7 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return id;
-    case 1: return groupId;
+    case 1: return roleId;
     case 2: return userId;
     case 3: return modified;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -49,7 +49,7 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: id = (java.lang.String)value$; break;
-    case 1: groupId = (java.lang.String)value$; break;
+    case 1: roleId = (java.lang.String)value$; break;
     case 2: userId = (java.lang.String)value$; break;
     case 3: modified = (java.lang.Long)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -72,18 +72,18 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'groupId' field.
+   * Gets the value of the 'roleId' field.
    */
-  public java.lang.String getGroupId() {
-    return groupId;
+  public java.lang.String getRoleId() {
+    return roleId;
   }
 
   /**
-   * Sets the value of the 'groupId' field.
+   * Sets the value of the 'roleId' field.
    * @param value the value to set.
    */
-  public void setGroupId(java.lang.String value) {
-    this.groupId = value;
+  public void setRoleId(java.lang.String value) {
+    this.roleId = value;
   }
 
   /**
@@ -103,59 +103,59 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Gets the value of the 'modified' field.
-   * usergroups's modified datetime   */
+   * userrole's modified datetime   */
   public java.lang.Long getModified() {
     return modified;
   }
 
   /**
    * Sets the value of the 'modified' field.
-   * usergroups's modified datetime   * @param value the value to set.
+   * userrole's modified datetime   * @param value the value to set.
    */
   public void setModified(java.lang.Long value) {
     this.modified = value;
   }
 
-  /** Creates a new G_UserGroup RecordBuilder */
-  public static graphene.model.idl.G_UserGroup.Builder newBuilder() {
-    return new graphene.model.idl.G_UserGroup.Builder();
+  /** Creates a new G_UserRole RecordBuilder */
+  public static graphene.model.idl.G_UserRole.Builder newBuilder() {
+    return new graphene.model.idl.G_UserRole.Builder();
   }
   
-  /** Creates a new G_UserGroup RecordBuilder by copying an existing Builder */
-  public static graphene.model.idl.G_UserGroup.Builder newBuilder(graphene.model.idl.G_UserGroup.Builder other) {
-    return new graphene.model.idl.G_UserGroup.Builder(other);
+  /** Creates a new G_UserRole RecordBuilder by copying an existing Builder */
+  public static graphene.model.idl.G_UserRole.Builder newBuilder(graphene.model.idl.G_UserRole.Builder other) {
+    return new graphene.model.idl.G_UserRole.Builder(other);
   }
   
-  /** Creates a new G_UserGroup RecordBuilder by copying an existing G_UserGroup instance */
-  public static graphene.model.idl.G_UserGroup.Builder newBuilder(graphene.model.idl.G_UserGroup other) {
-    return new graphene.model.idl.G_UserGroup.Builder(other);
+  /** Creates a new G_UserRole RecordBuilder by copying an existing G_UserRole instance */
+  public static graphene.model.idl.G_UserRole.Builder newBuilder(graphene.model.idl.G_UserRole other) {
+    return new graphene.model.idl.G_UserRole.Builder(other);
   }
   
   /**
-   * RecordBuilder for G_UserGroup instances.
+   * RecordBuilder for G_UserRole instances.
    */
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<G_UserGroup>
-    implements org.apache.avro.data.RecordBuilder<G_UserGroup> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<G_UserRole>
+    implements org.apache.avro.data.RecordBuilder<G_UserRole> {
 
     private java.lang.String id;
-    private java.lang.String groupId;
+    private java.lang.String roleId;
     private java.lang.String userId;
     private long modified;
 
     /** Creates a new Builder */
     private Builder() {
-      super(graphene.model.idl.G_UserGroup.SCHEMA$);
+      super(graphene.model.idl.G_UserRole.SCHEMA$);
     }
     
     /** Creates a Builder by copying an existing Builder */
-    private Builder(graphene.model.idl.G_UserGroup.Builder other) {
+    private Builder(graphene.model.idl.G_UserRole.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.groupId)) {
-        this.groupId = data().deepCopy(fields()[1].schema(), other.groupId);
+      if (isValidValue(fields()[1], other.roleId)) {
+        this.roleId = data().deepCopy(fields()[1].schema(), other.roleId);
         fieldSetFlags()[1] = true;
       }
       if (isValidValue(fields()[2], other.userId)) {
@@ -168,15 +168,15 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
     
-    /** Creates a Builder by copying an existing G_UserGroup instance */
-    private Builder(graphene.model.idl.G_UserGroup other) {
-            super(graphene.model.idl.G_UserGroup.SCHEMA$);
+    /** Creates a Builder by copying an existing G_UserRole instance */
+    private Builder(graphene.model.idl.G_UserRole other) {
+            super(graphene.model.idl.G_UserRole.SCHEMA$);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.groupId)) {
-        this.groupId = data().deepCopy(fields()[1].schema(), other.groupId);
+      if (isValidValue(fields()[1], other.roleId)) {
+        this.roleId = data().deepCopy(fields()[1].schema(), other.roleId);
         fieldSetFlags()[1] = true;
       }
       if (isValidValue(fields()[2], other.userId)) {
@@ -195,7 +195,7 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Sets the value of the 'id' field */
-    public graphene.model.idl.G_UserGroup.Builder setId(java.lang.String value) {
+    public graphene.model.idl.G_UserRole.Builder setId(java.lang.String value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -208,33 +208,33 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Clears the value of the 'id' field */
-    public graphene.model.idl.G_UserGroup.Builder clearId() {
+    public graphene.model.idl.G_UserRole.Builder clearId() {
       id = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'groupId' field */
-    public java.lang.String getGroupId() {
-      return groupId;
+    /** Gets the value of the 'roleId' field */
+    public java.lang.String getRoleId() {
+      return roleId;
     }
     
-    /** Sets the value of the 'groupId' field */
-    public graphene.model.idl.G_UserGroup.Builder setGroupId(java.lang.String value) {
+    /** Sets the value of the 'roleId' field */
+    public graphene.model.idl.G_UserRole.Builder setRoleId(java.lang.String value) {
       validate(fields()[1], value);
-      this.groupId = value;
+      this.roleId = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
     
-    /** Checks whether the 'groupId' field has been set */
-    public boolean hasGroupId() {
+    /** Checks whether the 'roleId' field has been set */
+    public boolean hasRoleId() {
       return fieldSetFlags()[1];
     }
     
-    /** Clears the value of the 'groupId' field */
-    public graphene.model.idl.G_UserGroup.Builder clearGroupId() {
-      groupId = null;
+    /** Clears the value of the 'roleId' field */
+    public graphene.model.idl.G_UserRole.Builder clearRoleId() {
+      roleId = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -245,7 +245,7 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Sets the value of the 'userId' field */
-    public graphene.model.idl.G_UserGroup.Builder setUserId(java.lang.String value) {
+    public graphene.model.idl.G_UserRole.Builder setUserId(java.lang.String value) {
       validate(fields()[2], value);
       this.userId = value;
       fieldSetFlags()[2] = true;
@@ -258,7 +258,7 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Clears the value of the 'userId' field */
-    public graphene.model.idl.G_UserGroup.Builder clearUserId() {
+    public graphene.model.idl.G_UserRole.Builder clearUserId() {
       userId = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -270,7 +270,7 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Sets the value of the 'modified' field */
-    public graphene.model.idl.G_UserGroup.Builder setModified(long value) {
+    public graphene.model.idl.G_UserRole.Builder setModified(long value) {
       validate(fields()[3], value);
       this.modified = value;
       fieldSetFlags()[3] = true;
@@ -283,17 +283,17 @@ public class G_UserGroup extends org.apache.avro.specific.SpecificRecordBase imp
     }
     
     /** Clears the value of the 'modified' field */
-    public graphene.model.idl.G_UserGroup.Builder clearModified() {
+    public graphene.model.idl.G_UserRole.Builder clearModified() {
       fieldSetFlags()[3] = false;
       return this;
     }
 
     @Override
-    public G_UserGroup build() {
+    public G_UserRole build() {
       try {
-        G_UserGroup record = new G_UserGroup();
+        G_UserRole record = new G_UserRole();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.String) defaultValue(fields()[0]);
-        record.groupId = fieldSetFlags()[1] ? this.groupId : (java.lang.String) defaultValue(fields()[1]);
+        record.roleId = fieldSetFlags()[1] ? this.roleId : (java.lang.String) defaultValue(fields()[1]);
         record.userId = fieldSetFlags()[2] ? this.userId : (java.lang.String) defaultValue(fields()[2]);
         record.modified = fieldSetFlags()[3] ? this.modified : (java.lang.Long) defaultValue(fields()[3]);
         return record;
