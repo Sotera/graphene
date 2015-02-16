@@ -14,21 +14,45 @@
 	<h1>Use the search bar in the upper right to initiate a search across reports.</h1>
 	<t:if test="workspacesEnabled">
 		<t:if test="workspacesAvailable">
-			<p>Select a workspace by clicking on a link below:</p>
-			<div t:type="loop" source="workspaces" value="currentWorkspace">
-				<div class="row">
-					<div class="col-md-4">
-						<a t:type="pagelink" page="graphene/workspace/view" context="currentWorkspace.id"
-							title="Click to switch to this workspace">${currentWorkspace.title} </a>
-					</div>
+			<p>
+				Select a workspace by clicking on a link below, or <a t:type="pagelink" class="btn btn-xs btn-default"
+					page="graphene/workspace/manage">Create a new workspace</a>
+			</p>
 
-					<div class="col-md-4">
-						Last modified:
-						<t:graphene.jodatimeoutput value="currentWorkspace.modified" style="LL" />
-					</div>
-					<div class="col-md-4"></div>
+			<table id="inbox-table" class="table table-striped table-hover">
+				<div t:type="loop" source="workspaces" value="currentWorkspace">
+				<tr id="msg1" class="unread">
+					<td class="inbox-table-icon">
+						<div class="checkbox">
+							<label><span></span> </label>
+						</div>
+					</td>
+					<td class="inbox-data-from hidden-xs hidden-sm"><a t:type="pagelink" page="graphene/workspace/view"
+						context="currentWorkspace.id" title="Click to switch to this workspace">
+							<div>${currentWorkspace.title}</div>
+					</a></td>
+					<td class="inbox-data-message"><a t:type="pagelink" page="graphene/workspace/view"
+						context="currentWorkspace.id" title="Click to switch to this workspace">
+							<div>
+								<span>${currentWorkspace.description}</span>
+							</div>
+					</a></td>
+					<td class="inbox-data-attachment hidden-xs">
+						<div>
+							<span title="Number of saved reports">${currentWorkspace?.savedReports?.size()}</span>
+						</div>
+					</td>
+					<td class="inbox-data-from hidden-sm">
+						<div>
+							<t:graphene.jodatimeoutput value="currentWorkspace.modified" style="LL" />
+						</div>
+					</td>
+				</tr>
 				</div>
-			</div>
+			</table>
+
+
+
 			<p:else>
 				<p>
 					<a t:type="pagelink" page="graphene/workspace/manage">Click here to create a workspace</a>
