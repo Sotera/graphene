@@ -56,7 +56,7 @@ public class G_SymbolConstants {
 	public static final String ENABLE_FREE_TEXT_EXTRACTION = "graphene.enable-free-text-extraction";
 
 	public static final String ENABLE_GRAPH_QUERY_PATH = "graphene.enable-graph-query-path";
-
+	public static final String ENABLE_WORKSPACES = "graphene.enable-workspaces";
 	public static final String ENABLE_DELETE_WORKSPACES = "graphene.enable-delete-workspaces";
 	public static final String ENABLE_DELETE_UNUSED_WORKSPACES = "graphene.enable-delete-unused-workspaces";
 	public static final String ENABLE_DELETE_USERS = "graphene.enable-delete-users";

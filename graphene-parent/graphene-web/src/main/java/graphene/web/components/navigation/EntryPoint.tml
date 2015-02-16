@@ -1,35 +1,40 @@
 <!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
-	xmlns:p="tapestry:parameter">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 <!-- Most of the page content, including <head>, <body>, etc. tags, comes 
 		from Layout.tml -->
 <t:content>
 
 	<h1>Welcome to Graphene!</h1>
 	<h2>Please use the search bar above to get started.</h2>
-	<h2>If you would like to learn more about the tool, refer to the user guides in Getting Started or Advanced Help.</h2>
+	<h2>
+		If you would like to learn more about the tool, refer to the user guides in <strong><a t:type="pagelink"
+			page="graphene/help">Getting Started</a></strong> or <strong><a t:type="pagelink" page="help">Advanced Help.</a></strong>
+	</h2>
 
 	<h1>Use the search bar in the upper right to initiate a search across reports.</h1>
-	<t:if test="workspacesExists">
-		<p>Select a workspace by clicking on a link below:</p>
+	<t:if test="workspacesEnabled">
+		<t:if test="workspacesAvailable">
+			<p>Select a workspace by clicking on a link below:</p>
+			<div t:type="loop" source="workspaces" value="currentWorkspace">
+				<div class="row">
+					<div class="col-md-4">
+						<a t:type="pagelink" page="graphene/workspace/view" context="currentWorkspace.id"
+							title="Click to switch to this workspace">${currentWorkspace.title} </a>
+					</div>
 
-		<div t:type="loop" source="workspaces" value="currentWorkspace">
-			<div class="row">
-				<div class="col-md-4">
-					<a t:type="pagelink" page="graphene/workspace/view" context="currentWorkspace.id"
-						title="Click to switch to this workspace">${currentWorkspace.title} </a>
+					<div class="col-md-4">
+						Last modified:
+						<t:graphene.jodatimeoutput value="currentWorkspace.modified" style="LL" />
+					</div>
+					<div class="col-md-4"></div>
 				</div>
-
-				<div class="col-md-4">
-					Last modified:
-					<t:graphene.jodatimeoutput value="currentWorkspace.modified" style="LL" />
-				</div>
-				<div class="col-md-4"></div>
 			</div>
-		</div>
-		<p:else>
-			<p><a t:type="pagelink" page="workspace/manage" >Please create a workspace</a></p>
-		</p:else>
+			<p:else>
+				<p>
+					<a t:type="pagelink" page="graphene/workspace/manage">Click here to create a workspace</a>
+				</p>
+			</p:else>
+		</t:if>
 	</t:if>
 </t:content>
 

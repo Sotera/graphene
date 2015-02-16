@@ -48,6 +48,7 @@ public class DAOModule {
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_USERS, true);
 
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_GROUPS, true);
+		configuration.add(G_SymbolConstants.ENABLE_WORKSPACES, true);
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_WORKSPACES, true);
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_UNUSED_WORKSPACES, true);
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_ROLES, false);
