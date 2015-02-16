@@ -2,6 +2,7 @@ package graphene.web.security;
 
 import graphene.model.idl.G_Workspace;
 
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.tapestry5.PersistenceConstants;
@@ -29,7 +30,7 @@ public class ShiroSecurityModule {
 	public static void bind(final ServiceBinder binder) {
 
 		binder.bind(AuthenticatorHelper.class, ShiroAuthenticatorHelper.class).eagerLoad();
-		binder.bind(Realm.class, GrapheneSecurityRealm.class);
+		binder.bind(AuthorizingRealm.class, GrapheneSecurityRealm.class);
 	}
 
 	@Contribute(ValidatorMacro.class)
@@ -41,7 +42,7 @@ public class ShiroSecurityModule {
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, String> configuration) {
 		configuration.add(SecuritySymbols.LOGIN_URL, "/graphene/pub/login");
 
-		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/infrastructure/pagedenied");
+		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/pub/pagedenied");
 		configuration.add(SecuritySymbols.SUCCESS_URL, "/graphene/index");
 		configuration.add(SecuritySymbols.REDIRECT_TO_SAVED_URL, "true");
 
@@ -78,7 +79,8 @@ public class ShiroSecurityModule {
 	}
 
 	@Contribute(WebSecurityManager.class)
-	public static void contributeSecurity(final Configuration<Realm> configuration, final Realm grapheneSecurityRealm) {
+	public static void contributeSecurity(final Configuration<Realm> configuration,
+			final AuthorizingRealm grapheneSecurityRealm) {
 		configuration.add(grapheneSecurityRealm);
 	}
 
