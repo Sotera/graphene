@@ -80,7 +80,7 @@ public interface UserDAO {
 	 * @param username
 	 * @return
 	 */
-	boolean isExisting(String username);
+	boolean isExistingUsername(String username);
 
 	boolean isExistingId(String id);
 

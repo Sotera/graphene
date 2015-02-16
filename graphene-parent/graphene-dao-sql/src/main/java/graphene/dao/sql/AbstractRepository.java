@@ -7,7 +7,6 @@ import java.sql.Connection;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.RelationalPath;
@@ -21,15 +20,23 @@ public abstract class AbstractRepository {
 	@Inject
 	private Configuration configuration;
 
-	public long getModifiedTime() {
-		return DateTime.now(DateTimeZone.UTC).getMillis();
-	}
-
 	@Inject
 	private ConnectionContext context;
 
+	protected SQLDeleteClause delete(final RelationalPath<?> path) {
+		return new SQLDeleteClause(getConnection(), configuration, path);
+	}
+
+	protected SQLQuery from(final Expression<?> expression) {
+		return query().from(expression);
+	}
+
 	public Connection getConnection() {
 		return context.getConnection();
+	}
+
+	public long getModifiedTime() {
+		return DateTime.now().getMillis();
 	}
 
 	public void initialize() {
@@ -37,23 +44,15 @@ public abstract class AbstractRepository {
 
 	}
 
+	protected SQLInsertClause insert(final RelationalPath<?> path) {
+		return new SQLInsertClause(getConnection(), configuration, path);
+	}
+
 	private SQLQuery query() {
 		return new SQLQuery(getConnection(), configuration);
 	}
 
-	protected SQLQuery from(Expression<?> expression) {
-		return query().from(expression);
-	}
-
-	protected SQLInsertClause insert(RelationalPath<?> path) {
-		return new SQLInsertClause(getConnection(), configuration, path);
-	}
-
-	protected SQLUpdateClause update(RelationalPath<?> path) {
+	protected SQLUpdateClause update(final RelationalPath<?> path) {
 		return new SQLUpdateClause(getConnection(), configuration, path);
-	}
-
-	protected SQLDeleteClause delete(RelationalPath<?> path) {
-		return new SQLDeleteClause(getConnection(), configuration, path);
 	}
 }

@@ -3,62 +3,61 @@ package graphene.model.graph;
 public class G_PersistedGraph {
 	private java.lang.String id;
 
-	public java.lang.String getId() {
-		return id;
-	}
-
-	public void setId(java.lang.String id) {
-		this.id = id;
-	}
-
 	String graphSeed;
+
 	String username;
+
 	/** workspace's modified datetime */
 	private java.lang.Long modified;
-
-	public java.lang.Long getModified() {
-		return modified;
-	}
-
-	public void setModified(java.lang.Long modified) {
-		this.modified = modified;
-	}
+	/** workspace's created datetime */
+	private java.lang.Long created;
+	String graphJSONdata;
 
 	public java.lang.Long getCreated() {
 		return created;
 	}
 
-	public void setCreated(java.lang.Long created) {
-		this.created = created;
+	public String getGraphJSONdata() {
+		return graphJSONdata;
 	}
-
-	/** workspace's created datetime */
-	private java.lang.Long created;
 
 	public String getGraphSeed() {
 		return graphSeed;
 	}
 
-	public void setGraphSeed(String graphSeed) {
-		this.graphSeed = graphSeed;
+	public java.lang.String getId() {
+		return id;
+	}
+
+	public java.lang.Long getModified() {
+		return modified;
 	}
 
 	public String getUserName() {
 		return username;
 	}
 
-	public void setUserName(String username) {
-		this.username = username;
+	public void setCreated(final java.lang.Long created) {
+		this.created = created;
 	}
 
-
-	public String getGraphJSONdata() {
-		return graphJSONdata;
-	}
-
-	public void setGraphJSONdata(String graphJSONdata) {
+	public void setGraphJSONdata(final String graphJSONdata) {
 		this.graphJSONdata = graphJSONdata;
 	}
 
-	String graphJSONdata;
+	public void setGraphSeed(final String graphSeed) {
+		this.graphSeed = graphSeed;
+	}
+
+	public void setId(final java.lang.String id) {
+		this.id = id;
+	}
+
+	public void setModified(final java.lang.Long modified) {
+		this.modified = modified;
+	}
+
+	public void setUserName(final String username) {
+		this.username = username;
+	}
 }

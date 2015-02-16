@@ -67,7 +67,7 @@ public class UserRoleDAOESImpl extends BasicESDAO implements UserRoleDAO {
 				logger.debug("The user already appears to have a membership to the specified role.");
 			}
 		} else {
-			logger.error("A valid userId and roleId are required. Was given userId: " + userId + " and roleId: "
+			logger.error("add(): A valid userId and roleId are required. Was given userId: " + userId + " and roleId: "
 					+ roleId);
 		}
 		return success;
@@ -173,9 +173,9 @@ public class UserRoleDAOESImpl extends BasicESDAO implements UserRoleDAO {
 		if (ValidationUtils.isValid(g)) {
 			g.setModified(getModifiedTime());
 			if (g.getId() == null) {
-				g.setId(saveObject(g, g.getId(), indexName, type));
+				g.setId(saveObject(g, g.getId(), indexName, type, false));
 			}
-			saveObject(g, g.getId(), indexName, type);
+			saveObject(g, g.getId(), indexName, type, true);
 			returnVal = g;
 		} else {
 			logger.error("Attempted to save a null user role object!");

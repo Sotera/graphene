@@ -83,9 +83,9 @@ public class GroupDAOESImpl extends BasicESDAO implements GroupDAO {
 		if (ValidationUtils.isValid(g)) {
 			g.setModified(getModifiedTime());
 			if (g.getId() == null) {
-				g.setId(saveObject(g, g.getId(), indexName, type));
+				g.setId(saveObject(g, g.getId(), indexName, type, false));
 			}
-			saveObject(g, g.getId(), indexName, type);
+			saveObject(g, g.getId(), indexName, type, true);
 			returnVal = g;
 		} else {
 			logger.error("Attempted to save a null group object!");

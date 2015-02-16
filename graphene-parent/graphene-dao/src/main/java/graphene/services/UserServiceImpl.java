@@ -69,6 +69,9 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_DELETE_WORKSPACES)
 	private boolean deleteWorkspaces;
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
+	private boolean enableWorkspaces;
 
 	@Override
 	public G_Workspace addNewWorkspaceForUser(final String userId, final G_Workspace workspace) {
@@ -78,10 +81,12 @@ public class UserServiceImpl implements G_UserDataAccess {
 			if (w == null) {
 				logger.error("Could not create new workspace");
 			} else {
-				final boolean success = uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.EDITOR_OF,
-						workspace.getId());
-				if (!success) {
-					logger.error("Could not create editor relationship for workspace");
+				final boolean success1 = uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.CREATOR_OF,
+						w.getId());
+				final boolean success2 = uwDao.addRelationToWorkspace(userId, G_UserSpaceRelationshipType.EDITOR_OF,
+						w.getId());
+				if (!success1 && success2) {
+					logger.error("Could not create editor/creator relationship for workspace");
 				}
 			}
 
@@ -328,6 +333,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 			d.setActive(true);
 			d.setLastlogin(0l);
 			d.setNumberlogins(0);
+			d.setCreated(DateTime.now().getMillis());
 			d.setId(null);
 			logger.debug("Saving a new user...");
 			d = uDao.save(d);
@@ -423,12 +429,12 @@ public class UserServiceImpl implements G_UserDataAccess {
 
 	@Override
 	public boolean userExists(final String userId) throws AvroRemoteException {
-		return uDao.isExisting(userId);
+		return uDao.isExistingId(userId);
 	}
 
 	@Override
 	public boolean usernameExists(final String username) throws AvroRemoteException {
-		final boolean exists = uDao.isExisting(username);
+		final boolean exists = uDao.isExistingUsername(username);
 		if (exists) {
 			logger.warn("Username already exists");
 		} else {

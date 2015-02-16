@@ -7,6 +7,7 @@ import io.searchbox.core.CountResult;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
+import io.searchbox.core.Search.Builder;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.IndicesExists;
 
@@ -16,14 +17,23 @@ import java.util.concurrent.ExecutionException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 
+/**
+ * Note that when you extend this class, do not have a logger in your extended
+ * class. Use the logger provided here, and see other implementations' examples
+ * on how to set up the constructor and post injection initializer.
+ * 
+ * @author djue
+ * 
+ */
 public class BasicESDAO {
 
 	protected ObjectMapper mapper;
@@ -31,7 +41,7 @@ public class BasicESDAO {
 	protected Logger logger;
 	protected ESRestAPIConnection c;
 	protected String auth = null;
-	protected String type = "defaultType";
+	protected String type = "_all";
 	@Inject
 	@Symbol(JestModule.ES_READ_DELAY_MS)
 	protected long ES_READ_DELAY_MS;
@@ -70,7 +80,6 @@ public class BasicESDAO {
 		try {
 			final JestResult result = c.getClient().execute(
 					(new Delete.Builder(id)).index(index).type(type).setParameter("timeout", defaultESTimeout).build());
-
 			success = result.isSucceeded();
 			if (success) {
 				logger.debug("Successfully deleted id " + id);
@@ -140,23 +149,54 @@ public class BasicESDAO {
 		return result;
 	}
 
+	public String getIdByFirstHit(final JestResult jr) {
+		String id = null;
+		try {
+			id = ((JsonObject) ((JsonObject) jr.getJsonObject().get("hits")).getAsJsonArray("hits").get(0)).get("_id")
+					.getAsString();
+		} catch (final Exception e) {
+			logger.error("Problem getting id from first hit: ", e);
+		}
+
+		return id;
+	}
+
 	public String getIndex() {
 		return index;
 	}
 
 	public long getModifiedTime() {
-		return DateTime.now(DateTimeZone.UTC).getMillis();
+		return DateTime.now().getMillis();
 	}
 
 	protected JestResult getResultsById(final String id) {
-		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.matchQuery("_id", id));
+		return getResultsById(id, index, type);
+	}
 
-		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
-				.setParameter("timeout", defaultESTimeout).build();
+	protected JestResult getResultsById(final String id, final String customIndex, final String customType) {
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		// searchSourceBuilder.query(QueryBuilders.matchQuery("_id", id));
+		// This should be faster.
+		searchSourceBuilder.query(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
+				FilterBuilders.termFilter("_id", id)));
+		final Builder sb = new Search.Builder(searchSourceBuilder.toString()).setParameter("timeout", defaultESTimeout);
+		logger.debug(searchSourceBuilder.toString());
+		if (ValidationUtils.isValid(customIndex)) {
+			sb.addIndex(customIndex);
+		} else {
+			// sb.addIndex("_all");
+		}
+		if (ValidationUtils.isValid(customType)) {
+			sb.addType(customType);
+		}
+
 		JestResult result = new JestResult(null);
+
 		try {
+			final Search search = sb.build();
+
 			result = c.getClient().execute(search);
+			logger.debug(result.getJsonString());
 		} catch (final Exception e) {
 			logger.error("getResultsById: " + e.getMessage());
 		}
@@ -212,7 +252,8 @@ public class BasicESDAO {
 		}
 	}
 
-	public String saveObject(final Object g, final String id, final String indexName, final String type) {
+	public String saveObject(final Object g, final String id, final String indexName, final String type,
+			final boolean useDelay) {
 		Index saveAction;
 		if (!ValidationUtils.isValid(id)) {
 			saveAction = new Index.Builder(g).index(indexName).type(type).setParameter("timeout", defaultESTimeout)
@@ -228,11 +269,11 @@ public class BasicESDAO {
 			final Object oid = result.getValue("_id");
 			if (ValidationUtils.isValid(oid)) {
 				generatedId = oid.toString();
-				if (ES_READ_DELAY_MS > 0) {
+				if (useDelay && (ES_READ_DELAY_MS > 0)) {
 					Thread.sleep(ES_READ_DELAY_MS);
 				}
 			} else {
-				logger.error("Error getting saved object: " + result.getJsonString());
+				logger.error("Error getting saved object's id: " + result.getJsonString());
 				generatedId = null;
 			}
 		} catch (ExecutionException | InterruptedException | IOException e) {

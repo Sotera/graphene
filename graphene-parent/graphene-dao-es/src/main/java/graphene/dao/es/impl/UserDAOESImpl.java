@@ -9,6 +9,7 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.util.crypto.PasswordHash;
 import graphene.util.validator.ValidationUtils;
+import io.searchbox.client.JestResult;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 
@@ -22,7 +23,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -118,8 +118,13 @@ public class UserDAOESImpl extends BasicESDAO implements UserDAO {
 
 	@Override
 	public G_User getByUsername(final String username) {
-		final G_User resultObject = getByField("username", username).getSourceAsObject(G_User.class);
+		final JestResult jr = getByField("username", username);
+		final G_User resultObject = jr.getSourceAsObject(G_User.class);
 		if (ValidationUtils.isValid(resultObject)) {
+			if (!ValidationUtils.isValid(resultObject.getId())) {
+				logger.debug("Setting the id from the hit result");
+				resultObject.setId(getIdByFirstHit(jr));
+			}
 			logger.debug("Found: " + resultObject.toString());
 		} else {
 			logger.warn("Could not get user with username " + username
@@ -148,16 +153,6 @@ public class UserDAOESImpl extends BasicESDAO implements UserDAO {
 	}
 
 	@Override
-	public boolean isExisting(final String username) {
-		logger.debug("Checking to see if username exists");
-		if (getByUsername(username) != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public boolean isExistingId(final String id) {
 		logger.debug("Checking to see if user id exists");
 		if (getById(id) != null) {
@@ -168,11 +163,24 @@ public class UserDAOESImpl extends BasicESDAO implements UserDAO {
 	}
 
 	@Override
+	public boolean isExistingUsername(final String username) {
+		logger.debug("Checking to see if username exists");
+		if (getByUsername(username) != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	public G_User loginAuthenticatedUser(final String id) {
-		G_User user = getById(id);
+		final G_User user = getById(id);
 		if (user != null) {
-			user.setLastlogin(DateTime.now(DateTimeZone.UTC).getMillis());
-			user = save(user);
+			user.setNumberlogins(user.getNumberlogins() + 1);
+			user.setLastlogin(DateTime.now().getMillis());
+			// user = save(user);
+			// This should be faster, no waiting.
+			saveObject(user, user.getId(), indexName, type, false);
 		}
 		return user;
 	}
@@ -184,13 +192,14 @@ public class UserDAOESImpl extends BasicESDAO implements UserDAO {
 			final String hash = user.getHashedpassword();
 			try {
 				if (passwordHasher.validatePassword(password, hash)) {
-					user.setLastlogin(DateTime.now(DateTimeZone.UTC).getMillis());
-
+					user.setNumberlogins(user.getNumberlogins() + 1);
+					user.setLastlogin(DateTime.now().getMillis());
+					// This should be faster, no waiting.
+					saveObject(user, user.getId(), indexName, type, false);
 				}
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 				logger.error("Error logging in, could not validate password for " + id);
 			}
-
 		} else {
 			logger.warn("Could not get user with id " + id);
 		}
@@ -203,9 +212,9 @@ public class UserDAOESImpl extends BasicESDAO implements UserDAO {
 		if (ValidationUtils.isValid(g)) {
 			g.setModified(getModifiedTime());
 			if (g.getId() == null) {
-				g.setId(saveObject(g, g.getId(), indexName, type));
+				g.setId(saveObject(g, g.getId(), indexName, type, false));
 			}
-			saveObject(g, g.getId(), indexName, type);
+			saveObject(g, g.getId(), indexName, type, true);
 			returnVal = g;
 		} else {
 			logger.error("Attempted to save a null user object!");

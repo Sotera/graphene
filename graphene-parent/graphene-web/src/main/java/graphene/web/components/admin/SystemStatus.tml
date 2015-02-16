@@ -1,12 +1,36 @@
 <!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 
 <t:content>
 	<div class="widget-body-toolbar bg-color-white">
-	System stuff here.
+		<p>
+			Production Mode: <strong>${productionMode}</strong>
+		</p>
+		<p>
+			Application Version: <strong>${applicationVersion}</strong>
+		</p>
+		<p>
+			Tapestry Version: <strong>${tapestryVersion}</strong>
+		</p>
+
+		<h3>System Properties</h3>
+		<dl>
+			<t:loop source="systemProperties" value="propertyName">
+				<dt>${propertyName}</dt>
+				<dd>
+					<t:if test="! complexProperty">
+                                ${propertyValue}
+                                <p:else>
+							<ul>
+								<li t:type="loop" source="complexPropertyValue" value="var:path">${var:path}</li>
+							</ul>
+						</p:else>
+					</t:if>
+				</dd>
+			</t:loop>
+		</dl>
 	</div>
 </t:content>
 </html>
