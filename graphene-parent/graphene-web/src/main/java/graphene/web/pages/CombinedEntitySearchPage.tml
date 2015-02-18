@@ -37,7 +37,7 @@ table td {
 }
 
 .pivotlink {
-	max-width: 400px;
+	max-width: 100px;
 	white-space: normal;
 }
 </style>
@@ -78,7 +78,7 @@ table td {
 									<t:if test="mediaPageLink">
 										<a href="${mediaPageLink}" page="prop:mediaPageLink"
 											context="mediaId" target="mediaId"  title="${score}">
-											<img height="150" width="150" src="${mediaThumbnail}">
+											<img height="100" width="100" src="${mediaThumbnail}">
 											</img>
 											<!-- <i class="fa fa-folder-open-o"/> ${mediaId} -->
 										</a>
