@@ -264,12 +264,17 @@ Ext.define("DARPA.AbstractGraphPanel", {
 				ele.data().attrs = newAttrs;
 				
 				ele.data({
-					"name": window.getName(false),
 					"label": window.getName(true),
 					"idType": window.getIdType(),
 					"color": window.getColor(),
-					"EDITED_BY_USER": true
+					"edited": true
 				});
+				// edges do not have a "name" field
+				if (ele.isNode()) {
+					ele.data({
+						"name": window.getName(false)
+					});
+				}
 			}
 		});
 
@@ -460,7 +465,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		if (typeof setTabTitle == "function") {
 			setTabTitle("" + id);
 		} else {
-			console.error("the function setTabTitle() has not yet been implemented in the .html");
+			console.log("the function setTabTitle() has not yet been implemented in the .html");
 		}
 	},
 	
@@ -473,7 +478,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			if (typeof setTabTitle == "function") {
 				setTabTitle("" + prevId);
 			} else {
-				console.error("the function setTabTitle() has not yet been implemented in the .html");
+				console.log("the function setTabTitle() has not yet been implemented in the .html");
 			}
 		}
 	},

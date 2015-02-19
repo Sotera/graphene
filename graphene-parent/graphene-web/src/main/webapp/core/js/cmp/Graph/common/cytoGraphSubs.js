@@ -671,7 +671,6 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		if (node.data.id != innode.data("id")) {
 			// node.data.color = this.CONSTANTS("expandedDefNode");
 			node.data.expanded = true;
-			node.data.parentId = innode.data("id");
 			node.position = {
 				x: pos.x + (radius * Math.cos(rad)),
 				y: pos.y + (radius * Math.sin(rad))
