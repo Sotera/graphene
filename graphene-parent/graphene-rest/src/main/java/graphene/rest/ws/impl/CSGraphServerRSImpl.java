@@ -135,33 +135,27 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("showNameNodes " + showNameNodes);
 		logger.debug("useSaved " + useSaved);
 
-		final int maxDegreeInt = FastNumberUtils
-				.parseIntWithCheck(maxDegree, 6);
-		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes,
-				1000);
-		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(
-				maxEdgesPerNode, 100);
+		final int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, 6);
+		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes,1000);
+		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
+		
 		V_CSGraph m = null;
 		if (ValidationUtils.isValid(value) && !"null".equals(value[0])) {
 			if (useSaved) {
 				final String firstValue = value[0];
 				try {
 					// TODO: fix which key is going to be used as the seed
-					final G_PersistedGraph existingGraph = wdao
-							.getExistingGraph(firstValue, null, null);
+					final G_PersistedGraph existingGraph = wdao.getExistingGraph(firstValue, null, null);
 					final ObjectMapper mapper = new ObjectMapper();
 					if (existingGraph != null) {
-						m = mapper.readValue(existingGraph.getGraphJSONdata(),
-								V_CSGraph.class);
+						m = mapper.readValue(existingGraph.getGraphJSONdata(), V_CSGraph.class);
 						if (m == null) {
 							logger.error("Could not parse existing graph from a previous save, will regenerate.");
 						} else {
-							loggingDao.recordQuery("Opened existing graph for "
-									+ firstValue);
+							loggingDao.recordQuery("Opened existing graph for " + firstValue);
 							m.setStrStatus("This graph was previously saved on "
-									+ DataFormatConstants
-											.formatDate(existingGraph
-													.getModified()));
+									+ DataFormatConstants.formatDate(existingGraph.getModified()));
+							m.createPositionMapping(); // new, aweller
 						}
 					} else {
 						logger.info("Could not find previously saved graph, will regenerate");
