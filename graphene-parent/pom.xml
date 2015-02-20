@@ -46,7 +46,7 @@
 		<querydsl.version>3.3.1</querydsl.version>
 
 		<!-- properties for dependencies that are utilities -->
-		<vande.version>1.1.0-SNAPSHOT</vande.version>
+		<vande.version>1.1.1</vande.version>
 		<jackson2.version>2.2.1	</jackson2.version>
 		<!-- <jackson2.version>2.3.0</jackson2.version> 2.3.0 does not work with 
 			resteasy 3.0.5.Final or 3.0.6.Final. -->
