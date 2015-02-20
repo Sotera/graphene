@@ -153,15 +153,6 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		this.load(this.prevLoadParams.value); 
 	},
 	
-	afterLayout: function() {
-		// TODO implement in extended class
-	},
-	
-	afterRender: function() {
-		this.showjson();
-		this.callParent(arguments); // ?
-	},
-	
 	importGraph: function() {
 		var importWindow = Ext.create("DARPA.importDialog", {
 			title: "Import Window",

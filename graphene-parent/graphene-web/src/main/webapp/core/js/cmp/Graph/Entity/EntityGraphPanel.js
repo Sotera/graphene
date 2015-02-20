@@ -105,7 +105,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 				botBorder: 80
 			};
 			self.GraphVis.initGraph(config, self, function() {
-				self.showjson(self.prevLoadParams.value);
+				//self.showjson(self.prevLoadParams.value);
 			}, true);
 		}
 		this.callParent(arguments); // ?
@@ -158,7 +158,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 				
 				var loadGraph = function(scope, useSaved) {
 					if (scope.GraphVis.getGv() != null) {
-						scope.clear();
+						//scope.clear();
 						scope.showjson(scope.prevLoadParams.value, useSaved);
 					}
 				};

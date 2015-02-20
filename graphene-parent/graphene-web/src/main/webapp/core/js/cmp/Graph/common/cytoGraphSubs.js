@@ -160,9 +160,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 				'width': 'data(size)' + 5,//_this.CONSTANTS("selectedNodeSize"),  
 				'height': 'data(size)' + 5//_this.CONSTANTS("selectedNodeSize")
 			});
-			// disable until Cytoscape 2.3.7 works.
-			// haystack edges look weird in 2.2.12
-			if (/*isEntityGraph*/ false) {
+			if (isEntityGraph) {
 				style.selector("edge").css({
 					'curve-style': 'haystack',	// !
 					'haystack-radius': 0,		// !
@@ -554,31 +552,33 @@ CytoGraphVis.prototype.showAll = function(isFilter) {
 CytoGraphVis.prototype.showGraph = function(json, name, useSaved) {
 	var scope = this;
 	scope.searchName = name;
-	scope.gv.load(json); // <---- FIXME: renders elements even when ele.data("visible") == false
-	if (useSaved === true) {
-		scope.changeLayout("preset", {});
-	} else { 
-		scope.changeLayout(scope.CONSTANTS("defaultLayout"), {});
-	}
 	
-	try {
+	// cytoscape.load(graph json, callback after load finishes, callback after layout finishes) 
+	scope.gv.load(json, null, function() {
 		if (useSaved === true) {
-			var btn = scope.getOwner().getToolbar().getEnabledLayoutBtn();
-			if (btn) btn.toggle(false);
-		} else {
-			var btn = scope.getOwner().getToolbar().getHierarchyBtn();
-			if (btn) btn.toggle(true); 
+			scope.changeLayout("preset", {
+				positions: json.positionMapping
+			});
+			if (scope && scope.getOwner && scope.getOwner().getToolbar && scope.getOwner().getToolbar().getEnabledLayoutBtn) {
+				var btn = scope.getOwner().getToolbar().getEnabledLayoutBtn();
+				if (btn) btn.toggle(false);
+			}
+		} else { 
+			scope.changeLayout(scope.CONSTANTS("defaultLayout"), {});
+			// TODO: use CONSTANTS.defaultLayout to figure this out instead
+			if (scope && scope.getOwner && scope.getOwner().getToolbar && scope.getOwner().getToolbar().getHierarchyBtn) {
+				var btn = scope.getOwner().getToolbar().getHierarchyBtn();
+				if (btn) btn.toggle(true); 
+			}
 		}
-	} catch (e) {
-		console.error(e.message);
-	}
-	
-	// for some reason, elements marked as hidden to not remain hidden when loaded into cytoscape.
-	// investigate that later.  for now, just re-hide the hidden elements
-	scope.gv.elements("[!visible]").each(function(i, ele) {
-		var isFilter = ele.hasClass("toggled-filter");
-		if (ele.isNode()) {scope.hideNode(ele, isFilter);}
-		else if (ele.isEdge()) {scope.hideEdge(ele, isFilter);}
+		
+		// for some reason, elements marked as hidden to not remain hidden when loaded into cytoscape.
+		// investigate that later.  for now, just re-hide the hidden elements
+		scope.gv.elements("[!visible]").each(function(i, ele) {
+			var isFilter = ele.hasClass("toggled-filter");
+			if (ele.isNode()) {scope.hideNode(ele, isFilter);}
+			else if (ele.isEdge()) {scope.hideEdge(ele, isFilter);}
+		});
 	});
 };
 
