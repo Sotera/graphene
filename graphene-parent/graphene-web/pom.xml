@@ -17,10 +17,10 @@
 	</repositories>
 
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<artifactId>graphene-model</artifactId>
 			<groupId>${project.groupId}</groupId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>graphene-dao</artifactId>
@@ -29,14 +29,14 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>graphene-search</artifactId>
 		</dependency>
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>graphene-util</artifactId>
-		</dependency>
-		<dependency>
+		</dependency> -->
+	<!-- 	<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>graphene-dao-sql</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.tynamo</groupId>
 			<artifactId>tapestry-security</artifactId>
