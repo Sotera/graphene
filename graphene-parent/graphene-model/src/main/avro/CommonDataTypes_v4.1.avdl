@@ -68,6 +68,7 @@ protocol G_CommonDataTypes {
 	METRIC_IMPUTEDFROM,		//(413, "Imputed From", "imputedFrom"),
 	METRIC_PROVENANCE,		//(420, "Provenance", "provenance"),
 	METRIC_SCORE,			//(423, "Score", "score"),
+	MEDIA,
 	NAME,					//(6, "Name", "name"),
 	NODETYPE,				//(417, "Node Type", "nodeType"),
 	OCCUPATION,				//(418, "Occupation", "occupation"),
@@ -229,6 +230,8 @@ protocol G_CommonDataTypes {
 		CREATOR_OF,			// ENTITY to n
 		FRIEND_OF,			// ENTITY to ENTITY
 		ENEMY_OF,			// ENTITY to ENTITY
+		LIKES,
+		DISLIKES,
 		LOVES, 				// ENTITY to ENTITY
 		HATES, 				// ENTITY to ENTITY
 		KNOWS, 				// ENTITY to ENTITY
