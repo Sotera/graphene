@@ -1,0 +1,17 @@
+
+
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="row">
+		<div class="col-sm-12">
+			
+				<span style="margin-right: 3px"> Legend: </span>	
+				<t:loop source="legendItems" value="currentLegendItem">
+					<span class="label legend" style="${currentLegendItem.style} margin: 3px;" title="${currentLegendItem.title}"> ${currentLegendItem.label} </span>
+				</t:loop>
+			
+		</div>
+	</div>
+</t:container>

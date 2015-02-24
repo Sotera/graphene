@@ -9,7 +9,7 @@
         <include>**/*.prefs</include>
       </includes>
     </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
+    <fileSet filtered="true" packaged="true" encoding="UTF-8"><!--packaged="true" tells maven to copy the core package in to root package while creating a project.  if you set -Dpackage=com.alibaba.china after execute mvn archetype:generate, it will create java source package as com/alibaba/china/dal/dao/sample.java-->
       <directory></directory>
       <includes>
         <include>.project</include>

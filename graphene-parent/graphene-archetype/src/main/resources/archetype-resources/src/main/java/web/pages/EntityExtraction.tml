@@ -1,0 +1,101 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="${appName}"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<!-- Most of the page content, including <head>, <body>, etc. tags, comes 
+		from Layout.tml -->
+	<section id="widget-grid">
+		<div class="row">
+			<article class="col-sm-12 col-md-12 col-lg-12 sortable-grid ui-sortable">
+				<div class="jarviswidget jarviswidget-sortable" id="wid-id-0"
+					data-widget-colorbutton="false" data-widget-editbutton="false"
+					role="widget">
+					<header role="heading">
+						<div class="jarviswidget-ctrls" role="menu">
+							<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip"
+								title="" data-placement="bottom" data-original-title="Collapse">
+								<i class="fa fa-minus "></i>
+							</a>
+							<a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn"
+								rel="tooltip" title="" data-placement="bottom"
+								data-original-title="Fullscreen">
+								<i class="fa fa-resize-full "></i>
+							</a>
+							<a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn"
+								rel="tooltip" title="" data-placement="bottom"
+								data-original-title="Delete">
+								<i class="fa fa-times"></i>
+							</a>
+						</div>
+						<span class="widget-icon">
+							<i class="fa fa-eye"></i>
+						</span>
+						<h2>Entity Extraction</h2>
+
+						<span class="jarviswidget-loader">
+							<i class="fa fa-refresh fa-spin"></i>
+						</span>
+					</header>
+					<div role="content">
+						<div class="widget-body">
+							<form t:type="form" t:id="augmentTextForm" class="form-horizontal"
+								t:zone="extractionZone">
+								<fieldset>
+									<div class="form-group">
+										<t:errors />
+										<label class="col-md-1 control-label" for="textarea">Input Text</label>
+										<div class="col-md-11">
+											<t:textarea t:id="textAreaValue" class="form-control"
+												rows="8"></t:textarea>
+										</div>
+									</div>
+								</fieldset>
+
+								<div class="form-actions">
+									<div class="row">
+										<div class="col-md-12">
+											<button class="btn btn-default" type="submit">
+												Cancel
+											</button>
+											<button class="btn btn-primary" type="submit">
+												<i class="fa fa-save"></i>
+												Submit
+											</button>
+										</div>
+									</div>
+								</div>
+							</form>
+
+
+						</div>
+						<t:zone t:id="extractionZone" id="extractionZone">
+							<t:if test="r">
+								<div class="widget-body">
+									<div>${numberOfEntitiesExtracted}</div>
+									<t:loop source="r.entities" value="currententity">
+										<div>
+											<a href="${getNamePivotLink(currententity.text)}" class="btn btn-labeled  bg-color-orange  txt-color-white">
+												<span class="btn-label">
+													<i class="${styleIcon}" />
+												</span>
+												${currententity.text}
+											</a>
+<!-- 											<button type="button"
+												class="btn btn-labeled  bg-color-orange  txt-color-white"
+												t:type="pagelink" page="graphene/CombinedEntitySearchPage" context="currententity.text">
+												<span class="btn-label">
+													<i class="${styleIcon}" />
+												</span>
+												${currententity.text}
+											</button> -->
+										</div>
+										<br />
+									</t:loop>
+								</div>
+							</t:if>
+						</t:zone>
+					</div>
+				</div>
+			</article>
+		</div>
+	</section>
+</html>

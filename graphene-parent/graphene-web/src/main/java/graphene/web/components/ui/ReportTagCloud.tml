@@ -1,0 +1,22 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<t:if test="enableTagClouds">
+		<!-- Tag Cloud -->
+		<t:if test="tags">
+			<li class="col-md-12"><t:graphene.ui.sectionTreeButton t:typeName="title"  t:color="literal:FREETEXT"/>
+				<ul>
+					<li><div class="col-md-12">
+							<t:loop source="tags" value="currentTag">
+								<a class="btn btn-xs bg-color-orange txt-color-white"
+									t:type="pagelink" page="graphene/CombinedEntitySearchPage"
+									context="currentTag"> ${currentTag}</a>
+							</t:loop>
+						</div></li>
+				</ul></li>
+		</t:if>
+	</t:if>
+</t:container>

@@ -1,0 +1,69 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="widget-body-toolbar">
+
+		<div class="row">
+
+			<div class="col-sm-2">
+				<strong class="font-xl">${eventTypeName}</strong><br /> <strong>REPORT NO :</strong> <span> ${eventId} </span>
+			</div>
+			<div class="col-sm-2">
+				<t:if test="datesOfEvents">
+					<div class="font-md">
+						<strong>Event(s):</strong><br /> <span> <t:loop source="datesOfEvents" value="currentDate">
+								<div>
+									<i class="fa fa-calendar"></i> ${currentDate}
+								</div>
+							</t:loop>
+						</span>
+					</div>
+				</t:if>
+			</div>
+			<div class="col-sm-2">
+				<t:if test="datesFiled">
+					<div class="font-md">
+						<strong>Filed:</strong><br /> <span> <t:loop source="datesFiled" value="currentDate">
+								<i class="fa fa-calendar"></i> ${currentDate}
+							</t:loop>
+						</span>
+					</div>
+				</t:if>
+
+			</div>
+			<div class="col-sm-2">
+				<t:if test="datesReceived">
+					<div class="font-md">
+						<strong>Received:</strong><br /> <span> <t:loop source="datesReceived" value="currentDate">
+								<i class="fa fa-calendar"></i> ${currentDate}
+							</t:loop>
+						</span>
+					</div>
+				</t:if>
+			</div>
+
+			<div class="col-sm-2">
+				<div class="font-md">
+					<strong>Total Involved:</strong> <br /> <span><i class="fa fa-usd"></i> ${totalAmount} </span>
+				</div>
+			</div>
+
+			<div class="col-sm-2 text-align-right">
+				<div class="btn-group">
+					<a class="btn btn-sm btn-action" href="${extLink}" target="extjs"> <i class="fa fa-fork"></i> Graph
+						${eventTypeName} ${eventId}
+					</a>
+					<t:eventlink t:event="saveReport" context="[eventId,eventTypeName]" class="btn btn-sm btn-action" title="Save this report to the currently selected workspace, so you can view it later.">
+						<i class="fa fa-plus"></i> Save To Workspace
+					</t:eventlink>
+				</div>
+
+			</div>
+
+		</div>
+
+		<t:reportlegend />
+	</div>
+
+</t:container>
