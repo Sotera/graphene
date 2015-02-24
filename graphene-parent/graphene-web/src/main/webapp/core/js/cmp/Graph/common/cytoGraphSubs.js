@@ -1210,6 +1210,8 @@ function StateManager(graphRef) {
 					e.hide();
 				}
 			});
+			
+			graphRef.gv.fit();
 		} else {
 			console.error("The graph json for import is empty or invalid");
 		}
