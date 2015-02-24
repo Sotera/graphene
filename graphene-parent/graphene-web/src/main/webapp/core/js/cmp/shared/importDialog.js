@@ -39,7 +39,7 @@ Ext.define("DARPA.importDialog", {
 		div.id = "droppable_div";
 		
 		var panel = new Ext.Panel({
-			title: "Empty",
+			title: thisWindow.CONSTANTS("empty_title"),
 			border: false,
 			height: "100%",
 			flex: 1,
@@ -48,11 +48,6 @@ Ext.define("DARPA.importDialog", {
 			id: "form_panel",
 			//autoScroll: true,
 			html: div.outerHTML
-		});
-		
-		var progressBar = new Ext.ProgressBar({
-			height: 20,
-			width: "100%"
 		});
 		
 		thisWindow.getPanel = function() {
@@ -81,7 +76,7 @@ Ext.define("DARPA.importDialog", {
 		}, {
 			text: "Clear",
 			handler: function() {
-				thisWindow.showIdleState()
+				thisWindow.showIdleState();
 			}
 		}, {
 			text: "Cancel",
