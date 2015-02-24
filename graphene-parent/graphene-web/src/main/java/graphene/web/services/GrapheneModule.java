@@ -9,7 +9,6 @@ import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
 import graphene.web.model.EventEncoder;
 import graphene.web.services.javascript.CytoscapeStack;
-import graphene.web.services.javascript.NeoCytoscapeStack;
 
 import java.io.IOException;
 
@@ -79,7 +78,9 @@ public class GrapheneModule {
 	@Contribute(JavaScriptStackSource.class)
 	public static void addGrapheneJSStacks(final MappedConfiguration<String, JavaScriptStack> configuration) {
 		configuration.addInstance("CytoscapeStack", CytoscapeStack.class);
-		configuration.addInstance("NeoCytoscapeStack", NeoCytoscapeStack.class);
+		// configuration.addInstance("NeoCytoscapeStack",
+		// NeoCytoscapeStack.class);
+		// configuration.addInstance("GlobeStack", GlobeStack.class);
 	}
 
 	public static void bind(final ServiceBinder binder) {

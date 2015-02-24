@@ -10,11 +10,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.apache.tapestry5.annotations.Log;
+
 /**
- * NOTE:  This class will be superseded by EventSearchRS.
+ * NOTE: This class will be superseded by EventSearchRS.
+ * 
  * @author djue
- *
+ * 
  */
+@Deprecated
 @Path("/")
 public interface EventServerRS {
 
@@ -37,8 +40,7 @@ public interface EventServerRS {
 	@Produces("application/json")
 	@GET
 	@Path("/getEvents")
-	public abstract DirectedEvents getEvents(
-			@QueryParam("accountNumber") @DefaultValue(value = "") String[] account,
+	public abstract DirectedEvents getEvents(@QueryParam("accountNumber") @DefaultValue(value = "") String[] account,
 			@QueryParam("start") @DefaultValue(value = "0") int start,
 			@QueryParam("limit") @DefaultValue(value = "1000") int limit,
 			@QueryParam("minAmount") @DefaultValue(value = "0") String minAmount,
@@ -47,19 +49,6 @@ public interface EventServerRS {
 			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
 			@QueryParam("comments") @DefaultValue(value = "") String comments,
 			@QueryParam("sortColumn") @DefaultValue(value = "trn_dt") String sortColumn);
-
-	/**
-	 * XXX: Seems like this is not being used.
-	 * 
-	 * @param account
-	 * @return
-	 */
-	@Log
-	@Produces("application/json")
-	@GET
-	@Path("/getPairMonthlyStatistics")
-	public abstract EventStatistics getPairMonthlyStatistics(
-			@QueryParam("accountNumber") @DefaultValue(value = "") String account);
 
 	/**
 	 * XXX: Seems like this is not being used.
@@ -77,5 +66,18 @@ public interface EventServerRS {
 			@QueryParam("accountNumber") @DefaultValue(value = "") String account,
 			@QueryParam("year") @DefaultValue(value = "0") int year,
 			@QueryParam("month") @DefaultValue(value = "0") int month);
+
+	/**
+	 * XXX: Seems like this is not being used.
+	 * 
+	 * @param account
+	 * @return
+	 */
+	@Log
+	@Produces("application/json")
+	@GET
+	@Path("/getPairMonthlyStatistics")
+	public abstract EventStatistics getPairMonthlyStatistics(
+			@QueryParam("accountNumber") @DefaultValue(value = "") String account);
 
 }

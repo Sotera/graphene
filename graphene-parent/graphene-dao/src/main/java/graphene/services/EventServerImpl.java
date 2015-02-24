@@ -176,19 +176,6 @@ public class EventServerImpl implements EventServer {
 
 		logger.debug("Starting process single account with query " + q.toString());
 
-		// We now get all the transactions if it's a single account, so that we
-		// can get
-		// the statistics
-
-		// List<EnronTransactionPair100> entries = transferDAO.findByQuery(q);
-		// // ***
-		// MFM
-		// REVISIT
-		// NAME:
-		// transferDAOfullQ
-		// TODO: Check if we need to dedupe here, before calculating statistics.
-		// rows = new ArrayList<DirectedEventRow>();
-
 		boolean multiUnit = false;
 		String lastUnit = null;
 		boolean transitionFound = false;

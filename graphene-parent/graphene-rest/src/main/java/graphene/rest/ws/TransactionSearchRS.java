@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+@Deprecated
 @Path("/transaction")
 public interface TransactionSearchRS {
 
@@ -45,6 +46,7 @@ public interface TransactionSearchRS {
 
 	/**
 	 * In this version you explicitly define the senders and receivers
+	 * 
 	 * @param senderAccounts
 	 * @param receiverAccounts
 	 * @param offset
@@ -60,8 +62,7 @@ public interface TransactionSearchRS {
 	@Produces("application/json")
 	@GET
 	@Path("/between")
-	List<G_Link> getTransactions(
-			@QueryParam("from") @DefaultValue(value = "") String senderAccounts,
+	List<G_Link> getTransactions(@QueryParam("from") @DefaultValue(value = "") String senderAccounts,
 			@QueryParam("to") @DefaultValue(value = "") String receiverAccounts,
 			@QueryParam("limit") @DefaultValue(value = "0") int offset,
 			@QueryParam("limit") @DefaultValue(value = "1000") int limit,

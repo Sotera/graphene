@@ -40,7 +40,7 @@ public class EntityDAOImpl implements EntityDAO {
 	@Inject
 	public EntityDAOImpl(final EntityRefDAO dao, @Inject @EntityLightFunnelMarker final Funnel f) {
 		this.dao = dao;
-		funnel = f;// new EntityLightFunnel();
+		funnel = f;
 	}
 
 	@Override

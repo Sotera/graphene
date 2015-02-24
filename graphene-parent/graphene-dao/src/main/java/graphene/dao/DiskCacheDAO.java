@@ -90,7 +90,7 @@ public abstract class DiskCacheDAO<T, Q> {
 				cb.callBack(e);
 				numProcessed++;
 				if (numProcessed % 1000 == 0) {
-					t.getSpeed(numProcessed, "EnronEntityref100");
+					t.getSpeed(numProcessed, "Disk Cache Objects");
 				}
 			}
 			t.logElapsed("Done reading with " + numProcessed + " processed.");

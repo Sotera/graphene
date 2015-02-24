@@ -57,7 +57,7 @@ public class AdvancedSearch {
 		return start;
 	}
 
-	public void setDataSet(String dataSet) {
+	public void setDataSet(final String dataSet) {
 		this.dataSet = dataSet;
 	}
 
@@ -69,18 +69,18 @@ public class AdvancedSearch {
 	 * 
 	 * @param dataSourceList
 	 */
-	public void setFieldsIntoFilters(DataSourceList dataSourceList) {
+	@Deprecated
+	public void setFieldsIntoFilters(final DataSourceList dataSourceList) {
 		if (dataSourceList == null) {
 			logger.error("Could not get data source list");
 		} else {
-			for (SearchFilter f : filters) {
-				f.setField(dataSourceList.getField(source, dataSet,
-						f.getFieldName()));
+			for (final SearchFilter f : filters) {
+				f.setField(dataSourceList.getField(source, dataSet, f.getFieldName()));
 			}
 		}
 	}
 
-	public void setFilters(List<SearchFilter> filters) {
+	public void setFilters(final List<SearchFilter> filters) {
 		this.filters = filters;
 	}
 
@@ -88,11 +88,11 @@ public class AdvancedSearch {
 	 * @param limit
 	 *            the limit to set
 	 */
-	public final void setLimit(int limit) {
+	public final void setLimit(final int limit) {
 		this.limit = limit;
 	}
 
-	public void setSource(String source) {
+	public void setSource(final String source) {
 		this.source = source;
 	}
 
@@ -100,16 +100,15 @@ public class AdvancedSearch {
 	 * @param start
 	 *            the start to set
 	 */
-	public final void setStart(int start) {
+	public final void setStart(final int start) {
 		this.start = start;
 	}
 
 	@Override
 	public String toString() {
-		return "AdvancedSearch ["
-				+ (dataSet != null ? "dataSet=" + dataSet + ", " : "")
-				+ (source != null ? "source=" + source + ", " : "")
-				+ (filters != null ? "filters=" + filters : "") + "]";
+		return "AdvancedSearch [" + (dataSet != null ? "dataSet=" + dataSet + ", " : "")
+				+ (source != null ? "source=" + source + ", " : "") + (filters != null ? "filters=" + filters : "")
+				+ "]";
 	}
 
 }

@@ -178,12 +178,22 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	public long performCount(@Nullable final String basicAuth, final String baseUrl, final String index,
 			final String type, final String fieldName, final String term) throws DataAccessException {
 		try {
-			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			final QueryBuilder qb = QueryBuilders.matchQuery(fieldName, term);
-			final SearchSourceBuilder query = searchSourceBuilder.query(qb);
-			final Count action = new Count.Builder().addIndex(index).query(query.toString())
-					.setParameter("timeout", defaultESTimeout).build();
-			final CountResult result = client.execute(action);
+			final io.searchbox.core.Count.Builder action = new Count.Builder()
+					.setParameter("timeout", defaultESTimeout);
+			if (ValidationUtils.isValid(term)) {
+				final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+				final QueryBuilder qb = QueryBuilders.matchQuery(fieldName, term);
+				final SearchSourceBuilder query = searchSourceBuilder.query(qb);
+
+				action.query(query.toString());
+			}
+			if (ValidationUtils.isValid(index)) {
+				action.addIndex(index);
+			}
+			if (ValidationUtils.isValid(type)) {
+				action.addType(type);
+			}
+			final CountResult result = client.execute(action.build());
 			final long longCount = result.getCount().longValue();
 			logger.debug("Found a count of: " + longCount);
 			return longCount;

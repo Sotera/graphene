@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataSourceList {
@@ -18,10 +19,9 @@ public class DataSourceList {
 	public List<DataSource> dataSources = new ArrayList<DataSource>();
 
 	@XmlTransient
-	static private Logger logger = LoggerFactory
-			.getLogger(DataSourceList.class);
+	static private Logger logger = LoggerFactory.getLogger(DataSourceList.class);
 
-	public void addSource(DataSource d) {
+	public void addSource(final DataSource d) {
 		dataSources.add(d);
 	}
 
@@ -29,31 +29,31 @@ public class DataSourceList {
 		return dataSources;
 	}
 
-	public DataSource getSourceById(String id) {
-		for (DataSource s : dataSources) {
-			if (s.id.equals(id))
-				return s;
-		}
-		return null;
-	}
-
-	public DataSetField getField(String sourceId, String setId, String fieldName) {
+	public DataSetField getField(final String sourceId, final String setId, final String fieldName) {
 		DataSetField f = null;
 
-		DataSource d = getSourceById(sourceId);
+		final DataSource d = getSourceById(sourceId);
 		if (d != null) {
-			DataSet s = d.getSet(setId);
+			final DataSet s = d.getSet(setId);
 			if (s != null) {
 				f = s.findField(fieldName);
 			}
-		}else{
-			logger.error("Could not find datasource with id "+sourceId);
+		} else {
+			logger.error("Could not find datasource with id " + sourceId);
 		}
 		if (f == null) {
-			logger.error("Can not find field " + sourceId + " : " + setId
-					+ " : " + fieldName);
+			logger.error("Can not find field " + sourceId + " : " + setId + " : " + fieldName);
 		}
 
 		return f;
+	}
+
+	public DataSource getSourceById(final String id) {
+		for (final DataSource s : dataSources) {
+			if (s.id.equals(id)) {
+				return s;
+			}
+		}
+		return null;
 	}
 }

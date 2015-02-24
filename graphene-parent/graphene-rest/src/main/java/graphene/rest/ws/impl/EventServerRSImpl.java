@@ -18,6 +18,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
+@Deprecated
 public class EventServerRSImpl implements EventServerRS {
 
 	@Inject
@@ -37,18 +38,17 @@ public class EventServerRSImpl implements EventServerRS {
 	private EventServer eventServer;
 
 	@Override
-	public DirectedEvents getEvents(String[] account, int start, int limit,
-			String minAmount, String maxAmount, String minSecs, String maxSecs,
-			String comments, String sortColumn) {
-		TimeReporter t = new TimeReporter("getEvents", logger);
+	public DirectedEvents getEvents(final String[] account, final int start, final int limit, final String minAmount,
+			final String maxAmount, final String minSecs, final String maxSecs, final String comments,
+			final String sortColumn) {
+		final TimeReporter t = new TimeReporter("getEvents", logger);
 		if (start < 0) {
-			logger.debug("Got Events request with invalid starting offset "
-					+ start);
+			logger.debug("Got Events request with invalid starting offset " + start);
 			return new DirectedEvents(); // bug in extjs often asks for
 											// negative start
 		}
 
-		EventQuery q = new EventQuery();
+		final EventQuery q = new EventQuery();
 		q.addIds(Arrays.asList(account));
 		q.setFirstResult(start);
 		q.setMaxResult(limit);
@@ -59,22 +59,14 @@ public class EventServerRSImpl implements EventServerRS {
 		q.setComments(comments);
 		q.setSortAndDirection(sortColumn);
 
-		DirectedEvents e = eventServer.getEvents(q);
+		final DirectedEvents e = eventServer.getEvents(q);
 		t.logAsCompleted();
 		return e;
 	}
 
-	public EventStatistics getPairMonthlyStatistics(
-			@QueryParam("accountNumber") String account) {
-		if (!prevQuery.isSingleId()) {
-			return new EventStatistics(); // to return an empty structure
-		}
-		return prevStatistics; // generated when previous query was executed
-	}
-
-	public EventStatistics getPairDailyStatistics(
-			@QueryParam("accountNumber") String account,
-			@QueryParam("year") int year, @QueryParam("month") int month)
+	@Override
+	public EventStatistics getPairDailyStatistics(@QueryParam("accountNumber") final String account,
+			@QueryParam("year") final int year, @QueryParam("month") final int month)
 
 	{
 		if (!prevQuery.isSingleId()) {
@@ -85,9 +77,17 @@ public class EventServerRSImpl implements EventServerRS {
 			return new EventStatistics(); // to return an empty structure
 		}
 
-		EventStatistics stats = new EventStatistics();
+		final EventStatistics stats = new EventStatistics();
 
 		return stats;
+	}
+
+	@Override
+	public EventStatistics getPairMonthlyStatistics(@QueryParam("accountNumber") final String account) {
+		if (!prevQuery.isSingleId()) {
+			return new EventStatistics(); // to return an empty structure
+		}
+		return prevStatistics; // generated when previous query was executed
 	}
 
 }

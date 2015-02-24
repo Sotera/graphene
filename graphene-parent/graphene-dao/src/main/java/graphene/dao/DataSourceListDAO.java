@@ -1,7 +1,5 @@
 package graphene.dao;
 
-import graphene.model.datasourcedescriptors.DataSourceList;
-
 import java.util.List;
 
 /**
@@ -23,5 +21,4 @@ public interface DataSourceListDAO {
 
 	public String getDefaultSchema();
 
-	public DataSourceList getList();
 }
