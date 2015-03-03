@@ -41,7 +41,15 @@ function Legend() {
 				xtype: 'panel',
 				border: false,
 				html: desc
-			}]
+			}],
+			getJson: function() {
+				return {
+					isIcon: typeof color == "undefined",
+					identifier: this.identifier,
+					img: this.items[0].html,
+					desc: this.items[1].html
+				};
+			}
 		};
 	};
 	
@@ -166,6 +174,27 @@ function Legend() {
 			} else {
 				this.addLegendItem(groupNames, text, iconPath, color);
 			}
+		}
+	};
+	
+	this.exportLegend = function() {
+		var legendTypes = this.getAllLegendItems();
+		var jsonArr = [];
+		
+		for (var type in legendTypes) {
+			if (!legendTypes.hasOwnProperty(type)) continue;
+			var legendDef = legendTypes[type];
+			for (var i = 0; i < legendDef.length; i++) {
+				jsonArr.push(legendDef[i].getJson());
+			}
+		}
+		return jsonArr;
+	};
+	
+	this.importLegend = function(legendArray) {
+		for (var i = 0; i < legendArray.length; i++) {
+			var legendItem = legendArray[i];
+			// TODO
 		}
 	};
 }
