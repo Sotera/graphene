@@ -65,6 +65,9 @@ public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 	@Inject
 	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
 	protected long defaultMaxSearchResults;
+	@Inject
+	@Symbol(JestModule.ES_SERVER)
+	private String host;
 
 	public long count() {
 		final String query = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).toString();
@@ -76,6 +79,23 @@ public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 		} catch (final Exception e) {
 			logger.error("Error counting users " + e.getMessage());
 		}
+		return 0;
+	}
+
+	public long count(final Q pq) throws Exception {
+		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getAttributeList())) {
+			pq.getAttributeList().get(0);
+			String schema = pq.getSchema();
+			if (!ValidationUtils.isValid(schema)) {
+
+				schema = c.getIndexName();
+				logger.debug("Setting schema to " + schema);
+			}
+			final String term = pq.getAttributeList().get(0).getValue();
+			final long x = c.performCount(null, host, schema, null, null, term);
+			return x;
+		}
+		logger.warn("Did not find any values for " + pq);
 		return 0;
 	}
 
