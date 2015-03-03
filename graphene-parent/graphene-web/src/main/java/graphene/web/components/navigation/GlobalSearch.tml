@@ -24,7 +24,7 @@ margin-top: 4px;
 display: -webkit-inline-box;
 position: relative;
 margin-right: 6px; min-width: 60px;"
-			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Report Type"
+			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Type"
 			role="menu" model="availableTypes" />
 		<t:select
 			style="float: none;

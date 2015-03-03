@@ -11,6 +11,6 @@ package graphene.model.idl;
 @org.apache.avro.specific.AvroGenerated
 public enum G_PropertyType { 
   DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Allowed types for Property values.\\n\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

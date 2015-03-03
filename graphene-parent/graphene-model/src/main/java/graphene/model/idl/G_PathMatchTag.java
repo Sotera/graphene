@@ -11,6 +11,6 @@ package graphene.model.idl;
 @org.apache.avro.specific.AvroGenerated
 public enum G_PathMatchTag { 
   PATH_LENGTH, PATH_TIME, PATH_SOURCES, PATH_DESTS  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_PathMatchTag\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* In addition to PropertyTags, a PropertyMatchDescriptor might also be one of these.\\r\\n\\r\\n\\t \\tADDED IN 1.5\",\"symbols\":[\"PATH_LENGTH\",\"PATH_TIME\",\"PATH_SOURCES\",\"PATH_DESTS\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_PathMatchTag\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* In addition to PropertyTags, a PropertyMatchDescriptor might also be one of these.\\n\\n\\t \\tADDED IN 1.5\",\"symbols\":[\"PATH_LENGTH\",\"PATH_TIME\",\"PATH_SOURCES\",\"PATH_DESTS\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

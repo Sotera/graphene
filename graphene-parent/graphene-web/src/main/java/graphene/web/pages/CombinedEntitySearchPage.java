@@ -99,6 +99,12 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Property
 	private Triple<String, String, String> currentName;
 
+	@Property
+	private Tuple<String, String> currentAt;
+	
+	@Property
+	private Tuple<String, String> currentHashTag;
+	
 	@Inject
 	private CombinedDAO dao;
 
@@ -301,7 +307,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * @return
 	 */
 	public String getExtLink() {
-		return extPath + getReportId();
+		return extPath + getMediaId();
 	}
 
 	public String getFormattedAmount() {
@@ -337,6 +343,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	}
 
 	public BeanModel getModel() {
+<<<<<<< HEAD
 		if (model == null) {
 			model = beanModelSource.createEditModel(Object.class, messages);
 			model.addEmpty("rank");
@@ -359,6 +366,31 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			model.getById("communicationIdentifierList").sortable(true);
 			model.getById("identifierList").sortable(true);
 		}
+=======
+		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
+		model.addEmpty("rank");
+		model.addEmpty("actions");
+		model.addEmpty("username");
+		model.addEmpty("createdTime");
+		model.addEmpty("captionText");
+		model.addEmpty("likeCount");
+		model.addEmpty("commentCount");
+		model.addEmpty("hashtags");
+		model.addEmpty("ats");
+		model.addEmpty("location");
+
+		model.getById("rank").sortable(true);
+		model.getById("actions").sortable(false);
+		model.getById("username").sortable(true);
+		model.getById("createdTime").sortable(true);
+		model.getById("captionText").sortable(true);
+		model.getById("likeCount").sortable(true);
+		model.getById("commentCount").sortable(true);
+		model.getById("hashtags").sortable(true);
+		model.getById("ats").sortable(true);
+		model.getById("location").sortable(true);
+
+>>>>>>> origin/instagram
 		return model;
 	}
 
@@ -377,7 +409,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 	public Link getNamePivotLink(final String term) {
 		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+		final Link l = searchPage.set(null, "media", G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
 		return l;
 	}
 
@@ -402,6 +434,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				{ "date", "7%" }, { "amount", "7%" }, { "subjects", "12%" }, { "addressList", "25%" },
 				{ "communicationIdentifierList", "15%" }, { "identifierList", "15%" } };
 
+<<<<<<< HEAD
 		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "numeric"));
 
@@ -432,6 +465,75 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		// json.put("sScrollX", "100%");
 		// json.put("bScrollCollapse", false);
 		json.put("aoColumns", columnArray);
+=======
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "numeric"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "false", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "html"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "date"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"type", "currency",
+			"sType", "currency"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		columnArray.put(new JSONObject(
+			"mDataProp", properties[columnArray.length()][0], 
+			"bSortable", "true", 
+			"sWidth", properties[columnArray.length()][1], 
+			"sType", "string"
+		));
+
+		//json.put("sScrollX", "100%");
+		//json.put("bScrollCollapse", false);
+//		json.put("aoColumns", columnArray);
+>>>>>>> origin/instagram
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
 
 		return json;
@@ -449,13 +551,53 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public String getReportId() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_ID);
 	}
+	
+	public String getMediaId() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
+	}
 
 	public String getReportPageLink() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_LINK);
 	}
+	
+	public String getMediaPageLink() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
+	}
+	
+	public String getMediaOwner() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
+	}
+	
+	public String getMediaCaption() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
+	}
+	
+	public String getMediaLikeCount() {
+		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
+	}
+	
+	public String getMediaCommentCount() {
+		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
+	}
+	
+	public String getMediaLocationLatLon() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
+	}
+	
+	public String getMediaLocationName() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
+	}
+	
+	public String getMediaThumbnail() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
+	}
 
 	public String getReportType() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_TYPE);
+	}
+	
+	public Object getMediaCreatedTime() {
+		return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
 	}
 
 	public String getScore() {
@@ -463,6 +605,22 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return DataFormatConstants.formatScore(d);
 	}
 
+	public Collection<Tuple<String, String>> getAtsInComments() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_COMMENTS");
+	}
+	
+	public Collection<Tuple<String, String>> getAtsInCaption() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_CAPTION");
+	}
+	
+	public Collection<Tuple<String, String>> getHashTagsInComments() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_COMMENTS");
+	}
+	
+	public Collection<Tuple<String, String>> getHashTagsInCaption() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_CAPTION");
+	}
+	
 	/**
 	 * @return the searchValue
 	 */

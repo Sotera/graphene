@@ -153,6 +153,14 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		logger.debug("Bipartite " + bipartite);
 		logger.debug("showNameNodes " + showNameNodes);
 		logger.debug("useSaved " + useSaved);
+<<<<<<< HEAD
+=======
+
+		final int maxDegreeInt = FastNumberUtils.parseIntWithCheck(maxDegree, 6);
+		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes,1000);
+		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
+		
+>>>>>>> origin/instagram
 		V_CSGraph m = null;
 		if (requireAuthentication && !securityService.isAuthenticated()) {
 			// The user needs to be authenticated.
@@ -170,6 +178,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			String username = null;
 			if (ValidationUtils.isValid(securityService.getSubject())) {
 				try {
+<<<<<<< HEAD
 					username = (String) securityService.getSubject().getPrincipal();
 					final G_User byUsername = userDataAccess.getByUsername(username);
 					userId = byUsername.getId();
@@ -209,6 +218,20 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 							}
 						} else {
 							logger.info("Could not find previously saved graph, will regenerate");
+=======
+					// TODO: fix which key is going to be used as the seed
+					final G_PersistedGraph existingGraph = wdao.getExistingGraph(firstValue, null, null);
+					final ObjectMapper mapper = new ObjectMapper();
+					if (existingGraph != null) {
+						m = mapper.readValue(existingGraph.getGraphJSONdata(), V_CSGraph.class);
+						if (m == null) {
+							logger.error("Could not parse existing graph from a previous save, will regenerate.");
+						} else {
+							loggingDao.recordQuery("Opened existing graph for " + firstValue);
+							m.setStrStatus("This graph was previously saved on "
+									+ DataFormatConstants.formatDate(existingGraph.getModified()));
+							m.createPositionMapping(); // new, aweller
+>>>>>>> origin/instagram
 						}
 
 					} catch (final Exception e) {

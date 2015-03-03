@@ -153,15 +153,6 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		this.load(this.prevLoadParams.value); 
 	},
 	
-	afterLayout: function() {
-		// TODO implement in extended class
-	},
-	
-	afterRender: function() {
-		this.showjson();
-		this.callParent(arguments); // ?
-	},
-	
 	importGraph: function() {
 		var importWindow = Ext.create("DARPA.importDialog", {
 			title: "Import Window",
@@ -465,7 +456,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		if (typeof setTabTitle == "function") {
 			setTabTitle("" + id);
 		} else {
-			console.error("the function setTabTitle() has not yet been implemented in the .html");
+			console.log("the function setTabTitle() has not yet been implemented in the .html");
 		}
 	},
 	
@@ -478,7 +469,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			if (typeof setTabTitle == "function") {
 				setTabTitle("" + prevId);
 			} else {
-				console.error("the function setTabTitle() has not yet been implemented in the .html");
+				console.log("the function setTabTitle() has not yet been implemented in the .html");
 			}
 		}
 	},
