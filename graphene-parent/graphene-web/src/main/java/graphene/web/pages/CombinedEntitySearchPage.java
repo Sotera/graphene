@@ -4,6 +4,7 @@ import graphene.dao.CombinedDAO;
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.StyleService;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
@@ -234,7 +235,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			final String value, final int maxResults) {
 		GrapheneResults<Object> metaresults = null;
 		if (ValidationUtils.isValid(value)) {
-			final EntityQuery sq = new EntityQuery();
+			
+			G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
+			
+//			final EntityQuery sq = new EntityQuery();
 			G_SearchType g_SearchType = null;
 			if (ValidationUtils.isValid(matchType)) {
 				try {
@@ -245,23 +249,40 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			}
 			final G_SearchTuple<String> gs = new G_SearchTuple<String>(value, g_SearchType);
 			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
-				sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
+				queryBuilder.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
+				//sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
 			}
-			sq.addAttribute(gs);
-			sq.setMaxResult(maxResults);
-			sq.setSchema(schema);
-			sq.setMinimumScore(0.0);
+			queryBuilder.getAttributeList().add(gs);
+//			sq.addAttribute(gs);
+			
+			queryBuilder.setMaxResult(maxResults);
+//			sq.setMaxResult(maxResults);
+			
+			queryBuilder.setTargetSchema(schema);
+//			sq.setSchema(schema);
+			
+			queryBuilder.setMinimumScore(0.0);
+//			sq.setMinimumScore(0.0);
+			
 			if (isUserExists()) {
-				sq.setUserId(getUser().getId());
-				sq.setUserName(getUser().getUsername());
+				queryBuilder.setUserId(getUser().getId());
+//				sq.setUserId(getUser().getId());
+				
+				queryBuilder.setUsername(getUser().getUsername());
+//				sq.setUserName(getUser().getUsername());
 			}
-			sq.setTimeInitiated(DateTime.now().getMillis());
+			
+			queryBuilder.setTimeInitiated(DateTime.now().getMillis());
+//			sq.setTimeInitiated(DateTime.now().getMillis());
+			
+			final G_EntityQuery sq = queryBuilder.build();
+			
 			try {
 				loggingDao.recordQuery(sq);
 				if (currentSelectedWorkspaceExists) {
-					List<EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
+					List<G_EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
 					if (qo == null) {
-						qo = new ArrayList<EntityQuery>(1);
+						qo = new ArrayList<G_EntityQuery>(1);
 					}
 					qo.add(sq);
 					currentSelectedWorkspace.setQueryObjects(qo);

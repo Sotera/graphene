@@ -1,6 +1,7 @@
 package graphene.dao.es;
 
 import graphene.business.commons.exception.DataAccessException;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
@@ -139,7 +140,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	 * @param q
 	 * @throws Exception
 	 */
-	private String performCommonTermsQuery(final EntityQuery q) throws Exception {
+	private String performCommonTermsQuery(final G_EntityQuery q) throws Exception {
 		final StringBuffer terms = new StringBuffer();
 		// Dead simple, just coalesces the values as one long phrase
 		for (final G_SearchTuple<String> qi : q.getAttributeList()) {
@@ -154,12 +155,12 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 			// final HighlightBuilder h = new HighlightBuilder().field("NARR");
-			searchSourceBuilder.query(qbc).minScore((float) q.getMinimumScore()).sort(SortBuilders.scoreSort());
+			searchSourceBuilder.query(qbc).minScore((float) q.getMinimumScore().doubleValue()).sort(SortBuilders.scoreSort());
 			if (q.getMaxResult() == 0) {
 				q.setMaxResult(maxSearchResults);
 			}
 			logger.debug("SSB: \n" + searchSourceBuilder.toString());
-			String schema = q.getSchema();
+			String schema = q.getTargetSchema();
 			if (!ValidationUtils.isValid(schema)) {
 				schema = indexName;
 			}
@@ -213,13 +214,13 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 		}
 	}
 
-	private String performIndexQuery(final EntityQuery q) throws Exception {
+	private String performIndexQuery(final G_EntityQuery q) throws Exception {
 
 		if (q.getMaxResult() == 0) {
 			logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to one.");
 			q.setMaxResult(1l);
 		}
-		String schema = q.getSchema();
+		String schema = q.getTargetSchema();
 		if (!ValidationUtils.isValid(schema)) {
 			schema = indexName;
 		}
@@ -231,7 +232,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 		return executeAction(sb);
 	}
 
-	private String performMatchQuery(final EntityQuery q) throws Exception {
+	private String performMatchQuery(final G_EntityQuery q) throws Exception {
 		final StringBuffer buffer = new StringBuffer();
 		// Dead simple, just coalesces the values as one long phrase
 		for (final G_SearchTuple<String> qi : q.getAttributeList()) {
@@ -251,7 +252,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 				q.setMaxResult(maxSearchResults);
 			}
 			logger.debug("SSB: \n" + searchSourceBuilder.toString());
-			String schema = q.getSchema();
+			String schema = q.getTargetSchema();
 			if (!ValidationUtils.isValid(schema)) {
 				schema = indexName;
 			}
@@ -268,7 +269,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	}
 
 	@Override
-	public String performQuery(final String basicAuth, final String baseurl, final EntityQuery q)
+	public String performQuery(final String basicAuth, final String baseurl, final G_EntityQuery q)
 			throws DataAccessException {
 
 		String retval = null;

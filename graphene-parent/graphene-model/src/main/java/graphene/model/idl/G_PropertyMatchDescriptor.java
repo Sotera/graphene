@@ -9,10 +9,10 @@ package graphene.model.idl;
 	 a single property that can be used in a property search. It can optionally include example or suggested values 
 	 for searching on.
 	 
-	 CHANGED IN 1.5 */
+	 CHANGED IN 1.8 */
 @org.apache.avro.specific.AvroGenerated
 public class G_PropertyMatchDescriptor extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_PropertyMatchDescriptor\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A PropertyDescriptor is used to describe a possible property that can be present in an entity or link. It describes \\n\\t a single property that can be used in a property search. It can optionally include example or suggested values \\n\\t for searching on.\\n\\t \\n\\t CHANGED IN 1.5\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field name or G_PropertyTag (or G_PathMatchTag) that could be searched on\"},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\n\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]}],\"doc\":\"value of the Property to search on\",\"default\":null},{\"name\":\"variable\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"If not null/empty, the value is relative to a logical variable specified here (e.g. \\\"X\\\")\\n\\t\\t *  Other parameters using the same logical variable name are relative to this value.\\n\\t\\t *  For instance, for a {key=\\\"amount\\\", value=\\\"0.98\\\", variable=\\\"A\\\"} means that the value\\n\\t\\t *  of amount is 0.98A.  Another amount might be 0.55A, and the property match engine\\n\\t\\t *  (e.g. search engine, database query or pattern match algorithm) should understand\\n\\t\\t *  the relative values.\\n\\t\\t *  \\n\\t\\t *  If no variable is specified, then the value is an absolute number. For example,\\n\\t\\t *  {key=\\\"amount\\\", value=\\\"0.98\\\"} refers to an amount of exactly 0.98.\",\"default\":\"\"},{\"name\":\"weight\",\"type\":[\"float\",\"null\"],\"doc\":\"Relative importance of this match criteria, where the default is 1.0.\",\"default\":1.0},{\"name\":\"similarity\",\"type\":[\"float\",\"null\"],\"doc\":\"Require similarity for fuzzy searches, the default is null.\",\"default\":1.0},{\"name\":\"include\",\"type\":\"boolean\",\"doc\":\"If true, INCLUDE all values matching this descriptor. If false, EXCLUDE all values matching this descriptor.\",\"default\":true},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\n\\n\\t CHANGED IN 1.5\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\"]},\"null\"],\"doc\":\"MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_PropertyMatchDescriptor\",\"namespace\":\"graphene.model.idl\",\"doc\":\"A PropertyDescriptor is used to describe a possible property that can be present in an entity or link. It describes \\n\\t a single property that can be used in a property search. It can optionally include example or suggested values \\n\\t for searching on.\\n\\t \\n\\t CHANGED IN 1.8\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field name or G_PropertyTag (or G_PathMatchTag) that could be searched on\"},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\n\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]}],\"doc\":\"value of the Property to search on\",\"default\":null},{\"name\":\"variable\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"If not null/empty, the value is relative to a logical variable specified here (e.g. \\\"X\\\")\\n\\t\\t *  Other parameters using the same logical variable name are relative to this value.\\n\\t\\t *  For instance, for a {key=\\\"amount\\\", value=\\\"0.98\\\", variable=\\\"A\\\"} means that the value\\n\\t\\t *  of amount is 0.98A.  Another amount might be 0.55A, and the property match engine\\n\\t\\t *  (e.g. search engine, database query or pattern match algorithm) should understand\\n\\t\\t *  the relative values.\\n\\t\\t *  \\n\\t\\t *  If no variable is specified, then the value is an absolute number. For example,\\n\\t\\t *  {key=\\\"amount\\\", value=\\\"0.98\\\"} refers to an amount of exactly 0.98.\",\"default\":\"\"},{\"name\":\"weight\",\"type\":[\"float\",\"null\"],\"doc\":\"Relative importance of this match criteria, where the default is 1.0.\",\"default\":1.0},{\"name\":\"similarity\",\"type\":[\"float\",\"null\"],\"doc\":\"Require similarity for fuzzy searches, the default is null.\",\"default\":1.0},{\"name\":\"include\",\"type\":\"boolean\",\"doc\":\"If true, INCLUDE all values matching this descriptor. If false, EXCLUDE all values matching this descriptor.\",\"default\":true},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\n\\n\\t ADDED IN 1.8\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\"]},\"null\"],\"doc\":\"MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT\"},{\"name\":\"typeMappings\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\n\\n\\t\\tADDED IN 1.8\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}},\"doc\":\"List of type mappings to match in *\",\"default\":null}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** field name or G_PropertyTag (or G_PathMatchTag) that could be searched on */
    private java.lang.String key;
@@ -36,6 +36,8 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
    private boolean include;
   /** MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT */
    private graphene.model.idl.G_Constraint constraint;
+  /** List of type mappings to match in * */
+   private java.util.List<graphene.model.idl.G_TypeMapping> typeMappings;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -47,7 +49,7 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
   /**
    * All-args constructor.
    */
-  public G_PropertyMatchDescriptor(java.lang.String key, java.lang.Object range, java.lang.String variable, java.lang.Float weight, java.lang.Float similarity, java.lang.Boolean include, graphene.model.idl.G_Constraint constraint) {
+  public G_PropertyMatchDescriptor(java.lang.String key, java.lang.Object range, java.lang.String variable, java.lang.Float weight, java.lang.Float similarity, java.lang.Boolean include, graphene.model.idl.G_Constraint constraint, java.util.List<graphene.model.idl.G_TypeMapping> typeMappings) {
     this.key = key;
     this.range = range;
     this.variable = variable;
@@ -55,6 +57,7 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
     this.similarity = similarity;
     this.include = include;
     this.constraint = constraint;
+    this.typeMappings = typeMappings;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -68,6 +71,7 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
     case 4: return similarity;
     case 5: return include;
     case 6: return constraint;
+    case 7: return typeMappings;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -82,6 +86,7 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
     case 4: similarity = (java.lang.Float)value$; break;
     case 5: include = (java.lang.Boolean)value$; break;
     case 6: constraint = (graphene.model.idl.G_Constraint)value$; break;
+    case 7: typeMappings = (java.util.List<graphene.model.idl.G_TypeMapping>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -207,6 +212,21 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
     this.constraint = value;
   }
 
+  /**
+   * Gets the value of the 'typeMappings' field.
+   * List of type mappings to match in *   */
+  public java.util.List<graphene.model.idl.G_TypeMapping> getTypeMappings() {
+    return typeMappings;
+  }
+
+  /**
+   * Sets the value of the 'typeMappings' field.
+   * List of type mappings to match in *   * @param value the value to set.
+   */
+  public void setTypeMappings(java.util.List<graphene.model.idl.G_TypeMapping> value) {
+    this.typeMappings = value;
+  }
+
   /** Creates a new G_PropertyMatchDescriptor RecordBuilder */
   public static graphene.model.idl.G_PropertyMatchDescriptor.Builder newBuilder() {
     return new graphene.model.idl.G_PropertyMatchDescriptor.Builder();
@@ -235,6 +255,7 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
     private java.lang.Float similarity;
     private boolean include;
     private graphene.model.idl.G_Constraint constraint;
+    private java.util.List<graphene.model.idl.G_TypeMapping> typeMappings;
 
     /** Creates a new Builder */
     private Builder() {
@@ -272,6 +293,10 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
         this.constraint = data().deepCopy(fields()[6].schema(), other.constraint);
         fieldSetFlags()[6] = true;
       }
+      if (isValidValue(fields()[7], other.typeMappings)) {
+        this.typeMappings = data().deepCopy(fields()[7].schema(), other.typeMappings);
+        fieldSetFlags()[7] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing G_PropertyMatchDescriptor instance */
@@ -304,6 +329,10 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
       if (isValidValue(fields()[6], other.constraint)) {
         this.constraint = data().deepCopy(fields()[6].schema(), other.constraint);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.typeMappings)) {
+        this.typeMappings = data().deepCopy(fields()[7].schema(), other.typeMappings);
+        fieldSetFlags()[7] = true;
       }
     }
 
@@ -481,6 +510,31 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
       return this;
     }
 
+    /** Gets the value of the 'typeMappings' field */
+    public java.util.List<graphene.model.idl.G_TypeMapping> getTypeMappings() {
+      return typeMappings;
+    }
+    
+    /** Sets the value of the 'typeMappings' field */
+    public graphene.model.idl.G_PropertyMatchDescriptor.Builder setTypeMappings(java.util.List<graphene.model.idl.G_TypeMapping> value) {
+      validate(fields()[7], value);
+      this.typeMappings = value;
+      fieldSetFlags()[7] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'typeMappings' field has been set */
+    public boolean hasTypeMappings() {
+      return fieldSetFlags()[7];
+    }
+    
+    /** Clears the value of the 'typeMappings' field */
+    public graphene.model.idl.G_PropertyMatchDescriptor.Builder clearTypeMappings() {
+      typeMappings = null;
+      fieldSetFlags()[7] = false;
+      return this;
+    }
+
     @Override
     public G_PropertyMatchDescriptor build() {
       try {
@@ -492,6 +546,7 @@ public class G_PropertyMatchDescriptor extends org.apache.avro.specific.Specific
         record.similarity = fieldSetFlags()[4] ? this.similarity : (java.lang.Float) defaultValue(fields()[4]);
         record.include = fieldSetFlags()[5] ? this.include : (java.lang.Boolean) defaultValue(fields()[5]);
         record.constraint = fieldSetFlags()[6] ? this.constraint : (graphene.model.idl.G_Constraint) defaultValue(fields()[6]);
+        record.typeMappings = fieldSetFlags()[7] ? this.typeMappings : (java.util.List<graphene.model.idl.G_TypeMapping>) defaultValue(fields()[7]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

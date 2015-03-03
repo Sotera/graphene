@@ -2,7 +2,7 @@ package graphene.services;
 
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.GenericDAO;
-import graphene.model.query.EntityQuery;
+import graphene.model.idl.G_EntityQuery;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
@@ -85,7 +85,7 @@ public interface HyperGraphBuilder<T> {
 	/**
 	 * This object will be supplied by the concrete implementation
 	 */
-	public abstract GenericDAO<T, EntityQuery> getDAO();
+	public abstract GenericDAO<T, G_EntityQuery> getDAO();
 
 	public abstract DocumentGraphParser getParserForObject(Object obj);
 

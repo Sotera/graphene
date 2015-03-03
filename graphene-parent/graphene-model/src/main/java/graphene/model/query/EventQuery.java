@@ -35,13 +35,13 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * related
 	 */
 	private List<String> idList = new ArrayList<String>();
-	private List<G_SearchTuple<String>> attributeList = new ArrayList<G_SearchTuple<String>>(
+	private List<G_SearchTuple> attributeList = new ArrayList<G_SearchTuple>(
 			1);
 
 	/**
 	 * @return the attributeList
 	 */
-	public List<G_SearchTuple<String>> getAttributeList() {
+	public List<G_SearchTuple> getAttributeList() {
 		return attributeList;
 	}
 
@@ -49,7 +49,7 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * @param attributeList
 	 *            the attributeList to set
 	 */
-	public void setAttributeList(List<G_SearchTuple<String>> attributeList) {
+	public void setAttributeList(List<G_SearchTuple> attributeList) {
 		this.attributeList = attributeList;
 	}
 

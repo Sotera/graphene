@@ -23,7 +23,7 @@
 @namespace("graphene.model.idl")
 
 protocol G_CommonDataTypes {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 
 	enum G_CanonicalPropertyType {
 	

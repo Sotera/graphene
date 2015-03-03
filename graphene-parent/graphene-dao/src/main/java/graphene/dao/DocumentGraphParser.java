@@ -1,11 +1,9 @@
 package graphene.dao;
 
-import graphene.model.idl.G_Property;
-import graphene.model.query.EntityQuery;
+import graphene.model.idl.G_EntityQuery;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -83,19 +81,6 @@ public interface DocumentGraphParser<T> {
 	 */
 	public static final String TOTALAMOUNTSTR = "totalamountinvolved";
 	public static final String CARDINAL_ORDER = "cardinalOrder";
-	
-	
-	public static final String MEDIA_ID = "mediaid";
-	public static final String MEDIA_LABEL = "medialabel";
-	public static final String MEDIA_LINK = "medialink";
-	public static final String MEDIA_OWNER = "mediaowner";
-	public static final String MEDIA_CREATED_TIME = "mediacreatedtime";
-	public static final String MEDIA_CAPTION_TEXT = "mediacaptiontext";
-	public static final String MEDIA_LIKE_COUNT = "medialikecount";
-	public static final String MEDIA_COMMENT_COUNT = "mediacommentcount";
-	public static final String MEDIA_LOCATION_LATLON = "medialocationlatlon";
-	public static final String MEDIA_LOCATION_NAME = "medialocationname";
-	public static final String MEDIA_THUMBNAIL = "mediathumbnail";
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 
@@ -122,12 +107,9 @@ public interface DocumentGraphParser<T> {
 	 *            associated node id.
 	 * @return
 	 */
-	public boolean parse(Object obj, EntityQuery q);
+	public boolean parse(Object obj, G_EntityQuery q);
 
-	@Deprecated
-	public abstract T populateExtraFields(T theEvent, EntityQuery q);
-
-	public Collection<? extends G_Property> populateSearchResult(T theEvent, EntityQuery sq);
+	public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
 
 	/**
 	 * @param phgb

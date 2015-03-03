@@ -10,10 +10,12 @@ package graphene.model.idl;
 	CHANGED IN 1.6 */
 @org.apache.avro.specific.AvroGenerated
 public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"namespace\":\"graphene.model.idl\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\n\\t\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"namespace\":\"graphene.model.idl\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\n\\t\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1},{\"name\":\"currency\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.\",\"default\":1}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** Placeholder for now. Express original source confidence as a single number from 0 to 1. */
    private double confidence;
+  /** Placeholder for now. Express confidence in currency of data as a single number from 0 to 1. */
+   private double currency;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -25,8 +27,9 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public G_Uncertainty(java.lang.Double confidence) {
+  public G_Uncertainty(java.lang.Double confidence, java.lang.Double currency) {
     this.confidence = confidence;
+    this.currency = currency;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -34,6 +37,7 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return confidence;
+    case 1: return currency;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -42,6 +46,7 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: confidence = (java.lang.Double)value$; break;
+    case 1: currency = (java.lang.Double)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -59,6 +64,21 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
    */
   public void setConfidence(java.lang.Double value) {
     this.confidence = value;
+  }
+
+  /**
+   * Gets the value of the 'currency' field.
+   * Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.   */
+  public java.lang.Double getCurrency() {
+    return currency;
+  }
+
+  /**
+   * Sets the value of the 'currency' field.
+   * Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.   * @param value the value to set.
+   */
+  public void setCurrency(java.lang.Double value) {
+    this.currency = value;
   }
 
   /** Creates a new G_Uncertainty RecordBuilder */
@@ -83,6 +103,7 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
     implements org.apache.avro.data.RecordBuilder<G_Uncertainty> {
 
     private double confidence;
+    private double currency;
 
     /** Creates a new Builder */
     private Builder() {
@@ -96,6 +117,10 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
         this.confidence = data().deepCopy(fields()[0].schema(), other.confidence);
         fieldSetFlags()[0] = true;
       }
+      if (isValidValue(fields()[1], other.currency)) {
+        this.currency = data().deepCopy(fields()[1].schema(), other.currency);
+        fieldSetFlags()[1] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing G_Uncertainty instance */
@@ -104,6 +129,10 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
       if (isValidValue(fields()[0], other.confidence)) {
         this.confidence = data().deepCopy(fields()[0].schema(), other.confidence);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.currency)) {
+        this.currency = data().deepCopy(fields()[1].schema(), other.currency);
+        fieldSetFlags()[1] = true;
       }
     }
 
@@ -131,11 +160,36 @@ public class G_Uncertainty extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
+    /** Gets the value of the 'currency' field */
+    public java.lang.Double getCurrency() {
+      return currency;
+    }
+    
+    /** Sets the value of the 'currency' field */
+    public graphene.model.idl.G_Uncertainty.Builder setCurrency(double value) {
+      validate(fields()[1], value);
+      this.currency = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'currency' field has been set */
+    public boolean hasCurrency() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'currency' field */
+    public graphene.model.idl.G_Uncertainty.Builder clearCurrency() {
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
     @Override
     public G_Uncertainty build() {
       try {
         G_Uncertainty record = new G_Uncertainty();
         record.confidence = fieldSetFlags()[0] ? this.confidence : (java.lang.Double) defaultValue(fields()[0]);
+        record.currency = fieldSetFlags()[1] ? this.currency : (java.lang.Double) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

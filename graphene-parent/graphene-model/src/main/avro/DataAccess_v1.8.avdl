@@ -27,7 +27,7 @@
 /**
 */
 protocol G_DataAccess {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 
 	/**
 	 Sort type for transactions

@@ -35,7 +35,7 @@ public class NoSecurityModule {
 
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, String> configuration) {
 		configuration.add(SecuritySymbols.LOGIN_URL, "/graphene/pub/login");
-		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/infrastructure/pagedenied");
+		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/pub/pagedenied");
 		configuration.add(SecuritySymbols.SUCCESS_URL, "/graphene/index");
 		configuration.add(SecuritySymbols.REDIRECT_TO_SAVED_URL, "true");
 

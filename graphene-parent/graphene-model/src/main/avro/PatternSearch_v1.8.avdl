@@ -28,8 +28,8 @@
  This defines an API for searching a graph-like database based on patterns.
  */
 protocol G_PatternSearch {
-	import idl "Search_v1.7.avdl";
-	import idl "FutureResults_v1.7.avdl";
+	import idl "Search_v1.8.avdl";
+	import idl "FutureResults_v1.8.avdl";
 	
 	/**
 	 Description of entity match criteria within a pattern.
@@ -48,13 +48,13 @@ protocol G_PatternSearch {
 		string uid;
 		
 		/** Optional role name, for labeling the pattern for human understanding */
-		union{string, null} role = null;
+		union{null, string} role = null;				// CHANGED IN 1.8
 		
 		/** entities should match AT LEAST ONE OF the given entity IDs, if provided */
 		union{array<string>, null} entities = null;
 
 		/** entities should match AT LEAST ONE OF the given tags (e.g ACCOUNT), if provided */
-		union{array<G_EntityTag>, null} tags = null;
+		union{array<G_EntityTag>, null} tags = null;	
 		
 		/** entities should match ALL of the provided property descriptors (e.g. LABEL, GEO, etc)
 		    e.g. logical "AND". Partial matches may be returned, if scoring is provided.  */
@@ -95,17 +95,17 @@ protocol G_PatternSearch {
 		string uid;
 		
 		/** Optional role name, for labeling the pattern for human understanding */
-		union{string, null} role = null;
+		union{null, string} role = null;		// CHANGED IN 1.8
 		
 		/** The UID of a G_EntityMatchDescriptor node (not an underlying Entity UID) 
 			Being null indicates that matched links should have no source node
 		*/
-		union{string, null} source;
+		union{null, string} source;				// CHANGED IN 1.8
 		
 		/** The UID of a G_EntityMatchDescriptor node (not an underlying Entity UID) 
 			Being null indicates that matched links should have no target node
 		*/
-		union{string, null} target;
+		union{null, string} target;				// CHANGED IN 1.8
 
 		/** entities should match AT LEAST ONE OF the given tags (e.g FINANCIAL, COMMUNICATION, SOCIAL), if provided */
 		union{array<G_LinkTag>, null} tags = null;
@@ -134,7 +134,7 @@ protocol G_PatternSearch {
 		string name;
 		
 		/** displayable long description of the pattern **/
-		union {string, null} description = null;
+		union {null, string} description = null;				// CHANGED IN 1.8
 		
 		/**
 		 - ordered list of entity criteria for the pattern
@@ -161,7 +161,7 @@ protocol G_PatternSearch {
 		string uid = null;
 
 		/** role name of the matched G_EntityMatchDescriptor in the matched pattern */
-		union{string, null} role = null;
+		union{null, string} role = null;			// CHANGED IN 1.8
 	
 		/** the entity */
 		G_Entity entity;
@@ -178,7 +178,7 @@ protocol G_PatternSearch {
 		string uid = null;
 
 		/** role name of the matched G_LinkMatchDescriptor in the matched pattern */
-		union{string, null} role = null;
+		union{null, string} role = null;			// CHANGED IN 1.8
 	
 		/** the link */
 		G_Link link;		
@@ -227,7 +227,7 @@ protocol G_PatternSearch {
 	union{G_Future,G_PatternSearchResults}
 		searchByExample(
 			G_PatternDescriptor example,
-			union {string, null} service = null,
+			union {null, string} service = null,			// CHANGED IN 1.8
 			long start = 0,
 			long max = -1,
 			union {G_BoundedRange, null} dateRange = null, // ADDED IN 1.5
@@ -250,7 +250,7 @@ protocol G_PatternSearch {
 	union{G_Future,G_PatternSearchResults}
 		searchByTemplate(
 			string template,
-			union {string, null} service = null,
+			union {null, string} service = null,			// CHANGED IN 1.8
 			long start = 0, 
 			long max = -1,
 			union {G_BoundedRange, null} dateRange = null // ADDED IN 1.5

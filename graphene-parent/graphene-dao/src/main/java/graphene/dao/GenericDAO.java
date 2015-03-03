@@ -12,7 +12,7 @@ import java.util.List;
  * @param <T>
  * @param <QUERYOBJECT>
  */
-public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
+public interface GenericDAO<T, G_EntityQuery> {
 
 	/**
 	 * This version assumes the offset and max results have been stored properly
@@ -21,7 +21,7 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	 * @param pq
 	 * @return a list of T
 	 */
-	List<T> findByQuery(QUERYOBJECT pq) throws Exception;
+	List<T> findByQuery(G_EntityQuery pq) throws Exception;
 
 	/**
 	 * TODO: This could be replaced by putting offset and maxresults inside a
@@ -35,7 +35,7 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	 */
 	List<T> getAll(final long offset, final long maxResults) throws Exception;
 
-	long count(final QUERYOBJECT q) throws Exception;
+	long count(final G_EntityQuery q) throws Exception;
 
 	/**
 	 * 
@@ -79,7 +79,7 @@ public interface GenericDAO<T, QUERYOBJECT extends BasicQuery> {
 	 * @param q
 	 * @return true if the callback succeeded, or did not find any errors.
 	 */
-	boolean performCallback(long offset, long maxResults, G_CallBack<T,QUERYOBJECT> cb,
-			QUERYOBJECT q);
+	boolean performCallback(long offset, long maxResults, G_CallBack<T,G_EntityQuery> cb,
+			G_EntityQuery q);
 
 }

@@ -2,6 +2,7 @@ package graphene.web.pages.workspace;
 
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.UserWorkspaceDAO;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_UserDataAccess;
@@ -9,7 +10,7 @@ import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
-import graphene.model.query.EntityQuery;
+//import graphene.model.query.EntityQuery;
 import graphene.util.ExceptionUtil;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
@@ -63,7 +64,7 @@ public class View extends SimpleBasePage {
 	private ComponentResources componentResources;
 
 	@Property
-	private EntityQuery currentQuery;
+	private G_EntityQuery currentQuery;
 
 	@Property
 	private String currentFilter;
@@ -75,9 +76,9 @@ public class View extends SimpleBasePage {
 	private G_ReportViewEvent currentReportView;
 
 	@Property
-	private List<EntityQuery> searchQueryList;
+	private List<G_EntityQuery> searchQueryList;
 	@Persist
-	private BeanModel<EntityQuery> entityQuerymodel;
+	private BeanModel<G_EntityQuery> entityQuerymodel;
 	@Persist
 	private BeanModel<G_ReportViewEvent> reportViewmodel;
 	@Inject
@@ -110,9 +111,9 @@ public class View extends SimpleBasePage {
 	private UserWorkspaceDAO uwDao;
 
 	// Generally useful bits and pieces
-	public BeanModel<EntityQuery> getEntityQueryModel() {
+	public BeanModel<G_EntityQuery> getEntityQueryModel() {
 		if (entityQuerymodel == null) {
-			entityQuerymodel = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
+			entityQuerymodel = beanModelSource.createDisplayModel(G_EntityQuery.class, resources.getMessages());
 			entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues",
 					"minimumscore", "minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult",
 					"datasource", "userId", "username", "sortascending", "id", "schema");
@@ -262,8 +263,8 @@ public class View extends SimpleBasePage {
 	}
 
 	void onDeleteQuery(final long timeInitiated) {
-		EntityQuery q = null;
-		for (final EntityQuery x : currentSelectedWorkspace.getQueryObjects()) {
+		G_EntityQuery q = null;
+		for (final G_EntityQuery x : currentSelectedWorkspace.getQueryObjects()) {
 			if (x.getTimeInitiated() == timeInitiated) {
 				q = x;
 			}

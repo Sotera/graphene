@@ -5,29 +5,32 @@
  */
 package graphene.model.idl;  
 @SuppressWarnings("all")
-/** Used to add constraints for entity searches. The key indicates the property to make the constraint on, while the
-	 value field is set to the desired value. The type field indicates how the constraint should be treated (ex,
-	 constrain results to those where the "count" property has a value of "LESS_THAN" "100").
-	 
-	 CHANGED IN 1.7 */
+/** Used to add constraints for entity searches.
+
+          The 'memberOf' parameter is a list of G_TypeMapping that describe the property in the given types.
+
+          ADDED IN 1.8
+     * */
 @org.apache.avro.specific.AvroGenerated
 public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_PropertyDescriptor\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Used to add constraints for entity searches. The key indicates the property to make the constraint on, while the\\n\\t value field is set to the desired value. The type field indicates how the constraint should be treated (ex,\\n\\t constrain results to those where the \\\"count\\\" property has a value of \\\"LESS_THAN\\\" \\\"100\\\").\\n\\t \\n\\t CHANGED IN 1.7\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"key of the Property to search on\"},{\"name\":\"friendlyText\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"a human readable label to display if the key isn't friendly (optional)\",\"default\":null},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\n\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"type of the Property to search on\"},{\"name\":\"range\",\"type\":[{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\n\\t\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"null\"],\"doc\":\"range of the Property to search on\"},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\n\\n\\t CHANGED IN 1.5\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\"]},\"null\"],\"doc\":\"REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED\"},{\"name\":\"freeTextIndexed\",\"type\":\"boolean\",\"doc\":\"indicates whether the property is indexed for free text queries *\",\"default\":false},{\"name\":\"defaultTerm\",\"type\":\"boolean\",\"doc\":\"indicates whether it should be included in the set of default criteria to specify *\",\"default\":false}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_PropertyDescriptor\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Used to add constraints for entity searches.\\n\\n          The 'memberOf' parameter is a list of G_TypeMapping that describe the property in the given types.\\n\\n          ADDED IN 1.8\\n     *\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"property descriptor unique key\"},{\"name\":\"friendlyText\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"a human readable property name to display if the key isn't friendly (optional)\",\"default\":null},{\"name\":\"propertyType\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\n\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"data type of the property\"},{\"name\":\"range\",\"type\":[{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\n\\t\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"null\"],\"doc\":\"range of the Property to search on\"},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\n\\n\\t ADDED IN 1.8\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\"]},\"null\"],\"doc\":\"REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED\"},{\"name\":\"freeTextIndexed\",\"type\":\"boolean\",\"doc\":\"indicates whether this property is indexed for free text queries *\",\"default\":false},{\"name\":\"defaultTerm\",\"type\":\"boolean\",\"doc\":\"indicates whether this property should be included in the set of default criteria to specify *\",\"default\":false},{\"name\":\"memberOf\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\n\\n\\t\\tADDED IN 1.8\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}},\"doc\":\"List of mappings against types to which this property belongs,  *\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-  /** key of the Property to search on */
+  /** property descriptor unique key */
    private java.lang.String key;
-  /** a human readable label to display if the key isn't friendly (optional) */
+  /** a human readable property name to display if the key isn't friendly (optional) */
    private java.lang.String friendlyText;
-  /** type of the Property to search on */
-   private graphene.model.idl.G_PropertyType type;
+  /** data type of the property */
+   private graphene.model.idl.G_PropertyType propertyType;
   /** range of the Property to search on */
    private graphene.model.idl.G_RangeType range;
   /** REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED */
    private graphene.model.idl.G_Constraint constraint;
-  /** indicates whether the property is indexed for free text queries * */
+  /** indicates whether this property is indexed for free text queries * */
    private boolean freeTextIndexed;
-  /** indicates whether it should be included in the set of default criteria to specify * */
+  /** indicates whether this property should be included in the set of default criteria to specify * */
    private boolean defaultTerm;
+  /** List of mappings against types to which this property belongs,  * */
+   private java.util.List<graphene.model.idl.G_TypeMapping> memberOf;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -39,14 +42,15 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
   /**
    * All-args constructor.
    */
-  public G_PropertyDescriptor(java.lang.String key, java.lang.String friendlyText, graphene.model.idl.G_PropertyType type, graphene.model.idl.G_RangeType range, graphene.model.idl.G_Constraint constraint, java.lang.Boolean freeTextIndexed, java.lang.Boolean defaultTerm) {
+  public G_PropertyDescriptor(java.lang.String key, java.lang.String friendlyText, graphene.model.idl.G_PropertyType propertyType, graphene.model.idl.G_RangeType range, graphene.model.idl.G_Constraint constraint, java.lang.Boolean freeTextIndexed, java.lang.Boolean defaultTerm, java.util.List<graphene.model.idl.G_TypeMapping> memberOf) {
     this.key = key;
     this.friendlyText = friendlyText;
-    this.type = type;
+    this.propertyType = propertyType;
     this.range = range;
     this.constraint = constraint;
     this.freeTextIndexed = freeTextIndexed;
     this.defaultTerm = defaultTerm;
+    this.memberOf = memberOf;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -55,11 +59,12 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
     switch (field$) {
     case 0: return key;
     case 1: return friendlyText;
-    case 2: return type;
+    case 2: return propertyType;
     case 3: return range;
     case 4: return constraint;
     case 5: return freeTextIndexed;
     case 6: return defaultTerm;
+    case 7: return memberOf;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -69,25 +74,26 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
     switch (field$) {
     case 0: key = (java.lang.String)value$; break;
     case 1: friendlyText = (java.lang.String)value$; break;
-    case 2: type = (graphene.model.idl.G_PropertyType)value$; break;
+    case 2: propertyType = (graphene.model.idl.G_PropertyType)value$; break;
     case 3: range = (graphene.model.idl.G_RangeType)value$; break;
     case 4: constraint = (graphene.model.idl.G_Constraint)value$; break;
     case 5: freeTextIndexed = (java.lang.Boolean)value$; break;
     case 6: defaultTerm = (java.lang.Boolean)value$; break;
+    case 7: memberOf = (java.util.List<graphene.model.idl.G_TypeMapping>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
    * Gets the value of the 'key' field.
-   * key of the Property to search on   */
+   * property descriptor unique key   */
   public java.lang.String getKey() {
     return key;
   }
 
   /**
    * Sets the value of the 'key' field.
-   * key of the Property to search on   * @param value the value to set.
+   * property descriptor unique key   * @param value the value to set.
    */
   public void setKey(java.lang.String value) {
     this.key = value;
@@ -95,32 +101,32 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Gets the value of the 'friendlyText' field.
-   * a human readable label to display if the key isn't friendly (optional)   */
+   * a human readable property name to display if the key isn't friendly (optional)   */
   public java.lang.String getFriendlyText() {
     return friendlyText;
   }
 
   /**
    * Sets the value of the 'friendlyText' field.
-   * a human readable label to display if the key isn't friendly (optional)   * @param value the value to set.
+   * a human readable property name to display if the key isn't friendly (optional)   * @param value the value to set.
    */
   public void setFriendlyText(java.lang.String value) {
     this.friendlyText = value;
   }
 
   /**
-   * Gets the value of the 'type' field.
-   * type of the Property to search on   */
-  public graphene.model.idl.G_PropertyType getType() {
-    return type;
+   * Gets the value of the 'propertyType' field.
+   * data type of the property   */
+  public graphene.model.idl.G_PropertyType getPropertyType() {
+    return propertyType;
   }
 
   /**
-   * Sets the value of the 'type' field.
-   * type of the Property to search on   * @param value the value to set.
+   * Sets the value of the 'propertyType' field.
+   * data type of the property   * @param value the value to set.
    */
-  public void setType(graphene.model.idl.G_PropertyType value) {
-    this.type = value;
+  public void setPropertyType(graphene.model.idl.G_PropertyType value) {
+    this.propertyType = value;
   }
 
   /**
@@ -155,14 +161,14 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Gets the value of the 'freeTextIndexed' field.
-   * indicates whether the property is indexed for free text queries *   */
+   * indicates whether this property is indexed for free text queries *   */
   public java.lang.Boolean getFreeTextIndexed() {
     return freeTextIndexed;
   }
 
   /**
    * Sets the value of the 'freeTextIndexed' field.
-   * indicates whether the property is indexed for free text queries *   * @param value the value to set.
+   * indicates whether this property is indexed for free text queries *   * @param value the value to set.
    */
   public void setFreeTextIndexed(java.lang.Boolean value) {
     this.freeTextIndexed = value;
@@ -170,17 +176,32 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Gets the value of the 'defaultTerm' field.
-   * indicates whether it should be included in the set of default criteria to specify *   */
+   * indicates whether this property should be included in the set of default criteria to specify *   */
   public java.lang.Boolean getDefaultTerm() {
     return defaultTerm;
   }
 
   /**
    * Sets the value of the 'defaultTerm' field.
-   * indicates whether it should be included in the set of default criteria to specify *   * @param value the value to set.
+   * indicates whether this property should be included in the set of default criteria to specify *   * @param value the value to set.
    */
   public void setDefaultTerm(java.lang.Boolean value) {
     this.defaultTerm = value;
+  }
+
+  /**
+   * Gets the value of the 'memberOf' field.
+   * List of mappings against types to which this property belongs,  *   */
+  public java.util.List<graphene.model.idl.G_TypeMapping> getMemberOf() {
+    return memberOf;
+  }
+
+  /**
+   * Sets the value of the 'memberOf' field.
+   * List of mappings against types to which this property belongs,  *   * @param value the value to set.
+   */
+  public void setMemberOf(java.util.List<graphene.model.idl.G_TypeMapping> value) {
+    this.memberOf = value;
   }
 
   /** Creates a new G_PropertyDescriptor RecordBuilder */
@@ -206,11 +227,12 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
 
     private java.lang.String key;
     private java.lang.String friendlyText;
-    private graphene.model.idl.G_PropertyType type;
+    private graphene.model.idl.G_PropertyType propertyType;
     private graphene.model.idl.G_RangeType range;
     private graphene.model.idl.G_Constraint constraint;
     private boolean freeTextIndexed;
     private boolean defaultTerm;
+    private java.util.List<graphene.model.idl.G_TypeMapping> memberOf;
 
     /** Creates a new Builder */
     private Builder() {
@@ -228,8 +250,8 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
         this.friendlyText = data().deepCopy(fields()[1].schema(), other.friendlyText);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.type)) {
-        this.type = data().deepCopy(fields()[2].schema(), other.type);
+      if (isValidValue(fields()[2], other.propertyType)) {
+        this.propertyType = data().deepCopy(fields()[2].schema(), other.propertyType);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.range)) {
@@ -247,6 +269,10 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
       if (isValidValue(fields()[6], other.defaultTerm)) {
         this.defaultTerm = data().deepCopy(fields()[6].schema(), other.defaultTerm);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.memberOf)) {
+        this.memberOf = data().deepCopy(fields()[7].schema(), other.memberOf);
+        fieldSetFlags()[7] = true;
       }
     }
     
@@ -261,8 +287,8 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
         this.friendlyText = data().deepCopy(fields()[1].schema(), other.friendlyText);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.type)) {
-        this.type = data().deepCopy(fields()[2].schema(), other.type);
+      if (isValidValue(fields()[2], other.propertyType)) {
+        this.propertyType = data().deepCopy(fields()[2].schema(), other.propertyType);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.range)) {
@@ -280,6 +306,10 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
       if (isValidValue(fields()[6], other.defaultTerm)) {
         this.defaultTerm = data().deepCopy(fields()[6].schema(), other.defaultTerm);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.memberOf)) {
+        this.memberOf = data().deepCopy(fields()[7].schema(), other.memberOf);
+        fieldSetFlags()[7] = true;
       }
     }
 
@@ -333,27 +363,27 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Gets the value of the 'type' field */
-    public graphene.model.idl.G_PropertyType getType() {
-      return type;
+    /** Gets the value of the 'propertyType' field */
+    public graphene.model.idl.G_PropertyType getPropertyType() {
+      return propertyType;
     }
     
-    /** Sets the value of the 'type' field */
-    public graphene.model.idl.G_PropertyDescriptor.Builder setType(graphene.model.idl.G_PropertyType value) {
+    /** Sets the value of the 'propertyType' field */
+    public graphene.model.idl.G_PropertyDescriptor.Builder setPropertyType(graphene.model.idl.G_PropertyType value) {
       validate(fields()[2], value);
-      this.type = value;
+      this.propertyType = value;
       fieldSetFlags()[2] = true;
       return this; 
     }
     
-    /** Checks whether the 'type' field has been set */
-    public boolean hasType() {
+    /** Checks whether the 'propertyType' field has been set */
+    public boolean hasPropertyType() {
       return fieldSetFlags()[2];
     }
     
-    /** Clears the value of the 'type' field */
-    public graphene.model.idl.G_PropertyDescriptor.Builder clearType() {
-      type = null;
+    /** Clears the value of the 'propertyType' field */
+    public graphene.model.idl.G_PropertyDescriptor.Builder clearPropertyType() {
+      propertyType = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -456,17 +486,43 @@ public class G_PropertyDescriptor extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
+    /** Gets the value of the 'memberOf' field */
+    public java.util.List<graphene.model.idl.G_TypeMapping> getMemberOf() {
+      return memberOf;
+    }
+    
+    /** Sets the value of the 'memberOf' field */
+    public graphene.model.idl.G_PropertyDescriptor.Builder setMemberOf(java.util.List<graphene.model.idl.G_TypeMapping> value) {
+      validate(fields()[7], value);
+      this.memberOf = value;
+      fieldSetFlags()[7] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'memberOf' field has been set */
+    public boolean hasMemberOf() {
+      return fieldSetFlags()[7];
+    }
+    
+    /** Clears the value of the 'memberOf' field */
+    public graphene.model.idl.G_PropertyDescriptor.Builder clearMemberOf() {
+      memberOf = null;
+      fieldSetFlags()[7] = false;
+      return this;
+    }
+
     @Override
     public G_PropertyDescriptor build() {
       try {
         G_PropertyDescriptor record = new G_PropertyDescriptor();
         record.key = fieldSetFlags()[0] ? this.key : (java.lang.String) defaultValue(fields()[0]);
         record.friendlyText = fieldSetFlags()[1] ? this.friendlyText : (java.lang.String) defaultValue(fields()[1]);
-        record.type = fieldSetFlags()[2] ? this.type : (graphene.model.idl.G_PropertyType) defaultValue(fields()[2]);
+        record.propertyType = fieldSetFlags()[2] ? this.propertyType : (graphene.model.idl.G_PropertyType) defaultValue(fields()[2]);
         record.range = fieldSetFlags()[3] ? this.range : (graphene.model.idl.G_RangeType) defaultValue(fields()[3]);
         record.constraint = fieldSetFlags()[4] ? this.constraint : (graphene.model.idl.G_Constraint) defaultValue(fields()[4]);
         record.freeTextIndexed = fieldSetFlags()[5] ? this.freeTextIndexed : (java.lang.Boolean) defaultValue(fields()[5]);
         record.defaultTerm = fieldSetFlags()[6] ? this.defaultTerm : (java.lang.Boolean) defaultValue(fields()[6]);
+        record.memberOf = fieldSetFlags()[7] ? this.memberOf : (java.util.List<graphene.model.idl.G_TypeMapping>) defaultValue(fields()[7]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

@@ -3,11 +3,10 @@
  */
 package graphene.dao;
 
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_UserLoginEvent;
-import graphene.model.query.BasicQuery;
-import graphene.model.query.EntityQuery;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
-	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
+	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -78,7 +77,7 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
-	public void recordQuery(final BasicQuery sq) {
+	public void recordQuery(final G_EntityQuery sq) {
 		// TODO Auto-generated method stub
 
 	}

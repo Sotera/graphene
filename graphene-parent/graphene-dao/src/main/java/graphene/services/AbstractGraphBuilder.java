@@ -3,10 +3,10 @@ package graphene.services;
 import graphene.business.commons.DocumentError;
 import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_EdgeTypeAccess;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.query.EntityQuery;
 import graphene.util.G_CallBack;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
@@ -71,9 +71,9 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 
 	protected Set<String> scannedResults = new HashSet<String>();
 
-	protected PriorityQueue<EntityQuery> queriesToRun = new PriorityQueue<EntityQuery>(10, new ScoreComparator());
+	protected PriorityQueue<G_EntityQuery> queriesToRun = new PriorityQueue<G_EntityQuery>(10, new ScoreComparator());
 
-	protected Stack<EntityQuery> queriesToRunNextDegree = new Stack<EntityQuery>();
+	protected Stack<G_EntityQuery> queriesToRunNextDegree = new Stack<G_EntityQuery>();
 	protected V_NodeList nodeList = new V_NodeList();
 	protected Set<V_LegendItem> legendItems = new HashSet<V_LegendItem>();
 	@Inject

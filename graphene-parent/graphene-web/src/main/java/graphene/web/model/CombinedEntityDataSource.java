@@ -5,8 +5,8 @@ import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SortCriterion;
 import graphene.model.idl.G_SortOrder;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.query.AdvancedSearch;
-import graphene.model.query.EntityQuery;
 import graphene.model.query.SearchFilter;
 import graphene.model.view.entities.Entity;
 
@@ -44,10 +44,13 @@ public class CombinedEntityDataSource implements GridDataSource {
 		if (partialName == null) {
 			return 0;
 		}
-		final EntityQuery q = new EntityQuery();
-		q.addAttribute(new G_SearchTuple(partialName, G_SearchType.COMPARE_EQUALS));
+		
+		G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
+		final G_SearchTuple<String> gs = new G_SearchTuple<String>(partialName, G_SearchType.COMPARE_EQUALS);
+		queryBuilder.getAttributeList().add(gs);
+
 		try {
-			return (int) dao.count(q);
+			return (int) dao.count(queryBuilder.build());
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -76,10 +79,12 @@ public class CombinedEntityDataSource implements GridDataSource {
 			filters.add(sf);
 			srch.setFilters(filters);
 
-			final EntityQuery q = new EntityQuery();
-			q.addAttribute(new G_SearchTuple(partialName, G_SearchType.COMPARE_EQUALS));
+			G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
+			final G_SearchTuple<String> gs = new G_SearchTuple<String>(partialName, G_SearchType.COMPARE_EQUALS);
+			queryBuilder.getAttributeList().add(gs);
+
 			try {
-				preparedResults = dao.findByQuery(q);
+				preparedResults = dao.findByQuery(queryBuilder.build());
 			} catch (final Exception e) {
 				logger.error(e.getMessage());
 			}

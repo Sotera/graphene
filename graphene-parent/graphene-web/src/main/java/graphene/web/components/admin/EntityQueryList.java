@@ -1,8 +1,8 @@
 package graphene.web.components.admin;
 
 import graphene.dao.LoggingDAO;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchTuple;
-import graphene.model.query.EntityQuery;
 import graphene.web.components.BasicDataTable;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class EntityQueryList extends BasicDataTable {
 	@Inject
 	protected LoggingDAO loggingDao;
 	@Property
-	private EntityQuery current;
+	private G_EntityQuery current;
 	@Property
 	private String currentFilter;
 	@Property
@@ -26,13 +26,13 @@ public class EntityQueryList extends BasicDataTable {
 	private G_SearchTuple<String> currentTuple;
 
 	@Persist
-	private BeanModel<EntityQuery> model;
+	private BeanModel<G_EntityQuery> model;
 	@Property
-	private List<EntityQuery> list;
+	private List<G_EntityQuery> list;
 
-	public BeanModel<EntityQuery> getModel() {
+	public BeanModel<G_EntityQuery> getModel() {
 		if (model == null) {
-			model = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
+			model = beanModelSource.createDisplayModel(G_EntityQuery.class, resources.getMessages());
 			model.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues", "minimumscore",
 					"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource",
 					"userId", "sortascending", "id", "schema");

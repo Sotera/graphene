@@ -27,38 +27,7 @@
 /**
  */
 protocol G_EntitySearch {
-	import idl "Search_v1.7.avdl";
-	
-	/**
-	 Used to add constraints for entity searches. The key indicates the property to make the constraint on, while the
-	 value field is set to the desired value. The type field indicates how the constraint should be treated (ex,
-	 constrain results to those where the "count" property has a value of "LESS_THAN" "100").
-	 
-	 CHANGED IN 1.7
-	 
-	 */
-	record G_PropertyDescriptor {
-		/** key of the Property to search on */
-		string key;
-		
-		/** a human readable label to display if the key isn't friendly (optional) */
-		union {string, null} friendlyText = null;
-		
-		/** type of the Property to search on */
-		G_PropertyType type;
-		
-		/** range of the Property to search on */
-		union{G_RangeType, null} range; // ADDED IN 1.5
-		
-		/** REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED */
-		union {G_Constraint, null} constraint; // CHANGED IN 1.5
-		
-		/** indicates whether the property is indexed for free text queries **/
-		boolean freeTextIndexed = false; // CHANGED IN 1.7
-		
-		/** indicates whether it should be included in the set of default criteria to specify **/
-		boolean defaultTerm = false; // CHANGED IN 1.7
-	}
+	import idl "Search_v1.8.avdl";
 	
 	/*
 	 */
@@ -91,19 +60,28 @@ protocol G_EntitySearch {
 	 
 	 CHANGED IN 1.5
 	 
-	 @param query		text query (Solr-like syntax)
 	 @param terms		Property Search Terms
 	 @param start		0-based index of first result to return
 	 @param max			maximum number of results to return
-	 @param type		the type of the PropertyDescriptors selected (see getDescriptors)
 	 @return			SearchResults
 	 */
 	G_SearchResults search(
-			string query = null, 
-			array<G_PropertyMatchDescriptor> terms = null,
-			long start = 0, 
-			long max = -1,
-			union{string, null} type = null); // ADDED IN 1.5
+		array<G_PropertyMatchDescriptor> terms = null,
+		long start = 0, 
+		long max = -1
+	); 
+
+	/**
+	 An instance of PropertyDescriptors is used to contain the dataset-specific type and property descriptions returned
+	 by getDescriptors()
+
+	 ADDED IN 1.8
+
+	 */
+	record G_PropertyDescriptors {
+		array<G_PropertyDescriptor> properties = null;
+		array<G_TypeDescriptor> types = null;
+	}
 
 	/**
 	 Returns the property descriptors that can be used for a Search. This is normally used to populate the Advanced 
@@ -112,7 +90,10 @@ protocol G_EntitySearch {
 	 Service URL: /entity/descriptors
 	 HTTP Method: GET
 	 
-	 @return Map of "Type" to "Array of PropertyDescriptor", where Type is the dataset specific type (see the Tag TYPE for examples)
+	 @return a PropertyDescriptors instance that contains an array of PropertyDescriptor and an array of TypeDescriptor,
+	 where fields in these descriptors contain info about the dataset-specific types and properties
+	 	 
+	 	 CHANGED IN 1.8
 	 */
-	map<array<G_PropertyDescriptor>> getDescriptors();
+	G_PropertyDescriptors getDescriptors();
 }

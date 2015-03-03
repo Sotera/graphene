@@ -28,7 +28,7 @@
  Services for geocoding.
 */
 protocol G_Geocoding {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 	
 	
 	/**
