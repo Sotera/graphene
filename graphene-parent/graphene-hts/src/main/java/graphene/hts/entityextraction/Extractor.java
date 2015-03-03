@@ -13,6 +13,22 @@ import java.util.List;
  * 
  */
 public interface Extractor {
+	/**
+	 * Allow large texts to be split into multiple pieces, to improve
+	 * performance. For instance, split by newline, tabs and/or periods.
+	 * 
+	 * @param source
+	 * @param divideRegex
+	 * @return
+	 */
+	public abstract Collection<String> divideAndExtract(String body, String regex);
+
+	/**
+	 * 
+	 * @param source
+	 * @return a collection of strings which were found using source
+	 */
+	public abstract Collection<String> extract(String source);
 
 	/**
 	 * 
@@ -23,10 +39,9 @@ public interface Extractor {
 
 	/**
 	 * 
-	 * @param source
-	 * @return a collection of strings which were found using source
+	 * @return a list of entity tags
 	 */
-	public abstract Collection<String> extract(String source);
+	public List<G_EntityTag> getEntityTags();
 
 	/**
 	 * 
@@ -42,6 +57,12 @@ public interface Extractor {
 
 	/**
 	 * 
+	 * @return a list of properties
+	 */
+	public List<G_Property> getProperties();
+
+	/**
+	 * 
 	 * @return the relation type
 	 */
 	public abstract String getRelationType();
@@ -51,17 +72,5 @@ public interface Extractor {
 	 * @return the relation value
 	 */
 	public abstract String getRelationValue();
-
-	/**
-	 * 
-	 * @return a list of entity tags
-	 */
-	public List<G_EntityTag> getEntityTags();
-
-	/**
-	 * 
-	 * @return a list of properties
-	 */
-	public List<G_Property> getProperties();
 
 }
