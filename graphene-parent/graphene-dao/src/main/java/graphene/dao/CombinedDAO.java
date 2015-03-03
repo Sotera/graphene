@@ -1,6 +1,6 @@
 package graphene.dao;
 
-import graphene.model.query.EntityQuery;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.view.GrapheneResults;
 
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.List;
  * @author djue
  * 
  */
-public interface CombinedDAO extends GenericDAO<Object, EntityQuery> {
+public interface CombinedDAO extends GenericDAO<Object, G_EntityQuery> {
 
-	public abstract List<Object> findById(EntityQuery pq);
+	public abstract List<Object> findById(G_EntityQuery pq);
 
-	public abstract GrapheneResults<Object> findByQueryWithMeta(EntityQuery pq)
+	public abstract GrapheneResults<Object> findByQueryWithMeta(G_EntityQuery pq)
 			throws Exception;
 }

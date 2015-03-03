@@ -1,6 +1,6 @@
 package graphene.dao;
 
-import graphene.model.query.EntityQuery;
+import graphene.model.idl.G_EntityQuery;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
@@ -107,9 +107,9 @@ public interface DocumentGraphParser<T> {
 	 *            associated node id.
 	 * @return
 	 */
-	public boolean parse(Object obj, EntityQuery q);
+	public boolean parse(Object obj, G_EntityQuery q);
 
-	public abstract T populateExtraFields(T theEvent, EntityQuery q);
+	public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
 
 	/**
 	 * @param phgb

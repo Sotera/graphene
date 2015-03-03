@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public enum G_SearchType { 
-  COMPARE_SIMPLE, COMPARE_EQUALS, COMPARE_LESS, COMPARE_GREATER, COMPARE_INCLUDE, COMPARE_NOTINCLUDE, COMPARE_REGEX, COMPARE_SOUNDSLIKE, COMPARE_ENDSWITH, COMPARE_STARTSWITH, COMPARE_CONTAINS, COMPARE_INVALID  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_SearchType\",\"namespace\":\"graphene.model.idl\",\"symbols\":[\"COMPARE_SIMPLE\",\"COMPARE_EQUALS\",\"COMPARE_LESS\",\"COMPARE_GREATER\",\"COMPARE_INCLUDE\",\"COMPARE_NOTINCLUDE\",\"COMPARE_REGEX\",\"COMPARE_SOUNDSLIKE\",\"COMPARE_ENDSWITH\",\"COMPARE_STARTSWITH\",\"COMPARE_CONTAINS\",\"COMPARE_INVALID\"]}");
+  COMPARE_CONTAINS, COMPARE_ENDSWITH, COMPARE_EQUALS, COMPARE_GREATER, COMPARE_INCLUDE, COMPARE_INVALID, COMPARE_LESS, COMPARE_NOTINCLUDE, COMPARE_REGEX, COMPARE_SIMPLE, COMPARE_SOUNDSLIKE, COMPARE_STARTSWITH  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_SearchType\",\"namespace\":\"graphene.model.idl\",\"symbols\":[\"COMPARE_CONTAINS\",\"COMPARE_ENDSWITH\",\"COMPARE_EQUALS\",\"COMPARE_GREATER\",\"COMPARE_INCLUDE\",\"COMPARE_INVALID\",\"COMPARE_LESS\",\"COMPARE_NOTINCLUDE\",\"COMPARE_REGEX\",\"COMPARE_SIMPLE\",\"COMPARE_SOUNDSLIKE\",\"COMPARE_STARTSWITH\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

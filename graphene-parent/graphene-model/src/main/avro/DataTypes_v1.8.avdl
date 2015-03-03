@@ -147,6 +147,9 @@ protocol G_DataTypes {
 	record G_Uncertainty {
 		/** Placeholder for now. Express original source confidence as a single number from 0 to 1. */
 		double confidence = 1;
+		
+		/** Placeholder for now. Express confidence in currency of data as a single number from 0 to 1. */
+		double currency = 1; // ADDED IN 1.6
 	}
 	
 	/**
@@ -157,10 +160,10 @@ protocol G_DataTypes {
 		string url;
 		
 		/** MIME type of the resource */
-		union {string, null} mimeType = null;
+		union {null, string} mimeType = null;		// CHANGED IN 1.8
 		
 		/** description of the linked resource (suitable for display to the user in an hypertext link) */
-		union {string, null} title = null;
+		union {null, string} title = null;			// CHANGED IN 1.8
 	}
 	
 	/**
@@ -168,7 +171,7 @@ protocol G_DataTypes {
 	 */
 	record G_GeoData {
 		/** an address or other place reference; unstructured text field */
-		union {string, null} text = null;
+		union {null, string} text = null;			// CHANGED IN 1.8
 		
 		/** latitude */
 		union {double, null} lat = null;
@@ -177,7 +180,7 @@ protocol G_DataTypes {
 		union {double, null} lon = null;
 		
 		/** ISO 3 digit country code */
-		union {string, null} cc = null;
+		union {null, string} cc = null;				// CHANGED IN 1.8
 	}
 
 	/**
@@ -353,7 +356,7 @@ protocol G_DataTypes {
 		string key;
 		
 		/** user-friendly short-text for key (displayable) */
-		union {string, null} friendlyText = null;
+		union {null, string} friendlyText = null;			// CHANGED IN 1.8
 		
 		/** range of values */
 		union {G_SingletonRange, G_ListRange, G_BoundedRange, G_DistributionRange} range = null; // CHANGED IN 1.6
@@ -400,10 +403,10 @@ protocol G_DataTypes {
 		array<G_LinkTag> tags;
 		
 		/** source entity uid */
-		union {string, null} source = null;
+		union {null, string} source = null;				// CHANGED IN 1.8
 		
 		/** target entity uid */
-		union {string, null} target = null;
+		union {null, string} target = null;				// CHANGED IN 1.8
 		
 		/** true if directed, false if undirected */
 		boolean directed = true;
@@ -441,10 +444,10 @@ protocol G_DataTypes {
 		array<string> subclusters;
 		
 		/** The id of the parent cluster if this is a cluster in a hierarchy - Can be null if this is a root cluster **/
-		union {string, null} parent = null;
+		union {null, string} parent = null;				// CHANGED IN 1.8
 		
 		/** The id of the root cluster (top level cluster) if this is a cluster in a hierarchy - Can be null if this is a root cluster **/
-		union {string, null} root = null;
+		union {null, string} root = null;				// CHANGED IN 1.8
 		
 		/** The degree from the root this cluster is in the hierarchy - level = 0 if this is a root cluster **/
 		int level = 0;
@@ -465,7 +468,7 @@ protocol G_DataTypes {
 		string label;
 		
 		/** uid of the service task is running on */
-		union {string, null} service = null;
+		union {null, string} service = null;			// CHANGED IN 1.8
 		
 		/** date/time task was started */
 		long started;

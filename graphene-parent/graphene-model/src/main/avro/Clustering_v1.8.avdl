@@ -28,7 +28,7 @@
  Services for clustering
 */
 protocol G_Clustering {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 	
 	/**
 	 Clusters the specified entities and returns the resulting set of clusters (if entities are hierarchically 

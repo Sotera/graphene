@@ -28,7 +28,7 @@
  Data Access for clusters
 */
 protocol G_ClusteringDataAccess {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 
 	/**
 	 Sort type for transactions
@@ -157,7 +157,7 @@ protocol G_ClusteringDataAccess {
 		union {G_LinkTag, null} tag,
 		union {G_DateRange, null} date,
 		string entitiesContextId,
-		union {string, null} focusContextId);
+		union {null, string} focusContextId);		// CHANGED IN 1.8
 	
 	/**
 	 Returns links to other entities related to specify entities.  Each Link returned should
@@ -185,7 +185,7 @@ protocol G_ClusteringDataAccess {
 		union {G_LinkTag, null} tag,
 		G_DateRange date,
 		string entitiesContextId,
-		union {string, null} focusContextId);
+		union {null, string} focusContextId);		// CHANGED IN 1.8
 	
 	/**
 	 Returns links to other entities related to specify entities. Each link returned should

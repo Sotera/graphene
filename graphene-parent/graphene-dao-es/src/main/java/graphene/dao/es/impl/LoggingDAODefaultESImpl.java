@@ -4,12 +4,12 @@ import graphene.dao.LoggingDAO;
 import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserLoginEvent;
 import graphene.model.query.BasicQuery;
-import graphene.model.query.EntityQuery;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Search;
@@ -152,7 +152,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
+	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 			if (ValidationUtils.isValid(partialTerm)) {
@@ -178,11 +178,11 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 				.setParameter("from", offset).setParameter("size", limit).build();
 		System.out.println(searchSourceBuilder.toString());
 		JestResult result;
-		List<EntityQuery> returnValue = new ArrayList<EntityQuery>(0);
+		List<G_EntityQuery> returnValue = new ArrayList<G_EntityQuery>(0);
 		try {
 			result = c.getClient().execute(search);
 			// System.out.println(result);
-			returnValue = result.getSourceAsObjectList(EntityQuery.class);
+			returnValue = result.getSourceAsObjectList(G_EntityQuery.class);
 
 			// for (final EntityQuery u : returnValue) {
 			// System.out.println(u);
@@ -280,7 +280,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public void recordQuery(final BasicQuery q) {
+	public void recordQuery(final G_EntityQuery q) {
 		if (ValidationUtils.isValid(q)) {
 			// if (q.getId() == null) {
 			q.setId(saveObject(q, q.getId(), indexName, searchQueryType, false));

@@ -72,13 +72,21 @@ public class EntityDAOImpl implements EntityDAO {
 		final Set<String> matches = dao.entityIDsByAdvancedSearch(srch);
 		if (matches != null) {
 			for (final String s : matches) {
+				
+				G_Entity.Builder entityBuilder = G_Entity.newBuilder();
+				
+				entityBuilder.setProvenance(new G_Provenance(srch.getSource()));
+				entityBuilder.setUncertainty(G_Uncertainty.newBuilder().setConfidence(1.0d).build());
+				
 				final List<G_EntityTag> tagList = new ArrayList<G_EntityTag>(1);
 				tagList.add(G_EntityTag.FILE);
-				final G_Provenance prov = new G_Provenance(srch.getSource());
-				final G_Uncertainty uncertainty = new G_Uncertainty(1.0d);
-				final G_Property property = new PropertyHelper(G_PropertyTag.LABEL, s);
-				final G_Entity e = new EntityHelper(s, tagList, prov, uncertainty, Collections.singletonList(property));// srch.getSource(),
-																														// s);
+				entityBuilder.setTags(tagList);
+
+				List<G_Property> props = new ArrayList<G_Property>();
+				props.add(new PropertyHelper(G_PropertyTag.LABEL, s));
+				entityBuilder.setProperties(props);
+	
+				final G_Entity e = entityBuilder.build();
 				e.setUid(s);
 				// if (e.getProperties() == null) {
 				updateAllFields(e);
@@ -86,6 +94,7 @@ public class EntityDAOImpl implements EntityDAO {
 				results.add(e);
 			}
 		}
+		
 		return results;
 	}
 

@@ -8,9 +8,9 @@ import graphene.dao.DocumentBuilder;
 import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 import graphene.util.G_CallBack;
 import graphene.util.validator.ValidationUtils;
@@ -69,14 +69,14 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 	}
 
 	@Override
-	public long count(final EntityQuery pq) throws Exception {
+	public long count(final G_EntityQuery pq) throws Exception {
 		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getAttributeList())) {
 			pq.getAttributeList().get(0);
-			String schema = pq.getSchema();
+			String schema = pq.getTargetSchema();
 			if (!ValidationUtils.isValid(schema)) {
 				schema = c.getIndexName();
 			}
-			final String term = pq.getAttributeList().get(0).getValue();
+			final String term = (String) pq.getAttributeList().get(0).getValue();
 			final long x = c.performCount(null, host, schema, "_all", "", term);
 			return x;
 		}
@@ -85,10 +85,10 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 	}
 
 	@Override
-	public List<Object> findById(final EntityQuery pq) {
+	public List<Object> findById(final G_EntityQuery pq) {
 		logger.debug("Query " + pq);
 		final List<Object> objects = new ArrayList<Object>();
-		String schema = pq.getSchema();
+		String schema = pq.getTargetSchema();
 		if (!ValidationUtils.isValid(schema)) {
 			schema = indexName;
 		}
@@ -168,13 +168,13 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 	}
 
 	@Override
-	public List<Object> findByQuery(final EntityQuery pq) throws Exception {
+	public List<Object> findByQuery(final G_EntityQuery pq) throws Exception {
 		final GrapheneResults<Object> gr = findByQueryWithMeta(pq);
 		return gr.getResults();
 	}
 
 	@Override
-	public GrapheneResults<Object> findByQueryWithMeta(final EntityQuery pq) throws Exception {
+	public GrapheneResults<Object> findByQueryWithMeta(final G_EntityQuery pq) throws Exception {
 		final GrapheneResults<Object> results = new GrapheneResults<Object>();
 		final List<Object> objects = new ArrayList<Object>();
 
@@ -235,8 +235,8 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 	}
 
 	@Override
-	public boolean performCallback(final long offset, final long maxResults, final G_CallBack<Object, EntityQuery> cb,
-			final EntityQuery q) {
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack<Object, G_EntityQuery> cb,
+			final G_EntityQuery q) {
 		// TODO Auto-generated method stub
 		try {
 			for (final Object obj : findByQuery(q)) {

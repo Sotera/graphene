@@ -1,11 +1,11 @@
 package graphene.dao;
 
 import graphene.business.commons.exception.DataAccessException;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_UserLoginEvent;
 import graphene.model.query.BasicQuery;
-import graphene.model.query.EntityQuery;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public interface LoggingDAO {
 
 	List<G_GraphViewEvent> getGraphViewEvents(String userId, int offset, int limit);
 
-	List<EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
+	List<G_EntityQuery> getQueries(String userId, String partialTerm, int offset, int limit);
 
 	List<G_ReportViewEvent> getReportViewEvents(String userId, int offset, int limit);
 
@@ -54,7 +54,7 @@ public interface LoggingDAO {
 	 * @param sq
 	 *            The entity query initiated by the user
 	 */
-	void recordQuery(BasicQuery sq);
+	void recordQuery(G_EntityQuery sq);
 
 	/**
 	 * For recording query terms (or queries that were executed, with all their

@@ -2,9 +2,10 @@
 /**
 */
 protocol G_UserSpaceDataTypes {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 	import idl "CommonDataTypes_v4.1.avdl";
 	import idl "SecurityDataTypes_v4.1.avdl";
+	import idl "Search_v1.8.avdl";
 	
 	enum G_WorkspaceFields {
 		active,json,queries, datamap,description,title,id,modified,created
@@ -106,7 +107,7 @@ protocol G_UserSpaceDataTypes {
 		union {string, null} reports=null;
 		string title="untitled";
 		array<G_ReportViewEvent> savedReports;
-		array<@java-class("graphene.model.query.EntityQuery") string> queryObjects;
+		array<G_EntityQuery> queryObjects;
 		string id =null;
 			
 		 /** workspace's modified datetime */

@@ -6,11 +6,11 @@ import graphene.dao.GenericDAO;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.query.EntityQuery;
 import graphene.util.DataFormatConstants;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
@@ -46,7 +46,7 @@ import org.slf4j.Logger;
  * @param <T>
  */
 @UsesConfiguration(DocumentGraphParser.class)
-public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<T, EntityQuery> implements
+public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<T, G_EntityQuery> implements
 		HyperGraphBuilder<T> {
 
 	protected Collection<DocumentGraphParser> singletons;
@@ -80,7 +80,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		}
 	}
 
-	public void addGraphQueryPath(final V_GenericNode reportNode, final EntityQuery q) {
+	public void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q) {
 		if (enableGraphQueryPath && ValidationUtils.isValid(reportNode, q)) {
 			createEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
 					G_CanonicalRelationshipType.CONTAINED_IN.name());
@@ -174,7 +174,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 	 * @see graphene.services.HyperGraphBuilder#getDAO()
 	 */
 	@Override
-	public abstract GenericDAO<T, EntityQuery> getDAO();
+	public abstract GenericDAO<T, G_EntityQuery> getDAO();
 
 	public void inheritLabelIfNeeded(final V_GenericNode a, final V_GenericNode... nodes) {
 		for (final V_GenericNode n : nodes) {
@@ -198,7 +198,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		edgeMap = new HashMap<String, V_GenericEdge>();
 		edgeList = new V_EdgeList(graphQuery);
 		scannedQueries = new HashSet<String>();
-		queriesToRun = new PriorityQueue<EntityQuery>(10, new ScoreComparator());
+		queriesToRun = new PriorityQueue<G_EntityQuery>(10, new ScoreComparator());
 		V_NodeList savNodeList = new V_NodeList();
 
 		if (graphQuery.getMaxHops() <= 0) {
@@ -211,20 +211,21 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		String strStatus = "Graph Loaded";
 		// Set<String> scannedStrings = new HashSet<String>();
 
-		EntityQuery eq = new EntityQuery();
+		G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
+//		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		final G_IdType nodeType = nodeTypeAccess.getCommonNodeType(G_CanonicalPropertyType.ANY);
 		for (final String id : graphQuery.getSearchIds()) {
-			eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
+			queryBuilder.getAttributeList().add(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
-		queriesToRun.add(eq);
+		queriesToRun.add(queryBuilder.build());
 
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
 		int currentDegree = 0;
 		for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
 				&& (nodeList.getNodes().size() < graphQuery.getMaxNodes()); currentDegree++) {
-			eq = null;
+			G_EntityQuery eq = null;
 			logger.debug("$$$$There are " + queriesToRun.size() + " queries to run in the current degree.");
 			while ((queriesToRun.size() > 0) && ((eq = queriesToRun.poll()) != null)
 					&& (nodeList.getNodes().size() < graphQuery.getMaxNodes())) {
@@ -321,7 +322,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		// default blank
 	}
 
-	public void removeGraphQueryPath(final V_GenericNode reportNode, final EntityQuery q) {
+	public void removeGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q) {
 		removeEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
 				G_CanonicalRelationshipType.CONTAINED_IN.name());
 	}

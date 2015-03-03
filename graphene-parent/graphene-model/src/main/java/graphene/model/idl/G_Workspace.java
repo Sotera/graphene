@@ -7,14 +7,14 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"savedReports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_ReportViewEvent\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"graphene.model.query.EntityQuery\"}}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":\"long\",\"doc\":\"workspace's created datetime\",\"default\":0}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Workspace\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"active\",\"type\":\"boolean\",\"default\":true},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"reports\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":null},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"untitled\"},{\"name\":\"savedReports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_ReportViewEvent\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"reportId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"reportPageLink\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"userName\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"}]}}},{\"name\":\"queryObjects\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_EntityQuery\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"targetSchema\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"firstResult\",\"type\":\"long\",\"default\":0},{\"name\":\"maxResult\",\"type\":\"long\",\"default\":0},{\"name\":\"userId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"None\"},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"None\"},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"attributeList\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"graphene.model.idl.G_SearchTuple\"}}},{\"name\":\"propertyMatchDescriptors\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_PropertyMatchDescriptor\",\"doc\":\"A PropertyDescriptor is used to describe a possible property that can be present in an entity or link. It describes \\n\\t a single property that can be used in a property search. It can optionally include example or suggested values \\n\\t for searching on.\\n\\t \\n\\t CHANGED IN 1.8\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field name or G_PropertyTag (or G_PathMatchTag) that could be searched on\"},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\n\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\n\\t\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]}],\"doc\":\"value of the Property to search on\",\"default\":null},{\"name\":\"variable\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"If not null/empty, the value is relative to a logical variable specified here (e.g. \\\"X\\\")\\n\\t\\t *  Other parameters using the same logical variable name are relative to this value.\\n\\t\\t *  For instance, for a {key=\\\"amount\\\", value=\\\"0.98\\\", variable=\\\"A\\\"} means that the value\\n\\t\\t *  of amount is 0.98A.  Another amount might be 0.55A, and the property match engine\\n\\t\\t *  (e.g. search engine, database query or pattern match algorithm) should understand\\n\\t\\t *  the relative values.\\n\\t\\t *  \\n\\t\\t *  If no variable is specified, then the value is an absolute number. For example,\\n\\t\\t *  {key=\\\"amount\\\", value=\\\"0.98\\\"} refers to an amount of exactly 0.98.\",\"default\":\"\"},{\"name\":\"weight\",\"type\":[\"float\",\"null\"],\"doc\":\"Relative importance of this match criteria, where the default is 1.0.\",\"default\":1.0},{\"name\":\"similarity\",\"type\":[\"float\",\"null\"],\"doc\":\"Require similarity for fuzzy searches, the default is null.\",\"default\":1.0},{\"name\":\"include\",\"type\":\"boolean\",\"doc\":\"If true, INCLUDE all values matching this descriptor. If false, EXCLUDE all values matching this descriptor.\",\"default\":true},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\n\\n\\t ADDED IN 1.8\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\"]},\"null\"],\"doc\":\"MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT\"},{\"name\":\"typeMappings\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\n\\n\\t\\tADDED IN 1.8\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}},\"doc\":\"List of type mappings to match in *\",\"default\":null}]}}},{\"name\":\"filters\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}},{\"name\":\"caseSensitive\",\"type\":\"boolean\",\"default\":false},{\"name\":\"searchFreeText\",\"type\":\"boolean\",\"default\":false},{\"name\":\"minimumScore\",\"type\":\"double\",\"default\":0.25},{\"name\":\"initiatorId\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":null},{\"name\":\"modified\",\"type\":\"long\",\"doc\":\"workspace's modified datetime\",\"default\":0},{\"name\":\"created\",\"type\":\"long\",\"doc\":\"workspace's created datetime\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private boolean active;
    private java.lang.String description;
    private java.lang.String reports;
    private java.lang.String title;
    private java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports;
-   private java.util.List<graphene.model.query.EntityQuery> queryObjects;
+   private java.util.List<graphene.model.idl.G_EntityQuery> queryObjects;
    private java.lang.String id;
   /** workspace's modified datetime */
    private long modified;
@@ -31,7 +31,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String reports, java.lang.String title, java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports, java.util.List<graphene.model.query.EntityQuery> queryObjects, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
+  public G_Workspace(java.lang.Boolean active, java.lang.String description, java.lang.String reports, java.lang.String title, java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports, java.util.List<graphene.model.idl.G_EntityQuery> queryObjects, java.lang.String id, java.lang.Long modified, java.lang.Long created) {
     this.active = active;
     this.description = description;
     this.reports = reports;
@@ -68,7 +68,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     case 2: reports = (java.lang.String)value$; break;
     case 3: title = (java.lang.String)value$; break;
     case 4: savedReports = (java.util.List<graphene.model.idl.G_ReportViewEvent>)value$; break;
-    case 5: queryObjects = (java.util.List<graphene.model.query.EntityQuery>)value$; break;
+    case 5: queryObjects = (java.util.List<graphene.model.idl.G_EntityQuery>)value$; break;
     case 6: id = (java.lang.String)value$; break;
     case 7: modified = (java.lang.Long)value$; break;
     case 8: created = (java.lang.Long)value$; break;
@@ -154,7 +154,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * Gets the value of the 'queryObjects' field.
    */
-  public java.util.List<graphene.model.query.EntityQuery> getQueryObjects() {
+  public java.util.List<graphene.model.idl.G_EntityQuery> getQueryObjects() {
     return queryObjects;
   }
 
@@ -162,7 +162,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
    * Sets the value of the 'queryObjects' field.
    * @param value the value to set.
    */
-  public void setQueryObjects(java.util.List<graphene.model.query.EntityQuery> value) {
+  public void setQueryObjects(java.util.List<graphene.model.idl.G_EntityQuery> value) {
     this.queryObjects = value;
   }
 
@@ -237,7 +237,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.String reports;
     private java.lang.String title;
     private java.util.List<graphene.model.idl.G_ReportViewEvent> savedReports;
-    private java.util.List<graphene.model.query.EntityQuery> queryObjects;
+    private java.util.List<graphene.model.idl.G_EntityQuery> queryObjects;
     private java.lang.String id;
     private long modified;
     private long created;
@@ -454,12 +454,12 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
     }
 
     /** Gets the value of the 'queryObjects' field */
-    public java.util.List<graphene.model.query.EntityQuery> getQueryObjects() {
+    public java.util.List<graphene.model.idl.G_EntityQuery> getQueryObjects() {
       return queryObjects;
     }
     
     /** Sets the value of the 'queryObjects' field */
-    public graphene.model.idl.G_Workspace.Builder setQueryObjects(java.util.List<graphene.model.query.EntityQuery> value) {
+    public graphene.model.idl.G_Workspace.Builder setQueryObjects(java.util.List<graphene.model.idl.G_EntityQuery> value) {
       validate(fields()[5], value);
       this.queryObjects = value;
       fieldSetFlags()[5] = true;
@@ -560,7 +560,7 @@ public class G_Workspace extends org.apache.avro.specific.SpecificRecordBase imp
         record.reports = fieldSetFlags()[2] ? this.reports : (java.lang.String) defaultValue(fields()[2]);
         record.title = fieldSetFlags()[3] ? this.title : (java.lang.String) defaultValue(fields()[3]);
         record.savedReports = fieldSetFlags()[4] ? this.savedReports : (java.util.List<graphene.model.idl.G_ReportViewEvent>) defaultValue(fields()[4]);
-        record.queryObjects = fieldSetFlags()[5] ? this.queryObjects : (java.util.List<graphene.model.query.EntityQuery>) defaultValue(fields()[5]);
+        record.queryObjects = fieldSetFlags()[5] ? this.queryObjects : (java.util.List<graphene.model.idl.G_EntityQuery>) defaultValue(fields()[5]);
         record.id = fieldSetFlags()[6] ? this.id : (java.lang.String) defaultValue(fields()[6]);
         record.modified = fieldSetFlags()[7] ? this.modified : (java.lang.Long) defaultValue(fields()[7]);
         record.created = fieldSetFlags()[8] ? this.created : (java.lang.Long) defaultValue(fields()[8]);
