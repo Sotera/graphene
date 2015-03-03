@@ -1,5 +1,10 @@
 package graphene.dao.es;
 
+import graphene.model.idl.G_SearchTuple;
+import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_SymbolConstants;
+import graphene.model.query.EntityQuery;
+import graphene.util.G_CallBack;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Count;
@@ -8,10 +13,14 @@ import io.searchbox.core.Delete;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.core.Search.Builder;
+import io.searchbox.core.SearchScroll;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.IndicesExists;
+import io.searchbox.params.Parameters;
+import io.searchbox.params.SearchType;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -24,6 +33,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
@@ -32,10 +42,14 @@ import com.google.gson.JsonObject;
  * on how to set up the constructor and post injection initializer.
  * 
  * @author djue
+ * @param <T>
+ * @param <QUERYOBJECT>
  * 
  */
-public class BasicESDAO {
+public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 
+	private static final int MAX_TO_GET_AT_ONCE = 1000000;
+	private static final int PAGESIZE = 200;
 	protected ObjectMapper mapper;
 	private String index;
 	protected Logger logger;
@@ -48,6 +62,9 @@ public class BasicESDAO {
 	@Inject
 	@Symbol(JestModule.ES_DEFAULT_TIMEOUT)
 	protected String defaultESTimeout;
+	@Inject
+	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+	protected long defaultMaxSearchResults;
 
 	public long count() {
 		final String query = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).toString();
@@ -97,9 +114,26 @@ public class BasicESDAO {
 		c.deleteIndex(indexName);
 	}
 
-	protected JestResult getAllResults() {
+	public boolean exists(final String id) {
+		final String query = new SearchSourceBuilder().query(
+				QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("_id", id)))
+				.toString();
+		try {
+			final CountResult result = c.getClient().execute(
+					new Count.Builder().query(query).addIndex(index).addType(type)
+							.setParameter("timeout", defaultESTimeout).build());
+			logger.debug("Exists found count " + result.getCount());
+			return (result.getCount() > 0);
+		} catch (final Exception e) {
+			logger.error("Error determining existence " + e.getMessage());
+		}
+		logger.error("Error determining existence ");
+		return false;
+	}
+
+	public JestResult getAllResults() {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(200000);
+		searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(MAX_TO_GET_AT_ONCE);
 		// .sort("modified")
 		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
 				.setParameter("timeout", defaultESTimeout).build();
@@ -203,6 +237,26 @@ public class BasicESDAO {
 		return result;
 	}
 
+	public JestResult getSpecifiedFields(final String... field) {
+		JestResult result = new JestResult(null);
+		final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery())
+				.size(MAX_TO_GET_AT_ONCE).sort("_id");
+		if (ValidationUtils.isValid(field)) {
+			ssb.fields(field);
+		}
+		final Search search = new Search.Builder(ssb.toString()).addIndex(index).addType(type)
+				.setParameter("timeout", defaultESTimeout).build();
+		logger.debug(ssb.toString());
+
+		try {
+
+			result = c.getClient().execute(search);
+		} catch (final Exception e) {
+			logger.error("Problem getting by ids with field: " + field, e.getMessage());
+		}
+		return result;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -237,6 +291,54 @@ public class BasicESDAO {
 		} else {
 			logger.error("Could not check for existance of index because index variable was not defined.");
 		}
+	}
+
+	public boolean performCallback(final long offset, final long maxResults,
+			final G_CallBack<JestResult, EntityQuery> cb, final EntityQuery q) {
+		JestResult result = new JestResult(null);
+		final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).sort("_id");
+
+		final ArrayList<String> excludes = new ArrayList<String>();
+		for (final G_SearchTuple<String> a : q.getAttributeList()) {
+			if (a.getSearchType().equals(G_SearchType.COMPARE_NOTINCLUDE)) {
+				excludes.add(a.getValue());
+			}
+		}
+		if (ValidationUtils.isValid(excludes)) {
+			ssb.fetchSource(null, excludes.toArray(new String[excludes.size()]));
+		}
+		/**
+		 * Make a search object first.
+		 */
+		final Search search = new Search.Builder(ssb.toString()).addIndex(index).addType(type)
+				.setParameter(Parameters.SIZE, PAGESIZE).setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+				.setParameter("timeout", defaultESTimeout).setParameter(Parameters.SCROLL, "5m").build();
+		logger.debug(ssb.toString());
+
+		try {
+			result = c.getClient().execute(search);
+			// The first query will not have any results, just the scroll id
+			assert (result.isSucceeded());
+			String scrollId = result.getJsonObject().get("_scroll_id").getAsString();
+			logger.debug(" scan completed, scroll id is " + scrollId);
+			int currentResultSize = 0;
+			int pageNumber = 1;
+			do {
+				final SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
+				result = c.getClient().execute(scroll);
+				scrollId = result.getJsonObject().get("_scroll_id").getAsString();
+				final JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
+				currentResultSize = hits.size();
+				logger.debug("finished scrolling page # " + pageNumber++ + " which had " + currentResultSize + " hits.");
+				cb.callBack(result, q);
+			} while (currentResultSize > 0);
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+			logger.error("Problem in callback " + e.getMessage());
+		}
+		return true;
+
 	}
 
 	public void recreateIndex() {

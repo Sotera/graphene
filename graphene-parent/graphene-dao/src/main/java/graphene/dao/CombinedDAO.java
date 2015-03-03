@@ -1,5 +1,6 @@
 package graphene.dao;
 
+import graphene.model.idl.G_SearchResults;
 import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 
@@ -16,6 +17,8 @@ public interface CombinedDAO extends GenericDAO<Object, EntityQuery> {
 
 	public abstract List<Object> findById(EntityQuery pq);
 
-	public abstract GrapheneResults<Object> findByQueryWithMeta(EntityQuery pq)
-			throws Exception;
+	@Deprecated
+	public abstract GrapheneResults<Object> findByQueryWithMeta(EntityQuery pq) throws Exception;
+
+	public abstract G_SearchResults findByQueryWithMeta2(EntityQuery pq) throws Exception;
 }

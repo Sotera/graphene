@@ -1,9 +1,11 @@
 package graphene.dao;
 
+import graphene.model.idl.G_Property;
 import graphene.model.query.EntityQuery;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +111,10 @@ public interface DocumentGraphParser<T> {
 	 */
 	public boolean parse(Object obj, EntityQuery q);
 
+	@Deprecated
 	public abstract T populateExtraFields(T theEvent, EntityQuery q);
+
+	public Collection<? extends G_Property> populateSearchResult(T theEvent, EntityQuery sq);
 
 	/**
 	 * @param phgb

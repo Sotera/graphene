@@ -2,21 +2,18 @@ package graphene.model.view;
 
 import java.util.List;
 
+@Deprecated
 public class GrapheneResults<T> {
 	private int numberOfResultsReturned = 0;
 	private double maxScore = 0.0d;
 
-	public double getMaxScore() {
-		return maxScore;
-	}
-
-	public void setMaxScore(double maxScore) {
-		this.maxScore = maxScore;
-	}
-
 	private int numberOfResultsTotal = 0;
 
 	List<T> results;
+
+	public double getMaxScore() {
+		return maxScore;
+	}
 
 	/**
 	 * @return the numberOfResultsReturned
@@ -39,11 +36,15 @@ public class GrapheneResults<T> {
 		return results;
 	}
 
+	public void setMaxScore(final double maxScore) {
+		this.maxScore = maxScore;
+	}
+
 	/**
 	 * @param numberOfResultsReturned
 	 *            the numberOfResultsReturned to set
 	 */
-	public final void setNumberOfResultsReturned(int numberOfResultsReturned) {
+	public final void setNumberOfResultsReturned(final int numberOfResultsReturned) {
 		this.numberOfResultsReturned = numberOfResultsReturned;
 	}
 
@@ -51,7 +52,7 @@ public class GrapheneResults<T> {
 	 * @param numberOfResultsTotal
 	 *            the numberOtResultsTotal to set
 	 */
-	public final void setNumberOfResultsTotal(int numberOfResultsTotal) {
+	public final void setNumberOfResultsTotal(final int numberOfResultsTotal) {
 		this.numberOfResultsTotal = numberOfResultsTotal;
 	}
 
@@ -59,7 +60,7 @@ public class GrapheneResults<T> {
 	 * @param results
 	 *            the results to set
 	 */
-	public final void setResults(List<T> results) {
+	public final void setResults(final List<T> results) {
 		this.results = results;
 	}
 }

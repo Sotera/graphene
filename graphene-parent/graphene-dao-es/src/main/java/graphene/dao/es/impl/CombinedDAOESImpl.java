@@ -8,6 +8,8 @@ import graphene.dao.DocumentBuilder;
 import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
+import graphene.model.idl.G_SearchResult;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.query.EntityQuery;
@@ -77,7 +79,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 				schema = c.getIndexName();
 			}
 			final String term = pq.getAttributeList().get(0).getValue();
-			final long x = c.performCount(null, host, schema, "_all", "", term);
+			final long x = c.performCount(null, host, schema, null, null, term);
 			return x;
 		}
 		logger.warn("Did not find any values for " + pq);
@@ -211,9 +213,44 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 	}
 
 	@Override
+	public G_SearchResults findByQueryWithMeta2(final EntityQuery pq) throws Exception {
+		final G_SearchResults results = new G_SearchResults();
+		final List<G_SearchResult> objects = new ArrayList<G_SearchResult>();
+
+		final String _qResp = c.performQuery(null, host, pq);
+
+		JsonNode rootNode;
+		rootNode = mapper.readValue(_qResp, JsonNode.class);
+		Long totalNumberOfPossibleResults = 0l;
+		if ((rootNode != null) && (rootNode.get("hits") != null) && (rootNode.get("hits").get("total") != null)) {
+			totalNumberOfPossibleResults = rootNode.get("hits").get("total").asLong();
+			logger.debug("Found " + totalNumberOfPossibleResults + " hits in hitparent!");
+			results.setTotal(totalNumberOfPossibleResults);
+			final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
+			final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
+
+			// Go through the results, and keep a map of
+			// id->DocumentGraphParser.SCORE, as well as
+			// ids to fetch
+			logger.debug("actualListOfHits was serialized into  " + actualListOfHits.size() + " object(s)");
+			for (int i = 0; i < actualListOfHits.size(); i++) {
+				final JsonNode currentHit = actualListOfHits.get(i);
+				if (ValidationUtils.isValid(currentHit)) {
+					final G_SearchResult entity = db.buildSearchResultFromDocument(i, currentHit, pq);
+					objects.add(entity);
+				} else {
+					logger.error("Invalid search result at index " + i + " for query " + pq.toString());
+				}
+			}
+		}
+
+		results.setResults(objects);
+		return results;
+	}
+
+	@Override
 	public List<Object> getAll(final long offset, final long maxResults) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAllResults().getSourceAsObjectList(Object.class);
 	}
 
 	@Override
@@ -235,8 +272,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 	}
 
 	@Override
-	public boolean performCallback(final long offset, final long maxResults, final G_CallBack<Object, EntityQuery> cb,
-			final EntityQuery q) {
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final EntityQuery q) {
 		// TODO Auto-generated method stub
 		try {
 			for (final Object obj : findByQuery(q)) {

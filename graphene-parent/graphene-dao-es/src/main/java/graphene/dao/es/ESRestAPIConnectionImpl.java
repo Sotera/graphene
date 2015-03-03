@@ -182,17 +182,26 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 					.setParameter("timeout", defaultESTimeout);
 			if (ValidationUtils.isValid(term)) {
 				final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-				final QueryBuilder qb = QueryBuilders.matchQuery(fieldName, term);
-				final SearchSourceBuilder query = searchSourceBuilder.query(qb);
 
+				QueryBuilder qb;
+				if (ValidationUtils.isValid(fieldName)) {
+					qb = QueryBuilders.matchPhraseQuery(fieldName, term);
+				} else {
+					qb = QueryBuilders.matchPhraseQuery("_all", term);
+				}
+				final SearchSourceBuilder query = searchSourceBuilder.query(qb);
 				action.query(query.toString());
+				logger.debug(query.toString());
 			}
 			if (ValidationUtils.isValid(index)) {
 				action.addIndex(index);
+				logger.debug("index: " + index);
 			}
 			if (ValidationUtils.isValid(type)) {
 				action.addType(type);
+				logger.debug("type: " + type);
 			}
+
 			final CountResult result = client.execute(action.build());
 			final long longCount = result.getCount().longValue();
 			logger.debug("Found a count of: " + longCount);

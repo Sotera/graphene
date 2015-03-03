@@ -34,7 +34,7 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 public class DAOModule {
 
 	public static void bind(final ServiceBinder binder) {
-		binder.bind(G_UserDataAccess.class, UserServiceImpl.class).eagerLoad();
+		binder.bind(G_UserDataAccess.class, UserServiceImpl.class);
 		binder.bind(EventServer.class, EventServerImpl.class);
 		binder.bind(FederatedPropertyGraphServer.class, FederatedPropertyGraphImpl.class);
 		binder.bind(FederatedEventGraphServer.class, FederatedEventGraphImpl.class);
