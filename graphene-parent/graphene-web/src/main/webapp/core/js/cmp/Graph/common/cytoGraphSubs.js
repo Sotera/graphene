@@ -29,7 +29,6 @@ function CytoGraphVis(inId) {
 			lineColor: "black",
 			defaultNode:  '#00FFFF',
 			selectedNode: 'DarkBlue',
-			//searchedNode: '#FF0000',
 			defaultEdge:  '#23A4FF',
 			selectedEdge: '#0B0B0B',
 			expandedDefNode: '#F66CFB',
@@ -41,10 +40,10 @@ function CytoGraphVis(inId) {
 			incomingHoverTextColor: "#FF8040",
 			incomingHoverColor: "#111111",
 			incomingHoverSize: 2,
-			//expandedDefEdge: '#BE26C4',
 
 			borderWidth: 3,
 			borderColor: "black",
+			borderStyle: "solid", // or "dotted" or "dashed"
 			
 			fillColor: "rgba(0, 0, 200, 0.75)",
 			activeFillColor: "rgba(92, 194, 237, 0.75)",
@@ -54,6 +53,8 @@ function CytoGraphVis(inId) {
 		};
 		return _legend[key];
 	};
+	
+	this.utils = new Utils(this);
 	
 	var _layoutManager = new LayoutManager(this);
 	var _stateManager = new StateManager(this);
@@ -85,22 +86,23 @@ function CytoGraphVis(inId) {
 	this.hideEdge = _stateManager.hideEdge;
 };
 
-/*
+/**
  *	Initialize this graph wrapper div with a cytoscape graph.
  *		config:Object - configuration parameters
  *		owner:Object - Reference to the parent display that houses this graph visualization (useful for scope)
  *		callbackFn:Function - (Optional) a callback function executed after cytoscape initializes the graph
- *		
+ *		isUndirected:Boolean - (Optional) a flag to change the styling of the graph to prevent implication of directed edges		
+ *
  *		note: anything else passed to this function will be given to callbackFn as parameters
  */
-CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...args]*/ ) {
+CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, isUndirected, ...args]*/ ) {
 	var _this = this;
 	
 	var args = [].slice.apply(arguments);
 	var config = args.shift();
 	var owner = args.shift();
 	var onLoadCallback = args.shift();
-	var isEntityGraph = args.shift();
+	var isUndirected = args.shift();
 	// at this point, args is an array of whatever other arguments were passed to this function
 	
 	if (typeof config.width !== "undefined") _this.dispWidth = config.width;
@@ -160,7 +162,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 				'width': 'data(size)' + 5,//_this.CONSTANTS("selectedNodeSize"),  
 				'height': 'data(size)' + 5//_this.CONSTANTS("selectedNodeSize")
 			});
-			if (isEntityGraph) {
+			if (isUndirected) {
 				style.selector("edge").css({
 					'curve-style': 'haystack',	// !
 					'haystack-radius': 0,		// !
@@ -217,7 +219,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 			});
 			style.selector("node.super-node").css({
 				'border-width': _this.CONSTANTS("borderWidth"),
-				'border-style': 'solid', // currently does not modify anything
+				'border-style': _this.CONSTANTS("borderStyle"),
 				'border-color': _this.CONSTANTS("borderColor")
 			});
 			
@@ -368,7 +370,7 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, ...ar
 	});
 };
 
-/*
+/**
  *	Define the event handlers for user-interaction with this graph.
  */
 CytoGraphVis.prototype.setHandlers = function() {
@@ -524,7 +526,7 @@ CytoGraphVis.prototype.reset = function() {
 	this.changeLayout(this.CONSTANTS("defaultLayout"), {});
 };
 
-/*
+/**
  *	Show all elements on this graph and toggle their class appropriately
  */
 CytoGraphVis.prototype.showAll = function(isFilter) {
@@ -544,7 +546,7 @@ CytoGraphVis.prototype.showAll = function(isFilter) {
 	});
 };
 
-/*
+/**
  *	Load the following json into cytoscape for processing.
  *		json:Object - json representation of the graph
  *		name:String - identifier of the root node/entity 
@@ -594,7 +596,7 @@ CytoGraphVis.prototype.clear = function() {
 	this.gv.elements().remove();
 };
 
-/*
+/**
  * 	Given a sub-graph and a central node, place the expanded nodes in an orbit
  *	around the "Origin Node".  Note: this method does not determine what the expanded,
  *	or 1-hop, graph will be.
@@ -630,28 +632,6 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 		return false;
 	};
 	
-	// randomly select an edge attached to this node and use it to push it away from the rest of the graph
-	/*
-	try {
-		var connectedNodes = innode.connectedEdges().connectedNodes();
-		var neighbor = null;
-		connectedNodes.each(function(i, n) {
-			if (n.data().id != innode.data().id) {
-				neighbor = n;
-				return;
-			}
-		});
-		var n_pos = neighbor.position();
-		var dx = pos.x - n_pos.x;
-		var dy = pos.y - n_pos.y;
-		var newX = pos.x + dx * 1.5;
-		var newY = pos.y + dy * 1.5;
-		innode.position({x: newX, y: newY});
-		pos = innode.position();
-	} catch(e) {
-		console.log(e.message);
-	}
-	*/
 	var nodes = json.nodes;
 	for (var i = 0; i < nodes.length; i++) {
 		var node = nodes[i];
@@ -722,7 +702,7 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	return retJson;
 };
 
-/*
+/**
  * 	Delete all leaf nodes from the given node, essentially undoing a 1-hop expansion.
  *  Note: any edges that were created to existing nodes will remain
  *  	innode:Cytoscape Node - "Origin Node" from which to retract all leaf nodes
@@ -734,20 +714,11 @@ CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	var nonLeafNodeIDs = [];
 	
 	// TODO: make a public function somewhere
-	var _isLeaf = function(node) {
-		var possibleNeighbors = node.connectedEdges().connectedNodes();
-		var confirmedNeighbors = [];
-		possibleNeighbors.each(function(index, n) {
-			if (n.data("id") != node.data("id")) {
-				confirmedNeighbors.push(n.data("id"));
-			}
-		});
-		return confirmedNeighbors.length == 1;
-	};
+	
 	
 	// "[?expanded]" filters for all elements which element.data("expanded") == true
 	innode.connectedEdges("[?expanded]").connectedNodes().each(function(i, n) {
-		if ( _isLeaf(n) ) { 
+		if ( _this.utils.isLeaf(n) ) { 
 			if (n.data("id") !== innode.data("id")) {
 				nodesToDelete.push(n);
 			}
@@ -789,7 +760,7 @@ function LayoutManager(graphRef) {
 	
 	var _registeredLayouts = {};
 	
-	/*
+	/**
 	 *	Returns an array of the currently registered layouts whose names match any of the
 	 *	key strings passed as this function's array parameter.
 	 *		keysArr:Array - (optional) array containing layout identifier strings.  Only layouts
@@ -798,6 +769,7 @@ function LayoutManager(graphRef) {
 	 *						config options for that layout.
 	 */
 	this.getRegisteredLayouts = function(keysArr) {
+		
 		var arr = [];
 		var returnAll = true;
 		if (typeof keysArr == "undefined") { keysArr = []; }
@@ -814,9 +786,7 @@ function LayoutManager(graphRef) {
 			for (var prop in layout) {
 				if (!layout.hasOwnProperty(prop)) continue;
 				var val = layout[prop];
-				//if (typeof val !== "function") {
-					options[prop] = val;
-				//}
+				options[prop] = val;
 			}
 			
 			arr.push({
@@ -828,7 +798,7 @@ function LayoutManager(graphRef) {
 		return arr;
 	};
 	
-	/*
+	/**
 	 * private function to merge the properties of the two parameters, with optsToMerge having overwrite priority.
 	 *		baseOpts:Object - default configuration object
 	 *		optsToMerge:Object - overrides for the default configuration
@@ -853,7 +823,7 @@ function LayoutManager(graphRef) {
 		return mergedOptions;
 	};
 	
-	/*
+	/**
 	 *	Changes the current graph layout if layoutName matches a registered layout.
 	 *		layoutName:String - key to access the registered layouts
 	 *		config:Object - (optional) overrides for the layout's configuration
@@ -874,7 +844,7 @@ function LayoutManager(graphRef) {
 		}
 	};
 	
-	/*
+	/**
 	 *	Add a new layout option to the LayoutManager.
 	 *		layoutName:String - key to access the registered layouts
 	 *		config:Object - configuration parameters for this new layout
@@ -913,7 +883,7 @@ function LayoutManager(graphRef) {
 		}
 	};
 	
-	/*
+	/**
 	 *	For each Origin Node passed to this method, its leaf nodes will be repositioned to orbit around
 	 *	the Origin Node.  Neighbors to the Origin Node who have neighbors of their own will be untouched.
 	 *		nodelist:Object - Contains one or more "origin nodes" and an array of each one's leaves
@@ -984,7 +954,7 @@ function LayoutManager(graphRef) {
 	
 	this.registerLayout("breadthfirst", graphRef, {
 			name: "breadthfirst", fit: true, directed: true, padding: 15, circle: false, roots: undefined,
-			//maximalAdjustments: 20
+			maximalAdjustments: 20
 		},
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
@@ -1093,28 +1063,15 @@ function LayoutManager(graphRef) {
 			
 			var anodes = graphRef.gv.nodes();
 			var originNodes = {};
-
-			// TODO: make a public function somewhere
-			var _isLeaf = function(node) {
-				var possibleNeighbors = node.connectedEdges().connectedNodes();
-				var confirmedNeighbors = [];
-				possibleNeighbors.each(function(index, n) {
-					if (n.data().id != node.data().id) {
-						confirmedNeighbors.push(n.data().id);
-					}
-				});
-				return confirmedNeighbors.length == 1;
-			};
 			
 			// iterate over all nodes.  if a leaf is found, designate its single neighbor to be
 			// an "origin node".  Origin Nodes have an array of all their leaves. 
 			anodes.each(function(indx, node) {
-				if (_isLeaf(node)) {
+				if ( graphRef.utils.isLeaf(node) ) {
 					var neighbors = node.connectedEdges().connectedNodes();
 					neighbors.each(function(index, n) {
 						var neighborId = n.data().id;
 						if (neighborId != node.data().id) {
-							//node.data().color = "purple";
 							if (originNodes.hasOwnProperty(neighborId)) {
 								originNodes[neighborId].leaves.push(node);
 							} else {
@@ -1167,7 +1124,7 @@ function LayoutManager(graphRef) {
 function StateManager(graphRef) {
 	var _this = this;
 	
-	/*
+	/**
 	 *	Gather the metadata and graph JSON for this cytoscape graph and
 	 *	return it.
 	 *		returns json:Object
@@ -1188,7 +1145,7 @@ function StateManager(graphRef) {
 		return json;
 	};
 	
-	/*
+	/**
 	 *	Loads a pre-defined cytoscape graph's JSON object, preserving the elements'
 	 *	visibility and positions on the X/Y plane.
 	 *		json:Object - graph JSON to load into cytoscape.
@@ -1217,7 +1174,7 @@ function StateManager(graphRef) {
 		}
 	};
 	
-	/*
+	/**
 	 *	Remove (not hide) nodes from the cytosape graph AND the json representation
 	 *	stored by most parent containers of a graph.
 	 *		nodes:Array - cytosape nodes to be deleted
@@ -1370,7 +1327,7 @@ function DijkstraManager(graphRef) {
 			
 			if (graphRef.owner.getProgressBar) {
 				var pb = graphRef.owner.getProgressBar();
-				if (pb) pb.updateProgress(0, "Root node " + /*(id='" + node.data("id") + "') */ "selected.  Left-click another node to show the shortest path between them.");
+				if (pb) pb.updateProgress(0, "Root node selected.  Left-click another node to show the shortest path between them.");
 			}
 		}
 	};
@@ -1575,5 +1532,29 @@ function GraphGenerator(graphRef) {
 		_stateEnum.ADD.value = false;
 		_stateEnum.CONNECT.value = false;
 		_stateEnum.MERGE.value = false;
+	};
+}
+
+// utility class constructor
+function Utils(graphRef) {
+	var _this = this;
+	
+	/** returns whether the passed Cytoscape node is a leaf or not; i.e. one neighbor only */
+	_this.isLeaf = function(node) {
+		var possibleNeighbors = node.connectedEdges().connectedNodes();
+		var confirmedNeighbors = [];
+		
+		possibleNeighbors.each(function(index, n) {
+			if (n.data("id") != node.data("id")) {
+				confirmedNeighbors.push(n.data("id"));
+			}
+			
+			// if confirmed neighbors already > 1, break
+			if (confirmedNeighbors.length > 1) {
+				return false;
+			}
+		});
+		
+		return confirmedNeighbors.length == 1;
 	};
 }
