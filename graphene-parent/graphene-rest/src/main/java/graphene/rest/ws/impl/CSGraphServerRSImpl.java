@@ -1,6 +1,5 @@
 package graphene.rest.ws.impl;
 
-import graphene.dao.FederatedEventGraphServer;
 import graphene.dao.LoggingDAO;
 import graphene.dao.WorkspaceDAO;
 import graphene.model.graph.G_PersistedGraph;
@@ -9,21 +8,17 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.rest.ws.CSGraphServerRS;
-import graphene.services.EventGraphBuilder;
 import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
-import java.util.Arrays;
-
 import javax.ws.rs.core.Response;
 
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GraphQuery;
-import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -36,9 +31,6 @@ import org.tynamo.security.services.SecurityService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CSGraphServerRSImpl implements CSGraphServerRS {
-
-	@Inject
-	private FederatedEventGraphServer feg;
 
 	@Inject
 	private Logger logger;
@@ -76,65 +68,6 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	private SecurityService securityService;
 
 	public CSGraphServerRSImpl() {
-
-	}
-
-	@Override
-	public V_CSGraph getEvents(final String objectType, final String[] value, final String valueType,
-			final String degree, final String maxNodes, final String maxEdgesPerNode, final boolean showIcons,
-			final String minSecs, final String maxSecs, final String minimumWeight, final boolean useSaved) {
-		logger.debug("-------");
-		logger.debug("get Interaction Graph for type " + objectType);
-		logger.debug("Value     " + Arrays.toString(value));
-		logger.debug("valueType     " + valueType);
-		logger.debug("Degrees   " + degree);
-		logger.debug("Max Nodes " + maxNodes);
-		logger.debug("Max Edges per node" + maxEdgesPerNode);
-		logger.debug("showIcons " + showIcons);
-		logger.debug("minSecs " + minSecs);
-		logger.debug("maxSecs " + maxSecs);
-		logger.debug("minimumWeight " + minimumWeight);
-		logger.debug("useSaved " + useSaved);
-		final int maxdegree = FastNumberUtils.parseIntWithCheck(degree, defaultMaxDegrees);
-		final int maxnodes = FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes);
-		final int maxedges = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode);
-		final int minWeight = FastNumberUtils.parseIntWithCheck(minimumWeight, 0);
-		final long startDate = FastNumberUtils.parseLongWithCheck(minSecs, 0);
-		final long endDate = FastNumberUtils.parseLongWithCheck(maxSecs, 0);
-
-		final TemporalGraphQuery q = new TemporalGraphQuery();
-		q.setStartTime(startDate);
-		q.setEndTime(endDate);
-		q.setType(valueType); // new, --djue
-		q.setMinTransValue(minWeight); // new --djue
-		q.setMaxNodes(maxnodes);
-		q.setMaxEdgesPerNode(maxedges);
-		q.setMaxHops(maxdegree);
-		q.addSearchIds(value);
-
-		V_CSGraph m = null;
-		if (ValidationUtils.isValid(value)) {
-			try {
-				V_GenericGraph g = null;
-				final EventGraphBuilder gb = feg.getGraphBuilderForDataSource(objectType);
-				if (gb != null) {
-					logger.debug("Found Graph Builder for " + objectType + ": " + gb.getClass().getName());
-					// loggingDao.recordQuery(q);
-					g = gb.makeGraphResponse(q);
-				} else {
-					logger.error("Unable to handle graph request for type " + objectType);
-				}
-
-				m = new V_CSGraph(g, true);
-			} catch (final Exception e) {
-				logger.error(e.getMessage());
-			}
-		} else {
-			m = new V_CSGraph();
-			m.setStrStatus("A query was sent without any ids");
-			logger.error("A query was sent without any ids");
-		}
-		return m;
 
 	}
 
@@ -260,84 +193,6 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		}
 		return m;
 
-	}
-
-	@Override
-	public V_CSGraph getTemporalEvents(final String objectType, final String[] ids, final String valueType,
-			final String maxHops, final String maxNodes, final String maxEdgesPerNode, final boolean showIcons,
-			final String minSecs, final String maxSecs, final String minLinksPairOverall,
-			final String minValueAnyInteraction, final boolean daily, final boolean monthly, final boolean yearly,
-			final boolean directed)
-
-	{
-		logger.debug("-------");
-		logger.debug("get Interaction Graph for type " + objectType);
-		logger.debug("IDs     " + Arrays.toString(ids));
-		logger.debug("Max Hops   " + maxHops);
-		logger.debug("Max Nodes " + maxNodes);
-		logger.debug("Max Edges " + maxEdgesPerNode);
-		logger.debug("min links " + minLinksPairOverall);
-		logger.debug("min value " + minValueAnyInteraction);
-		logger.debug("daily " + daily);
-		logger.debug("monthly " + monthly);
-		logger.debug("yearly " + yearly);
-		logger.debug("directed " + directed);
-
-		final TemporalGraphQuery q = new TemporalGraphQuery();
-
-		q.setMaxHops(FastNumberUtils.parseIntWithCheck(maxHops, defaultMaxDegrees));
-		q.setMaxNodes(FastNumberUtils.parseIntWithCheck(maxNodes, defaultMaxNodes));
-		q.setMaxEdgesPerNode(FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, defaultMaxEdgesPerNode));
-		q.setMinLinks(FastNumberUtils.parseIntWithCheck(minLinksPairOverall, 2));
-		q.setMinTransValue(FastNumberUtils.parseIntWithCheck(minValueAnyInteraction, 0));
-		q.setMinEdgeValue(FastNumberUtils.parseIntWithCheck(minValueAnyInteraction, 0)); // new,
-																							// djue
-		q.setByMonth(monthly);
-		q.setByDay(daily);
-		q.setByYear(yearly);
-		q.setDirected(directed);
-		q.setStartTime(FastNumberUtils.parseLongWithCheck(minSecs, 0));
-		q.setEndTime(FastNumberUtils.parseLongWithCheck(maxSecs, 0));
-
-		q.addSearchIds(ids);
-
-		logger.debug(q.toString());
-
-		// egb.setOriginalQuery(gq);
-
-		V_CSGraph m = new V_CSGraph();
-		if (ValidationUtils.isValid(ids)) {
-			try {
-				// V_GenericGraph g = eventGraphBuilder.makeGraphResponse(gq);
-				V_GenericGraph g = null;
-				final EventGraphBuilder gb = feg.getGraphBuilderForDataSource(objectType);
-				if (gb != null) {
-					logger.debug("Found Graph Builder for " + objectType + ": " + gb.getClass().getName());
-					g = gb.makeGraphResponse(q);
-					if (ValidationUtils.isValid(g)) {
-						m = new V_CSGraph(g, true);
-						if (ValidationUtils.isValid(g.getNodes(), g.getEdges())) {
-							logger.debug("Made graph with " + g.getNodes().size() + " Nodes and " + g.getEdges().size()
-									+ " Edges");
-						}
-					} else {
-						logger.error("Problem creating graph response.");
-					}
-				} else {
-					logger.error("Unable to handle graph request for type " + objectType);
-				}
-
-			} catch (final Exception e) {
-				logger.error("Error building graph: ", e);
-				m.setStrStatus("An error occurred when creating the graph: " + e.getMessage());
-
-			}
-		} else {
-			m = new V_CSGraph();
-			m.setStrStatus("A query was sent without any ids");
-			logger.error("A query was sent without any ids");
-		}
-		return m;
 	}
 
 	@Override
