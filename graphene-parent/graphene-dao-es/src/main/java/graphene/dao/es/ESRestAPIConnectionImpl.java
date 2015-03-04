@@ -5,7 +5,6 @@ import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.query.EntityQuery;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Count;
@@ -155,7 +154,8 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
 			// final HighlightBuilder h = new HighlightBuilder().field("NARR");
-			searchSourceBuilder.query(qbc).minScore((float) q.getMinimumScore().doubleValue()).sort(SortBuilders.scoreSort());
+			searchSourceBuilder.query(qbc).minScore((float) q.getMinimumScore().doubleValue())
+					.sort(SortBuilders.scoreSort());
 			if (q.getMaxResult() == 0) {
 				q.setMaxResult(maxSearchResults);
 			}
@@ -217,7 +217,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 	private String performIndexQuery(final G_EntityQuery q) throws Exception {
 
 		if (q.getMaxResult() == 0) {
-			logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to one.");
+			logger.warn("NO MAX RESULT SUPPLIED FOR G_EntityQuery!  Setting to one.");
 			q.setMaxResult(1l);
 		}
 		String schema = q.getTargetSchema();
@@ -248,7 +248,7 @@ public class ESRestAPIConnectionImpl implements ESRestAPIConnection {
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.query(qbc);
 			if (q.getMaxResult() == 0) {
-				logger.warn("NO MAX RESULT SUPPLIED FOR EntityQuery!  Setting to one.");
+				logger.warn("NO MAX RESULT SUPPLIED FOR G_EntityQuery!  Setting to one.");
 				q.setMaxResult(maxSearchResults);
 			}
 			logger.debug("SSB: \n" + searchSourceBuilder.toString());

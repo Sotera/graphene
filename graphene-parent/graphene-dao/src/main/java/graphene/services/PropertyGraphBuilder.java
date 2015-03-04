@@ -2,13 +2,15 @@ package graphene.services;
 
 import graphene.dao.EntityRefDAO;
 import graphene.model.idl.G_CanonicalPropertyType;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
-import graphene.model.query.EntityQuery;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,14 +83,15 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T, V_
 
 		// V_EdgeList savEdgeList = edgeList.clone();
 
-		EntityQuery eq = new EntityQuery();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		final G_IdType nodeType = nodeTypeAccess.getCommonNodeType(G_CanonicalPropertyType.ANY);
+		List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
 		for (final String id : graphQuery.getSearchIds()) {
-
-			eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
+			tuples.add(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
+
+		G_EntityQuery eq = G_EntityQuery.newBuilder().setAttributeList(tuples).build();
 		V_NodeList savNodeList = new V_NodeList();
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();
 		int currentDegree = 0;
@@ -108,8 +111,9 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T, V_
 				}
 
 			}
+			// Done with the old eq
 
-			eq = new EntityQuery();
+			tuples = new ArrayList<G_SearchTuple>();
 			// Iterate over each node found by the previous query and scan them.
 			for (final V_GenericNode node : unscannedNodeList) {
 
@@ -129,7 +133,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T, V_
 						node.setCluster(true);
 					} else {
 						// we will search on it.
-						eq.addAttribute(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeTypeAccess
+						tuples.add(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeTypeAccess
 								.getNodeType(node.getNodeType()), valueToSearchOn));
 					}
 				} catch (final Exception e) {
@@ -138,6 +142,7 @@ public abstract class PropertyGraphBuilder<T> extends AbstractGraphBuilder<T, V_
 				// we're done scanning this id.
 
 			}
+			eq = G_EntityQuery.newBuilder().setAttributeList(tuples).build();
 			// very important!!
 			unscannedNodeList.clear();
 

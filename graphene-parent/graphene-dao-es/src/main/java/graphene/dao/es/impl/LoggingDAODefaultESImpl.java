@@ -184,7 +184,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			// System.out.println(result);
 			returnValue = result.getSourceAsObjectList(G_EntityQuery.class);
 
-			// for (final EntityQuery u : returnValue) {
+			// for (final G_EntityQuery u : returnValue) {
 			// System.out.println(u);
 			// }
 		} catch (final Exception e) {

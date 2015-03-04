@@ -93,7 +93,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 		for (final V_GenericNode n : nodes) {
 			if (determineTraversability(n)) {
 
-				for (final EntityQuery eq : createQueriesFromNode(n)) {
+				for (final G_EntityQuery eq : createQueriesFromNode(n)) {
 					final String queryToString = eq.getAttributeList().get(0).getValue();
 					// Have we done this EXACT query before?
 					if (!scannedQueries.contains(queryToString)) {
@@ -158,7 +158,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 	}
 
 	@Override
-	public boolean callBack(final Object p, final EntityQuery q) {
+	public boolean callBack(final Object p, final G_EntityQuery q) {
 		if (ValidationUtils.isValid(p)) {
 			final DocumentGraphParser parser = getParserForObject(p);
 			if (parser != null) {
@@ -180,7 +180,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 	 */
 	private List<EntityQuery> createQueriesFromNode(final V_GenericNode n) {
 		final List<EntityQuery> list = new ArrayList<EntityQuery>(2);
-		final EntityQuery eq = new EntityQuery();
+		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
 		final G_SearchTuple<String> tuple = new G_SearchTuple<>();
 		tuple.setValue(n.getIdVal());
 		tuple.setSearchType(ruleService.getRule(n.getIdType()));
@@ -194,7 +194,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 		list.add(eq);
 		// make second query here, stripping leading zeroes.
 		if (n.getIdVal().startsWith("0")) {
-			final EntityQuery eq2 = new EntityQuery();
+			final G_EntityQuery eq2 =  G_EntityQuery.newBuilder();
 			final G_SearchTuple<String> tuple2 = new G_SearchTuple<>();
 			tuple2.setValue(StringUtils.removeLeadingZeros(n.getIdVal()));
 			tuple2.setSearchType(ruleService.getRule(n.getIdType()));
@@ -209,7 +209,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 		}
 		// make a second query here, stripping leading ones for phone types.
 		if (n.getIdType().equals(G_CanonicalPropertyType.PHONE.name())) {
-			final EntityQuery eq2 = new EntityQuery();
+			final G_EntityQuery eq2 =  G_EntityQuery.newBuilder();
 			final G_SearchTuple<String> tuple2 = new G_SearchTuple<>();
 			if (n.getIdVal().startsWith("1")) {
 				// try without 1 code
@@ -247,7 +247,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 	}
 
 	@Override
-	public GenericDAO<Object, EntityQuery> getDAO() {
+	public GenericDAO<Object, G_EntityQuery> getDAO() {
 		return combinedDAO;
 	}
 

@@ -1,10 +1,11 @@
 package graphene.dao.es;
 
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.query.EntityQuery;
-import graphene.util.G_CallBack;
+import graphene.model.query.G_CallBack;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Count;
@@ -46,7 +47,7 @@ import com.google.gson.JsonObject;
  * @param <QUERYOBJECT>
  * 
  */
-public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
+public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 
 	private static final int MAX_TO_GET_AT_ONCE = 1000000;
 	private static final int PAGESIZE = 200;
@@ -85,13 +86,13 @@ public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 	public long count(final Q pq) throws Exception {
 		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getAttributeList())) {
 			pq.getAttributeList().get(0);
-			String schema = pq.getSchema();
+			String schema = pq.getTargetSchema();
 			if (!ValidationUtils.isValid(schema)) {
 
 				schema = c.getIndexName();
 				logger.debug("Setting schema to " + schema);
 			}
-			final String term = pq.getAttributeList().get(0).getValue();
+			final String term = (String) pq.getAttributeList().get(0).getValue();
 			final long x = c.performCount(null, host, schema, null, null, term);
 			return x;
 		}
@@ -229,8 +230,7 @@ public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 
 	protected JestResult getResultsById(final String id, final String customIndex, final String customType) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		// searchSourceBuilder.query(QueryBuilders.matchQuery("_id", id));
-		// This should be faster.
+
 		searchSourceBuilder.query(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
 				FilterBuilders.termFilter("_id", id)));
 		final Builder sb = new Search.Builder(searchSourceBuilder.toString()).setParameter("timeout", defaultESTimeout);
@@ -313,11 +313,9 @@ public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 		}
 	}
 
-	public boolean performCallback(final long offset, final long maxResults,
-			final G_CallBack<JestResult, EntityQuery> cb, final EntityQuery q) {
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery q) {
 		JestResult result = new JestResult(null);
 		final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).sort("_id");
-
 		final ArrayList<String> excludes = new ArrayList<String>();
 		for (final G_SearchTuple<String> a : q.getAttributeList()) {
 			if (a.getSearchType().equals(G_SearchType.COMPARE_NOTINCLUDE)) {
@@ -350,7 +348,9 @@ public class BasicESDAO<T extends JestResult, Q extends EntityQuery> {
 				final JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
 				currentResultSize = hits.size();
 				logger.debug("finished scrolling page # " + pageNumber++ + " which had " + currentResultSize + " hits.");
-				cb.callBack(result, q);
+				final G_SearchResult sr = G_SearchResult.newBuilder().setResult(result).build();
+
+				cb.callBack(sr, q);
 			} while (currentResultSize > 0);
 
 		} catch (final Exception e) {

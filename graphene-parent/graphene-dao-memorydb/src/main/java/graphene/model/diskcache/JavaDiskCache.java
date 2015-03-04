@@ -1,4 +1,7 @@
-package graphene.util.fs;
+package graphene.model.diskcache;
+
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +22,7 @@ import org.slf4j.Logger;
  *            The class of object you are serializing, usually a POJO based on a
  *            DB call.
  */
-public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
+public class JavaDiskCache<T> implements DiskCache<T> {
 	@Inject
 	private Logger logger;
 
@@ -33,7 +36,18 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 		// TODO Auto-generated constructor stub
 	}
 
-	public boolean callBack(T t) {
+	@Override
+	public boolean callBack(final G_SearchResult t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean callBack(final G_SearchResult t, final G_EntityQuery q) {
+		return write(t.getResult());
+	}
+
+	public boolean callBack(final T t) {
 		return write(t);
 	}
 
@@ -43,14 +57,14 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 			try {
 				output.reset();
 				output.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				logger.error(e.getMessage());
 			}
 		}
 		if (input != null) {
 			try {
 				input.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				logger.error(e.getMessage());
 			}
 		}
@@ -62,35 +76,33 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 	 * @see graphene.util.fs.DiskCache#dropExisting(java.lang.String)
 	 */
 	@Override
-	public boolean dropExisting(String fileName) {
-		File f = new File(fileName);
+	public boolean dropExisting(final String fileName) {
+		final File f = new File(fileName);
 		return f.delete();
 	}
 
-	public boolean initializeWriter(String fileName) {
-		output = null;
-		try {
-			output = new ObjectOutputStream(new FileOutputStream(fileName));
-			numberOfRecordsCached = 0;
-		} catch (FileNotFoundException e) {
-			logger.error(e.getMessage());
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-		return output != null ? true : false;
+	@Override
+	public long getNumberOfRecordsCached() {
+		return numberOfRecordsCached;
 	}
 
-	public boolean initializeReader(String fileName) {
+	@Override
+	public void init(final Class<T> clazz) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean initializeReader(final String fileName) {
 		input = null;
-		File f = new File(fileName);
-		if (f.exists() && f.length() > 0) {
+		final File f = new File(fileName);
+		if (f.exists() && (f.length() > 0)) {
 			logger.debug("File found: " + fileName);
 			try {
 				input = new ObjectInputStream(new FileInputStream(fileName));
-			} catch (FileNotFoundException e) {
-				logger.error("Expected to find the file " + fileName + " "
-						+ e.getMessage());
-			} catch (IOException e) {
+			} catch (final FileNotFoundException e) {
+				logger.error("Expected to find the file " + fileName + " " + e.getMessage());
+			} catch (final IOException e) {
 				logger.error(e.getMessage());
 			}
 		} else {
@@ -98,6 +110,20 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 		}
 
 		return input != null ? true : false;
+	}
+
+	@Override
+	public boolean initializeWriter(final String fileName) {
+		output = null;
+		try {
+			output = new ObjectOutputStream(new FileOutputStream(fileName));
+			numberOfRecordsCached = 0;
+		} catch (final FileNotFoundException e) {
+			logger.error(e.getMessage());
+		} catch (final IOException e) {
+			logger.error(e.getMessage());
+		}
+		return output != null ? true : false;
 	}
 
 	@Override
@@ -111,32 +137,17 @@ public class JavaDiskCache<T, Q> implements DiskCache<T, Q> {
 		return t;
 	}
 
-	public boolean write(T s) {
+	@Override
+	public boolean write(final Object s) {
 		boolean success = false;
 		try {
 			output.writeObject(s);
 			numberOfRecordsCached++;
 			success = true;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.error(e.getMessage());
 		}
 		return success;
-	}
-
-	@Override
-	public long getNumberOfRecordsCached() {
-		return numberOfRecordsCached;
-	}
-
-	@Override
-	public void init(Class<T> clazz) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean callBack(T t, Q q) {
-		return write(t);
 	}
 
 }

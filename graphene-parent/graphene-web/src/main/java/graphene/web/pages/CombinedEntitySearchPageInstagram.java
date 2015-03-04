@@ -4,13 +4,13 @@ import graphene.dao.CombinedDAO;
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.StyleService;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
-import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.LinkGenerator;
@@ -240,7 +240,7 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 			final String value, final int maxResults) {
 		GrapheneResults<Object> metaresults = null;
 		if (ValidationUtils.isValid(value)) {
-			final EntityQuery sq = new EntityQuery();
+			final G_EntityQuery sq = G_EntityQuery.newBuilder();
 			G_SearchType g_SearchType = null;
 			if (ValidationUtils.isValid(matchType)) {
 				try {

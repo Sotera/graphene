@@ -8,7 +8,6 @@ import graphene.model.query.BasicQuery;
  * @author djue
  * 
  */
-public interface UnifiedEventDAO<S, Q extends BasicQuery> extends GenericDAO<S, Q> {
-
+public interface UnifiedEventDAO<S, Q extends BasicQuery> extends GenericDAO {
 
 }

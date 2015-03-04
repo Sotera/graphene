@@ -14,13 +14,14 @@ import java.util.List;
  * @author pwg
  * 
  */
+@Deprecated
 public interface EntityDAO {
 	/**
 	 * 
-	 * @param srch
+	 * @param q
 	 * @return
 	 */
-	public List<G_Entity> getEntitiesByAdvancedSearch(AdvancedSearch srch);
+	public long count(EventQuery q);
 
 	/**
 	 * 
@@ -38,12 +39,11 @@ public interface EntityDAO {
 
 	/**
 	 * 
-	 * @param q
+	 * @param srch
 	 * @return
 	 */
-	public long count(EventQuery q);
+	public List<G_Entity> getEntitiesByAdvancedSearch(AdvancedSearch srch);
 
-	public List<EntityLight> getLightEntitiesByAdvancedSearch(
-			AdvancedSearch search);
+	public List<EntityLight> getLightEntitiesByAdvancedSearch(AdvancedSearch search);
 
 }

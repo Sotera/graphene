@@ -16,7 +16,7 @@ import java.util.List;
  * @param <Q>
  */
 @Deprecated
-public interface TransferDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
+public interface TransferDAO<T, Q extends BasicQuery> extends GenericDAO {
 	/**
 	 * FIXME:Move this to it's own DAO for finding mappings between accounts.
 	 * The more generic version will be a key to federating search across many
@@ -26,7 +26,6 @@ public interface TransferDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract List<String> getRelatedAccounts(final EventQuery q)
-			throws Exception;
+	public abstract List<String> getRelatedAccounts(final EventQuery q) throws Exception;
 
 }

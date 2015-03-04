@@ -5,13 +5,14 @@ import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
-import graphene.model.query.EntityQuery;
 import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.LinkGenerator;
@@ -102,10 +103,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 	@Property
 	private Tuple<String, String> currentAt;
-	
+
 	@Property
 	private Tuple<String, String> currentHashTag;
-	
+
 	@Inject
 	private CombinedDAO dao;
 
@@ -212,6 +213,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
 	}
 
+	public Collection<Tuple<String, String>> getAtsInCaption() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_CAPTION");
+	}
+
+	public Collection<Tuple<String, String>> getAtsInComments() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_COMMENTS");
+	}
+
 	public Collection<Triple<String, String, String>> getCIdentifierList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTCIDLIST);
 	}
@@ -231,14 +240,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * @param searchValue2
 	 * @return
 	 */
-	private GrapheneResults<Object> getEntities(final String schema, final String subType, final String matchType,
+	private G_SearchResults getEntities(final String schema, final String subType, final String matchType,
 			final String value, final int maxResults) {
-		GrapheneResults<Object> metaresults = null;
+		G_SearchResults metaresults = null;
 		if (ValidationUtils.isValid(value)) {
-			
-			G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
-			
-//			final EntityQuery sq = new EntityQuery();
 			G_SearchType g_SearchType = null;
 			if (ValidationUtils.isValid(matchType)) {
 				try {
@@ -246,37 +251,24 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				} catch (final Exception e) {
 					g_SearchType = G_SearchType.COMPARE_CONTAINS;
 				}
+			} else {
+				g_SearchType = G_SearchType.COMPARE_CONTAINS;
 			}
-			final G_SearchTuple<String> gs = new G_SearchTuple<String>(value, g_SearchType);
-			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
-				queryBuilder.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
-				//sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
-			}
-			queryBuilder.getAttributeList().add(gs);
-//			sq.addAttribute(gs);
-			
-			queryBuilder.setMaxResult(maxResults);
-//			sq.setMaxResult(maxResults);
-			
-			queryBuilder.setTargetSchema(schema);
-//			sq.setSchema(schema);
-			
-			queryBuilder.setMinimumScore(0.0);
-//			sq.setMinimumScore(0.0);
-			
+			String userId, username;
 			if (isUserExists()) {
-				queryBuilder.setUserId(getUser().getId());
-//				sq.setUserId(getUser().getId());
-				
-				queryBuilder.setUsername(getUser().getUsername());
-//				sq.setUserName(getUser().getUsername());
+				userId = getUser().getId();
+				username = getUser().getUsername();
 			}
-			
-			queryBuilder.setTimeInitiated(DateTime.now().getMillis());
-//			sq.setTimeInitiated(DateTime.now().getMillis());
-			
-			final G_EntityQuery sq = queryBuilder.build();
-			
+			final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
+			final G_SearchTuple tuple = new G_SearchTuple<String>(value, g_SearchType);
+			tuples.add(tuple);
+			final G_EntityQuery sq = G_EntityQuery.newBuilder().setAttributeList(tuples).setMaxResult(maxResults)
+					.setTargetSchema(schema).setMinimumScore(0.0).setUserId(userId).setUsername(username)
+					.setTimeInitiated(DateTime.now().getMillis()).build();
+			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
+				sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
+			}
+
 			try {
 				loggingDao.recordQuery(sq);
 				if (currentSelectedWorkspaceExists) {
@@ -293,10 +285,10 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
 				populatedTableResults = new ArrayList<Map<String, Object>>();
 				// Populate all the results!
-				for (final Object m : metaresults.getResults()) {
+				for (final G_SearchResult m : metaresults.getResults()) {
 					final DocumentGraphParser parserForObject = phgb.getParserForObject(m);
 					if (parserForObject != null) {
-						parserForObject.populateExtraFields(m, sq);
+						parserForObject.populateSearchResult(m, sq);
 						populatedTableResults.add(parserForObject.getAdditionalProperties(m));
 					} else {
 						logger.error("Could not find parser for " + m);
@@ -308,16 +300,13 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 				logger.error(e.getMessage());
 			}
 		}
-		if ((metaresults == null) || (metaresults.getNumberOfResultsReturned() == 0)) {
+		if ((metaresults == null) || (metaresults.getResults().size() == 0)) {
 			alertManager.alert(Duration.TRANSIENT, Severity.INFO, "No results found for " + value + ".");
 			resultShowingCount = 0;
 			resultTotalCount = 0;
 		} else {
-			alertManager.alert(
-					Duration.TRANSIENT,
-					Severity.SUCCESS,
-					"Showing " + metaresults.getNumberOfResultsReturned() + " of "
-							+ metaresults.getNumberOfResultsTotal() + " results found.");
+			alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Showing " + metaresults.getResults().size()
+					+ " of " + metaresults.getTotal() + " results found.");
 		}
 		return metaresults;
 	}
@@ -350,6 +339,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return amount;
 	}
 
+	public Collection<Tuple<String, String>> getHashTagsInCaption() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_CAPTION");
+	}
+
+	public Collection<Tuple<String, String>> getHashTagsInComments() {
+		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_COMMENTS");
+	}
+
 	/**
 	 * Get a list of icons that apply to this report.
 	 * 
@@ -359,8 +356,52 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return (Collection<Tuple<String, String>>) currentEntity.get(DocumentGraphParser.ICONLIST);
 	}
 
+	// /////////////////////////////////////////////////////////////////////
+	// FILTER
+	// /////////////////////////////////////////////////////////////////////
+
 	public Collection<Triple<String, String, String>> getIdentifierList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
+	}
+
+	public String getMediaCaption() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
+	}
+
+	public String getMediaCommentCount() {
+		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
+	}
+
+	public Object getMediaCreatedTime() {
+		return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
+	}
+
+	public String getMediaId() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
+	}
+
+	public String getMediaLikeCount() {
+		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
+	}
+
+	public String getMediaLocationLatLon() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
+	}
+
+	public String getMediaLocationName() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
+	}
+
+	public String getMediaOwner() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
+	}
+
+	public String getMediaPageLink() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
+	}
+
+	public String getMediaThumbnail() {
+		return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
 	}
 
 	public BeanModel getModel() {
@@ -423,10 +464,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTNAMELIST);
 
 	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// FILTER
-	// /////////////////////////////////////////////////////////////////////
 
 	public Link getNamePivotLink(final String term) {
 		// XXX: pick the right search type based on the link value
@@ -572,53 +609,13 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	public String getReportId() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_ID);
 	}
-	
-	public String getMediaId() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
-	}
 
 	public String getReportPageLink() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_LINK);
 	}
-	
-	public String getMediaPageLink() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
-	}
-	
-	public String getMediaOwner() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
-	}
-	
-	public String getMediaCaption() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
-	}
-	
-	public String getMediaLikeCount() {
-		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
-	}
-	
-	public String getMediaCommentCount() {
-		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
-	}
-	
-	public String getMediaLocationLatLon() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
-	}
-	
-	public String getMediaLocationName() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
-	}
-	
-	public String getMediaThumbnail() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
-	}
 
 	public String getReportType() {
 		return (String) currentEntity.get(DocumentGraphParser.REPORT_TYPE);
-	}
-	
-	public Object getMediaCreatedTime() {
-		return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
 	}
 
 	public String getScore() {
@@ -626,22 +623,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return DataFormatConstants.formatScore(d);
 	}
 
-	public Collection<Tuple<String, String>> getAtsInComments() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_COMMENTS");
-	}
-	
-	public Collection<Tuple<String, String>> getAtsInCaption() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_CAPTION");
-	}
-	
-	public Collection<Tuple<String, String>> getHashTagsInComments() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_COMMENTS");
-	}
-	
-	public Collection<Tuple<String, String>> getHashTagsInCaption() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_CAPTION");
-	}
-	
 	/**
 	 * @return the searchValue
 	 */

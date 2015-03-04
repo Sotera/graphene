@@ -1,7 +1,6 @@
 package graphene.dao;
 
 import graphene.model.idl.G_IdType;
-import graphene.model.query.BasicQuery;
 import graphene.model.view.entities.IdType;
 
 import java.util.List;
@@ -28,45 +27,7 @@ import java.util.Map;
  * @param <T>
  * @param <Q>
  */
-public interface IdTypeDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
-
-	public abstract void createFamilyMap();
-
-	public abstract IdType getByType(int typeno);
-
-	public abstract String getColumnSource(int type);
-
-	public abstract String getNodeType(int type);
-
-	public abstract Map<Integer, IdType> getLoadedTypes();
-
-	public abstract String getLongName(int type);
-
-	public abstract String getShortName(int type);
-
-	public abstract String getTableSource(int type);
-
-	public abstract int getTypeByShortName(String shortName);
-
-	public abstract IdType getIdTypeByShortName(String shortName);
-
-	public abstract Integer[] getTypesForFamily(G_IdType g_NodeType);
-
-	public abstract boolean isLoaded();
-
-	public abstract void setLoaded(boolean l);
-
-	public abstract void setLoadedTypes(Map<Integer, IdType> lt);
-
-	public abstract String toString();
-
-	public abstract List<Integer> getSkipTypes();
-
-	public abstract void setSkipTypes(List<Integer> skipTypes);
-
-	public abstract void init();
-
-	public boolean isBadIdentifier(String id);
+public interface IdTypeDAO<T> extends GenericDAO {
 
 	/**
 	 * TOTO: remove the side effect nature of this method for a more graceful
@@ -82,5 +43,44 @@ public interface IdTypeDAO<T, Q extends BasicQuery> extends GenericDAO<T, Q> {
 	 *         otherwise.
 	 */
 	public abstract boolean applySkipRule(T id);
+
+	public abstract void createFamilyMap();
+
+	public abstract IdType getByType(int typeno);
+
+	public abstract String getColumnSource(int type);
+
+	public abstract IdType getIdTypeByShortName(String shortName);
+
+	public abstract Map<Integer, IdType> getLoadedTypes();
+
+	public abstract String getLongName(int type);
+
+	public abstract String getNodeType(int type);
+
+	public abstract String getShortName(int type);
+
+	public abstract List<Integer> getSkipTypes();
+
+	public abstract String getTableSource(int type);
+
+	public abstract int getTypeByShortName(String shortName);
+
+	public abstract Integer[] getTypesForFamily(G_IdType g_NodeType);
+
+	public abstract void init();
+
+	public boolean isBadIdentifier(String id);
+
+	public abstract boolean isLoaded();
+
+	public abstract void setLoaded(boolean l);
+
+	public abstract void setLoadedTypes(Map<Integer, IdType> lt);
+
+	public abstract void setSkipTypes(List<Integer> skipTypes);
+
+	@Override
+	public abstract String toString();
 
 }

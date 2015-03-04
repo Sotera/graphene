@@ -1,9 +1,8 @@
 package graphene.dao;
 
-import graphene.model.query.BasicQuery;
-import graphene.util.G_CallBack;
-
-import java.util.List;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResults;
+import graphene.model.query.G_CallBack;
 
 /**
  * 
@@ -12,7 +11,9 @@ import java.util.List;
  * @param <T>
  * @param <QUERYOBJECT>
  */
-public interface GenericDAO<T, G_EntityQuery> {
+public interface GenericDAO {
+
+	long count(final G_EntityQuery q) throws Exception;
 
 	/**
 	 * This version assumes the offset and max results have been stored properly
@@ -21,7 +22,7 @@ public interface GenericDAO<T, G_EntityQuery> {
 	 * @param pq
 	 * @return a list of T
 	 */
-	List<T> findByQuery(G_EntityQuery pq) throws Exception;
+	G_SearchResults findByQuery(G_EntityQuery pq) throws Exception;
 
 	/**
 	 * TODO: This could be replaced by putting offset and maxresults inside a
@@ -33,25 +34,7 @@ public interface GenericDAO<T, G_EntityQuery> {
 	 * @return a list of T
 	 * @throws Exception
 	 */
-	List<T> getAll(final long offset, final long maxResults) throws Exception;
-
-	long count(final G_EntityQuery q) throws Exception;
-
-	/**
-	 * 
-	 * @return true if this DAO is ready to be queried.
-	 */
-	boolean isReady();
-
-	/**
-	 * Allows end user implementations to record the readiness of the service,
-	 * for example if a procedure fails we may set the service to not ready, or
-	 * a larger service can cause this service to be available or unavailable
-	 * depending on it's settings.
-	 * 
-	 * @param b
-	 */
-	void setReady(boolean b);
+	G_SearchResults getAll(final long offset, final long maxResults) throws Exception;
 
 	/**
 	 * This method is an expansion of the isReady system status. Individual
@@ -67,6 +50,12 @@ public interface GenericDAO<T, G_EntityQuery> {
 	double getReadiness();
 
 	/**
+	 * 
+	 * @return true if this DAO is ready to be queried.
+	 */
+	boolean isReady();
+
+	/**
 	 * Within this method, the callback cb will be executed, usually on each
 	 * result the implementation finds. The implementation may choose to respect
 	 * the QUERYOBJECT q. If maxResults is set to 0, that is usually understood
@@ -79,7 +68,16 @@ public interface GenericDAO<T, G_EntityQuery> {
 	 * @param q
 	 * @return true if the callback succeeded, or did not find any errors.
 	 */
-	boolean performCallback(long offset, long maxResults, G_CallBack<T,G_EntityQuery> cb,
-			G_EntityQuery q);
+	boolean performCallback(long offset, long maxResults, G_CallBack cb, G_EntityQuery q);
+
+	/**
+	 * Allows end user implementations to record the readiness of the service,
+	 * for example if a procedure fails we may set the service to not ready, or
+	 * a larger service can cause this service to be available or unavailable
+	 * depending on it's settings.
+	 * 
+	 * @param b
+	 */
+	void setReady(boolean b);
 
 }

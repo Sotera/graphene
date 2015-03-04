@@ -1,9 +1,12 @@
 package graphene.dao;
 
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_Property;
+import graphene.model.idl.G_SearchResult;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +84,7 @@ public interface DocumentGraphParser<T> {
 	 */
 	public static final String TOTALAMOUNTSTR = "totalamountinvolved";
 	public static final String CARDINAL_ORDER = "cardinalOrder";
+	public static final String SUMMARY = "summary";
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 
@@ -100,16 +104,18 @@ public interface DocumentGraphParser<T> {
 	 * query. In this way, we can tie the resulting object back to a node id
 	 * that initiated the query.
 	 * 
-	 * @param obj
+	 * @param sr
 	 *            a result of a query specified by q.
 	 * @param q
 	 *            the query object that generated this result, along with an
 	 *            associated node id.
 	 * @return
 	 */
-	public boolean parse(Object obj, G_EntityQuery q);
+	public boolean parse(G_SearchResult sr, G_EntityQuery q);
 
-	public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
+	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
+
+	Collection<? extends G_Property> populateSearchResult(G_SearchResult p, G_EntityQuery sq);
 
 	/**
 	 * @param phgb

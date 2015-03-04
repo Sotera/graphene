@@ -17,10 +17,7 @@
 			<groupId>graphene</groupId>
 			<artifactId>graphene-model</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>graphene</groupId>
-			<artifactId>graphene-search</artifactId>
-		</dependency>
+	
 		<dependency>
 			<groupId>org.tynamo</groupId>
 			<artifactId>tapestry-security</artifactId>

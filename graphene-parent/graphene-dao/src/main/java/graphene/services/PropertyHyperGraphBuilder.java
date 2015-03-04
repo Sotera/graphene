@@ -174,7 +174,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 	 * @see graphene.services.HyperGraphBuilder#getDAO()
 	 */
 	@Override
-	public abstract GenericDAO<T, G_EntityQuery> getDAO();
+	public abstract GenericDAO getDAO();
 
 	public void inheritLabelIfNeeded(final V_GenericNode a, final V_GenericNode... nodes) {
 		for (final V_GenericNode n : nodes) {
@@ -211,8 +211,8 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		String strStatus = "Graph Loaded";
 		// Set<String> scannedStrings = new HashSet<String>();
 
-		G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
-//		EntityQuery eq = new EntityQuery();
+		final G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder();
+		// EntityQuery eq = G_EntityQuery.newBuilder();
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		final G_IdType nodeType = nodeTypeAccess.getCommonNodeType(G_CanonicalPropertyType.ANY);

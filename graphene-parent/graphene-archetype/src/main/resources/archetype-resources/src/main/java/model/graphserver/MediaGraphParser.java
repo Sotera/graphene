@@ -45,7 +45,7 @@ public class MediaGraphParser extends AbstractDocumentGraphParser<Media> {
 	// This method creates a sub graph of the nodes inside a report, and a list
 	// of new identifiers to search on.
 	@Override
-	public boolean parse(final Object obj, final EntityQuery q) {
+	public boolean parse(final Object obj, final G_EntityQuery q) {
 		if (!(obj instanceof Media)) {
 			return false;
 		}
@@ -137,7 +137,7 @@ public class MediaGraphParser extends AbstractDocumentGraphParser<Media> {
 	}
 
 	@Override
-	public Media populateExtraFields(final Media p, final EntityQuery sq) {
+	public Media populateExtraFields(final Media p, final G_EntityQuery sq) {
 
 		p.setAdditionalProperty(MEDIA_LABEL, getReportLabel(p));
 		p.setAdditionalProperty(MEDIA_ID, p.getId());

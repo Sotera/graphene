@@ -1,7 +1,8 @@
 package graphene.dao;
 
-import graphene.util.G_CallBack;
-import graphene.util.fs.DiskCache;
+import graphene.model.diskcache.DiskCache;
+import graphene.model.idl.G_SearchResult;
+import graphene.model.query.G_CallBack;
 import graphene.util.stats.TimeReporter;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -11,7 +12,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	protected String cacheFileLocation = null;
 	protected boolean deleteExisting = false;
 
-	protected DiskCache<T,Q> diskCache;
+	protected DiskCache<T, Q> diskCache;
 
 	@Inject
 	private Logger logger;
@@ -33,13 +34,13 @@ public abstract class DiskCacheDAO<T, Q> {
 		return cacheFileLocation;
 	}
 
-	public abstract boolean getCacheToDisk(boolean deleteExisting,
-			boolean trySerialized, boolean saveLocally, long maxResults);
+	public abstract boolean getCacheToDisk(boolean deleteExisting, boolean trySerialized, boolean saveLocally,
+			long maxResults);
 
 	/**
 	 * @return the diskCache
 	 */
-	public final DiskCache<T,Q> getDiskCache() {
+	public final DiskCache<T, Q> getDiskCache() {
 		return diskCache;
 	}
 
@@ -71,25 +72,21 @@ public abstract class DiskCacheDAO<T, Q> {
 		return trySerialized;
 	}
 
-	public boolean performCallback(final long offset, final long maxResults,
-			final G_CallBack<T,Q> cb, final Q q) {
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final Q q) {
 		logger.debug("Performing callback at the Disk Cache level...");
 
-		boolean readerAvailable = getCacheToDisk(deleteExisting, trySerialized,
-				saveLocally, maxResults);
+		final boolean readerAvailable = getCacheToDisk(deleteExisting, trySerialized, saveLocally, maxResults);
 		if (readerAvailable) {
-			logger.debug("Disk cache thinks there are "
-					+ diskCache.getNumberOfRecordsCached()
-					+ " records to read.");
+			logger.debug("Disk cache thinks there are " + diskCache.getNumberOfRecordsCached() + " records to read.");
 			T e;
 			long numProcessed = 0;
-			TimeReporter t = new TimeReporter(
-					"Performing callbacks on all rows for disk cache", logger);
-			while (readerAvailable && (e = diskCache.read()) != null) {
+			final TimeReporter t = new TimeReporter("Performing callbacks on all rows for disk cache", logger);
+			while (readerAvailable && ((e = diskCache.read()) != null)) {
 				// logger.debug("read from disk " + e);
-				cb.callBack(e);
+				final G_SearchResult sr = G_SearchResult.newBuilder().setResult(e).build();
+				cb.callBack(sr);
 				numProcessed++;
-				if (numProcessed % 1000 == 0) {
+				if ((numProcessed % 1000) == 0) {
 					t.getSpeed(numProcessed, "Disk Cache Objects");
 				}
 			}
@@ -106,7 +103,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param cacheFileLocation
 	 *            the cacheFileLocation to set
 	 */
-	public final void setCacheFileLocation(String cacheFileLocation) {
+	public final void setCacheFileLocation(final String cacheFileLocation) {
 		this.cacheFileLocation = cacheFileLocation;
 	}
 
@@ -114,7 +111,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param deleteExisting
 	 *            the deleteExisting to set
 	 */
-	public final void setDeleteExisting(boolean deleteExisting) {
+	public final void setDeleteExisting(final boolean deleteExisting) {
 		this.deleteExisting = deleteExisting;
 	}
 
@@ -122,7 +119,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param diskCache
 	 *            the diskCache to set
 	 */
-	public final void setDiskCache(DiskCache<T,Q> diskCache) {
+	public final void setDiskCache(final DiskCache<T, Q> diskCache) {
 		this.diskCache = diskCache;
 	}
 
@@ -130,7 +127,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param maxResults
 	 *            the maxResults to set
 	 */
-	public final void setMaxResults(long maxResults) {
+	public final void setMaxResults(final long maxResults) {
 		this.maxResults = maxResults;
 	}
 
@@ -138,7 +135,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param saveLocally
 	 *            the saveLocally to set
 	 */
-	public final void setSaveLocally(boolean saveLocally) {
+	public final void setSaveLocally(final boolean saveLocally) {
 		this.saveLocally = saveLocally;
 	}
 
@@ -146,7 +143,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param trySerialized
 	 *            the trySerialized to set
 	 */
-	public final void setTrySerialized(boolean trySerialized) {
+	public final void setTrySerialized(final boolean trySerialized) {
 		this.trySerialized = trySerialized;
 	}
 }

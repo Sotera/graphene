@@ -1,9 +1,12 @@
-package graphene.util;
+package graphene.model.query;
 
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
 
-public interface G_CallBack<T,Q> {
-	//TODO: Change method name to execute
-	public boolean callBack(T t);
-	public boolean callBack(T t, Q q);
+public interface G_CallBack {
+	// TODO: Change method name to execute
+	public boolean callBack(G_SearchResult t);
+
+	public boolean callBack(G_SearchResult t, G_EntityQuery q);
 
 }

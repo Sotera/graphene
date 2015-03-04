@@ -1,7 +1,7 @@
 package graphene.rest.ws.impl;
 
+import graphene.dao.CombinedDAO;
 import graphene.dao.DataSourceListDAO;
-import graphene.dao.EntityDAO;
 import graphene.model.view.entities.EntityLight;
 import graphene.rest.ws.EntityServerRS;
 
@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
+@Deprecated
 public class EntityServerRSImpl implements EntityServerRS {
 
 	@Inject
@@ -22,42 +23,7 @@ public class EntityServerRSImpl implements EntityServerRS {
 	private DataSourceListDAO dataSourceListDAO;
 
 	@Inject
-	private EntityDAO entitydao;
-
-	// @Override
-	// @GET
-	// @Path("/advancedSearch")
-	// @Produces("application/json")
-	// public EntitySearchResults advancedSearch(
-	// @QueryParam("jsonSearch") String jsonSearch) {
-	// TimeReporter t = new TimeReporter("advancedSearch", logger);
-	// logger.trace("json search: " + jsonSearch);
-	// ObjectMapper mapper = new ObjectMapper();
-	// byte[] bytes = jsonSearch.getBytes();
-	// AdvancedSearch search = null;
-	// try {
-	// search = mapper.readValue(bytes, 0, bytes.length,
-	// AdvancedSearch.class);
-	// } catch (JsonParseException e) {
-	// logger.error(e.getMessage());
-	// } catch (JsonMappingException e) {
-	// logger.error(e.getMessage());
-	// } catch (IOException e) {
-	// logger.error(e.getMessage());
-	// }
-	// EntitySearchResults results = new EntitySearchResults();
-	// if (search == null) {
-	// logger.debug("json parse failed");
-	// results = null;
-	// } else {
-	// logger.trace(search.getDataSet());
-	// search.setFieldsIntoFilters(dataSourceListDAO.getList());
-	// results.addEntities(entitydao
-	// .getLightEntitiesByAdvancedSearch(search));
-	// }
-	// t.logAsCompleted();
-	// return results;
-	// }
+	private CombinedDAO entitydao;
 
 	@Override
 	@GET

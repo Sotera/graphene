@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author PWG for DARPA
  *
  */
+@Deprecated
 public class EntitySearchResults {
 
 	public String status;
@@ -26,16 +27,14 @@ public class EntitySearchResults {
 	@XmlElement(name = "entity")
 	public List<EntityLight> results = new ArrayList<EntityLight>();
 
-	public List<EntityLight> getResults() {
-		return results;
-	}
-
 	public EntitySearchResults() {
 
 	}
 
-	public int getCount() {
-		return results.size();
+	public void addEntities(final List<EntityLight> entities) {
+		for (final EntityLight e : entities) {
+			addEntityLight(e);
+		}
 	}
 
 	public void addEntityLight(final EntityLight result) {
@@ -43,27 +42,30 @@ public class EntitySearchResults {
 		count++;
 	}
 
-	public void addEntities(final List<EntityLight> entities) {
-		for (EntityLight e : entities) {
-			addEntityLight(e);
-		}
-	}
-
 	public void clearResults() {
 		results.clear();
 	}
 
-	//XXX: This is dumb.  Just store it in a input ordered set to begin with.
+	// XXX: This is dumb. Just store it in a input ordered set to begin with.
 	public void dedupe(final int maxResults) {
-		Set<EntityLight> st = new LinkedHashSet<EntityLight>(); // preserves
-																// input order
-		for (EntityLight s : results) {
+		final Set<EntityLight> st = new LinkedHashSet<EntityLight>(); // preserves
+		// input order
+		for (final EntityLight s : results) {
 			st.add(s);
-			if (st.size() >= maxResults)
+			if (st.size() >= maxResults) {
 				break;
+			}
 		}
 		results.clear();
 		results.addAll(st);
+	}
+
+	public int getCount() {
+		return results.size();
+	}
+
+	public List<EntityLight> getResults() {
+		return results;
 	}
 
 }

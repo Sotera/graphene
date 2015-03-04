@@ -17,6 +17,6 @@ import graphene.model.query.BasicQuery;
  * @param <T>
  * @param <Q>
  */
-public interface UnifiedEntityDAO<T,  Q extends BasicQuery> extends GenericDAO<T, Q> {
+public interface UnifiedEntityDAO<T, Q extends BasicQuery> extends GenericDAO {
 
 }

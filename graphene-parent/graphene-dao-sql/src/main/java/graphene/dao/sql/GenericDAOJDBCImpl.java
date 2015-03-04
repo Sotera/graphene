@@ -1,9 +1,11 @@
 package graphene.dao.sql;
 
 import graphene.dao.GenericDAO;
-import graphene.model.query.BasicQuery;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.query.EventQuery;
-import graphene.util.G_CallBack;
+import graphene.model.query.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
@@ -13,7 +15,6 @@ import graphene.util.validator.ValidationUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.annotation.Nonnegative;
 
@@ -28,8 +29,7 @@ import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.mysql.MySQLQuery;
 import com.mysema.query.types.EntityPath;
 
-public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
-		GenericDAO<T, Q> {
+public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 
 	/**
 	 * If you need to change the database that is used, set it in the
@@ -47,34 +47,6 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	@Inject
 	protected Logger logger;
 
-	/**
-	 * @return the cps
-	 */
-	public final DBConnectionPoolService getCps() {
-		return cps;
-	}
-
-	/**
-	 * @param cps the cps to set
-	 */
-	public final void setCps(DBConnectionPoolService cps) {
-		this.cps = cps;
-	}
-
-	/**
-	 * @return the logger
-	 */
-	public final Logger getLogger() {
-		return logger;
-	}
-
-	/**
-	 * @param logger the logger to set
-	 */
-	public final void setLogger(Logger logger) {
-		this.logger = logger;
-	}
-
 	private boolean ready;
 
 	/**
@@ -91,22 +63,20 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @param q
 	 * @return
 	 */
-	public boolean basicCallback(long initialOffset, long maxResults,
-			G_CallBack<T,Q> cb, Q q) {
+	public boolean basicCallback(long initialOffset, final long maxResults, final G_CallBack cb, final G_EntityQuery q) {
 		if (initialOffset == 0) {
 			// For SQL offsets, it is one based.
 			initialOffset = 1;
 		}
-		long offset = initialOffset, numProcessed = 0;
+		final long offset = initialOffset;
+		long numProcessed = 0;
 		logger.debug("Performing basic callback performer");
-		TimeReporter t = new TimeReporter("Reading from database...", logger);
-		MemoryReporter m = new MemoryReporter("Reading from database...",
-				logger);
+		final TimeReporter t = new TimeReporter("Reading from database...", logger);
+		final MemoryReporter m = new MemoryReporter("Reading from database...", logger);
 		boolean doneProcessing = false;
-		while (!doneProcessing
-				&& (maxResults < 0 || numProcessed <= maxResults)) {
+		while (!doneProcessing && ((maxResults < 0) || (numProcessed <= maxResults))) {
 
-			List<T> results = null;
+			G_SearchResults results = null;
 			try {
 				if (q == null) {
 					// There was no query object, which mean just get
@@ -123,10 +93,10 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					q.setMaxResult(maxResults);
 					results = findByQuery(q);
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				logger.error(e.getMessage());
 			}
-			if (results == null || results.size() == 0) {
+			if ((results == null) || (results.getResults().size() == 0)) {
 
 				/*
 				 * This should be ok, as long as the dao query is not requesting
@@ -141,9 +111,9 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				 * up ASAP
 				 */
 
-				numProcessed += results.size();
+				numProcessed += results.getResults().size();
 				// Execute callbacks
-				for (T p : results) {
+				for (G_SearchResult p : results.getResults()) {
 					if (!cb.callBack(p)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
@@ -175,8 +145,8 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @return
 	 * @throws SQLException
 	 */
-	protected SQLQuery from(Connection conn, EntityPath<?>... o) {
-		SQLTemplates dialect = new SQLServer2005Templates(); // SQL-dialect
+	protected SQLQuery from(final Connection conn, final EntityPath<?>... o) {
+		final SQLTemplates dialect = new SQLServer2005Templates(); // SQL-dialect
 		return new SQLQuery(conn, dialect).from(o);
 	}
 
@@ -192,12 +162,11 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 *            One or more instances of query classes (that start with Q)
 	 * @return an SQLQuery object that you can start adding constraints to.
 	 */
-	protected SQLQuery from(Connection conn, String oldSchema,
-			String newSchema, EntityPath<?>... o) {
+	protected SQLQuery from(final Connection conn, final String oldSchema, final String newSchema,
+			final EntityPath<?>... o) {
 		// Tell QueryDSL to print the schema
-		SQLTemplates template = SQLServer2012Templates.builder().printSchema()
-				.build();
-		Configuration c = new Configuration(template);
+		final SQLTemplates template = SQLServer2012Templates.builder().printSchema().build();
+		final Configuration c = new Configuration(template);
 		// override the default schema for the entity path, usually dbo
 		c.registerSchemaOverride(oldSchema, newSchema);
 		return new SQLQuery(conn, c).from(o);
@@ -225,6 +194,20 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	}
 
 	/**
+	 * @return the cps
+	 */
+	public final DBConnectionPoolService getCps() {
+		return cps;
+	}
+
+	/**
+	 * @return the logger
+	 */
+	public final Logger getLogger() {
+		return logger;
+	}
+
+	/**
 	 * The default implementation of this relies solely on the isReady() being
 	 * true.
 	 */
@@ -235,7 +218,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 
 	@Override
 	public boolean isReady() {
-		if (cps != null && cps.isInitialized()) {
+		if ((cps != null) && cps.isInitialized()) {
 			ready = true;
 		} else {
 			ready = false;
@@ -248,70 +231,24 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * override and use a different callback if they want to.
 	 */
 	@Override
-	public boolean performCallback(long offset, long maxResults,
-			G_CallBack<T,Q> cb, Q q) {
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery q) {
 		return basicCallback(offset, maxResults, cb, q);
 	}
 
 	/**
-	 * A safe way of adding offset and limit, directly using long values.
-	 * 
-	 * 
-	 * @param offset
-	 * @param limit
-	 * @param sq
-	 * @return a modified SQLQuery object
+	 * @param cps
+	 *            the cps to set
 	 */
-	protected SQLQuery setOffsetAndLimit(@Nonnegative long offset,
-			@Nonnegative long limit, SQLQuery sq) {
-		if (limit > 0 && offset == limit) {
-			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
-					+ sq.toString());
-			sq = null;
-		} else {
-			if (ValidationUtils.isValid(offset)) {
-				sq = sq.offset(offset);
-			}
-			if (ValidationUtils.isValid(limit)) {
-				sq = sq.limit(limit);
-			}
-		}
-		return sq;
-	}
-
-	protected MySQLQuery setOffsetAndLimit(@Nonnegative long offset,
-			@Nonnegative long limit, MySQLQuery sq) {
-		if (limit > 0 && offset == limit) {
-			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
-					+ sq.toString());
-			sq = null;
-		} else {
-			if (ValidationUtils.isValid(offset)) {
-				sq = sq.offset(offset);
-			}
-			if (ValidationUtils.isValid(limit)) {
-				sq = sq.limit(limit);
-			}
-		}
-		return sq;
+	public final void setCps(final DBConnectionPoolService cps) {
+		this.cps = cps;
 	}
 
 	/**
-	 * 
-	 * @param q
-	 * @param sq
-	 * @return a modified SQLQuery object
+	 * @param logger
+	 *            the logger to set
 	 */
-	protected SQLQuery setOffsetAndLimit(Q q, SQLQuery sq) {
-		if (ValidationUtils.isValid(q)) {
-			if (ValidationUtils.isValid(q.getFirstResult())) {
-				sq = sq.offset(q.getFirstResult());
-			}
-			if (ValidationUtils.isValid(q.getMaxResult())) {
-				sq = sq.limit(q.getMaxResult());
-			}
-		}
-		return sq;
+	public final void setLogger(final Logger logger) {
+		this.logger = logger;
 	}
 
 	/**
@@ -321,11 +258,9 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @param defaultLimit
 	 * @return a modified SQLQuery object
 	 */
-	protected SQLQuery setOffsetAndLimit(EventQuery q, SQLQuery sq,
-			long defaultLimit) {
+	protected SQLQuery setOffsetAndLimit(final EventQuery q, SQLQuery sq, final long defaultLimit) {
 		if (ValidationUtils.isValid(q)) {
-			if (ValidationUtils.isValid(q.getFirstResult())
-					&& defaultLimit > q.getFirstResult()) {
+			if (ValidationUtils.isValid(q.getFirstResult()) && (defaultLimit > q.getFirstResult())) {
 				sq = sq.offset(q.getFirstResult());
 			}
 			if (ValidationUtils.isValid(q.getMaxResult())) {
@@ -337,8 +272,67 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 		return sq;
 	}
 
+	/**
+	 * 
+	 * @param q
+	 * @param sq
+	 * @return a modified SQLQuery object
+	 */
+	protected SQLQuery setOffsetAndLimit(final G_EntityQuery q, SQLQuery sq) {
+		if (ValidationUtils.isValid(q)) {
+			if (ValidationUtils.isValid(q.getFirstResult())) {
+				sq = sq.offset(q.getFirstResult());
+			}
+			if (ValidationUtils.isValid(q.getMaxResult())) {
+				sq = sq.limit(q.getMaxResult());
+			}
+		}
+		return sq;
+	}
+
+	protected MySQLQuery setOffsetAndLimit(@Nonnegative final long offset, @Nonnegative final long limit, MySQLQuery sq) {
+		if ((limit > 0) && (offset == limit)) {
+			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
+					+ sq.toString());
+			sq = null;
+		} else {
+			if (ValidationUtils.isValid(offset)) {
+				sq = sq.offset(offset);
+			}
+			if (ValidationUtils.isValid(limit)) {
+				sq = sq.limit(limit);
+			}
+		}
+		return sq;
+	}
+
+	/**
+	 * A safe way of adding offset and limit, directly using long values.
+	 * 
+	 * 
+	 * @param offset
+	 * @param limit
+	 * @param sq
+	 * @return a modified SQLQuery object
+	 */
+	protected SQLQuery setOffsetAndLimit(@Nonnegative final long offset, @Nonnegative final long limit, SQLQuery sq) {
+		if ((limit > 0) && (offset == limit)) {
+			logger.error("Offset and Limit were non zero and equal in query, so query will not be executed: "
+					+ sq.toString());
+			sq = null;
+		} else {
+			if (ValidationUtils.isValid(offset)) {
+				sq = sq.offset(offset);
+			}
+			if (ValidationUtils.isValid(limit)) {
+				sq = sq.limit(limit);
+			}
+		}
+		return sq;
+	}
+
 	@Override
-	public void setReady(boolean b) {
+	public void setReady(final boolean b) {
 		this.ready = b;
 	}
 
@@ -352,11 +346,10 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @param q
 	 * @return true if successful, false otherwise.
 	 */
-	public boolean throttlingCallback(long initialOffset, long maxResults,
-			G_CallBack<T,Q> cb, Q q) {
+	public boolean throttlingCallback(final long initialOffset, final long maxResults, final G_CallBack cb,
+			final G_EntityQuery q) {
 		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
-		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10,
-				250000);
+		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10, 250000);
 	}
 
 	/**
@@ -405,9 +398,8 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @param maxChunkSize
 	 * @return
 	 */
-	public boolean throttlingCallback(long initialOffset, long maxResults,
-			G_CallBack<T,Q> cb, Q q, long initialChunkSize, long minChunkSize,
-			long maxChunkSize) {
+	public boolean throttlingCallback(long initialOffset, final long maxResults, final G_CallBack cb,
+			final G_EntityQuery q, final long initialChunkSize, final long minChunkSize, final long maxChunkSize) {
 		logger.debug("Performing throttling callback performer");
 		logger.debug("initialOffset = " + initialOffset);
 		logger.debug("maxResults = " + maxResults);
@@ -419,49 +411,43 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 			initialOffset = 1;
 		}
 		long offset = initialOffset;
-		long chunkSize = (maxResults > 0 && maxResults < initialChunkSize ? maxResults
-				: initialChunkSize);
+		long chunkSize = ((maxResults > 0) && (maxResults < initialChunkSize) ? maxResults : initialChunkSize);
 		long numProcessed = 0;
 		long bestFetchSize = 0;
-		double fetchSizeGrowthRate = 1.05;
+		final double fetchSizeGrowthRate = 1.05;
 		// used to determine throttling
-		double fuzziness = 1.05;
+		final double fuzziness = 1.05;
 		double previousRate = 0.0, bestRate = 0.0;
 		int zeroResultsEvent = 0;
-		int maxZeroResultsEvents = 1;
-		TimeReporter t = new TimeReporter("Reading from database...", logger);
-		MemoryReporter m = new MemoryReporter("Reading from database...",
-				logger);
+		final int maxZeroResultsEvents = 1;
+		final TimeReporter t = new TimeReporter("Reading from database...", logger);
+		final MemoryReporter m = new MemoryReporter("Reading from database...", logger);
 		boolean doneProcessing = false;
-		while (!doneProcessing
-				&& (maxResults <= 0 || numProcessed <= maxResults)) {
+		while (!doneProcessing && ((maxResults <= 0) || (numProcessed <= maxResults))) {
 
-			long startTime = System.currentTimeMillis();
+			final long startTime = System.currentTimeMillis();
 			// double check the chunkSize against the total number of rows.
-			if (maxResults > 0 && numProcessed + chunkSize > maxResults) {
+			if ((maxResults > 0) && ((numProcessed + chunkSize) > maxResults)) {
 				chunkSize = maxResults - numProcessed;
 			}
-			List<T> results = null;
+			G_SearchResults results = null;
 			try {
 				if (q == null) {
-					logger.debug("getAll(offset=" + offset + ", chunksize="
-							+ chunkSize);
+					logger.debug("getAll(offset=" + offset + ", chunksize=" + chunkSize);
 					results = getAll(offset, chunkSize);
 				} else {
-					logger.debug("getAll(offset=" + offset + ", chunksize="
-							+ chunkSize + " query=" + q);
+					logger.debug("getAll(offset=" + offset + ", chunksize=" + chunkSize + " query=" + q);
 
 					// results = findByQuery(offset, chunkSize, q);
 					q.setFirstResult(offset);
 					q.setMaxResult(chunkSize);
 					results = findByQuery(q);
 				}
-			} catch (Exception e) {
-				logger.error("Problem in throttling callback: "
-						+ e.getMessage());
-				
+			} catch (final Exception e) {
+				logger.error("Problem in throttling callback: " + e.getMessage());
+
 			}
-			if (results == null || results.size() == 0) {
+			if ((results == null) || (results.getResults().size() == 0)) {
 				logger.info("Amount of rows processed during this throttling session was zero.");
 				/*
 				 * This should be ok, as long as the dao query is not requesting
@@ -478,21 +464,20 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				zeroResultsEvent = 0;
 			}
 
-			if (!doneProcessing && results != null) {
+			if (!doneProcessing && (results != null)) {
 				/*
 				 * Deal with any references to results.size(), so GC can clean
 				 * up ASAP
 				 */
 
-				numProcessed += results.size();
-				long deltaTime = System.currentTimeMillis() - startTime;
+				numProcessed += results.getResults().size();
+				final long deltaTime = System.currentTimeMillis() - startTime;
 				// rows per time
-				double currentRate = (double) results.size()
-						/ (double) deltaTime;
+				final double currentRate = (double) results.getResults().size() / deltaTime;
 				logger.trace("Chunk of rows received, processing callback on them.");
 
 				// Execute callbacks
-				for (T p : results) {
+				for (G_SearchResult p : results.getResults()) {
 					if (!cb.callBack(p)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
@@ -500,15 +485,14 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					p = null;
 				}
 
-				// PWG ADDED:
-				if (results.size() < chunkSize) {
+				if (results.getResults().size() < chunkSize) {
 					logger.debug("Could not get full chunk - assuming we have all there is");
 					doneProcessing = true;
 				}
 
 				results = null;
 
-				if (maxResults > 0 && numProcessed > maxResults) {
+				if ((maxResults > 0) && (numProcessed > maxResults)) {
 					logger.error("Processed more than max results, something is wrong.");
 					doneProcessing = true;
 				} else if (numProcessed == maxResults) {
@@ -516,7 +500,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					doneProcessing = true;
 				}
 				// a little logging.
-				if (numProcessed % 1000 == 0) {
+				if ((numProcessed % 1000) == 0) {
 					logger.debug("Processed " + numProcessed);
 				}
 				if (!doneProcessing) {
@@ -525,17 +509,15 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					offset += chunkSize;
 
 					// update rates
-					double deltaRate = currentRate - previousRate;
-					logger.debug("Current Rate: " + currentRate
-							+ " per ms.  Previous rate:" + previousRate
+					final double deltaRate = currentRate - previousRate;
+					logger.debug("Current Rate: " + currentRate + " per ms.  Previous rate:" + previousRate
 							+ " per ms. Change: " + deltaRate);
 
 					if (currentRate > bestRate) {
 						bestRate = currentRate;
 						bestFetchSize = chunkSize;
 					}
-					logger.debug("Best rate so far: " + bestRate
-							+ " at fetch size " + bestFetchSize);
+					logger.debug("Best rate so far: " + bestRate + " at fetch size " + bestFetchSize);
 					/*
 					 * First, address memory concerns. Then Throttle down if
 					 * performance was hindered. Otherwise throttle up.
@@ -546,7 +528,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 						logger.debug("Throttling down due to memory concerns");
 						JVMHelper.suggestGC();
 						chunkSize /= fetchSizeGrowthRate;
-					} else if (currentRate * fuzziness < previousRate) {
+					} else if ((currentRate * fuzziness) < previousRate) {
 						// throttle down
 						logger.debug("Throttling down");
 						chunkSize /= fetchSizeGrowthRate;
@@ -562,12 +544,10 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					 */
 					if (chunkSize < minChunkSize) {
 						chunkSize = minChunkSize;
-						logger.debug("Transferring at minimum fetch size of "
-								+ minChunkSize);
+						logger.debug("Transferring at minimum fetch size of " + minChunkSize);
 					} else if (chunkSize > maxChunkSize) {
 						chunkSize = maxChunkSize;
-						logger.debug("Transferring at maximum fetch size of "
-								+ maxChunkSize);
+						logger.debug("Transferring at maximum fetch size of " + maxChunkSize);
 					}
 					previousRate = currentRate;
 				}// end setting up for next chunk
@@ -607,9 +587,9 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 	 * @param maxChunkSize
 	 * @return
 	 */
-	public boolean throttlingCallbackOnValues(long initialOffset,
-			long maxResults, G_CallBack<T,Q> cb, Q q, long initialChunkSize,
-			long minChunkSize, long maxChunkSize, long minValue, long maxValue) {
+	public boolean throttlingCallbackOnValues(long initialOffset, final long maxResults, final G_CallBack cb,
+			final G_EntityQuery q, final long initialChunkSize, final long minChunkSize, final long maxChunkSize,
+			final long minValue, final long maxValue) {
 		logger.debug("Performing throttling callback performer against values");
 		logger.debug("initialOffset = " + initialOffset);
 		logger.debug("maxResults = " + maxResults);
@@ -625,17 +605,15 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 		long offset = initialOffset;
 		// set the chunk size to the lesser of maxResults or initialChunkSize,
 		// provided maxResults is valid.
-		long chunkSize = (maxResults > 0 && maxResults < initialChunkSize ? maxResults
-				: initialChunkSize);
+		long chunkSize = ((maxResults > 0) && (maxResults < initialChunkSize) ? maxResults : initialChunkSize);
 		long numProcessed = 0;
 		long bestFetchSize = 0;
-		double fetchSizeGrowthRate = 1.05;
+		final double fetchSizeGrowthRate = 1.05;
 		// used to determine throttling
-		double fuzziness = 1.05;
+		final double fuzziness = 1.05;
 		double previousRate = 0.0, bestRate = 0.0;
-		TimeReporter t = new TimeReporter("Reading from database...", logger);
-		MemoryReporter m = new MemoryReporter("Reading from database...",
-				logger);
+		final TimeReporter t = new TimeReporter("Reading from database...", logger);
+		final MemoryReporter m = new MemoryReporter("Reading from database...", logger);
 		boolean doneProcessing = false;
 
 		/*
@@ -643,19 +621,17 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 		 * no max result or the number processed so far is less than the max
 		 * number of results.
 		 */
-		while (!doneProcessing
-				&& (maxResults <= 0 || numProcessed <= maxResults)) {
+		while (!doneProcessing && ((maxResults <= 0) || (numProcessed <= maxResults))) {
 
-			long startTime = System.currentTimeMillis();
+			final long startTime = System.currentTimeMillis();
 			// double check the chunkSize against the total number of rows.
-			if (maxResults > 0 && numProcessed + chunkSize > maxResults) {
+			if ((maxResults > 0) && ((numProcessed + chunkSize) > maxResults)) {
 				chunkSize = maxResults - numProcessed;
 			}
-			List<T> results = null;
+			G_SearchResults results = null;
 			try {
 				if (q == null) {
-					logger.debug("getAll(offset=" + offset + ", max value="
-							+ (chunkSize + offset) + ")");
+					logger.debug("getAll(offset=" + offset + ", max value=" + (chunkSize + offset) + ")");
 					// NOTE that this is different than any others, because we
 					// are doing it against value. The limit is not just the
 					// chunk size, it's the maximum value for this window.
@@ -666,10 +642,9 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					q.setMaxResult(chunkSize);
 					results = findByQuery(q);
 				}
-			} catch (Exception e) {
-				logger.error("Problem in throttling callback: "
-						+ e.getMessage());
-			
+			} catch (final Exception e) {
+				logger.error("Problem in throttling callback: " + e.getMessage());
+
 			}
 			if (results == null) {
 				doneProcessing = true;
@@ -679,16 +654,15 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				 * up ASAP
 				 */
 
-				numProcessed += results.size();
-				long deltaTime = System.currentTimeMillis() - startTime;
+				numProcessed += results.getResults().size();
+				final long deltaTime = System.currentTimeMillis() - startTime;
 				// rows per time
-				double currentRate = (double) results.size()
-						/ (double) deltaTime;
-				logger.trace("Chunk of rows received (" + results.size()
+				final double currentRate = (double) results.getResults().size() / deltaTime;
+				logger.trace("Chunk of rows received (" + results.getResults().size()
 						+ ") , processing callback on them.");
 
 				// Execute callbacks
-				for (T p : results) {
+				for (G_SearchResult p : results.getResults()) {
 					if (!cb.callBack(p)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
@@ -697,22 +671,16 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 				}
 				results = null;
 				if (numProcessed == 0) {
-					logger.warn("No results found in this window of " + offset
-							+ " to " + (offset + chunkSize));
+					logger.warn("No results found in this window of " + offset + " to " + (offset + chunkSize));
 				}
-				if (maxResults > 0 && numProcessed > maxResults) {
+				if ((maxResults > 0) && (numProcessed > maxResults)) {
 					logger.error("Processed more than max results, something is wrong.");
 					doneProcessing = true;
-				} else if (maxResults > 0 && numProcessed == maxResults) {
-					logger.debug("numProcessed == maxResults == "
-							+ numProcessed);
+				} else if ((maxResults > 0) && (numProcessed == maxResults)) {
+					logger.debug("numProcessed == maxResults == " + numProcessed);
 					doneProcessing = true;
 				} else if ((offset) > maxValue) {
-					logger.debug("Processed a chunk that reached the maxValue: "
-							+ offset
-							+ "<"
-							+ maxValue
-							+ "<"
+					logger.debug("Processed a chunk that reached the maxValue: " + offset + "<" + maxValue + "<"
 							+ (offset + chunkSize));
 					doneProcessing = true;
 				}
@@ -723,17 +691,15 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					offset += chunkSize;
 
 					// update rates
-					double deltaRate = currentRate - previousRate;
-					logger.debug("Current Rate: " + currentRate
-							+ " per ms.  Previous rate:" + previousRate
+					final double deltaRate = currentRate - previousRate;
+					logger.debug("Current Rate: " + currentRate + " per ms.  Previous rate:" + previousRate
 							+ " per ms. Change: " + deltaRate);
 
 					if (currentRate > bestRate) {
 						bestRate = currentRate;
 						bestFetchSize = chunkSize;
 					}
-					logger.debug("Best rate so far: " + bestRate
-							+ " at fetch size " + bestFetchSize);
+					logger.debug("Best rate so far: " + bestRate + " at fetch size " + bestFetchSize);
 					/*
 					 * First, address memory concerns. Then Throttle down if
 					 * performance was hindered. Otherwise throttle up.
@@ -744,7 +710,7 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 						logger.debug("Throttling down due to memory concerns");
 						JVMHelper.suggestGC();
 						chunkSize /= fetchSizeGrowthRate;
-					} else if (currentRate * fuzziness < previousRate) {
+					} else if ((currentRate * fuzziness) < previousRate) {
 						// throttle down
 						logger.debug("Throttling down");
 						chunkSize /= fetchSizeGrowthRate;
@@ -760,12 +726,10 @@ public abstract class GenericDAOJDBCImpl<T, Q extends BasicQuery> implements
 					 */
 					if (chunkSize < minChunkSize) {
 						chunkSize = minChunkSize;
-						logger.debug("Transferring at minimum fetch size of "
-								+ minChunkSize);
+						logger.debug("Transferring at minimum fetch size of " + minChunkSize);
 					} else if (chunkSize > maxChunkSize) {
 						chunkSize = maxChunkSize;
-						logger.debug("Transferring at maximum fetch size of "
-								+ maxChunkSize);
+						logger.debug("Transferring at maximum fetch size of " + maxChunkSize);
 					}
 					previousRate = currentRate;
 				}// end setting up for next chunk

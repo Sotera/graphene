@@ -13,12 +13,9 @@ import java.util.List;
  * @param <T>
  * @param <Q>
  */
-public interface TransactionDAO<T, Q extends BasicQuery> extends
-		GenericDAO<T, Q> {
+public interface TransactionDAO<T, Q extends BasicQuery> extends GenericDAO {
 
 	long countEdges(String id) throws Exception;
-
-	List<DirectedEventRow> getEvents(Q q);
 
 	/**
 	 * For finding by internal pair id
@@ -27,5 +24,7 @@ public interface TransactionDAO<T, Q extends BasicQuery> extends
 	 * @return
 	 */
 	DirectedEventRow findEventById(String id);
+
+	List<DirectedEventRow> getEvents(Q q);
 
 }

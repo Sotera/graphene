@@ -66,7 +66,7 @@ public class EntityDAOESImpl implements EntityDAO {
 
 	@Override
 	public long count(final EventQuery q) {
-		final EntityQuery eq = new EntityQuery();
+		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
 		eq.addAttribute(q.getAttributeList());
 		eq.setSchema(q.getSchema());
 		try {
@@ -89,7 +89,7 @@ public class EntityDAOESImpl implements EntityDAO {
 
 	@Override
 	public EntityLight getById(final String id) {
-		final EntityQuery eq = new EntityQuery();
+		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
 		eq.addAttribute(new G_SearchTuple(id, G_SearchType.COMPARE_EQUALS));
 		try {
 			final List<Object> matches = dao.findByQuery(eq);
@@ -113,7 +113,7 @@ public class EntityDAOESImpl implements EntityDAO {
 		// and return the intersection of all the sets.
 		final ArrayList<G_Entity> results = new ArrayList<G_Entity>();
 
-		final EntityQuery eq = new EntityQuery();
+		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
 		// eq.setSchema(srch.getDataSet());
 		for (final SearchFilter f : srch.getFilters()) {
 			// TODO: Fix this by hooking up the actual search time with the one

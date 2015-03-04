@@ -11,7 +11,6 @@ import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.services.EventServerImpl;
-import graphene.services.FederatedEventGraphImpl;
 import graphene.services.FederatedPropertyGraphImpl;
 import graphene.services.G_EdgeTypeAccessImpl;
 import graphene.services.G_NodeTypeAccessImpl;
@@ -37,7 +36,8 @@ public class DAOModule {
 		binder.bind(G_UserDataAccess.class, UserServiceImpl.class);
 		binder.bind(EventServer.class, EventServerImpl.class);
 		binder.bind(FederatedPropertyGraphServer.class, FederatedPropertyGraphImpl.class);
-		binder.bind(FederatedEventGraphServer.class, FederatedEventGraphImpl.class);
+		// binder.bind(FederatedEventGraphServer.class,
+		// FederatedEventGraphImpl.class);
 		binder.bind(G_NodeTypeAccess.class, G_NodeTypeAccessImpl.class);
 		binder.bind(G_EdgeTypeAccess.class, G_EdgeTypeAccessImpl.class);
 		binder.bind(G_PropertyKeyTypeAccess.class, G_PropertyKeyTypeAccessImpl.class);

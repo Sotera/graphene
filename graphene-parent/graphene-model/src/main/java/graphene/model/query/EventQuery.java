@@ -18,6 +18,7 @@ import java.util.List;
  * @author djue
  * 
  */
+@Deprecated
 public class EventQuery extends BasicQuery implements IntersectionQuery {
 	/*
 	 * A string we will look for in the comments
@@ -35,25 +36,10 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * related
 	 */
 	private List<String> idList = new ArrayList<String>();
-	private List<G_SearchTuple> attributeList = new ArrayList<G_SearchTuple>(
-			1);
-
-	/**
-	 * @return the attributeList
-	 */
-	public List<G_SearchTuple> getAttributeList() {
-		return attributeList;
-	}
-
-	/**
-	 * @param attributeList
-	 *            the attributeList to set
-	 */
-	public void setAttributeList(List<G_SearchTuple> attributeList) {
-		this.attributeList = attributeList;
-	}
+	private List<G_SearchTuple> attributeList = new ArrayList<G_SearchTuple>(1);
 
 	private boolean intersectionOnly = false;
+
 	/*
 	 * The maximum monetary amount (unit not specified)
 	 */
@@ -64,22 +50,6 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 */
 	private double minAmount = 0;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "EventQuery ["
-				+ (comments != null ? "comments=" + comments + ", " : "")
-				+ "findRelatedIds="
-				+ findRelatedIds
-				+ ", "
-				+ (idList != null ? "idList=" + idList + ", " : "")
-				+ (attributeList != null ? "attributeList=" + attributeList
-						+ ", " : "") + "intersectionOnly=" + intersectionOnly
-				+ ", maxAmount=" + maxAmount + ", minAmount=" + minAmount + "]";
-	}
-
 	/**
 	 * Default constructor
 	 */
@@ -87,12 +57,11 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 
 	}
 
-	public void addAttribute(
-			Collection<? extends G_SearchTuple<String>> attr) {
+	public void addAttribute(final Collection<? extends G_SearchTuple<String>> attr) {
 		attributeList.addAll(attr);
 	}
 
-	public void addAttribute(G_SearchTuple<String> attr) {
+	public void addAttribute(final G_SearchTuple<String> attr) {
 		attributeList.add(attr);
 	}
 
@@ -102,7 +71,7 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * 
 	 * @param id
 	 */
-	public void addId(String id) {
+	public void addId(final String id) {
 		if (ValidationUtils.isValid(id)) {
 			idList.add(id);
 		}
@@ -114,41 +83,50 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * 
 	 * @param ids
 	 */
-	public void addIds(Collection<String> ids) {
+	public void addIds(final Collection<String> ids) {
 		if (ValidationUtils.isValid(ids)) {
 			idList.addAll(ids);
 		}
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		EventQuery other = (EventQuery) obj;
+		}
+		final EventQuery other = (EventQuery) obj;
 		if (comments == null) {
-			if (other.comments != null)
+			if (other.comments != null) {
 				return false;
-		} else if (!comments.equals(other.comments))
+			}
+		} else if (!comments.equals(other.comments)) {
 			return false;
-		if (findRelatedIds != other.findRelatedIds)
+		}
+		if (findRelatedIds != other.findRelatedIds) {
 			return false;
+		}
 		if (idList == null) {
-			if (other.idList != null)
+			if (other.idList != null) {
 				return false;
-		} else if (!idList.equals(other.idList))
+			}
+		} else if (!idList.equals(other.idList)) {
 			return false;
-		if (intersectionOnly != other.intersectionOnly)
+		}
+		if (intersectionOnly != other.intersectionOnly) {
 			return false;
-		if (Double.doubleToLongBits(maxAmount) != Double
-				.doubleToLongBits(other.maxAmount))
+		}
+		if (Double.doubleToLongBits(maxAmount) != Double.doubleToLongBits(other.maxAmount)) {
 			return false;
-		if (Double.doubleToLongBits(minAmount) != Double
-				.doubleToLongBits(other.minAmount))
+		}
+		if (Double.doubleToLongBits(minAmount) != Double.doubleToLongBits(other.minAmount)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -159,41 +137,53 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	// return minSecs;
 	// }
 
-	public boolean equalsIgnoreLimits(Object obj) {
-		if (this == obj)
+	public boolean equalsIgnoreLimits(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		EventQuery other = (EventQuery) obj;
+		}
+		final EventQuery other = (EventQuery) obj;
 		if (idList == null) {
-			if (other.idList != null)
+			if (other.idList != null) {
 				return false;
-		} else if (!idList.equals(other.idList))
+			}
+		} else if (!idList.equals(other.idList)) {
 			return false;
-		if (findRelatedIds != other.findRelatedIds)
+		}
+		if (findRelatedIds != other.findRelatedIds) {
 			return false;
-		if (Double.doubleToLongBits(maxAmount) != Double
-				.doubleToLongBits(other.maxAmount))
+		}
+		if (Double.doubleToLongBits(maxAmount) != Double.doubleToLongBits(other.maxAmount)) {
 			return false;
-		if (getMaxSecs() != other.getMaxSecs())
+		}
+		if (getMaxSecs() != other.getMaxSecs()) {
 			return false;
-		if (Double.doubleToLongBits(minAmount) != Double
-				.doubleToLongBits(other.minAmount))
+		}
+		if (Double.doubleToLongBits(minAmount) != Double.doubleToLongBits(other.minAmount)) {
 			return false;
-		if (getMinSecs() != other.getMinSecs())
+		}
+		if (getMinSecs() != other.getMinSecs()) {
 			return false;
+		}
 		if (comments == null) {
-			if (other.comments != null)
+			if (other.comments != null) {
 				return false;
-		} else if (!comments.equals(other.comments))
+			}
+		} else if (!comments.equals(other.comments)) {
 			return false;
+		}
 		if (getSortColumn() == null) {
-			if (other.getSortColumn() != null)
+			if (other.getSortColumn() != null) {
 				return false;
-		} else if (!getSortColumn().equals(other.getSortColumn()))
+			}
+		} else if (!getSortColumn().equals(other.getSortColumn())) {
 			return false;
+		}
 
 		// MFM have to also check the sort direction
 		if (isSortAscending() != other.isSortAscending()) {
@@ -206,14 +196,21 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	}
 
 	/**
-	 * @return the ids
+	 * @return the attributeList
 	 */
-	public List<String> getIdList() {
-		return idList;
+	public List<G_SearchTuple> getAttributeList() {
+		return attributeList;
 	}
 
 	public String getComments() {
 		return comments;
+	}
+
+	/**
+	 * @return the ids
+	 */
+	public List<String> getIdList() {
+		return idList;
 	}
 
 	/**
@@ -236,23 +233,22 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * @return
 	 */
 	public String getSingleId() {
-		return (String) this.idList.toArray()[0];
+		return (String) idList.toArray()[0];
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result + (findRelatedIds ? 1231 : 1237);
-		result = prime * result + ((idList == null) ? 0 : idList.hashCode());
-		result = prime * result + (intersectionOnly ? 1231 : 1237);
+		result = (prime * result) + ((comments == null) ? 0 : comments.hashCode());
+		result = (prime * result) + (findRelatedIds ? 1231 : 1237);
+		result = (prime * result) + ((idList == null) ? 0 : idList.hashCode());
+		result = (prime * result) + (intersectionOnly ? 1231 : 1237);
 		long temp;
 		temp = Double.doubleToLongBits(maxAmount);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(minAmount);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -263,6 +259,7 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 		return findRelatedIds;
 	}
 
+	@Override
 	public boolean isIntersectionOnly() {
 		return intersectionOnly;
 	}
@@ -277,30 +274,39 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	}
 
 	/**
-	 * @param idList
-	 *            the list of Ids to set
+	 * @param attributeList
+	 *            the attributeList to set
 	 */
-	public void setIdList(List<String> idList) {
-		this.idList = idList;
+	public void setAttributeList(final List<G_SearchTuple> attributeList) {
+		this.attributeList = attributeList;
 	}
 
 	/**
 	 * @param comments
 	 *            the comments to set
 	 */
-	public void setComments(String comments) {
+	public void setComments(final String comments) {
 		this.comments = comments;
 	}
 
 	/**
 	 * @param findRelatedIds
 	 */
-	public void setFindRelatedIds(boolean findRelatedIds) {
+	public void setFindRelatedIds(final boolean findRelatedIds) {
 
 		this.findRelatedIds = findRelatedIds;
 	}
 
-	public void setIntersectionOnly(boolean intersectionOnly) {
+	/**
+	 * @param idList
+	 *            the list of Ids to set
+	 */
+	public void setIdList(final List<String> idList) {
+		this.idList = idList;
+	}
+
+	@Override
+	public void setIntersectionOnly(final boolean intersectionOnly) {
 		this.intersectionOnly = intersectionOnly;
 	}
 
@@ -308,7 +314,7 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * @param maxAmount
 	 *            the maxAmount to set
 	 */
-	public void setMaxAmount(double maxAmount) {
+	public void setMaxAmount(final double maxAmount) {
 		this.maxAmount = maxAmount;
 	}
 
@@ -317,9 +323,10 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * 
 	 * @param maxAmountStr
 	 */
-	public void setMaxAmount(String maxAmountStr) {
-		if (maxAmountStr != null && maxAmountStr.length() > 0)
+	public void setMaxAmount(final String maxAmountStr) {
+		if ((maxAmountStr != null) && (maxAmountStr.length() > 0)) {
 			maxAmount = Double.parseDouble(maxAmountStr);
+		}
 
 	}
 
@@ -327,7 +334,7 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * @param minAmount
 	 *            the minAmount to set
 	 */
-	public void setMinAmount(double minAmount) {
+	public void setMinAmount(final double minAmount) {
 		this.minAmount = minAmount;
 	}
 
@@ -336,10 +343,24 @@ public class EventQuery extends BasicQuery implements IntersectionQuery {
 	 * 
 	 * @param minAmountStr
 	 */
-	public void setMinAmount(String minAmountStr) {
-		if (minAmountStr != null && minAmountStr.length() > 0)
+	public void setMinAmount(final String minAmountStr) {
+		if ((minAmountStr != null) && (minAmountStr.length() > 0)) {
 			minAmount = Double.parseDouble(minAmountStr);
+		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "EventQuery [" + (comments != null ? "comments=" + comments + ", " : "") + "findRelatedIds="
+				+ findRelatedIds + ", " + (idList != null ? "idList=" + idList + ", " : "")
+				+ (attributeList != null ? "attributeList=" + attributeList + ", " : "") + "intersectionOnly="
+				+ intersectionOnly + ", maxAmount=" + maxAmount + ", minAmount=" + minAmount + "]";
 	}
 
 }

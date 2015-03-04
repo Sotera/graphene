@@ -37,7 +37,7 @@ public class InstagramEntitySearch implements G_EntitySearch {
 	}
 
 	// public InstagramReportSearchIterator buildInstagramReportSearchIterator(
-	// final String baseURL, final EntityQuery query) {
+	// final String baseURL, final G_EntityQuery query) {
 	// return new InstagramReportSearchIterator(c, auth, baseURL, query);
 	// }
 
@@ -64,7 +64,7 @@ public class InstagramEntitySearch implements G_EntitySearch {
 			final List<G_PropertyMatchDescriptor> terms, final long start,
 			final long max, final String type) throws AvroRemoteException {
 
-		final EntityQuery sq = new EntityQuery();
+		final G_EntityQuery sq =  G_EntityQuery.newBuilder();
 		sq.addAttribute(new G_SearchTuple(query, G_SearchType.COMPARE_EQUALS));
 		// final InstagramReportSearchIterator ssr =
 		// buildInstagramReportSearchIterator(

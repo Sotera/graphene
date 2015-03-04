@@ -6,7 +6,7 @@
 		<artifactId>graphene-parent</artifactId>
 		<version>4.1.2-SNAPSHOT</version>
 	</parent>
-	<artifactId>graphene-memorydb</artifactId>
+	<artifactId>graphene-dao-memorydb</artifactId>
 	<name>${project.artifactId}</name>
 	<dependencies>
 		<dependency>
@@ -15,7 +15,7 @@
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>
-			<artifactId>graphene-dao</artifactId>
+			<artifactId>graphene-dao-sql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>

@@ -15,7 +15,6 @@ import java.util.List;
  * @param <T>
  * @param <Q>
  */
-public interface UnifiedCommunicationEventDAO<T, Q extends BasicQuery> extends
-		GenericDAO<T, Q> {
+public interface UnifiedCommunicationEventDAO<T, Q extends BasicQuery> extends GenericDAO {
 	public List<G_Link> getLinks(DirectedEventQuery q);
 }

@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import org.apache.tapestry5.annotations.Log;
 
 @Path("/EntitySearch")
+@Deprecated
 public interface EntityServerRS {
 	// @Log
 	// @GET
@@ -21,6 +22,7 @@ public interface EntityServerRS {
 	@GET
 	@Path("/getEntityByID/{ID}")
 	@Produces("application/json")
+	@Deprecated
 	public EntityLight getEntityByID(@PathParam("ID") String id);
 
 }

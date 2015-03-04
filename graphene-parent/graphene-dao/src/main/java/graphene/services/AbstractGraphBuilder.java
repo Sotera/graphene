@@ -5,9 +5,11 @@ import graphene.dao.DocumentGraphParser;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_NodeTypeAccess;
+import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.util.G_CallBack;
+import graphene.model.idlhelper.PropertyHelper;
+import graphene.model.query.G_CallBack;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
@@ -36,7 +38,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.URLEncoder;
 import org.slf4j.Logger;
 
-public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
+public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	@Inject
 	protected G_EdgeTypeAccess edgeTypeAccess;
 
@@ -95,7 +97,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 		}
 	}
 
-	public void addReportDetails(final V_GenericNode reportNode, final Map<String, Object> properties) {
+	public void addReportDetails(final V_GenericNode reportNode, final List<G_Property> props) {
 		try {
 			// for now, prevent the log-based increase on node dimensions
 			/*
@@ -104,22 +106,26 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack<T, Q> {
 			 * MIN_NODE_SIZE, MAX_NODE_SIZE));
 			 */
 
-			reportNode.addData("Amount involved", (String) properties.get(DocumentGraphParser.TOTALAMOUNTSTR));
+			reportNode.addData("Amount involved",
+					(String) PropertyHelper.getPropertyByKey(props, DocumentGraphParser.TOTALAMOUNTSTR).getRange());
 
-			final Set<String> datesOfEvents = (Set<String>) properties.get(DocumentGraphParser.DATES_OF_EVENTS);
+			final Set<String> datesOfEvents = (Set<String>) PropertyHelper.getPropertyByKey(props,
+					DocumentGraphParser.DATES_OF_EVENTS).getRange();
 			if (ValidationUtils.isValid(datesOfEvents)) {
 				for (final String d : datesOfEvents) {
 					reportNode.addData("Date of Event", d);
 				}
 			}
 
-			final Set<String> datesFiled = (Set<String>) properties.get(DocumentGraphParser.DATES_FILED);
+			final Set<String> datesFiled = (Set<String>) PropertyHelper.getPropertyByKey(props,
+					DocumentGraphParser.DATES_FILED).getRange();
 			if (ValidationUtils.isValid(datesFiled)) {
 				for (final String d : datesFiled) {
 					reportNode.addData("Date filed", d);
 				}
 			}
-			final Set<String> datesReceived = (Set<String>) properties.get(DocumentGraphParser.DATES_RECEIVED);
+			final Set<String> datesReceived = (Set<String>) PropertyHelper.getPropertyByKey(props,
+					DocumentGraphParser.DATES_RECEIVED).getRange();
 			if (ValidationUtils.isValid(datesReceived)) {
 				for (final String d : datesReceived) {
 					reportNode.addData("Date received", d);
