@@ -13,7 +13,35 @@ import org.apache.tapestry5.annotations.Log;
 
 @Path("/graphml/")
 @Produces("application/xml")
+@Deprecated
 public interface GraphmlServerRS {
+
+	/**
+	 * Seems to always be graphml/directed/transfers/ or graphml/directed/COMMS/
+	 * 
+	 * @param objectType
+	 * @param value
+	 * @param valueType
+	 * @param degree
+	 * @param maxNodes
+	 * @param maxEdgesPerNode
+	 * @param showIcons
+	 * @param minSecs
+	 * @param maxSecs
+	 * @param minimumWeight
+	 * @return
+	 */
+	@Log
+	@GET
+	@Path("/directed/{objectType}/{value}")
+	@Produces("application/xml")
+	public abstract GraphmlContainer getEvents(
+			@PathParam("objectType") String objectType, // Dataset name etc
+			@PathParam("value") String[] value, @QueryParam("Type") String valueType,
+			@QueryParam("degree") String degree, @QueryParam("maxNodes") String maxNodes,
+			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode, @QueryParam("showIcons") boolean showIcons,
+			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
+			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs, @QueryParam("minWeight") String minimumWeight);
 
 	/**
 	 * Seems to always be like this on EntityGraph.js:
@@ -40,45 +68,10 @@ public interface GraphmlServerRS {
 	@GET
 	@Path("/{type}/{value}")
 	@Produces("application/xml")
-	public abstract GraphmlContainer getProperties(
-			@PathParam("type") String type, @PathParam("value") String value,
-			@QueryParam("degree") String degree,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-			@QueryParam("bipartite") boolean bipartite,
-			@QueryParam("showLeafNodes") boolean leafNodes,
-			@QueryParam("showNameNodes") boolean showNameNodes,
+	public abstract GraphmlContainer getProperties(@PathParam("type") String type, @PathParam("value") String value,
+			@QueryParam("degree") String degree, @QueryParam("maxNodes") String maxNodes,
+			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode, @QueryParam("bipartite") boolean bipartite,
+			@QueryParam("showLeafNodes") boolean leafNodes, @QueryParam("showNameNodes") boolean showNameNodes,
 			@QueryParam("showIcons") boolean showIcons);
-
-	/**
-	 * Seems to always be graphml/directed/transfers/ or graphml/directed/COMMS/
-	 * 
-	 * @param objectType
-	 * @param value
-	 * @param valueType
-	 * @param degree
-	 * @param maxNodes
-	 * @param maxEdgesPerNode
-	 * @param showIcons
-	 * @param minSecs
-	 * @param maxSecs
-	 * @param minimumWeight
-	 * @return
-	 */
-	@Log
-	@GET
-	@Path("/directed/{objectType}/{value}")
-	@Produces("application/xml")
-	public abstract GraphmlContainer getEvents(
-			@PathParam("objectType") String objectType, // Dataset name etc
-			@PathParam("value") String[] value,
-			@QueryParam("Type") String valueType,
-			@QueryParam("degree") String degree,
-			@QueryParam("maxNodes") String maxNodes,
-			@QueryParam("maxEdgesPerNode") String maxEdgesPerNode,
-			@QueryParam("showIcons") boolean showIcons,
-			@QueryParam("fromdt") @DefaultValue(value = "0") String minSecs,
-			@QueryParam("todt") @DefaultValue(value = "0") String maxSecs,
-			@QueryParam("minWeight") String minimumWeight);
 
 }
