@@ -34,7 +34,7 @@ public class CallbackTest {
 		final ExampleCallback t = new ExampleCallback();
 
 		final G_SearchResult var = G_SearchResult.newBuilder().setScore(1.0d).build();
-		AssertJUnit.assertTrue(t.callBack(var));
-		AssertJUnit.assertFalse(t.callBack(null));
+		AssertJUnit.assertTrue(t.callBack(var, null));
+		AssertJUnit.assertFalse(t.callBack(null, null));
 	}
 }
