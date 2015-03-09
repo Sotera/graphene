@@ -7,11 +7,6 @@
 <!-- This is a span 10 in the bootstrap layout. You just need to add one 
 		or more fluid rows here. -->
 <style>
-<<<<<<< HEAD
-.legend{
-	margin-right: 3px;
-}
-=======
 <!--
 -->
 .ui-buttonset .ui-button {
@@ -24,28 +19,17 @@ table {
 	border-collapse: collapse;
 }
 
-table th {
-	padding: 8px;
-}
-
 table td {
 	border-right: 1px solid #EEEEEE;
 	border-bottom: 1px solid #888888;
-	padding: 8px;
-	max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
-
-.legend {
+.legend{
 	margin-right: 3px;
 }
-
 .pivotlink {
-	max-width: 100px;
+	max-width: 400px;
 	white-space: normal;
 }
->>>>>>> origin/instagram
 </style>
 <section id="widget-grid" class="">
 	<div class="row">
@@ -53,19 +37,16 @@ table td {
 			<!-- Start results area -->
 			<t:if test="populatedTableResults">
 				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1"
-					data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+					data-widget-sortable="false" data-widget-deletebutton="false"
+					data-widget-editbutton="false" data-widget-colorbutton="false" 
+					data-widget-collapsebutton="false"  data-widget-fullscreenbutton="false">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-table"></i>
 						</span>
 						<h2>Results</h2>
-						<h2>[ Showing ${results.numberOfResultsReturned} hits out of
-<<<<<<< HEAD
-							${results.numberOfResultsTotal} ] for ${searchValue} in ${searchTypeFilter}</h2>
+						<h2>[ Showing ${results.results.size()} hits out of
+							${results.total} ] for ${searchValue} in ${searchTypeFilter}</h2>
 						<t:graphene.ui.searchlegend />
-=======
-							${results.numberOtResultsTotal} ] for ${searchValue} in ${searchTypeFilter}</h2>
-						<!-- <t:graphene.ui.searchlegend /> -->
->>>>>>> origin/instagram
 					</header>
 					<!-- widget div-->
 					<div>
@@ -82,79 +63,65 @@ table td {
 								<p:rankCell>
 									 ${rank}
 								</p:rankCell>
-								
 								<p:actionsCell>
-									<t:if test="mediaPageLink">
-										<a href="${mediaPageLink}" page="prop:mediaPageLink"
-											context="mediaId" target="mediaId"  title="${score}">
-											<img height="100" width="100" src="${mediaThumbnail}">
-											</img>
-											<!-- <i class="fa fa-folder-open-o"/> ${mediaId} -->
-										</a>
+									<t:if test="reportPageLink">
+										<t:pagelink class="btn btn-action" page="prop:reportPageLink"
+											context="reportId" target="report-${reportId}"  title="${score}">
+											<i class="fa fa-folder-open-o"/> ${reportType} ${reportId}
+												</t:pagelink>
 										<br />
 										<p:else>Report View Unavailable</p:else>
 									</t:if>
 
-									<a class="btn btn-action" href="${extLink}" target="graph-${mediaId}">
+									<a class="btn btn-action" href="${extLink}" target="graph-${reportId}">
 										<i class="fa fa-code-fork"> </i> Graph
 									</a>
 								</p:actionsCell>
 
- 								<p:usernameCell>
- 									<a href="${getNamePivotLink(mediaOwner)}" class="btn btn-xs pivotlink">
-										${mediaOwner}
-									</a>
-								</p:usernameCell>
-								
-								<p:createdTimeCell>
-									${mediaCreatedTime}
-								</p:createdTimeCell>
-								
- 								<p:captionTextCell>
- 									${mediaCaption}
-								</p:captionTextCell>
-								
-								<p:likeCountCell>
-									${mediaLikeCount}
-								</p:likeCountCell>
-								
-								<p:commentCountCell>
-									${mediaCommentCount}
-								</p:commentCountCell>
-								
-								<p:hashtagsCell>
-									<t:loop source="hashTagsInComments" value="currentHashTag">
-										<a href="${getNamePivotLink(currentHashTag.first)}" class="btn btn-xs pivotlink">
-											${currentHashTag.first}
-										</a>
+								<p:informationIconsCell>
+									<t:loop source="iconList" value="currentIcon">
+										<span class="${currentIcon.first} label alert-info"
+											title="${currentIcon.second}">&nbsp; </span>
 									</t:loop>
-									<t:loop source="hashTagsInCaption" value="currentHashTag">
-										<a href="${getNamePivotLink(currentHashTag.first)}" class="btn btn-xs pivotlink">
-											${currentHashTag.first}
-										</a>
+								</p:informationIconsCell>
+								<p:dateCell>
+									${currentEntity.get('firstDate')}
+								</p:dateCell>
+								<p:amountCell>
+									${formattedAmount}
+								</p:amountCell>
+								<p:subjectsCell>
+									<t:loop source="nameList" value="currentName">
+										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentName)}"
+											href="${getNamePivotLink(currentName.third)}"> ${currentName.second} </a>
+										<br />
+										<br />
 									</t:loop>
-								</p:hashtagsCell>
-								
-								<p:atsCell>
-									<t:loop source="atsInComments" value="currentAt">
-										<a href="${getNamePivotLink(currentAt.first)}" class="btn btn-xs pivotlink">
-											${currentAt.first}
+								</p:subjectsCell>
+								<p:addressListCell>
+									<t:loop source="addressList" value="currentAddress">
+										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentAddress)}"
+											href="${getAddressPivotLink(currentAddress.third)}"> ${currentAddress.second}
 										</a>
+										<br />
 									</t:loop>
-									<t:loop source="atsInCaption" value="currentAt">
-										<a href="${getNamePivotLink(currentAt.first)}" class="btn btn-xs pivotlink">
-											${currentAt.first}
-										</a>
+								</p:addressListCell>
+								<p:communicationIdentifierListCell>
+									<t:loop source="cIdentifierList" value="currentCommunicationId">
+										<a
+											class="btn btn-xs pivotlink"  style="${getStyleFor(currentCommunicationId)}"
+											href="${getPivotLink(currentCommunicationId.third)}">
+											${currentCommunicationId.second}</a>
 									</t:loop>
-								</p:atsCell>
-								
-								<p:locationCell>
-									${mediaLocationName}
-									<t:if test="mediaLocationLatLon">
-									<br/>${mediaLocationLatLon}
-									</t:if>
-								</p:locationCell>
-								
+								</p:communicationIdentifierListCell>
+								<p:identifierListCell>
+									<t:loop source="identifierList" value="currentIdentifier">
+										<a class="btn btn-xs pivotlink" style="${getStyleFor(currentIdentifier)}"
+											href="${getPivotLink(currentIdentifier.third)}">
+											${currentIdentifier.second}</a>
+
+									</t:loop>
+								</p:identifierListCell>
 							</t:jquery.datatable>
 
 							<t:block t:id="emptyResults">
@@ -170,5 +137,7 @@ table td {
 			<!-- end results area -->
 		</article>
 	</div>
+
+
 </section>
 </html>

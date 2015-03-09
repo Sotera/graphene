@@ -154,20 +154,20 @@ protocol G_Search {
 	}
 	
 	record G_EntityQuery {
-		string id;
-		union {null, string} targetSchema;
+		union {null,string} id = null;
+		union {null, string} targetSchema = null;
 		long firstResult = 0;
 		long maxResult = 0;
 		string userId = "None";
 		string username = "None";
 		long timeInitiated;
 		array<@java-class("graphene.model.idl.G_SearchTuple") string> attributeList;
-		array<G_PropertyMatchDescriptor> propertyMatchDescriptors;
-		array<string> filters;
+		union {null, array<G_PropertyMatchDescriptor>} propertyMatchDescriptors = null;
+		union {null, array<string>} filters = null;
 		boolean caseSensitive = false;
 		boolean searchFreeText = false;
 		double minimumScore = 0.25d;
-		union {null, string} initiatorId;
+		union {null, string} initiatorId = null;
 	}
 }
 

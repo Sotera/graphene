@@ -132,6 +132,11 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 
 	@Override
 	public G_SearchResults findByQueryWithMeta(final G_EntityQuery pq) throws Exception {
+		
+		G_SearchResults results = G_SearchResults.newBuilder()
+				.setTotal(0)
+				.setResults(new ArrayList<G_SearchResult>())
+				.build();
 
 		final List<G_SearchResult> resultsList = new ArrayList<G_SearchResult>();
 
@@ -150,18 +155,17 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 			for (int i = 0; i < actualListOfHits.size(); i++) {
 				final JsonNode currentHit = actualListOfHits.get(i);
 				if (ValidationUtils.isValid(currentHit)) {
-
-					final Object entity = db.buildSearchResultFromDocument(i, currentHit, pq);
-					resultsList.add(G_SearchResult.newBuilder().setResult(entity)
-							.setScore(currentHit.get("_score").asDouble()).build());
+					final G_SearchResult result = db.buildSearchResultFromDocument(i, currentHit, pq);
+					resultsList.add(result);					
 				} else {
 					logger.error("Invalid search result at index " + i + " for query " + pq.toString());
 				}
 			}
 		}
-		final G_SearchResults results = G_SearchResults.newBuilder().setResults(resultsList)
-				.setTotal(totalNumberOfPossibleResults).build();
-
+		
+		results.setResults(resultsList);
+		results.setTotal((long) resultsList.size());
+		
 		return results;
 	}
 

@@ -5,6 +5,7 @@ import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_Property;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SearchTuple;
@@ -126,15 +127,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	private HyperGraphBuilder<Object> phgb;
 
 	@Property
-	private List<Map<String, Object>> populatedTableResults;
+	private List<List<G_Property>> populatedTableResults;
 
 	private String previousSearchValue;
 
 	@Property
-	private G_SearchResults results;
-	@Property
 	private int resultShowingCount;
 
+	@Property
+	private G_SearchResults results;
+	
 	@Property
 	private int resultTotalCount;
 	/**
@@ -197,7 +199,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	private BeanModel<Object> model;
 
 	final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-	private G_SearchResults metaresults;
 
 	public Collection<Triple<String, String, String>> getAddressList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTADDRESSLIST);
@@ -242,7 +243,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 */
 	private G_SearchResults getEntities(final String schema, final String subType, final String matchType,
 			final String value, final int maxResults) {
-		metaresults = null;
+		G_SearchResults metaresults = null;
 		if (ValidationUtils.isValid(value)) {
 			G_SearchType g_SearchType = null;
 			if (ValidationUtils.isValid(matchType)) {
@@ -254,7 +255,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			} else {
 				g_SearchType = G_SearchType.COMPARE_CONTAINS;
 			}
-			String userId = null, username = null;
+			String userId, username;
 			if (isUserExists()) {
 				userId = getUser().getId();
 				username = getUser().getUsername();
@@ -262,35 +263,42 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
 			final G_SearchTuple tuple = new G_SearchTuple<String>(value, g_SearchType);
 			tuples.add(tuple);
-			final G_EntityQuery sq = G_EntityQuery.newBuilder().setAttributeList(tuples).setMaxResult(maxResults)
-					.setTargetSchema(schema).setMinimumScore(0.0).setUserId(userId).setUsername(username)
-					.setTimeInitiated(DateTime.now().getMillis()).build();
+			
+			List<String> filters = new ArrayList<String>();
 			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
-				sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
+				filters.addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
 			}
+			
+			G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder().setAttributeList(tuples).setFilters(filters).setMaxResult(maxResults)
+					.setTargetSchema(schema).setMinimumScore(0.0).setTimeInitiated(DateTime.now().getMillis());
+			
+			if (isUserExists()) {
+				queryBuilder.setUserId(getUser().getId()).setUsername(getUser().getUsername());
+			}
+			
+			final G_EntityQuery sq = queryBuilder.build();
 
 			try {
-				loggingDao.recordQuery(sq);
-				if (currentSelectedWorkspaceExists) {
-					List<G_EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
-					if (qo == null) {
-						qo = new ArrayList<G_EntityQuery>(1);
-					}
-					qo.add(sq);
-					currentSelectedWorkspace.setQueryObjects(qo);
-
-					userDataAccess.saveWorkspace(getUser().getId(), currentSelectedWorkspace);
-				}
+//				loggingDao.recordQuery(sq);
+//				if (currentSelectedWorkspaceExists) {
+//					List<G_EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
+//					if (qo == null) {
+//						qo = new ArrayList<G_EntityQuery>(1);
+//					}
+//					qo.add(sq);
+//					currentSelectedWorkspace.setQueryObjects(qo);
+//
+//					userDataAccess.saveWorkspace(getUser().getId(), currentSelectedWorkspace);
+//				}
 				metaresults = dao.findByQueryWithMeta(sq);
-				final DocumentBuilder b;
 				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
-				populatedTableResults = new ArrayList<Map<String, Object>>();
+				populatedTableResults = new ArrayList<List<G_Property>>();
+				
 				// Populate all the results!
 				for (final G_SearchResult m : metaresults.getResults()) {
-					final DocumentGraphParser parserForObject = phgb.getParserForObject(m);
+					final DocumentGraphParser parserForObject = phgb.getParserForObject(m.getResult());
 					if (parserForObject != null) {
-						parserForObject.populateSearchResult(m, sq);
-						populatedTableResults.add(parserForObject.getAdditionalProperties(m));
+						populatedTableResults.add(m.getNamedProperties().get(DocumentGraphParser.SUMMARY));
 					} else {
 						logger.error("Could not find parser for " + m);
 					}
@@ -317,9 +325,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * 
 	 * @return
 	 */
-	// public String getExtLink() {
-	// return extPath + getMediaId();
-	// }
+	public String getExtLink() {
+		return extPath + getReportId();
+	}
 
 	public String getFormattedAmount() {
 		String amount = null;
@@ -340,14 +348,6 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return amount;
 	}
 
-	public Collection<Tuple<String, String>> getHashTagsInCaption() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_CAPTION");
-	}
-
-	public Collection<Tuple<String, String>> getHashTagsInComments() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("HASHTAGS_IN_COMMENTS");
-	}
-
 	/**
 	 * Get a list of icons that apply to this report.
 	 * 
@@ -365,106 +365,32 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
 	}
 
-	//
-	// public String getMediaCaption() {
-	// return (String)
-	// currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
-	// }
-	//
-	// public String getMediaCommentCount() {
-	// return
-	// String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
-	// }
-	//
-	// public Object getMediaCreatedTime() {
-	// return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
-	// }
-	//
-	// public String getMediaId() {
-	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
-	// }
-	//
-	// public String getMediaLikeCount() {
-	// return
-	// String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
-	// }
-	//
-	// public String getMediaLocationLatLon() {
-	// return (String)
-	// currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
-	// }
-	//
-	// public String getMediaLocationName() {
-	// return (String)
-	// currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
-	// }
-	//
-	// public String getMediaOwner() {
-	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
-	// }
-	//
-	// public String getMediaPageLink() {
-	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
-	// }
-	//
-	// public String getMediaThumbnail() {
-	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
-	// }
+
 
 	public BeanModel getModel() {
-		return (BeanModel) metaresults.get("BEANMODEL");
+		if (model == null) {
+			model = beanModelSource.createEditModel(Object.class, messages);
+			model.addEmpty("rank");
+			model.addEmpty("actions");
+			model.addEmpty("informationIcons");
+			model.addEmpty("date");
+			model.addEmpty("amount");
+			model.addEmpty("subjects");
+			model.addEmpty("addressList");
+			model.addEmpty("communicationIdentifierList");
+			model.addEmpty("identifierList");
 
-		//
-		// <<<<<<< HEAD
-		// if (model == null) {
-		// model = beanModelSource.createEditModel(Object.class, messages);
-		// model.addEmpty("rank");
-		// model.addEmpty("actions");
-		// model.addEmpty("informationIcons");
-		// model.addEmpty("date");
-		// model.addEmpty("amount");
-		// model.addEmpty("subjects");
-		// model.addEmpty("addressList");
-		// model.addEmpty("communicationIdentifierList");
-		// model.addEmpty("identifierList");
-		//
-		// model.getById("rank").sortable(true);
-		// model.getById("actions").sortable(true);
-		// model.getById("informationIcons").sortable(false);
-		// model.getById("date").sortable(true);
-		// model.getById("amount").sortable(true);
-		// model.getById("subjects").sortable(true);
-		// model.getById("addressList").sortable(true);
-		// model.getById("communicationIdentifierList").sortable(true);
-		// model.getById("identifierList").sortable(true);
-		// }
-		// =======
-		// final BeanModel<Object> model =
-		// beanModelSource.createEditModel(Object.class, messages);
-		// model.addEmpty("rank");
-		// model.addEmpty("actions");
-		// model.addEmpty("username");
-		// model.addEmpty("createdTime");
-		// model.addEmpty("captionText");
-		// model.addEmpty("likeCount");
-		// model.addEmpty("commentCount");
-		// model.addEmpty("hashtags");
-		// model.addEmpty("ats");
-		// model.addEmpty("location");
-		//
-		// model.getById("rank").sortable(true);
-		// model.getById("actions").sortable(false);
-		// model.getById("username").sortable(true);
-		// model.getById("createdTime").sortable(true);
-		// model.getById("captionText").sortable(true);
-		// model.getById("likeCount").sortable(true);
-		// model.getById("commentCount").sortable(true);
-		// model.getById("hashtags").sortable(true);
-		// model.getById("ats").sortable(true);
-		// model.getById("location").sortable(true);
-		//
-		// >>>>>>> origin/instagram
-		// return model;
+			model.getById("rank").sortable(true);
+			model.getById("actions").sortable(true);
+			model.getById("informationIcons").sortable(false);
+			model.getById("date").sortable(true);
+			model.getById("amount").sortable(true);
+			model.getById("subjects").sortable(true);
+			model.getById("addressList").sortable(true);
+			model.getById("communicationIdentifierList").sortable(true);
+			model.getById("identifierList").sortable(true);
+		}
+		return model;
 	}
 
 	public Format getMoneyFormat() {
@@ -483,7 +409,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	}
 
 	public JSONObject getOptions() {
-return (JSONObject) metaresults.get("DATATABLESJSON");
+
 		final JSONObject json = new JSONObject(
 				"bJQueryUI",
 				"true",
@@ -503,7 +429,6 @@ return (JSONObject) metaresults.get("DATATABLESJSON");
 				{ "date", "7%" }, { "amount", "7%" }, { "subjects", "12%" }, { "addressList", "25%" },
 				{ "communicationIdentifierList", "15%" }, { "identifierList", "15%" } };
 
-<<<<<<< HEAD
 		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
 				properties[columnArray.length()][1], "sType", "numeric"));
 
@@ -534,75 +459,6 @@ return (JSONObject) metaresults.get("DATATABLESJSON");
 		// json.put("sScrollX", "100%");
 		// json.put("bScrollCollapse", false);
 		json.put("aoColumns", columnArray);
-=======
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "numeric"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "false", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "html"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "date"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"type", "currency",
-			"sType", "currency"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
-
-		columnArray.put(new JSONObject(
-			"mDataProp", properties[columnArray.length()][0], 
-			"bSortable", "true", 
-			"sWidth", properties[columnArray.length()][1], 
-			"sType", "string"
-		));
-
-		//json.put("sScrollX", "100%");
-		//json.put("bScrollCollapse", false);
-//		json.put("aoColumns", columnArray);
->>>>>>> origin/instagram
 		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
 
 		return json;
