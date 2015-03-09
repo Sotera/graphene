@@ -5,13 +5,14 @@ import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentGraphParser;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
-import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.LinkGenerator;
 import graphene.util.DataFormatConstants;
@@ -20,7 +21,6 @@ import graphene.util.Tuple;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
-import graphene.web.model.CombinedEntityDataSource;
 
 import java.text.Format;
 import java.text.NumberFormat;
@@ -42,7 +42,6 @@ import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -52,6 +51,7 @@ import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
 /**
@@ -111,9 +111,6 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 	@Inject
 	private JavaScriptSupport javaScriptSupport;
 
-	@Property
-	private final GridDataSource gds = new CombinedEntityDataSource(dao);
-
 	@Inject
 	private Logger logger;
 
@@ -133,7 +130,7 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 	private String previousSearchValue;
 
 	@Property
-	private GrapheneResults<Object> results;
+	private G_SearchResults results;
 	@Property
 	private int resultShowingCount;
 
@@ -236,11 +233,10 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 	 * @param searchValue2
 	 * @return
 	 */
-	private GrapheneResults<Object> getEntities(final String schema, final String subType, final String matchType,
+	private G_SearchResults getEntities(final String schema, final String subType, final String matchType,
 			final String value, final int maxResults) {
-		GrapheneResults<Object> metaresults = null;
+		G_SearchResults metaresults = null;
 		if (ValidationUtils.isValid(value)) {
-			final G_EntityQuery sq = G_EntityQuery.newBuilder();
 			G_SearchType g_SearchType = null;
 			if (ValidationUtils.isValid(matchType)) {
 				try {
@@ -248,26 +244,30 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 				} catch (final Exception e) {
 					g_SearchType = G_SearchType.COMPARE_CONTAINS;
 				}
+			} else {
+				g_SearchType = G_SearchType.COMPARE_CONTAINS;
 			}
-			final G_SearchTuple<String> gs = new G_SearchTuple<String>(value, g_SearchType);
+			String userId = null, username = null;
+			if (isUserExists()) {
+				userId = getUser().getId();
+				username = getUser().getUsername();
+			}
+			final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
+			final G_SearchTuple tuple = new G_SearchTuple<String>(value, g_SearchType);
+			tuples.add(tuple);
+			final G_EntityQuery sq = G_EntityQuery.newBuilder().setAttributeList(tuples).setMaxResult(maxResults)
+					.setTargetSchema(schema).setMinimumScore(0.0).setUserId(userId).setUsername(username)
+					.setTimeInitiated(DateTime.now().getMillis()).build();
 			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
 				sq.getFilters().addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
-			}
-			sq.addAttribute(gs);
-			sq.setMaxResult(maxResults);
-			sq.setSchema(schema);
-			sq.setMinimumScore(0.0);
-			if (isUserExists()) {
-				sq.setUserId(getUser().getId());
-				sq.setUserName(getUser().getUsername());
 			}
 
 			try {
 				loggingDao.recordQuery(sq);
 				if (currentSelectedWorkspaceExists) {
-					List<EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
+					List<G_EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
 					if (qo == null) {
-						qo = new ArrayList<EntityQuery>(1);
+						qo = new ArrayList<G_EntityQuery>(1);
 					}
 					qo.add(sq);
 					currentSelectedWorkspace.setQueryObjects(qo);
@@ -278,10 +278,10 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
 				populatedTableResults = new ArrayList<Map<String, Object>>();
 				// Populate all the results!
-				for (final Object m : metaresults.getResults()) {
+				for (final G_SearchResult m : metaresults.getResults()) {
 					final DocumentGraphParser parserForObject = phgb.getParserForObject(m);
 					if (parserForObject != null) {
-						parserForObject.populateExtraFields(m, sq);
+						parserForObject.populateSearchResult(m, sq);
 						populatedTableResults.add(parserForObject.getAdditionalProperties(m));
 					} else {
 						logger.error("Could not find parser for " + m);
@@ -290,19 +290,16 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 				tr.logAsCompleted();
 			} catch (final Exception e) {
 				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
-		if ((metaresults == null) || (metaresults.getNumberOfResultsReturned() == 0)) {
+		if ((metaresults == null) || (metaresults.getResults().size() == 0)) {
 			alertManager.alert(Duration.TRANSIENT, Severity.INFO, "No results found for " + value + ".");
 			resultShowingCount = 0;
 			resultTotalCount = 0;
 		} else {
-			alertManager.alert(
-					Duration.TRANSIENT,
-					Severity.SUCCESS,
-					"Showing " + metaresults.getNumberOfResultsReturned() + " of "
-							+ metaresults.getNumberOtResultsTotal() + " results found.");
+			alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Showing " + metaresults.getResults().size()
+					+ " of " + metaresults.getTotal() + " results found.");
 		}
 		return metaresults;
 	}
@@ -312,9 +309,9 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 	 * 
 	 * @return
 	 */
-	public String getExtLink() {
-		return extPath + getMediaId();
-	}
+	// public String getExtLink() {
+	// return extPath + getMediaId();
+	// }
 
 	public String getFormattedAmount() {
 		final NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -350,45 +347,51 @@ public class CombinedEntitySearchPageInstagram extends SimpleBasePage implements
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
 	}
 
-	public String getMediaCaption() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
-	}
-
-	public String getMediaCommentCount() {
-		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
-	}
-
-	public Object getMediaCreatedTime() {
-		return currentEntity.get(AbstractDocumentGraphParser.MEDIA_CREATED_TIME);
-	}
-
-	public String getMediaId() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
-	}
-
-	public String getMediaLikeCount() {
-		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
-	}
-
-	public String getMediaLocationLatLon() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
-	}
-
-	public String getMediaLocationName() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
-	}
-
-	public String getMediaOwner() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
-	}
-
-	public String getMediaPageLink() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
-	}
-
-	public String getMediaThumbnail() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
-	}
+	//
+	// public String getMediaCaption() {
+	// return (String)
+	// currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
+	// }
+	//
+	// public String getMediaCommentCount() {
+	// return
+	// String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
+	// }
+	//
+	// public Object getMediaCreatedTime() {
+	// return currentEntity.get(AbstractDocumentGraphParser.MEDIA_CREATED_TIME);
+	// }
+	//
+	// public String getMediaId() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
+	// }
+	//
+	// public String getMediaLikeCount() {
+	// return
+	// String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
+	// }
+	//
+	// public String getMediaLocationLatLon() {
+	// return (String)
+	// currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
+	// }
+	//
+	// public String getMediaLocationName() {
+	// return (String)
+	// currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
+	// }
+	//
+	// public String getMediaOwner() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
+	// }
+	//
+	// public String getMediaPageLink() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
+	// }
+	//
+	// public String getMediaThumbnail() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
+	// }
 
 	public BeanModel getModel() {
 		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);

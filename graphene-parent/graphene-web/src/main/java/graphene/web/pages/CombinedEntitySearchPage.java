@@ -13,7 +13,6 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
-import graphene.model.view.GrapheneResults;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.LinkGenerator;
 import graphene.util.DataFormatConstants;
@@ -132,7 +131,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	private String previousSearchValue;
 
 	@Property
-	private GrapheneResults<Object> results;
+	private G_SearchResults results;
 	@Property
 	private int resultShowingCount;
 
@@ -198,6 +197,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	private BeanModel<Object> model;
 
 	final NumberFormat formatter = NumberFormat.getCurrencyInstance();
+	private G_SearchResults metaresults;
 
 	public Collection<Triple<String, String, String>> getAddressList() {
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTADDRESSLIST);
@@ -242,7 +242,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 */
 	private G_SearchResults getEntities(final String schema, final String subType, final String matchType,
 			final String value, final int maxResults) {
-		G_SearchResults metaresults = null;
+		metaresults = null;
 		if (ValidationUtils.isValid(value)) {
 			G_SearchType g_SearchType = null;
 			if (ValidationUtils.isValid(matchType)) {
@@ -254,7 +254,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			} else {
 				g_SearchType = G_SearchType.COMPARE_CONTAINS;
 			}
-			String userId, username;
+			String userId = null, username = null;
 			if (isUserExists()) {
 				userId = getUser().getId();
 				username = getUser().getUsername();
@@ -282,6 +282,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 					userDataAccess.saveWorkspace(getUser().getId(), currentSelectedWorkspace);
 				}
 				metaresults = dao.findByQueryWithMeta(sq);
+				final DocumentBuilder b;
 				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
 				populatedTableResults = new ArrayList<Map<String, Object>>();
 				// Populate all the results!
@@ -316,9 +317,9 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * 
 	 * @return
 	 */
-	public String getExtLink() {
-		return extPath + getMediaId();
-	}
+	// public String getExtLink() {
+	// return extPath + getMediaId();
+	// }
 
 	public String getFormattedAmount() {
 		String amount = null;
@@ -364,96 +365,106 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
 	}
 
-	public String getMediaCaption() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
-	}
-
-	public String getMediaCommentCount() {
-		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
-	}
-
-	public Object getMediaCreatedTime() {
-		return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
-	}
-
-	public String getMediaId() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
-	}
-
-	public String getMediaLikeCount() {
-		return String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
-	}
-
-	public String getMediaLocationLatLon() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
-	}
-
-	public String getMediaLocationName() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
-	}
-
-	public String getMediaOwner() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
-	}
-
-	public String getMediaPageLink() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
-	}
-
-	public String getMediaThumbnail() {
-		return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
-	}
+	//
+	// public String getMediaCaption() {
+	// return (String)
+	// currentEntity.get(DocumentGraphParser.MEDIA_CAPTION_TEXT);
+	// }
+	//
+	// public String getMediaCommentCount() {
+	// return
+	// String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_COMMENT_COUNT));
+	// }
+	//
+	// public Object getMediaCreatedTime() {
+	// return currentEntity.get(DocumentGraphParser.MEDIA_CREATED_TIME);
+	// }
+	//
+	// public String getMediaId() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_ID);
+	// }
+	//
+	// public String getMediaLikeCount() {
+	// return
+	// String.valueOf(currentEntity.get(DocumentGraphParser.MEDIA_LIKE_COUNT));
+	// }
+	//
+	// public String getMediaLocationLatLon() {
+	// return (String)
+	// currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_LATLON);
+	// }
+	//
+	// public String getMediaLocationName() {
+	// return (String)
+	// currentEntity.get(DocumentGraphParser.MEDIA_LOCATION_NAME);
+	// }
+	//
+	// public String getMediaOwner() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_OWNER);
+	// }
+	//
+	// public String getMediaPageLink() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_LINK);
+	// }
+	//
+	// public String getMediaThumbnail() {
+	// return (String) currentEntity.get(DocumentGraphParser.MEDIA_THUMBNAIL);
+	// }
 
 	public BeanModel getModel() {
-<<<<<<< HEAD
-		if (model == null) {
-			model = beanModelSource.createEditModel(Object.class, messages);
-			model.addEmpty("rank");
-			model.addEmpty("actions");
-			model.addEmpty("informationIcons");
-			model.addEmpty("date");
-			model.addEmpty("amount");
-			model.addEmpty("subjects");
-			model.addEmpty("addressList");
-			model.addEmpty("communicationIdentifierList");
-			model.addEmpty("identifierList");
+		return (BeanModel) metaresults.get("BEANMODEL");
 
-			model.getById("rank").sortable(true);
-			model.getById("actions").sortable(true);
-			model.getById("informationIcons").sortable(false);
-			model.getById("date").sortable(true);
-			model.getById("amount").sortable(true);
-			model.getById("subjects").sortable(true);
-			model.getById("addressList").sortable(true);
-			model.getById("communicationIdentifierList").sortable(true);
-			model.getById("identifierList").sortable(true);
-		}
-=======
-		final BeanModel<Object> model = beanModelSource.createEditModel(Object.class, messages);
-		model.addEmpty("rank");
-		model.addEmpty("actions");
-		model.addEmpty("username");
-		model.addEmpty("createdTime");
-		model.addEmpty("captionText");
-		model.addEmpty("likeCount");
-		model.addEmpty("commentCount");
-		model.addEmpty("hashtags");
-		model.addEmpty("ats");
-		model.addEmpty("location");
-
-		model.getById("rank").sortable(true);
-		model.getById("actions").sortable(false);
-		model.getById("username").sortable(true);
-		model.getById("createdTime").sortable(true);
-		model.getById("captionText").sortable(true);
-		model.getById("likeCount").sortable(true);
-		model.getById("commentCount").sortable(true);
-		model.getById("hashtags").sortable(true);
-		model.getById("ats").sortable(true);
-		model.getById("location").sortable(true);
-
->>>>>>> origin/instagram
-		return model;
+		//
+		// <<<<<<< HEAD
+		// if (model == null) {
+		// model = beanModelSource.createEditModel(Object.class, messages);
+		// model.addEmpty("rank");
+		// model.addEmpty("actions");
+		// model.addEmpty("informationIcons");
+		// model.addEmpty("date");
+		// model.addEmpty("amount");
+		// model.addEmpty("subjects");
+		// model.addEmpty("addressList");
+		// model.addEmpty("communicationIdentifierList");
+		// model.addEmpty("identifierList");
+		//
+		// model.getById("rank").sortable(true);
+		// model.getById("actions").sortable(true);
+		// model.getById("informationIcons").sortable(false);
+		// model.getById("date").sortable(true);
+		// model.getById("amount").sortable(true);
+		// model.getById("subjects").sortable(true);
+		// model.getById("addressList").sortable(true);
+		// model.getById("communicationIdentifierList").sortable(true);
+		// model.getById("identifierList").sortable(true);
+		// }
+		// =======
+		// final BeanModel<Object> model =
+		// beanModelSource.createEditModel(Object.class, messages);
+		// model.addEmpty("rank");
+		// model.addEmpty("actions");
+		// model.addEmpty("username");
+		// model.addEmpty("createdTime");
+		// model.addEmpty("captionText");
+		// model.addEmpty("likeCount");
+		// model.addEmpty("commentCount");
+		// model.addEmpty("hashtags");
+		// model.addEmpty("ats");
+		// model.addEmpty("location");
+		//
+		// model.getById("rank").sortable(true);
+		// model.getById("actions").sortable(false);
+		// model.getById("username").sortable(true);
+		// model.getById("createdTime").sortable(true);
+		// model.getById("captionText").sortable(true);
+		// model.getById("likeCount").sortable(true);
+		// model.getById("commentCount").sortable(true);
+		// model.getById("hashtags").sortable(true);
+		// model.getById("ats").sortable(true);
+		// model.getById("location").sortable(true);
+		//
+		// >>>>>>> origin/instagram
+		// return model;
 	}
 
 	public Format getMoneyFormat() {
@@ -472,7 +483,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	}
 
 	public JSONObject getOptions() {
-
+return (JSONObject) metaresults.get("DATATABLESJSON");
 		final JSONObject json = new JSONObject(
 				"bJQueryUI",
 				"true",

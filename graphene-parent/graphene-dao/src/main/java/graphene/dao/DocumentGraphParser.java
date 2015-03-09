@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import mil.darpa.vande.generic.V_GenericGraph;
+
 /**
  * 
  * @author djue
@@ -93,9 +95,21 @@ public interface DocumentGraphParser<T> {
 	 */
 	public HyperGraphBuilder<Object> getPhgb();
 
+	/**
+	 * This is the method for creating graphs for 4.1.2 and above.
+	 * 
+	 * @param sr
+	 * @param q
+	 * @return
+	 */
+	public V_GenericGraph getSubGraph(G_SearchResult sr, G_EntityQuery q);
+
 	public List<String> getSupportedObjects();
 
 	/**
+	 * This method is the way for creating graph nodes and edges for a document
+	 * for 4.1.1 and prior.
+	 * 
 	 * We try cast the object into a particular class, and pull out the
 	 * information we want. The Query object q is provided so that we know which
 	 * query allowed us to arrive at this object. This can be useful for
@@ -115,6 +129,14 @@ public interface DocumentGraphParser<T> {
 
 	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
 
+	/**
+	 * SearchResult properties are the things returned in a table view after an
+	 * initial search is done.
+	 * 
+	 * @param p
+	 * @param sq
+	 * @return
+	 */
 	Collection<? extends G_Property> populateSearchResult(G_SearchResult p, G_EntityQuery sq);
 
 	/**

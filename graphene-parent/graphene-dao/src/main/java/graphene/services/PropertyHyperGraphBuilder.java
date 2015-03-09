@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<T, G_EntityQuery> implements
 		HyperGraphBuilder<T> {
 
-	protected Collection<DocumentGraphParser> singletons;
+	// protected Collection<DocumentGraphParser> singletons;
 	private static final boolean INHERIT_ATTRIBUTES = true;
 	@Inject
 	protected StopWordService stopwordService;
@@ -74,10 +74,10 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 	}
 
 	public PropertyHyperGraphBuilder(final Collection<DocumentGraphParser> singletons) {
-		this.singletons = singletons;
-		for (final DocumentGraphParser s : singletons) {
-			s.setPhgb(this);
-		}
+		// this.singletons = singletons;
+		// for (final DocumentGraphParser s : singletons) {
+		// s.setPhgb(this);
+		// }
 	}
 
 	public void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q) {
