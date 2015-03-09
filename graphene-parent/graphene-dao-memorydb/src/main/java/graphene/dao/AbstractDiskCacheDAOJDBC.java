@@ -7,7 +7,6 @@ import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.query.BasicQuery;
 import graphene.model.query.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
@@ -40,8 +39,7 @@ import com.mysema.query.types.EntityPath;
  * @param <T>
  * @param <Q>
  */
-public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends DiskCacheDAO<T, Q> implements
-		GenericDAO {
+public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implements GenericDAO {
 
 	/**
 	 * If you need to change the database that is used, set it in the
@@ -130,7 +128,7 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends 
 				numProcessed += results.getResults().size();
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p)) {
+					if (!cb.callBack(p, q)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
 					}
@@ -285,6 +283,24 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends 
 	}
 
 	/**
+	 * 
+	 * @param q
+	 * @param sq
+	 * @return
+	 */
+	protected SQLQuery setOffsetAndLimit(final G_EntityQuery q, SQLQuery sq) {
+		if (ValidationUtils.isValid(q)) {
+			if (ValidationUtils.isValid(q.getFirstResult())) {
+				sq = sq.offset(q.getFirstResult());
+			}
+			if (ValidationUtils.isValid(q.getMaxResult())) {
+				sq = sq.limit(q.getMaxResult());
+			}
+		}
+		return sq;
+	}
+
+	/**
 	 * A safe way of adding offset and limit, directly using long values.
 	 * 
 	 * @param offset
@@ -299,24 +315,6 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends 
 		}
 		if (ValidationUtils.isValid(limit)) {
 			sq = sq.limit(limit);
-		}
-		return sq;
-	}
-
-	/**
-	 * 
-	 * @param q
-	 * @param sq
-	 * @return
-	 */
-	protected SQLQuery setOffsetAndLimit(final Q q, SQLQuery sq) {
-		if (ValidationUtils.isValid(q)) {
-			if (ValidationUtils.isValid(q.getFirstResult())) {
-				sq = sq.offset(q.getFirstResult());
-			}
-			if (ValidationUtils.isValid(q.getMaxResult())) {
-				sq = sq.limit(q.getMaxResult());
-			}
 		}
 		return sq;
 	}
@@ -468,7 +466,7 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends 
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p)) {
+					if (!cb.callBack(p, q)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
 					}
@@ -651,7 +649,7 @@ public abstract class AbstractDiskCacheDAOJDBC<T, Q extends BasicQuery> extends 
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p)) {
+					if (!cb.callBack(p, q)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
 					}

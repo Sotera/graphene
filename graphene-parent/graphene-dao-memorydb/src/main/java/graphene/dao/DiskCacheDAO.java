@@ -1,6 +1,7 @@
 package graphene.dao;
 
 import graphene.model.diskcache.DiskCache;
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.query.G_CallBack;
 import graphene.util.stats.TimeReporter;
@@ -8,11 +9,11 @@ import graphene.util.stats.TimeReporter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
-public abstract class DiskCacheDAO<T, Q> {
+public abstract class DiskCacheDAO<T> {
 	protected String cacheFileLocation = null;
 	protected boolean deleteExisting = false;
 
-	protected DiskCache<T, Q> diskCache;
+	protected DiskCache<T> diskCache;
 
 	@Inject
 	private Logger logger;
@@ -40,7 +41,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	/**
 	 * @return the diskCache
 	 */
-	public final DiskCache<T, Q> getDiskCache() {
+	public final DiskCache<T> getDiskCache() {
 		return diskCache;
 	}
 
@@ -72,7 +73,7 @@ public abstract class DiskCacheDAO<T, Q> {
 		return trySerialized;
 	}
 
-	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final Q q) {
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery q) {
 		logger.debug("Performing callback at the Disk Cache level...");
 
 		final boolean readerAvailable = getCacheToDisk(deleteExisting, trySerialized, saveLocally, maxResults);
@@ -84,7 +85,7 @@ public abstract class DiskCacheDAO<T, Q> {
 			while (readerAvailable && ((e = diskCache.read()) != null)) {
 				// logger.debug("read from disk " + e);
 				final G_SearchResult sr = G_SearchResult.newBuilder().setResult(e).build();
-				cb.callBack(sr);
+				cb.callBack(sr, q);
 				numProcessed++;
 				if ((numProcessed % 1000) == 0) {
 					t.getSpeed(numProcessed, "Disk Cache Objects");
@@ -119,7 +120,7 @@ public abstract class DiskCacheDAO<T, Q> {
 	 * @param diskCache
 	 *            the diskCache to set
 	 */
-	public final void setDiskCache(final DiskCache<T, Q> diskCache) {
+	public final void setDiskCache(final DiskCache<T> diskCache) {
 		this.diskCache = diskCache;
 	}
 

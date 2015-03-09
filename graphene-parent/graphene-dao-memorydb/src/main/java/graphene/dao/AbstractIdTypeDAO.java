@@ -1,6 +1,7 @@
 package graphene.dao;
 
 import graphene.dao.sql.GenericDAOJDBCImpl;
+import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
@@ -17,7 +18,7 @@ import org.slf4j.Logger;
 public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> implements IdTypeDAO<T> {
 	boolean loaded;
 	Map<Integer, IdType> loadedTypes = new HashMap<Integer, IdType>();
-
+	protected Funnel<G_SearchResult, IdType> funnel;
 	@Inject
 	protected Logger logger;
 
@@ -28,18 +29,9 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	}
 
 	@Override
-	public boolean applySkipRule(final T id) {
+	public boolean applySkipRule(final G_SearchResult id) {
 		return false;
 	}
-
-	/**
-	 * This is implemented for each customer implementation. It converts the
-	 * local domain object to the standard one.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public abstract IdType convertFrom(T id);
 
 	@Override
 	public void createFamilyMap() {
@@ -185,8 +177,8 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 			final Map<Integer, IdType> typeMap = new HashMap<Integer, IdType>(10);
 			final G_SearchResults typeList = getAll(0, 0);
 			for (final G_SearchResult id : typeList.getResults()) {
-				if (applySkipRule(id.getResult()) == false) {
-					final IdType idType = convertFrom(id);
+				if (applySkipRule(id) == false) {
+					final IdType idType = funnel.from(id);
 					// each idTypeId is unique.
 					typeMap.put(idType.getIdType_id(), idType);
 				}

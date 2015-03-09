@@ -64,7 +64,7 @@ public abstract class AbstractMemoryDB<T, I, Q extends G_EntityQuery> implements
 	protected Set<String> identifierSet;
 
 	@Inject
-	protected IdTypeDAO<?, ?> idTypeDAO;
+	protected IdTypeDAO<?> idTypeDAO;
 
 	protected HashMap<Integer, Integer> invalidTypes = new HashMap<Integer, Integer>(10);
 
@@ -72,7 +72,7 @@ public abstract class AbstractMemoryDB<T, I, Q extends G_EntityQuery> implements
 	protected long numProcessed = 0;
 	protected int state;
 
-	public AbstractMemoryDB(final EntityRefDAO<T> dao, final IdTypeDAO<?, ?> idTypeDAO) {
+	public AbstractMemoryDB(final EntityRefDAO<T> dao, final IdTypeDAO<?> idTypeDAO) {
 		this.dao = dao;
 		this.idTypeDAO = idTypeDAO;
 	}
