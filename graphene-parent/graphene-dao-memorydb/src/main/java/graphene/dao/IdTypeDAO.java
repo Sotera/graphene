@@ -1,6 +1,7 @@
 package graphene.dao;
 
 import graphene.model.idl.G_IdType;
+import graphene.model.idl.G_SearchResult;
 import graphene.model.view.entities.IdType;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public interface IdTypeDAO<T> extends GenericDAO {
 	 * @return true if the item was added to the list of ids to skip. False
 	 *         otherwise.
 	 */
-	public abstract boolean applySkipRule(T id);
+	public abstract boolean applySkipRule(G_SearchResult id);
 
 	public abstract void createFamilyMap();
 

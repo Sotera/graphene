@@ -114,7 +114,7 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 				numProcessed += results.getResults().size();
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p)) {
+					if (!cb.callBack(p, q)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
 					}
@@ -478,7 +478,7 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p)) {
+					if (!cb.callBack(p, q)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
 					}
@@ -663,7 +663,7 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p)) {
+					if (!cb.callBack(p, q)) {
 						logger.error("Fatal error in callback from loading index");
 						break;
 					}
