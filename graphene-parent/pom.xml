@@ -16,7 +16,7 @@
 		<module>graphene-dao</module>
 		<module>graphene-dao-sql</module>
 		<module>graphene-dao-neo4j</module>
-		<module>graphene-dao-memorydb</module>
+		<!-- <module>graphene-dao-memorydb</module> -->
 		<module>graphene-dao-titan</module>
 		<module>graphene-dao-es</module>
 		<module>graphene-export</module>

@@ -44,7 +44,7 @@ public class DirectedEventDataSource implements GridDataSource {
 		final EventQuery q = new EventQuery();
 		q.addId(partialName);
 		try {
-			return (int) dao.count(q);
+//			return (int) dao.count(q);
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -74,7 +74,7 @@ public class DirectedEventDataSource implements GridDataSource {
 			// new G_SearchTuple<String>(partialName, searchType));
 			try {
 				// FIXME: Need to set limit and offset in query object
-				preparedResults = dao.findByQuery(q);
+//				preparedResults = dao.findByQuery(q);
 			} catch (final Exception e) {
 				logger.error(e.getMessage());
 			}

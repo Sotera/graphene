@@ -11,6 +11,6 @@ package graphene.model.idl;
 @org.apache.avro.specific.AvroGenerated
 public enum G_DateInterval { 
   SECONDS, HOURS, DAYS, WEEKS, MONTHS, QUARTERS, YEARS  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Temporal resolution of a duration\\r\\n\\t \\r\\n\\t CHANGED IN 1.5\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_DateInterval\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Temporal resolution of a duration\\n\\t \\n\\t CHANGED IN 1.5\",\"symbols\":[\"SECONDS\",\"HOURS\",\"DAYS\",\"WEEKS\",\"MONTHS\",\"QUARTERS\",\"YEARS\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

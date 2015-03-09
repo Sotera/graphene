@@ -1,6 +1,7 @@
 package graphene.web.model;
 
 import graphene.dao.CombinedDAO;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SearchType;
 import graphene.model.idl.G_SortCriterion;
@@ -24,7 +25,7 @@ public class CombinedEntityDataSource implements GridDataSource {
 	private Logger logger;
 	private final String partialName = null;
 	private final String schema = null;
-	private List<Object> preparedResults;
+	private G_SearchResults preparedResults;
 
 	private final G_SearchType searchType = G_SearchType.COMPARE_CONTAINS;
 
@@ -70,7 +71,7 @@ public class CombinedEntityDataSource implements GridDataSource {
 	@Override
 	public void prepare(final int startIndex, final int endIndex, final List<SortConstraint> sortConstraints) {
 		if (partialName == null) {
-			preparedResults = new ArrayList<Object>();
+			preparedResults = new G_SearchResults();
 		} else {
 			final AdvancedSearch srch = new AdvancedSearch();
 			final List<SearchFilter> filters = new ArrayList<SearchFilter>();
@@ -90,7 +91,7 @@ public class CombinedEntityDataSource implements GridDataSource {
 			}
 		}
 		if (preparedResults == null) {
-			preparedResults = new ArrayList<Object>();
+			preparedResults = new G_SearchResults();
 		}
 		// (partialName, startIndex, endIndex - startIndex + 1);
 		this.startIndex = startIndex;

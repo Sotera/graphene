@@ -298,18 +298,6 @@ public class GrapheneModule {
 		sp.initialize();
 	}
 
-	@Contribute(ValueEncoderSource.class)
-	public static void provideEncoders(final MappedConfiguration<Class, ValueEncoderFactory> configuration,
-			@InjectService("Primary") final TransactionDAO transactionService) {
-		final ValueEncoderFactory<DirectedEventRow> factory = new ValueEncoderFactory<DirectedEventRow>() {
-			@Override
-			public ValueEncoder<DirectedEventRow> create(final Class<DirectedEventRow> clazz) {
-				return new EventEncoder(transactionService);
-			}
-		};
-		configuration.add(DirectedEventRow.class, factory);
-	}
-
 	/**
 	 * This is a service definition, the service will be named "TimingFilter".
 	 * The interface, RequestFilter, is used within the RequestHandler service
