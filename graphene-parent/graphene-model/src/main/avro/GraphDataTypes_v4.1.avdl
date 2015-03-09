@@ -35,11 +35,11 @@ protocol G_GraphDataTypes {
 		 */
 		string id;
 		
-		array<G_Entity> nodes;
+		union {array<G_Entity>,null} nodes;
 		
-		array<G_Link> edges;
+		union {array<G_Link>,null} edges;
 	
-		array<G_Property> properties;
+		union {array<G_Property>,null} properties;
 	}
 	
 
