@@ -1557,4 +1557,23 @@ function Utils(graphRef) {
 		
 		return confirmedNeighbors.length == 1;
 	};
+	
+	/**
+	 * 	Export the current graph as a PNG image in Base64 representation
+	 * 		@param options:Object - default parameters for PNG conversion
+	 * 		@returns String - Base64 representation of PNG image of the graph
+	 */
+	_this.toPng = function(options) {
+		if (typeof options == "undefined") {
+			options = {};
+		}
+		
+		var defaults = {
+			bg: (typeof options.bg != "undefined") ? options.bg : undefined,
+			full: (typeof options.full != "undefined") ? options.full : false,
+			scale: (typeof options.scale != "undefined") ? options.scale : 1
+		};
+		
+		return graphRef.gv.png(defaults);
+	};
 }
