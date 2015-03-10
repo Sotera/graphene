@@ -142,17 +142,21 @@ Ext.define("DARPA.exportDialog", {
 				if (a == null) Ext.Msg.alert("Export Error", "Unable to perform export capability with current browser");
 				else {
 					// NOTE:  we will eventually HAVE to do an Ajax POST.  Export of .png or .json is currently client-side
-					a.download = fileName + fileExt;
-					(function (obj, evt) {
-						if (document.createEvent) {
-							var evObj = document.createEvent("MouseEvents");
-							evObj.initEvent(evt, true, false);
-							obj.dispatchEvent(evObj);
-						} else if (document.createEventObject) {
-							var evObj = document.createEventObject();
-							obj.fireEvent("on" + evt, evObj);
-						}
-					})(a, "click");
+					try {
+						a.download = fileName + fileExt;
+						(function (obj, evt) {
+							if (document.createEvent) {
+								var evObj = document.createEvent("MouseEvents");
+								evObj.initEvent(evt, true, false);
+								obj.dispatchEvent(evObj);
+							} else if (document.createEventObject) {
+								var evObj = document.createEventObject();
+								obj.fireEvent("on" + evt, evObj);
+							}
+						})(a, "click");
+					} catch(e) {
+						console.error("Unable to export as image: " + e);
+					}
 				}
 				
 				thisWindow.close();
