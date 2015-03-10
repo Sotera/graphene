@@ -64,6 +64,8 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			institution: config.institution
 		});
 		
+		config.tbar.setDefaultLayoutBtn(self.GraphVis.CONSTANTS("defaultLayout"));
+		
 		config.bbar = Ext.create("Ext.ProgressBar", {
 			text: "Ready",
 			id: config.id + "-ProgressBar",
