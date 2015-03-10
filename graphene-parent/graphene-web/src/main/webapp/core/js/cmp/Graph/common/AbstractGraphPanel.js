@@ -176,7 +176,11 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		
 		var outPNG;
 		try {
-			outPNG = self.GraphVis.gv.png();
+			outPNG = self.GraphVis.utils.toPng({
+				// bg: background-color
+				// full: false = current viewport, true = entire graph
+				scale: 2
+			});
 		} catch (e) {
 			console.error("ERROR GETTING GRAPH PNG");
 			outPNG = undefined;
