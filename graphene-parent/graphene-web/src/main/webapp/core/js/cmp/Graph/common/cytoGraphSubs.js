@@ -88,10 +88,10 @@ function CytoGraphVis(inId) {
 
 /**
  *	Initialize this graph wrapper div with a cytoscape graph.
- *		config:Object - configuration parameters
- *		owner:Object - Reference to the parent display that houses this graph visualization (useful for scope)
- *		callbackFn:Function - (Optional) a callback function executed after cytoscape initializes the graph
- *		isUndirected:Boolean - (Optional) a flag to change the styling of the graph to prevent implication of directed edges		
+ *		@param config:Object - configuration parameters
+ *		@param owner:Object - Reference to the parent display that houses this graph visualization (useful for scope)
+ *		@param callbackFn:Function - (Optional) a callback function executed after cytoscape initializes the graph
+ *		@param isUndirected:Boolean - (Optional) a flag to change the styling of the graph to prevent implication of directed edges		
  *
  *		note: anything else passed to this function will be given to callbackFn as parameters
  */
@@ -105,15 +105,14 @@ CytoGraphVis.prototype.initGraph = function( /*config, owner[, callbackFn, isUnd
 	var isUndirected = args.shift();
 	// at this point, args is an array of whatever other arguments were passed to this function
 	
-	if (typeof config.width !== "undefined") _this.dispWidth = config.width;
-	if (typeof config.height !== "undefined") _this.dispHeight = config.height;
-	if (typeof config.rightBorder !== "undefined") _this.dispRightBorder = config.rightBorder;
-	if (typeof config.leftBorder !== "undefined") _this.dispLeftBorder = config.leftBorder;
-	if (typeof config.topBorder !== "undefined") _this.dispTopBorder = config.topBorder;
-	if (typeof config.botBorder !== "undefined") _this.dispBotBorder = config.botBorder;
+	if (typeof config.width !== "undefined")		_this.dispWidth = config.width;
+	if (typeof config.height !== "undefined")		_this.dispHeight = config.height;
+	if (typeof config.rightBorder !== "undefined")	_this.dispRightBorder = config.rightBorder;
+	if (typeof config.leftBorder !== "undefined")	_this.dispLeftBorder = config.leftBorder;
+	if (typeof config.topBorder !== "undefined")	_this.dispTopBorder = config.topBorder;
+	if (typeof config.botBorder !== "undefined")	_this.dispBotBorder = config.botBorder;
 	
 	_this.owner = owner;
-	_this.expandedNodes = [];
 	_this.onLoadCallback = onLoadCallback;
 	_this.args = args;
 	
@@ -528,6 +527,7 @@ CytoGraphVis.prototype.reset = function() {
 
 /**
  *	Show all elements on this graph and toggle their class appropriately
+ *		@param isFilter:boolean - flag saying whether this was a Filter action or a Hide action
  */
 CytoGraphVis.prototype.showAll = function(isFilter) {
 	var scope = this;
@@ -548,8 +548,9 @@ CytoGraphVis.prototype.showAll = function(isFilter) {
 
 /**
  *	Load the following json into cytoscape for processing.
- *		json:Object - json representation of the graph
- *		name:String - identifier of the root node/entity 
+ *		@param json:Object - json representation of the graph
+ *		@param name:String - identifier of the root node/entity 
+ *		@param useSaved:boolean - flag stating whether graph json was persisted or not
  */
 CytoGraphVis.prototype.showGraph = function(json, name, useSaved) {
 	var scope = this;
@@ -568,8 +569,8 @@ CytoGraphVis.prototype.showGraph = function(json, name, useSaved) {
 		} else { 
 			scope.changeLayout(scope.CONSTANTS("defaultLayout"), {});
 			// TODO: use CONSTANTS.defaultLayout to figure this out instead
-			if (scope && scope.getOwner && scope.getOwner().getToolbar && scope.getOwner().getToolbar().getHierarchyBtn) {
-				var btn = scope.getOwner().getToolbar().getHierarchyBtn();
+			if (scope && scope.getOwner && scope.getOwner().getToolbar && scope.getOwner().getToolbar().getDefaultLayoutBtn) {
+				var btn = scope.getOwner().getToolbar().getDefaultLayoutBtn();
 				if (btn) btn.toggle(true); 
 			}
 		}
@@ -600,8 +601,9 @@ CytoGraphVis.prototype.clear = function() {
  * 	Given a sub-graph and a central node, place the expanded nodes in an orbit
  *	around the "Origin Node".  Note: this method does not determine what the expanded,
  *	or 1-hop, graph will be.
- *		json:JsonObject - JSON graph representation of the nodes/edges found in 1-hop
- *		innode:Cytoscape Node - "Origin Node" to extend from the graph and show its 1-hop neighbors 
+ *		@param json:JsonObject - JSON graph representation of the nodes/edges found in 1-hop
+ *		@param innode:Cytoscape Node - "Origin Node" to extend from the graph and show its 1-hop neighbors 
+ *		@returns JSONObject - json representation of the newly expanded graph
  */
 CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 	var pos = innode.position();
@@ -705,16 +707,13 @@ CytoGraphVis.prototype.showGraph1Hop = function(json, innode) {
 /**
  * 	Delete all leaf nodes from the given node, essentially undoing a 1-hop expansion.
  *  Note: any edges that were created to existing nodes will remain
- *  	innode:Cytoscape Node - "Origin Node" from which to retract all leaf nodes
+ *  	@param innode:Cytoscape Node - "Origin Node" from which to retract all leaf nodes
  */
 CytoGraphVis.prototype.unexpand1Hop = function(innode) {
 	var _this = this;
 	var nodesToDelete = [];
 	var edgesToDelete = [];
 	var nonLeafNodeIDs = [];
-	
-	// TODO: make a public function somewhere
-	
 	
 	// "[?expanded]" filters for all elements which element.data("expanded") == true
 	innode.connectedEdges("[?expanded]").connectedNodes().each(function(i, n) {
@@ -763,9 +762,9 @@ function LayoutManager(graphRef) {
 	/**
 	 *	Returns an array of the currently registered layouts whose names match any of the
 	 *	key strings passed as this function's array parameter.
-	 *		keysArr:Array - (optional) array containing layout identifier strings.  Only layouts
+	 *		@param keysArr:Array - (optional) array containing layout identifier strings.  Only layouts
 	 *						whose keys match any of these identifiers will be returned.
-	 *		returns Array - array of objects, where each object has a layoutName property and
+	 *		@returns Array - array of objects, where each object has a layoutName property and
 	 *						config options for that layout.
 	 */
 	this.getRegisteredLayouts = function(keysArr) {
@@ -800,9 +799,9 @@ function LayoutManager(graphRef) {
 	
 	/**
 	 * private function to merge the properties of the two parameters, with optsToMerge having overwrite priority.
-	 *		baseOpts:Object - default configuration object
-	 *		optsToMerge:Object - overrides for the default configuration
-	 * 		returns mergedOptions:Object - combination of baseOpts + optsToMerge
+	 *		@param baseOpts:Object - default configuration object
+	 *		@param optsToMerge:Object - overrides for the default configuration
+	 *		@returns mergedOptions:Object - combination of baseOpts + optsToMerge
 	 */
 	var _mergeOptions = function(baseOpts, optsToMerge) {
 		var mergedOptions = {};
@@ -825,8 +824,8 @@ function LayoutManager(graphRef) {
 	
 	/**
 	 *	Changes the current graph layout if layoutName matches a registered layout.
-	 *		layoutName:String - key to access the registered layouts
-	 *		config:Object - (optional) overrides for the layout's configuration
+	 *		@param layoutName:String - key to access the registered layouts
+	 *		@param config:Object - (optional) overrides for the layout's configuration
  	 */
 	this.changeLayout = function(layoutName, config) {
 		if (graphRef.initialized == false) return;
@@ -846,11 +845,11 @@ function LayoutManager(graphRef) {
 	
 	/**
 	 *	Add a new layout option to the LayoutManager.
-	 *		layoutName:String - key to access the registered layouts
-	 *		config:Object - configuration parameters for this new layout
-	 *		stopFn:Function - (optional) callback on layoutstop event
-	 *		progressFn:Function - (optional) callback for layout's procedural status, if applicable
-	 *		startFn:Function - (optional) callback on layoutready event
+	 *		@param layoutName:String - key to access the registered layouts
+	 *		@param config:Object - configuration parameters for this new layout
+	 *		@param stopFn:Function - (optional) callback on layoutstop event
+	 *		@param progressFn:Function - (optional) callback for layout's procedural status, if applicable
+	 *		@param startFn:Function - (optional) callback on layoutready event
 	 */
 	this.registerLayout = function(layoutName, scope, config, stopFn, progressFn, startFn) {
 	
@@ -872,9 +871,9 @@ function LayoutManager(graphRef) {
 		}
 	};
 	
-	/*
+	/**
 	 *	Deletes the registered layout whose key matches layoutName.
-	 *		layoutName:String - identifier key for the registered layout to be deleted.
+	 *		@param layoutName:String - identifier key for the registered layout to be deleted.
 	 */
 	this.unregisterLayout = function(layoutName) {
 		if (typeof layoutName == "undefined" || typeof layoutName !== "string") return;
@@ -886,7 +885,7 @@ function LayoutManager(graphRef) {
 	/**
 	 *	For each Origin Node passed to this method, its leaf nodes will be repositioned to orbit around
 	 *	the Origin Node.  Neighbors to the Origin Node who have neighbors of their own will be untouched.
-	 *		nodelist:Object - Contains one or more "origin nodes" and an array of each one's leaves
+	 *		@param nodelist:Object - Contains one or more "origin nodes" and an array of each one's leaves
 	 *			nodelist resembles {
 	 *				"origin_id_1" : {
 	 *					node: Cytoscape Node Object of the origin node,
@@ -924,7 +923,7 @@ function LayoutManager(graphRef) {
 		},
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
-				var pb = graphRef.owner.getProgressBar();
+				//var pb = graphRef.owner.getProgressBar();
 				// if (pb) pb.updateProgress(1, "100%");
 			}
 		}
@@ -935,7 +934,7 @@ function LayoutManager(graphRef) {
 		},
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
-				var pb = graphRef.owner.getProgressBar();
+				//var pb = graphRef.owner.getProgressBar();
 				//if (pb) pb.updateProgress(1, "100%");
 			}
 		}
@@ -946,7 +945,7 @@ function LayoutManager(graphRef) {
 		},
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
-				var pb = graphRef.owner.getProgressBar();
+				//var pb = graphRef.owner.getProgressBar();
 				//if (pb) pb.updateProgress(1, "100%");
 			}
 		}
@@ -958,7 +957,7 @@ function LayoutManager(graphRef) {
 		},
 		function stop() {
 			if (graphRef.owner.getProgressBar) {
-				var pb = graphRef.owner.getProgressBar();
+				//var pb = graphRef.owner.getProgressBar();
 				//if (pb) pb.updateProgress(1, "100%");
 			}
 		}
@@ -1127,7 +1126,7 @@ function StateManager(graphRef) {
 	/**
 	 *	Gather the metadata and graph JSON for this cytoscape graph and
 	 *	return it.
-	 *		returns json:Object
+	 *		@returns json:Object
 	 */
 	this.exportGraph = function() {
 		var json = {};
@@ -1148,7 +1147,7 @@ function StateManager(graphRef) {
 	/**
 	 *	Loads a pre-defined cytoscape graph's JSON object, preserving the elements'
 	 *	visibility and positions on the X/Y plane.
-	 *		json:Object - graph JSON to load into cytoscape.
+	 *		@param json:Object - graph JSON to load into cytoscape.
 	 */
 	this.importGraph = function(json) {
 		if (json && json.graph && json.graph.nodes && json.graph.nodes.length > 0) {
@@ -1177,7 +1176,8 @@ function StateManager(graphRef) {
 	/**
 	 *	Remove (not hide) nodes from the cytosape graph AND the json representation
 	 *	stored by most parent containers of a graph.
-	 *		nodes:Array - cytosape nodes to be deleted
+	 *		@param nodes:Array - cytosape nodes to be deleted
+	 *		@param bypass:boolean - force deletion
 	 */
 	this.deleteNodes = function(nodes, bypass) {
 		var errorMsg = null;
@@ -1230,6 +1230,12 @@ function StateManager(graphRef) {
 		}
 	};
 	
+	/**
+	 *	Remove (not hide) edges from the cytosape graph AND the json representation
+	 *	stored by most parent containers of a graph.
+	 *		@param edges:Array - cytosape edges to be deleted
+	 *		@param bypass:boolean - force deletion
+	 */
 	this.deleteEdges = function(edges, bypass) {
 		var errorMsg = null;
 		for (var i = 0; i < edges.length; i++) {
@@ -1539,7 +1545,11 @@ function GraphGenerator(graphRef) {
 function Utils(graphRef) {
 	var _this = this;
 	
-	/** returns whether the passed Cytoscape node is a leaf or not; i.e. one neighbor only */
+	/**
+	 * 	returns whether the passed Cytoscape node is a leaf or not; i.e. one neighbor only
+	 * 		@param node:CSNode - the node to test for 'leafiness'
+	 * 		@returns boolean - whether given node is a leaf or not  
+	 */
 	_this.isLeaf = function(node) {
 		var possibleNeighbors = node.connectedEdges().connectedNodes();
 		var confirmedNeighbors = [];
