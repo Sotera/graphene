@@ -1,5 +1,7 @@
 package graphene.services;
 
+import graphene.dao.StopWordService;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,7 +14,7 @@ import java.util.Set;
  * @author djue
  * 
  */
-public class StopWordServiceImpl implements StopWordService {
+public class StopWordServiceDefaultImpl implements StopWordService {
 	private Set<String> stopwords = new HashSet<String>(1);
 
 	/**
@@ -37,13 +39,13 @@ public class StopWordServiceImpl implements StopWordService {
 	 * 
 	 * @param s
 	 */
-	public StopWordServiceImpl(Collection<String> s) {
+	public StopWordServiceDefaultImpl(Collection<String> s) {
 		for (String s1 : s) {
 			this.stopwords.add(s1.toLowerCase());
 		}
 	}
 
-	public StopWordServiceImpl() {
+	public StopWordServiceDefaultImpl() {
 		stopwords = new HashSet<String>();
 	}
 

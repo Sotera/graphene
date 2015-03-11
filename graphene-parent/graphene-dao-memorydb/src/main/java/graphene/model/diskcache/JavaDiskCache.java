@@ -37,12 +37,6 @@ public class JavaDiskCache<T> implements DiskCache<T> {
 	}
 
 	@Override
-	public boolean callBack(final G_SearchResult t) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean callBack(final G_SearchResult t, final G_EntityQuery q) {
 		return write(t.getResult());
 	}

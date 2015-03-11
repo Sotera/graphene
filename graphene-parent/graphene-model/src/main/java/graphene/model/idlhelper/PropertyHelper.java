@@ -43,7 +43,115 @@ import java.util.List;
 
 public class PropertyHelper extends G_Property {
 
-	public PropertyHelper(String key, String friendlyText, Object value, G_PropertyType type, G_Provenance provenance, G_Uncertainty uncertainty, List<G_PropertyTag> tags) {
+	public static PropertyHelper from(final G_Property property) {
+		if (property == null) {
+			return null;
+		}
+		if (property instanceof PropertyHelper) {
+			return (PropertyHelper) property;
+		}
+
+		return new PropertyHelper(property.getKey(), property.getFriendlyText(), property.getProvenance(),
+				property.getUncertainty(), property.getTags(), property.getRange());
+	}
+
+	/**
+	 * This is an ugly mess since it's O(n) and we may have many properties.
+	 * Also, such functionality should be available in the main object. XXX: Fix
+	 * this by changing the IDL to use a map of G_Properties instead of a list.
+	 * We're already treating it like a map since we assume there are only one
+	 * of each key below.
+	 * 
+	 * @param props
+	 * @param key
+	 * @return
+	 */
+	public static G_Property getPropertyByKey(final List<G_Property> props, final String key) {
+		if (props == null) {
+			return null;
+		}
+		for (final G_Property prop : props) {
+			if (prop.getKey().equalsIgnoreCase(key)) {
+				return prop;
+			}
+		}
+		return null;
+	}
+
+	public static Object getSingletonValue(final G_Property property) {
+		return ((G_SingletonRange) property.getRange()).getValue();
+	}
+
+	public static Object getSingletonValueByKey(final List<G_Property> props, final String key) {
+		return getSingletonValue(getPropertyByKey(props, key));
+
+	}
+
+	public PropertyHelper(final G_PropertyTag tag, final Date value) {
+		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
+	}
+
+	public PropertyHelper(final G_PropertyTag tag, final double value) {
+		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
+	}
+
+	public PropertyHelper(final G_PropertyTag tag, final String value) {
+		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
+	}
+
+	public PropertyHelper(final String key, final Object value, final G_PropertyTag tag) {
+		setKey(key);
+		setFriendlyText(key.replaceAll("([a-z])([A-Z0-9])", "$1 $2").replace('_', ' '));
+		setProvenance(null);
+		setUncertainty(null);
+		setTags(new ArrayList<G_PropertyTag>(2));
+		setRange(new SingletonRangeHelper(value));
+
+		getTags().add(tag);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final Date date, final List<G_PropertyTag> tags) {
+		this(key, friendlyText, date.getTime(), G_PropertyType.DATE, tags);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final double value,
+			final List<G_PropertyTag> tags) {
+		this(key, friendlyText, value, G_PropertyType.DOUBLE, tags);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final G_GeoData value,
+			final List<G_PropertyTag> tags) {
+		this(key, friendlyText, value, G_PropertyType.GEO, tags);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final G_Provenance provenance,
+			final G_Uncertainty uncertainty, final List<G_PropertyTag> tags, final Object range) {
+		setKey(key);
+		setFriendlyText(friendlyText);
+		setProvenance(provenance);
+		setUncertainty(uncertainty);
+		setTags(tags);
+		setRange(range);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final long value, final List<G_PropertyTag> tags) {
+		this(key, friendlyText, value, G_PropertyType.LONG, tags);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
+			final G_PropertyTag tag) {
+		setKey(key);
+		setFriendlyText(friendlyText);
+		setProvenance(null);
+		setUncertainty(null);
+		setTags(new ArrayList<G_PropertyTag>(2));
+		setRange(new SingletonRangeHelper(value, type));
+
+		getTags().add(tag);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
+			final G_Provenance provenance, final G_Uncertainty uncertainty, final List<G_PropertyTag> tags) {
 		setKey(key);
 		setFriendlyText(friendlyText);
 		setProvenance(provenance);
@@ -52,29 +160,8 @@ public class PropertyHelper extends G_Property {
 		setRange(new SingletonRangeHelper(value, type));
 	}
 
-	public PropertyHelper(String key, Object value, G_PropertyTag tag) {
-		setKey(key);
-		setFriendlyText(key.replaceAll("([a-z])([A-Z0-9])","$1 $2").replace('_',' '));
-		setProvenance(null);
-		setUncertainty(null);
-		setTags(new ArrayList<G_PropertyTag>(2));
-		setRange(new SingletonRangeHelper(value));
-		
-		getTags().add(tag);
-	}
-
-	public PropertyHelper(String key, String friendlyText, Object value, G_PropertyType type, G_PropertyTag tag) {
-		setKey(key);
-		setFriendlyText(friendlyText);
-		setProvenance(null);
-		setUncertainty(null);
-		setTags(new ArrayList<G_PropertyTag>(2));
-		setRange(new SingletonRangeHelper(value, type));
-		
-		getTags().add(tag);
-	}
-
-	public PropertyHelper(String key, String friendlyText, Object value, G_PropertyType type, List<G_PropertyTag> tags) {
+	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
+			final List<G_PropertyTag> tags) {
 		setKey(key);
 		setFriendlyText(friendlyText);
 		setProvenance(null);
@@ -83,7 +170,8 @@ public class PropertyHelper extends G_Property {
 		setRange(new SingletonRangeHelper(value, type));
 	}
 
-	public PropertyHelper(String key, String friendlyText, Object startValue, Object endValue, G_PropertyType type, List<G_PropertyTag> tags) {
+	public PropertyHelper(final String key, final String friendlyText, final Object startValue, final Object endValue,
+			final G_PropertyType type, final List<G_PropertyTag> tags) {
 		setKey(key);
 		setFriendlyText(friendlyText);
 		setProvenance(null);
@@ -92,137 +180,74 @@ public class PropertyHelper extends G_Property {
 		setRange(G_BoundedRange.newBuilder().setStart(startValue).setEnd(endValue).setType(type));
 	}
 
-	public PropertyHelper(String key, String friendlyText, G_Provenance provenance, G_Uncertainty uncertainty, List<G_PropertyTag> tags, Object range) {
-		setKey(key);
-		setFriendlyText(friendlyText);
-		setProvenance(provenance);
-		setUncertainty(uncertainty);
-		setTags(tags);
-		setRange(range);
-	}
-	
-	public static PropertyHelper from(G_Property property) {
-		if (property == null) return null;
-		if (property instanceof PropertyHelper) return (PropertyHelper) property;
-		
-		return new PropertyHelper(
-				property.getKey(),
-				property.getFriendlyText(),
-				property.getProvenance(),
-				property.getUncertainty(),
-				property.getTags(),
-				property.getRange());
-	}
-
-	public PropertyHelper(G_PropertyTag tag, String value) {
-		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
-	}
-
-	public PropertyHelper(G_PropertyTag tag, double value) {
-		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
-	}
-
-	public PropertyHelper(G_PropertyTag tag, Date value) {
-		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
-	}
-
-	
-	public PropertyHelper(String key, String friendlyText, String value, List<G_PropertyTag> tags) {
+	public PropertyHelper(final String key, final String friendlyText, final String value,
+			final List<G_PropertyTag> tags) {
 		this(key, friendlyText, value, G_PropertyType.STRING, tags);
-	}
-	
-	public PropertyHelper(String key, String friendlyText, double value, List<G_PropertyTag> tags) {
-		this(key, friendlyText, value, G_PropertyType.DOUBLE, tags);
-	}
-	
-	public PropertyHelper(String key, String friendlyText, Date date, List<G_PropertyTag> tags) {
-		this(key, friendlyText, date.getTime(), G_PropertyType.DATE, tags);
-	}
-	
-	public PropertyHelper(String key, String friendlyText, long value, List<G_PropertyTag> tags) {
-		this(key, friendlyText, value, G_PropertyType.LONG, tags);
-	}
-	
-	public PropertyHelper(String key, String friendlyText, G_GeoData value, List<G_PropertyTag> tags) {
-		this(key, friendlyText, value, G_PropertyType.GEO, tags);
-	}
-
-	public static G_Property getPropertyByKey(List<G_Property> props, String key) {
-		if (props == null) {
-			return null;
-		}
-		for (G_Property prop : props) {
-			if (prop.getKey().equalsIgnoreCase(key)) {
-				return prop;
-			}
-		}
-		return null;
 	}
 
 	public G_PropertyType getType() {
-		Object range = getRange();
-		if (range instanceof G_SingletonRange)
-			return ((G_SingletonRange)range).getType();
-		else if (range instanceof G_ListRange)
-			return ((G_ListRange)range).getType();
-		else if (range instanceof G_BoundedRange)
-			return ((G_BoundedRange)range).getType();
-		else if (range instanceof G_DistributionRange) 
-			return ((G_DistributionRange)range).getType();
+		final Object range = getRange();
+		if (range instanceof G_SingletonRange) {
+			return ((G_SingletonRange) range).getType();
+		} else if (range instanceof G_ListRange) {
+			return ((G_ListRange) range).getType();
+		} else if (range instanceof G_BoundedRange) {
+			return ((G_BoundedRange) range).getType();
+		} else if (range instanceof G_DistributionRange) {
+			return ((G_DistributionRange) range).getType();
+		}
 		return null;
 	}
 
 	/**
 	 * Look at the range, and return the value object associated with the range.
+	 * 
 	 * @return
 	 */
 	public Object getValue() {
-		Object range = getRange();
-		if (range == null) return null;
-		
+		final Object range = getRange();
+		if (range == null) {
+			return null;
+		}
+
 		if (range instanceof G_SingletonRange) {
-			return ((G_SingletonRange)range).getValue();
-		}
-		else if (range instanceof G_ListRange) {
-			return ((G_ListRange)range).getValues().iterator().next();
-		}
-		else if (range instanceof G_BoundedRange) {
-			G_BoundedRange bounded = (G_BoundedRange)range;
+			return ((G_SingletonRange) range).getValue();
+		} else if (range instanceof G_ListRange) {
+			return ((G_ListRange) range).getValues().iterator().next();
+		} else if (range instanceof G_BoundedRange) {
+			final G_BoundedRange bounded = (G_BoundedRange) range;
 			return bounded.getStart() != null ? bounded.getStart() : bounded.getEnd();
-		}
-		else if (range instanceof G_DistributionRange) {
-			G_DistributionRange dist = (G_DistributionRange)range;
+		} else if (range instanceof G_DistributionRange) {
+			final G_DistributionRange dist = (G_DistributionRange) range;
 			return dist.getDistribution();
 		}
-		
+
 		return null;
 	}
+
 	public List<Object> getValues() {
-		Object range = getRange();
-		
+		final Object range = getRange();
+
 		if (range != null) {
 			if (range instanceof G_SingletonRange) {
-				return Collections.singletonList(((G_SingletonRange)range).getValue());
-			}
-			else if (range instanceof G_ListRange) {
-				return ((G_ListRange)range).getValues();
-			}
-			else if (range instanceof G_BoundedRange) {
-				G_BoundedRange bounded = (G_BoundedRange)range;
+				return Collections.singletonList(((G_SingletonRange) range).getValue());
+			} else if (range instanceof G_ListRange) {
+				return ((G_ListRange) range).getValues();
+			} else if (range instanceof G_BoundedRange) {
+				final G_BoundedRange bounded = (G_BoundedRange) range;
 				return Arrays.asList(bounded.getStart(), bounded.getEnd());
-			}
-			else if (range instanceof G_DistributionRange) {
-				G_DistributionRange dist = (G_DistributionRange)range;
-				List<Object> values = new ArrayList<Object>(dist.getDistribution().size());
+			} else if (range instanceof G_DistributionRange) {
+				final G_DistributionRange dist = (G_DistributionRange) range;
+				final List<Object> values = new ArrayList<Object>(dist.getDistribution().size());
 				values.addAll(dist.getDistribution());
 				return values;
 			}
 		}
-		
+
 		return Collections.emptyList();
 	}
 
-	public boolean hasTag(G_PropertyTag tag) {
+	public boolean hasTag(final G_PropertyTag tag) {
 		return getTags().contains(tag);
 	}
 
@@ -230,5 +255,4 @@ public class PropertyHelper extends G_Property {
 		return getValue() != null;
 	}
 
-	
 }

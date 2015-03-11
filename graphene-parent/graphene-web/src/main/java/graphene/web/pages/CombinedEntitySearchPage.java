@@ -2,7 +2,8 @@ package graphene.web.pages;
 
 import graphene.dao.CombinedDAO;
 import graphene.dao.DataSourceListDAO;
-import graphene.dao.DocumentGraphParser;
+import graphene.dao.DocumentBuilder;
+import graphene.dao.G_Parser;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_Property;
@@ -14,7 +15,6 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
-import graphene.services.HyperGraphBuilder;
 import graphene.services.LinkGenerator;
 import graphene.util.DataFormatConstants;
 import graphene.util.Triple;
@@ -27,9 +27,7 @@ import java.text.Format;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.Link;
@@ -47,7 +45,6 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
@@ -90,7 +87,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Property
 	private String currentDate;
 	@Property
-	private Map<String, Object> currentEntity;
+	private G_SearchResult currentSearchResult;
 
 	@Property
 	private Tuple<String, String> currentIcon;
@@ -123,20 +120,19 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Symbol(SymbolConstants.APPLICATION_FOLDER)
 	private String path;
 
-	@Inject
-	private HyperGraphBuilder<Object> phgb;
-
+	/**
+	 * The outer list is a list of rows, the inner list is a list of columns.
+	 * i.e. List[Row] and a Row is a List[Column]
+	 */
 	@Property
 	private List<List<G_Property>> populatedTableResults;
-
-	private String previousSearchValue;
 
 	@Property
 	private int resultShowingCount;
 
 	@Property
-	private G_SearchResults results;
-	
+	private G_SearchResults searchResults;
+
 	@Property
 	private int resultTotalCount;
 	/**
@@ -200,31 +196,39 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 
 	final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-	public Collection<Triple<String, String, String>> getAddressList() {
-		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTADDRESSLIST);
-	}
+	@Inject
+	private DocumentBuilder b;
 
-	public Link getAddressPivotLink(final String term) {
-		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
-		return l;
-	}
+	// public Collection<Triple<String, String, String>> getAddressList() {
+	// return (Collection<Triple<String, String, String>>)
+	// currentRow.get(DocumentGraphParser.SUBJECTADDRESSLIST);
+	// }
 
-	public Double getAmount() {
-		return (Double) currentEntity.get(DocumentGraphParser.TOTALAMOUNTNBR);
-	}
+	// public Link getAddressPivotLink(final String term) {
+	// // XXX: pick the right search type based on the link value
+	// final Link l = searchPage.set(null, null,
+	// G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+	// return l;
+	// }
 
-	public Collection<Tuple<String, String>> getAtsInCaption() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_CAPTION");
-	}
+	// public Double getAmount() {
+	// return (Double) currentRow.get(DocumentGraphParser.TOTALAMOUNTNBR);
+	// }
 
-	public Collection<Tuple<String, String>> getAtsInComments() {
-		return (Collection<Tuple<String, String>>) currentEntity.get("ATS_IN_COMMENTS");
-	}
+	// public Collection<Tuple<String, String>> getAtsInCaption() {
+	// return (Collection<Tuple<String, String>>)
+	// currentRow.get("ATS_IN_CAPTION");
+	// }
 
-	public Collection<Triple<String, String, String>> getCIdentifierList() {
-		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTCIDLIST);
-	}
+	// public Collection<Tuple<String, String>> getAtsInComments() {
+	// return (Collection<Tuple<String, String>>)
+	// currentRow.get("ATS_IN_COMMENTS");
+	// }
+
+	// public Collection<Triple<String, String, String>> getCIdentifierList() {
+	// return (Collection<Triple<String, String, String>>)
+	// currentRow.get(DocumentGraphParser.SUBJECTCIDLIST);
+	// }
 
 	public Format getDateFormat() {
 		return new SimpleDateFormat(getDatePattern());
@@ -255,53 +259,56 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 			} else {
 				g_SearchType = G_SearchType.COMPARE_CONTAINS;
 			}
-			String userId, username;
 			if (isUserExists()) {
-				userId = getUser().getId();
-				username = getUser().getUsername();
+				getUser().getId();
+				getUser().getUsername();
 			}
 			final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
 			final G_SearchTuple tuple = new G_SearchTuple<String>(value, g_SearchType);
 			tuples.add(tuple);
-			
-			List<String> filters = new ArrayList<String>();
+
+			final List<String> filters = new ArrayList<String>();
 			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
 				filters.addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
 			}
-			
-			G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder().setAttributeList(tuples).setFilters(filters).setMaxResult(maxResults)
-					.setTargetSchema(schema).setMinimumScore(0.0).setTimeInitiated(DateTime.now().getMillis());
-			
+
+			final G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder().setAttributeList(tuples)
+					.setFilters(filters).setMaxResult(maxResults).setTargetSchema(schema).setMinimumScore(0.0)
+					.setTimeInitiated(DateTime.now().getMillis());
+
 			if (isUserExists()) {
 				queryBuilder.setUserId(getUser().getId()).setUsername(getUser().getUsername());
 			}
-			
+
 			final G_EntityQuery sq = queryBuilder.build();
 
 			try {
-//				loggingDao.recordQuery(sq);
-//				if (currentSelectedWorkspaceExists) {
-//					List<G_EntityQuery> qo = currentSelectedWorkspace.getQueryObjects();
-//					if (qo == null) {
-//						qo = new ArrayList<G_EntityQuery>(1);
-//					}
-//					qo.add(sq);
-//					currentSelectedWorkspace.setQueryObjects(qo);
-//
-//					userDataAccess.saveWorkspace(getUser().getId(), currentSelectedWorkspace);
-//				}
+				// loggingDao.recordQuery(sq);
+				// if (currentSelectedWorkspaceExists) {
+				// List<G_EntityQuery> qo =
+				// currentSelectedWorkspace.getQueryObjects();
+				// if (qo == null) {
+				// qo = new ArrayList<G_EntityQuery>(1);
+				// }
+				// qo.add(sq);
+				// currentSelectedWorkspace.setQueryObjects(qo);
+				//
+				// userDataAccess.saveWorkspace(getUser().getId(),
+				// currentSelectedWorkspace);
+				// }
 				metaresults = dao.findByQueryWithMeta(sq);
 				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
 				populatedTableResults = new ArrayList<List<G_Property>>();
-				
+
 				// Populate all the results!
 				for (final G_SearchResult m : metaresults.getResults()) {
-					final DocumentGraphParser parserForObject = phgb.getParserForObject(m.getResult());
-					if (parserForObject != null) {
-						populatedTableResults.add(m.getNamedProperties().get(DocumentGraphParser.SUMMARY));
-					} else {
-						logger.error("Could not find parser for " + m);
-					}
+					// final DocumentGraphParser parserForObject =
+					// b.getParserForObject(m.getResult());
+					// if (parserForObject != null) {
+					populatedTableResults.add(m.getNamedProperties().get(G_Parser.ROWFORTABLE));
+					// } else {
+					// logger.error("Could not find parser for " + m);
+					// }
 				}
 				tr.logAsCompleted();
 			} catch (final Exception e) {
@@ -325,71 +332,74 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * 
 	 * @return
 	 */
-	public String getExtLink() {
-		return extPath + getReportId();
-	}
+	// public String getExtLink() {
+	// return extPath + getReportId();
+	// }
 
-	public String getFormattedAmount() {
-		String amount = null;
-		try {
-			// amount = DataFormatConstants.formatMoney(getAmount());
-
-			// amount = formatter.format(getAmount());
-			// DataFormatConstants.formatter.setParseIntegerOnly(true);
-			amount = DataFormatConstants.formatter.format(getAmount());
-
-			// XXX: Hack to remove cents and decimal
-			amount = amount.subSequence(0, amount.length() - 3).toString();
-
-			return amount;
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return amount;
-	}
+	// public String getFormattedAmount() {
+	// String amount = null;
+	// try {
+	// // amount = DataFormatConstants.formatMoney(getAmount());
+	//
+	// // amount = formatter.format(getAmount());
+	// // DataFormatConstants.formatter.setParseIntegerOnly(true);
+	// amount = DataFormatConstants.formatter.format(getAmount());
+	//
+	// // XXX: Hack to remove cents and decimal
+	// amount = amount.subSequence(0, amount.length() - 3).toString();
+	//
+	// return amount;
+	// } catch (final Exception e) {
+	// e.printStackTrace();
+	// }
+	// return amount;
+	// }
 
 	/**
 	 * Get a list of icons that apply to this report.
 	 * 
 	 * @return
 	 */
-	public Collection<Tuple<String, String>> getIconList() {
-		return (Collection<Tuple<String, String>>) currentEntity.get(DocumentGraphParser.ICONLIST);
-	}
+	// public Collection<Tuple<String, String>> getIconList() {
+	// return (Collection<Tuple<String, String>>)
+	// currentRow.get(DocumentGraphParser.ICONLIST);
+	// }
 
 	// /////////////////////////////////////////////////////////////////////
 	// FILTER
 	// /////////////////////////////////////////////////////////////////////
 
-	public Collection<Triple<String, String, String>> getIdentifierList() {
-		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTIDLIST);
-	}
-
-
+	// public Collection<Triple<String, String, String>> getIdentifierList() {
+	// return (Collection<Triple<String, String, String>>)
+	// currentRow.get(DocumentGraphParser.SUBJECTIDLIST);
+	// }
 
 	public BeanModel getModel() {
-		if (model == null) {
-			model = beanModelSource.createEditModel(Object.class, messages);
-			model.addEmpty("rank");
-			model.addEmpty("actions");
-			model.addEmpty("informationIcons");
-			model.addEmpty("date");
-			model.addEmpty("amount");
-			model.addEmpty("subjects");
-			model.addEmpty("addressList");
-			model.addEmpty("communicationIdentifierList");
-			model.addEmpty("identifierList");
 
-			model.getById("rank").sortable(true);
-			model.getById("actions").sortable(true);
-			model.getById("informationIcons").sortable(false);
-			model.getById("date").sortable(true);
-			model.getById("amount").sortable(true);
-			model.getById("subjects").sortable(true);
-			model.getById("addressList").sortable(true);
-			model.getById("communicationIdentifierList").sortable(true);
-			model.getById("identifierList").sortable(true);
+		if (model == null) {
+			model = b.getModel(beanModelSource, messages);
 		}
+		// model = beanModelSource.createEditModel(Object.class, messages);
+		// model.addEmpty("rank");
+		// model.addEmpty("actions");
+		// model.addEmpty("informationIcons");
+		// model.addEmpty("date");
+		// model.addEmpty("amount");
+		// model.addEmpty("subjects");
+		// model.addEmpty("addressList");
+		// model.addEmpty("communicationIdentifierList");
+		// model.addEmpty("identifierList");
+		//
+		// model.getById("rank").sortable(true);
+		// model.getById("actions").sortable(true);
+		// model.getById("informationIcons").sortable(false);
+		// model.getById("date").sortable(true);
+		// model.getById("amount").sortable(true);
+		// model.getById("subjects").sortable(true);
+		// model.getById("addressList").sortable(true);
+		// model.getById("communicationIdentifierList").sortable(true);
+		// model.getById("identifierList").sortable(true);
+		// }
 		return model;
 	}
 
@@ -397,71 +407,21 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return DataFormatConstants.getMoneyFormat();
 	}
 
-	public Collection<Triple<String, String, String>> getNameList() {
-		return (Collection<Triple<String, String, String>>) currentEntity.get(DocumentGraphParser.SUBJECTNAMELIST);
+	// public Collection<Triple<String, String, String>> getNameList() {
+	// return (Collection<Triple<String, String, String>>)
+	// currentRow.get(DocumentGraphParser.SUBJECTNAMELIST);
+	//
+	// }
 
-	}
-
-	public Link getNamePivotLink(final String term) {
-		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, "media", G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
-		return l;
-	}
+	// public Link getNamePivotLink(final String term) {
+	// // XXX: pick the right search type based on the link value
+	// final Link l = searchPage.set(null, "media",
+	// G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+	// return l;
+	// }
 
 	public JSONObject getOptions() {
-
-		final JSONObject json = new JSONObject(
-				"bJQueryUI",
-				"true",
-				"bAutoWidth",
-				"true",
-				"sDom",
-				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
-		// Sort by score then by date.
-		json.put("aaSorting",
-				new JSONArray().put(new JSONArray().put(0).put("asc")).put(new JSONArray().put(3).put("desc")));
-
-		final JSONArray columnArray = new JSONArray();
-
-		// a two-dimensional array that acts as a definition and mapping between
-		// column headers and their widths (in %)
-		final String[][] properties = { { "rank", "1%" }, { "actions", "10%" }, { "informationIcons", "8%" },
-				{ "date", "7%" }, { "amount", "7%" }, { "subjects", "12%" }, { "addressList", "25%" },
-				{ "communicationIdentifierList", "15%" }, { "identifierList", "15%" } };
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "numeric"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "false",
-				"sWidth", properties[columnArray.length()][1], "sType", "html"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "date"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "type", "currency", "sType", "currency"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		columnArray.put(new JSONObject("mDataProp", properties[columnArray.length()][0], "bSortable", "true", "sWidth",
-				properties[columnArray.length()][1], "sType", "string"));
-
-		// json.put("sScrollX", "100%");
-		// json.put("bScrollCollapse", false);
-		json.put("aoColumns", columnArray);
-		json.put("oLanguage", new JSONObject("sSearch", "Filter:"));
-
-		return json;
+		return b.getOptions();
 	}
 
 	public Link getPivotLink(final String term) {
@@ -469,26 +429,26 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return l;
 	}
 
-	public int getRank() {
-		return (int) currentEntity.get(DocumentGraphParser.CARDINAL_ORDER);
-	}
+	// public int getRank() {
+	// return (int) currentRow.get(DocumentGraphParser.CARDINAL_ORDER);
+	// }
 
-	public String getReportId() {
-		return (String) currentEntity.get(DocumentGraphParser.REPORT_ID);
-	}
+	// public String getReportId() {
+	// return (String) currentRow.get(DocumentGraphParser.REPORT_ID);
+	// }
 
-	public String getReportPageLink() {
-		return (String) currentEntity.get(DocumentGraphParser.REPORT_LINK);
-	}
+	// public String getReportPageLink() {
+	// return (String) currentRow.get(DocumentGraphParser.REPORT_LINK);
+	// }
 
-	public String getReportType() {
-		return (String) currentEntity.get(DocumentGraphParser.REPORT_TYPE);
-	}
+	// public String getReportType() {
+	// return (String) currentRow.get(DocumentGraphParser.REPORT_TYPE);
+	// }
 
-	public String getScore() {
-		final Double d = (Double) currentEntity.get(DocumentGraphParser.SCORE);
-		return DataFormatConstants.formatScore(d);
-	}
+	// public String getScore() {
+	// final Double d = (Double) currentRow.get(DocumentGraphParser.SCORE);
+	// return DataFormatConstants.formatScore(d);
+	// }
 
 	/**
 	 * @return the searchValue
@@ -541,13 +501,14 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		if (ValidationUtils.isValid(searchValue)) {
 			currentSearchValue = searchValue;
 			try {
-				results = getEntities(searchSchema, searchTypeFilter, searchMatch, currentSearchValue, (int) maxResults);
+				searchResults = getEntities(searchSchema, searchTypeFilter, searchMatch, currentSearchValue,
+						(int) maxResults);
 
 			} catch (final Exception e) {
 				logger.error(e.getMessage());
 			}
 		} else {
-			results = null;
+			searchResults = null;
 		}
 
 	}

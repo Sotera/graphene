@@ -1,8 +1,9 @@
 package graphene.services;
 
 import graphene.business.commons.DocumentError;
-import graphene.dao.DocumentGraphParser;
+import graphene.dao.G_Parser;
 import graphene.dao.GenericDAO;
+import graphene.dao.StopWordService;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
@@ -45,7 +46,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-@UsesConfiguration(DocumentGraphParser.class)
+@UsesConfiguration(G_Parser.class)
 public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<T, G_EntityQuery> implements
 		HyperGraphBuilder<T> {
 
@@ -73,7 +74,7 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		super();
 	}
 
-	public PropertyHyperGraphBuilder(final Collection<DocumentGraphParser> singletons) {
+	public PropertyHyperGraphBuilder(final Collection<G_Parser> singletons) {
 		// this.singletons = singletons;
 		// for (final DocumentGraphParser s : singletons) {
 		// s.setPhgb(this);

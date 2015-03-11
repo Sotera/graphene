@@ -1,8 +1,9 @@
 /**
  * 
  */
-package graphene.dao;
+package graphene.services;
 
+import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
@@ -14,12 +15,13 @@ import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 /**
- * An empty implementation of the logging interface.
+ * An No Operation (NoOp) implementation of the logging interface. It doesn't do
+ * anything, but gives you a class to bind to.
  * 
  * @author djue
  * 
  */
-public class LoggingDAONullImpl implements LoggingDAO {
+public class LoggingDAONoOpImpl implements LoggingDAO {
 
 	@Override
 	public List<Object> getAllEvents(final String userId, final String partialTerm, final int offset, final int limit) {
@@ -41,7 +43,8 @@ public class LoggingDAONullImpl implements LoggingDAO {
 	}
 
 	@Override
-	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
+	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset,
+			final int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}

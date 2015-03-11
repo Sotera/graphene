@@ -1,25 +1,29 @@
 package graphene.dao;
 
+import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_Property;
-import graphene.model.idl.G_SearchResult;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import mil.darpa.vande.generic.V_GenericGraph;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
+ * TODO: Rename this class
+ * 
+ * TODO: add methods for getting a subgraph, getting the raw object, and getting
+ * an entity from the raw
  * 
  * @author djue
  * 
  * @param <T>
  *            the object that you can cast to
  */
-public interface DocumentGraphParser<T> {
+public interface G_Parser<T> {
 	/**
 	 * The key for storing an address for the entity.
 	 */
@@ -86,7 +90,17 @@ public interface DocumentGraphParser<T> {
 	 */
 	public static final String TOTALAMOUNTSTR = "totalamountinvolved";
 	public static final String CARDINAL_ORDER = "cardinalOrder";
-	public static final String SUMMARY = "summary";
+	public static final String ROWFORTABLE = "summary";
+
+	/**
+	 * SearchResult properties are the things returned in a table view after an
+	 * initial search is done.
+	 * 
+	 * @param hit
+	 * @param sq
+	 * @return
+	 */
+	G_Entity buildEntityFromDocument(JsonNode hit, G_EntityQuery sq);
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 
@@ -102,9 +116,11 @@ public interface DocumentGraphParser<T> {
 	 * @param q
 	 * @return
 	 */
-	public V_GenericGraph getSubGraph(G_SearchResult sr, G_EntityQuery q);
+	public V_GenericGraph getSubGraph(JsonNode sr, G_EntityQuery q);
 
 	public List<String> getSupportedObjects();
+
+	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
 
 	/**
 	 * This method is the way for creating graph nodes and edges for a document
@@ -125,19 +141,7 @@ public interface DocumentGraphParser<T> {
 	 *            associated node id.
 	 * @return
 	 */
-	public boolean parse(G_SearchResult sr, G_EntityQuery q);
-
-	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
-
-	/**
-	 * SearchResult properties are the things returned in a table view after an
-	 * initial search is done.
-	 * 
-	 * @param p
-	 * @param sq
-	 * @return
-	 */
-	Collection<? extends G_Property> populateSearchResult(G_SearchResult p, G_EntityQuery sq);
+	public boolean parse(JsonNode sr, G_EntityQuery q);
 
 	/**
 	 * @param phgb

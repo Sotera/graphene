@@ -1,6 +1,5 @@
 package graphene.services;
 
-import graphene.dao.DocumentGraphParser;
 import graphene.dao.GenericDAO;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
@@ -86,7 +85,7 @@ public interface HyperGraphBuilder<T> {
 	 */
 	public abstract GenericDAO getDAO();
 
-	public abstract DocumentGraphParser getParserForObject(Object obj);
+	// public abstract DocumentGraphParser getParserForObject(Object obj);
 
 	/**
 	 * Unrolled version.

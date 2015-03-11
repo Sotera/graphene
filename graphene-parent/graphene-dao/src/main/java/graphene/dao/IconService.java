@@ -1,13 +1,14 @@
 package graphene.dao;
 
+import graphene.model.idl.G_EntityQuery;
 import graphene.util.Tuple;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface IconService {
 
-	public abstract void addPattern(String pattern, boolean caseSensitive,
-			String iconClass, String reason);
+	public abstract void addPattern(String pattern, boolean caseSensitive, String iconClass, String reason);
 
 	/**
 	 * Returns a list of icon styles that match the list of keys provided.
@@ -16,6 +17,8 @@ public interface IconService {
 	 * @return
 	 */
 	// public abstract Collection<String> getIconsForKeys(String... keys);
+
+	public abstract List<Object> getIconsForText(String narr, G_EntityQuery sq);
 
 	/**
 	 * Returns a list of icon styles that match up with the contents of the text
@@ -28,8 +31,7 @@ public interface IconService {
 	 *            The narrative is checked to see if it contains the term(s)
 	 * @return
 	 */
-	public abstract Collection<Tuple<String, String>> getIconsForText(
-			String text, String... otherKeys);
+	public abstract Collection<Tuple<String, String>> getIconsForText(String text, String... otherKeys);
 
 	/**
 	 * Returns a list of tuples with <icon style, count> as the values, where
@@ -38,8 +40,7 @@ public interface IconService {
 	 * @param text
 	 * @return
 	 */
-	public abstract Collection<Tuple<String, String>> getIconsForTextWithCount(
-			String text, String... otherKeys);
+	public abstract Collection<Tuple<String, String>> getIconsForTextWithCount(String text, String... otherKeys);
 
 	public abstract void removePattern(String pattern, boolean caseSensitive);
 }

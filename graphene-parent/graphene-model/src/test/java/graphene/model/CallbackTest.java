@@ -12,14 +12,6 @@ public class CallbackTest {
 	public class ExampleCallback implements G_CallBack {
 
 		@Override
-		public boolean callBack(final G_SearchResult t) {
-			if (t == null) {
-				return false;
-			}
-			return true;
-		}
-
-		@Override
 		public boolean callBack(final G_SearchResult t, final G_EntityQuery q) {
 			if (t == null) {
 				return false;

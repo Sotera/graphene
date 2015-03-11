@@ -55,11 +55,11 @@ table td {
 						<div class="widget-body no-padding">
 							<div class="widget-body-toolbar"></div>
 							<t:jquery.datatable t:id="resultsdt"
-								t:source="populatedTableResults" t:model="model"
-								t:row="currentEntity" t:options="options"
+								t:source="searchResults" t:model="model"
+								t:row="currentSearchResult" t:options="options"
 								class="table table-striped table-bordered table-hover table-responsive"
 								t:rowsPerPage="20" t:empty="block:emptyResults">
-
+w
 								<p:rankCell>
 									 ${rank}
 								</p:rankCell>
@@ -85,7 +85,7 @@ table td {
 									</t:loop>
 								</p:informationIconsCell>
 								<p:dateCell>
-									${currentEntity.get('firstDate')}
+									${currentRow.get('firstDate')}
 								</p:dateCell>
 								<p:amountCell>
 									${formattedAmount}
