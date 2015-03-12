@@ -34,7 +34,6 @@ import mil.darpa.vande.generic.V_NodeList;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.slf4j.Logger;
 
 /**
@@ -46,7 +45,7 @@ import org.slf4j.Logger;
  * 
  * @param <T>
  */
-@UsesConfiguration(G_Parser.class)
+
 public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<T, G_EntityQuery> implements
 		HyperGraphBuilder<T> {
 

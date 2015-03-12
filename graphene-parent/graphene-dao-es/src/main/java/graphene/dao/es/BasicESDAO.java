@@ -225,6 +225,11 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 	}
 
 	protected JestResult getResultsById(final String id) {
+		// DONT use _all for type when searching by id.
+		return getResultsById(id, index, null);
+	}
+
+	protected JestResult getResultsById(final String id, final String type) {
 		return getResultsById(id, index, type);
 	}
 
@@ -248,7 +253,8 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 
 		try {
 			final Search search = sb.build();
-
+			logger.debug("Using schema " + customIndex);
+			logger.debug("Using type " + customType);
 			result = c.getClient().execute(search);
 			logger.debug(result.getJsonString());
 		} catch (final Exception e) {

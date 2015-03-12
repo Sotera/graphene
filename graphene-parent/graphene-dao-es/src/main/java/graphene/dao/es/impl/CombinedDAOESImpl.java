@@ -109,8 +109,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements CombinedDAO {
 					for (int i = 0; i < actualListOfHits.size(); i++) {
 						final JsonNode currentHit = actualListOfHits.get(i);
 						if (ValidationUtils.isValid(currentHit)) {
-							final G_SearchResult entity = db.buildSearchResultFromDocument(i, currentHit, pq);
-							sr = G_SearchResult.newBuilder().setResult(entity).build();
+							sr = db.buildSearchResultFromDocument(i, currentHit, pq);
 						}
 					}
 				} else {

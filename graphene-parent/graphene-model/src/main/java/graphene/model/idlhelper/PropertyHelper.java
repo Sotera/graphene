@@ -55,6 +55,24 @@ public class PropertyHelper extends G_Property {
 				property.getUncertainty(), property.getTags(), property.getRange());
 	}
 
+	public static Object getListValue(final G_Property property) {
+		final G_ListRange r = (G_ListRange) property.getRange();
+		if (r == null) {
+			return null;
+		} else {
+			return r.getValues();
+		}
+	}
+
+	public static Object getListValueByKey(final List<G_Property> props, final String key) {
+		final G_Property p = getPropertyByKey(props, key);
+		if (p == null) {
+			return null;
+		} else {
+			return getListValue(getPropertyByKey(props, key));
+		}
+	}
+
 	/**
 	 * This is an ugly mess since it's O(n) and we may have many properties.
 	 * Also, such functionality should be available in the main object. XXX: Fix
@@ -83,8 +101,11 @@ public class PropertyHelper extends G_Property {
 	}
 
 	public static Object getSingletonValueByKey(final List<G_Property> props, final String key) {
-		return getSingletonValue(getPropertyByKey(props, key));
-
+		if (props == null) {
+			return null;
+		} else {
+			return getSingletonValue(getPropertyByKey(props, key));
+		}
 	}
 
 	public PropertyHelper(final G_PropertyTag tag, final Date value) {

@@ -2,18 +2,14 @@ package graphene.web.services;
 
 import graphene.dao.DAOModule;
 import graphene.dao.StartupProcedures;
-import graphene.dao.TransactionDAO;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.view.events.DirectedEventRow;
 import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
-import graphene.web.model.EventEncoder;
 import graphene.web.services.javascript.CytoscapeStack;
 
 import java.io.IOException;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -39,8 +35,6 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ValueEncoderFactory;
-import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.atmosphere.cpr.ApplicationConfig;
@@ -123,6 +117,8 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.ENABLE_ADMIN, true);
 		configuration.add(G_SymbolConstants.ENABLE_TAG_CLOUDS, false);
 		configuration.add(G_SymbolConstants.ENABLE_FEDERATED_LOGIN, false);
+		configuration.add(G_SymbolConstants.ENABLE_LOGGING, true);
+
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS, 200);
 		configuration.add(G_SymbolConstants.DEFAULT_GRAPH_TRAVERSAL_DEGREE, 1);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_NODES, 1000);

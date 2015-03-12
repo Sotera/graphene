@@ -76,10 +76,15 @@ public class RecentWorkspaces {
 
 	@SetupRender
 	boolean listWorkspaces() {
-		updateListOfWorkspaces();
-		if (userExists && (!currentSelectedWorkspaceExists || !workspacesExists)) {
 
-			selectMostRecentWorkspace();
+		if (userExists) {
+			updateListOfWorkspaces();
+			if ((!currentSelectedWorkspaceExists || !workspacesExists)) {
+				selectMostRecentWorkspace();
+			}
+		} else {
+			currentSelectedWorkspace = null;
+			workspaces = null;
 		}
 		return workspacesExists;
 	}

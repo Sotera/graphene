@@ -91,6 +91,7 @@ public interface G_Parser<T> {
 	public static final String TOTALAMOUNTSTR = "totalamountinvolved";
 	public static final String CARDINAL_ORDER = "cardinalOrder";
 	public static final String ROWFORTABLE = "summary";
+	public static final String DTO = "_dto";
 
 	/**
 	 * SearchResult properties are the things returned in a table view after an

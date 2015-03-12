@@ -1,56 +1,17 @@
 package graphene.web.pages;
 
-import graphene.dao.CombinedDAO;
-import graphene.dao.DataSourceListDAO;
-import graphene.dao.DocumentBuilder;
-import graphene.dao.G_Parser;
-import graphene.dao.StyleService;
-import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_Property;
-import graphene.model.idl.G_SearchResult;
-import graphene.model.idl.G_SearchResults;
-import graphene.model.idl.G_SearchTuple;
-import graphene.model.idl.G_SearchType;
-import graphene.model.idl.G_SymbolConstants;
-import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
-import graphene.model.idl.G_Workspace;
 import graphene.services.LinkGenerator;
-import graphene.util.DataFormatConstants;
-import graphene.util.Triple;
-import graphene.util.Tuple;
-import graphene.util.stats.TimeReporter;
-import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 
-import java.text.Format;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.alerts.Duration;
-import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
 /**
@@ -75,66 +36,58 @@ import org.slf4j.Logger;
 		"context:core/js/plugin/datatables/media/css/TableTools.css" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGenerator {
-	@Inject
-	private G_UserDataAccess userDataAccess;
-	@Inject
-	private BeanModelSource beanModelSource;
 
-	@Property
-	private Triple<String, String, String> currentAddress;
-	@Property
-	private Triple<String, String, String> currentCommunicationId;
-	@Property
-	private String currentDate;
-	@Property
-	private G_SearchResult currentSearchResult;
+	// @Property
+	// private String currentDate;
+	// @Property
+	// private G_SearchResult currentSearchResult;
+	//
+	// @Property
+	// private Tuple<String, String> currentIcon;
 
-	@Property
-	private Tuple<String, String> currentIcon;
-
-	@Property
-	private Triple<String, String, String> currentIdentifier;
-
-	@Property
-	private Triple<String, String, String> currentName;
-
-	@Property
-	private Tuple<String, String> currentAt;
-
-	@Property
-	private Tuple<String, String> currentHashTag;
-
-	@Inject
-	private CombinedDAO dao;
-
-	@Inject
-	private JavaScriptSupport javaScriptSupport;
+	// @Property
+	// private Triple<String, String, String> currentIdentifier;
+	//
+	// @Property
+	// private Triple<String, String, String> currentName;
+	//
+	// @Property
+	// private Tuple<String, String> currentAt;
+	//
+	// @Property
+	// private Tuple<String, String> currentHashTag;
+	//
+	// @Inject
+	// private CombinedDAO dao;
+	//
+	// @Inject
+	// private JavaScriptSupport javaScriptSupport;
 
 	@Inject
 	private Logger logger;
+	//
+	// @Inject
+	// private Messages messages;
 
-	@Inject
-	private Messages messages;
-
-	@Inject
-	@Symbol(SymbolConstants.APPLICATION_FOLDER)
-	private String path;
+	// @Inject
+	// @Symbol(SymbolConstants.APPLICATION_FOLDER)
+	// private String path;
 
 	/**
 	 * The outer list is a list of rows, the inner list is a list of columns.
 	 * i.e. List[Row] and a Row is a List[Column]
 	 */
-	@Property
-	private List<List<G_Property>> populatedTableResults;
+	// @Property
+	// private List<List<G_Property>> populatedTableResults;
 
-	@Property
-	private int resultShowingCount;
+	// @Property
+	// private int resultShowingCount;
 
-	@Property
-	private G_SearchResults searchResults;
+	// @Property
+	// private G_SearchResults searchResults;
 
-	@Property
-	private int resultTotalCount;
+	// @Property
+	// private int resultTotalCount;
 	/**
 	 * The overall schema, such as an ES index
 	 */
@@ -148,6 +101,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@ActivationRequestParameter(value = "type")
 	@Property
 	private String searchTypeFilter;
+
 	@ActivationRequestParameter(value = "maxResults")
 	@Property
 	private long maxResults;
@@ -155,49 +109,51 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 * The value the user types in
 	 */
 	@ActivationRequestParameter(value = "term")
+	@Property
 	private String searchValue;
 
 	@InjectPage
 	private CombinedEntitySearchPage searchPage;
 
-	@Inject
-	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
-	private Integer defaultMaxResults;
+	// @Inject
+	// @Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+	// private Integer defaultMaxResults;
 	/**
 	 * The type of query to run
 	 */
 	@ActivationRequestParameter(value = "match")
+	@Property
 	private String searchMatch;
 
-	@Property
-	private Object selectedEvent;
+	// @Property
+	// private Object selectedEvent;
 
 	@Inject
 	private PageRenderLinkSource pageRenderLinkSource;
 
-	@Inject
-	@Symbol(G_SymbolConstants.EXT_PATH)
-	private String extPath;
+	// @Inject
+	// @Symbol(G_SymbolConstants.EXT_PATH)
+	// private String extPath;
 
-	@Property
-	@SessionState(create = false)
-	private G_Workspace currentSelectedWorkspace;
+	// @Property
+	// @SessionState(create = false)
+	// private G_Workspace currentSelectedWorkspace;
 
-	@Property
-	private boolean currentSelectedWorkspaceExists;
-	@Property
-	private String currentSearchValue;
+	// @Property
+	// private boolean currentSelectedWorkspaceExists;
+	// @Property
+	// private String currentSearchValue;
 
-	@Inject
-	private StyleService style;
+	// @Inject
+	// private StyleService style;
 
-	@Persist
-	private BeanModel<Object> model;
+	// @Persist
+	// private BeanModel<Object> model;
+	//
+	// final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-	final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-
-	@Inject
-	private DocumentBuilder b;
+	// @Inject
+	// private DocumentBuilder b;
 
 	// public Collection<Triple<String, String, String>> getAddressList() {
 	// return (Collection<Triple<String, String, String>>)
@@ -230,102 +186,46 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// currentRow.get(DocumentGraphParser.SUBJECTCIDLIST);
 	// }
 
-	public Format getDateFormat() {
-		return new SimpleDateFormat(getDatePattern());
-	}
-
-	public String getDatePattern() {
-		return DataFormatConstants.DATE_FORMAT_STRING;
-	}
+	// @Inject
+	// @Property
+	// private Block searchresultsview;
 
 	/**
+	 * Get a list of icons that apply to this report.
 	 * 
-	 * @param type
-	 * @param value
-	 * @param searchValue2
 	 * @return
 	 */
-	private G_SearchResults getEntities(final String schema, final String subType, final String matchType,
-			final String value, final int maxResults) {
-		G_SearchResults metaresults = null;
-		if (ValidationUtils.isValid(value)) {
-			G_SearchType g_SearchType = null;
-			if (ValidationUtils.isValid(matchType)) {
-				try {
-					g_SearchType = G_SearchType.valueOf(matchType);
-				} catch (final Exception e) {
-					g_SearchType = G_SearchType.COMPARE_CONTAINS;
-				}
-			} else {
-				g_SearchType = G_SearchType.COMPARE_CONTAINS;
-			}
-			if (isUserExists()) {
-				getUser().getId();
-				getUser().getUsername();
-			}
-			final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
-			final G_SearchTuple tuple = new G_SearchTuple<String>(value, g_SearchType);
-			tuples.add(tuple);
+	// public Collection<Tuple<String, String>> getIconList() {
+	// return (Collection<Tuple<String, String>>)
+	// currentRow.get(DocumentGraphParser.ICONLIST);
+	// }
 
-			final List<String> filters = new ArrayList<String>();
-			if (ValidationUtils.isValid(subType) && !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
-				filters.addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType, ","));
-			}
+	// /////////////////////////////////////////////////////////////////////
+	// FILTER
+	// /////////////////////////////////////////////////////////////////////
 
-			final G_EntityQuery.Builder queryBuilder = G_EntityQuery.newBuilder().setAttributeList(tuples)
-					.setFilters(filters).setMaxResult(maxResults).setTargetSchema(schema).setMinimumScore(0.0)
-					.setTimeInitiated(DateTime.now().getMillis());
+	// public Collection<Triple<String, String, String>> getIdentifierList() {
+	// return (Collection<Triple<String, String, String>>)
+	// currentRow.get(DocumentGraphParser.SUBJECTIDLIST);
+	// }
+	// <t:jquery.datatable t:id="resultsdt"
+	// t:source="searchResults.results" t:model="model"
+	// t:row="currentSearchResult" t:options="options"
+	// class="table table-striped table-bordered table-hover table-responsive"
+	// t:rowsPerPage="20" t:empty="block:emptyResults">
+	//
+	//
+	// </t:jquery.datatable>
+	// @Inject
+	// private Dynamic dynamic;
 
-			if (isUserExists()) {
-				queryBuilder.setUserId(getUser().getId()).setUsername(getUser().getUsername());
-			}
+	// public Format getDateFormat() {
+	// return new SimpleDateFormat(getDatePattern());
+	// }
 
-			final G_EntityQuery sq = queryBuilder.build();
-
-			try {
-				// loggingDao.recordQuery(sq);
-				// if (currentSelectedWorkspaceExists) {
-				// List<G_EntityQuery> qo =
-				// currentSelectedWorkspace.getQueryObjects();
-				// if (qo == null) {
-				// qo = new ArrayList<G_EntityQuery>(1);
-				// }
-				// qo.add(sq);
-				// currentSelectedWorkspace.setQueryObjects(qo);
-				//
-				// userDataAccess.saveWorkspace(getUser().getId(),
-				// currentSelectedWorkspace);
-				// }
-				metaresults = dao.findByQueryWithMeta(sq);
-				final TimeReporter tr = new TimeReporter("parsing details of results", logger);
-				populatedTableResults = new ArrayList<List<G_Property>>();
-
-				// Populate all the results!
-				for (final G_SearchResult m : metaresults.getResults()) {
-					// final DocumentGraphParser parserForObject =
-					// b.getParserForObject(m.getResult());
-					// if (parserForObject != null) {
-					populatedTableResults.add(m.getNamedProperties().get(G_Parser.ROWFORTABLE));
-					// } else {
-					// logger.error("Could not find parser for " + m);
-					// }
-				}
-				tr.logAsCompleted();
-			} catch (final Exception e) {
-				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
-				logger.error(e.getMessage());
-			}
-		}
-		if ((metaresults == null) || (metaresults.getResults().size() == 0)) {
-			alertManager.alert(Duration.TRANSIENT, Severity.INFO, "No results found for " + value + ".");
-			resultShowingCount = 0;
-			resultTotalCount = 0;
-		} else {
-			alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Showing " + metaresults.getResults().size()
-					+ " of " + metaresults.getTotal() + " results found.");
-		}
-		return metaresults;
-	}
+	// public String getDatePattern() {
+	// return DataFormatConstants.DATE_FORMAT_STRING;
+	// }
 
 	/**
 	 * 
@@ -356,56 +256,135 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// }
 
 	/**
-	 * Get a list of icons that apply to this report.
 	 * 
+	 * @param type
+	 * @param value
+	 * @param searchValue2
 	 * @return
 	 */
-	// public Collection<Tuple<String, String>> getIconList() {
-	// return (Collection<Tuple<String, String>>)
-	// currentRow.get(DocumentGraphParser.ICONLIST);
+	// private G_SearchResults getEntities(final String schema, final String
+	// subType, final String matchType,
+	// final String value, final int maxResults) {
+	// G_SearchResults metaresults = null;
+	// if (ValidationUtils.isValid(value)) {
+	// G_SearchType g_SearchType = null;
+	// if (ValidationUtils.isValid(matchType)) {
+	// try {
+	// g_SearchType = G_SearchType.valueOf(matchType);
+	// } catch (final Exception e) {
+	// g_SearchType = G_SearchType.COMPARE_CONTAINS;
+	// }
+	// } else {
+	// g_SearchType = G_SearchType.COMPARE_CONTAINS;
+	// }
+	// if (isUserExists()) {
+	// getUser().getId();
+	// getUser().getUsername();
+	// }
+	// final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
+	// final G_SearchTuple tuple = new G_SearchTuple<String>(value,
+	// g_SearchType);
+	// tuples.add(tuple);
+	//
+	// final List<String> filters = new ArrayList<String>();
+	// if (ValidationUtils.isValid(subType) &&
+	// !subType.contains(DataSourceListDAO.ALL_REPORTS)) {
+	// filters.addAll(graphene.util.StringUtils.tokenizeToStringCollection(subType,
+	// ","));
+	// }
+	//
+	// final G_EntityQuery.Builder queryBuilder =
+	// G_EntityQuery.newBuilder().setAttributeList(tuples)
+	// .setFilters(filters).setMaxResult(maxResults).setTargetSchema(schema).setMinimumScore(0.0)
+	// .setTimeInitiated(DateTime.now().getMillis());
+	//
+	// if (isUserExists()) {
+	// queryBuilder.setUserId(getUser().getId()).setUsername(getUser().getUsername());
+	// }
+	//
+	// final G_EntityQuery sq = queryBuilder.build();
+	//
+	// try {
+	// // loggingDao.recordQuery(sq);
+	// // if (currentSelectedWorkspaceExists) {
+	// // List<G_EntityQuery> qo =
+	// // currentSelectedWorkspace.getQueryObjects();
+	// // if (qo == null) {
+	// // qo = new ArrayList<G_EntityQuery>(1);
+	// // }
+	// // qo.add(sq);
+	// // currentSelectedWorkspace.setQueryObjects(qo);
+	// //
+	// // userDataAccess.saveWorkspace(getUser().getId(),
+	// // currentSelectedWorkspace);
+	// // }
+	// metaresults = dao.findByQueryWithMeta(sq);
+	// // final TimeReporter tr = new
+	// // TimeReporter("parsing details of results", logger);
+	// // populatedTableResults = new ArrayList<List<G_Property>>();
+	// //
+	// // // Populate all the results!
+	// // for (final G_SearchResult m : metaresults.getResults()) {
+	// // // final DocumentGraphParser parserForObject =
+	// // // b.getParserForObject(m.getResult());
+	// // // if (parserForObject != null) {
+	// //
+	// populatedTableResults.add(m.getNamedProperties().get(G_Parser.ROWFORTABLE));
+	// // // } else {
+	// // // logger.error("Could not find parser for " + m);
+	// // // }
+	// // }
+	// // tr.logAsCompleted();
+	// } catch (final Exception e) {
+	// alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
+	// logger.error(e.getMessage());
+	// }
+	// }
+	// if ((metaresults == null) || (metaresults.getResults().size() == 0)) {
+	// alertManager.alert(Duration.TRANSIENT, Severity.INFO,
+	// "No results found for " + value + ".");
+	// resultShowingCount = 0;
+	// resultTotalCount = 0;
+	// } else {
+	// alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Showing " +
+	// metaresults.getResults().size()
+	// + " of " + metaresults.getTotal() + " results found.");
+	// }
+	// return metaresults;
 	// }
 
-	// /////////////////////////////////////////////////////////////////////
-	// FILTER
-	// /////////////////////////////////////////////////////////////////////
-
-	// public Collection<Triple<String, String, String>> getIdentifierList() {
-	// return (Collection<Triple<String, String, String>>)
-	// currentRow.get(DocumentGraphParser.SUBJECTIDLIST);
+	// public BeanModel getModel() {
+	//
+	// if (model == null) {
+	// model = b.getModel(beanModelSource, messages);
+	// }
+	// model = beanModelSource.createEditModel(Object.class, messages);
+	// model.addEmpty("rank");
+	// model.addEmpty("actions");
+	// model.addEmpty("informationIcons");
+	// model.addEmpty("date");
+	// model.addEmpty("amount");
+	// model.addEmpty("subjects");
+	// model.addEmpty("addressList");
+	// model.addEmpty("communicationIdentifierList");
+	// model.addEmpty("identifierList");
+	//
+	// model.getById("rank").sortable(true);
+	// model.getById("actions").sortable(true);
+	// model.getById("informationIcons").sortable(false);
+	// model.getById("date").sortable(true);
+	// model.getById("amount").sortable(true);
+	// model.getById("subjects").sortable(true);
+	// model.getById("addressList").sortable(true);
+	// model.getById("communicationIdentifierList").sortable(true);
+	// model.getById("identifierList").sortable(true);
+	// }
+	// return model;
 	// }
 
-	public BeanModel getModel() {
-
-		if (model == null) {
-			model = b.getModel(beanModelSource, messages);
-		}
-		// model = beanModelSource.createEditModel(Object.class, messages);
-		// model.addEmpty("rank");
-		// model.addEmpty("actions");
-		// model.addEmpty("informationIcons");
-		// model.addEmpty("date");
-		// model.addEmpty("amount");
-		// model.addEmpty("subjects");
-		// model.addEmpty("addressList");
-		// model.addEmpty("communicationIdentifierList");
-		// model.addEmpty("identifierList");
-		//
-		// model.getById("rank").sortable(true);
-		// model.getById("actions").sortable(true);
-		// model.getById("informationIcons").sortable(false);
-		// model.getById("date").sortable(true);
-		// model.getById("amount").sortable(true);
-		// model.getById("subjects").sortable(true);
-		// model.getById("addressList").sortable(true);
-		// model.getById("communicationIdentifierList").sortable(true);
-		// model.getById("identifierList").sortable(true);
-		// }
-		return model;
-	}
-
-	public Format getMoneyFormat() {
-		return DataFormatConstants.getMoneyFormat();
-	}
+	// public Format getMoneyFormat() {
+	// return DataFormatConstants.getMoneyFormat();
+	// }
 
 	// public Collection<Triple<String, String, String>> getNameList() {
 	// return (Collection<Triple<String, String, String>>)
@@ -420,14 +399,15 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// return l;
 	// }
 
-	public JSONObject getOptions() {
-		return b.getOptions();
-	}
-
-	public Link getPivotLink(final String term) {
-		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_CONTAINS.name(), term, defaultMaxResults);
-		return l;
-	}
+	// public JSONObject getOptions() {
+	// return b.getOptions();
+	// }
+	//
+	// public Link getPivotLink(final String term) {
+	// final Link l = searchPage.set(null, null,
+	// G_SearchType.COMPARE_CONTAINS.name(), term, defaultMaxResults);
+	// return l;
+	// }
 
 	// public int getRank() {
 	// return (int) currentRow.get(DocumentGraphParser.CARDINAL_ORDER);
@@ -453,26 +433,28 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	/**
 	 * @return the searchValue
 	 */
-	public final String getSearchValue() {
-		return searchValue;
-	}
+	// public final String getSearchValue() {
+	// return searchValue;
+	// }
 
-	public String getStyleFor(final Triple<String, String, String> currentThing) {
-		boolean containsTerm = false;
-		// splits on " ", "/", and "\" in the search term.
-		// FIXME: tokenize based on " and use the substring between them as a
-		// single term
-		final String[] searchTerms = currentSearchValue.split("[ \\/]+");
-		for (final String term : searchTerms) {
-			// term.replaceAll() looks for all " characters and removes them for
-			// the sake of comparison
-			if (StringUtils.containsIgnoreCase(currentThing.getThird(), term.replaceAll("[\"]+", ""))) {
-				containsTerm = true;
-				break;
-			}
-		}
-		return style.getStyle(currentThing.getFirst(), containsTerm);
-	}
+	// public String getStyleFor(final Triple<String, String, String>
+	// currentThing) {
+	// boolean containsTerm = false;
+	// // splits on " ", "/", and "\" in the search term.
+	// // FIXME: tokenize based on " and use the substring between them as a
+	// // single term
+	// final String[] searchTerms = currentSearchValue.split("[ \\/]+");
+	// for (final String term : searchTerms) {
+	// // term.replaceAll() looks for all " characters and removes them for
+	// // the sake of comparison
+	// if (StringUtils.containsIgnoreCase(currentThing.getThird(),
+	// term.replaceAll("[\"]+", ""))) {
+	// containsTerm = true;
+	// break;
+	// }
+	// }
+	// return style.getStyle(currentThing.getFirst(), containsTerm);
+	// }
 
 	@Override
 	public Link set(final String schema, final String type, final String match, final String value,
@@ -485,31 +467,33 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return pageRenderLinkSource.createPageRenderLink(this.getClass());
 	}
 
-	/**
-	 * @param searchValue
-	 *            the searchValue to set
-	 */
-	public final void setSearchValue(final String searchValue) {
-		this.searchValue = searchValue;
-	}
+	//
+	// /**
+	// * @param searchValue
+	// * the searchValue to set
+	// */
+	// public final void setSearchValue(final String searchValue) {
+	// this.searchValue = searchValue;
+	// }
 
 	/**
 	 * This should help with persisted values.
 	 */
-	@Log
+	// @Log
 	void setupRender() {
-		if (ValidationUtils.isValid(searchValue)) {
-			currentSearchValue = searchValue;
-			try {
-				searchResults = getEntities(searchSchema, searchTypeFilter, searchMatch, currentSearchValue,
-						(int) maxResults);
-
-			} catch (final Exception e) {
-				logger.error(e.getMessage());
-			}
-		} else {
-			searchResults = null;
-		}
+		// if (ValidationUtils.isValid(searchValue)) {
+		// currentSearchValue = searchValue;
+		// try {
+		// searchResults = getEntities(searchSchema, searchTypeFilter,
+		// searchMatch, currentSearchValue,
+		// (int) maxResults);
+		//
+		// } catch (final Exception e) {
+		// logger.error(e.getMessage());
+		// }
+		// } else {
+		// searchResults = null;
+		// }
 
 	}
 }
