@@ -2,6 +2,7 @@ package graphene.dao;
 
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_SearchResult;
 import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
@@ -135,14 +136,14 @@ public interface G_Parser<T> {
 	 * query. In this way, we can tie the resulting object back to a node id
 	 * that initiated the query.
 	 * 
-	 * @param sr
+	 * @param t
 	 *            a result of a query specified by q.
 	 * @param q
 	 *            the query object that generated this result, along with an
 	 *            associated node id.
 	 * @return
 	 */
-	public boolean parse(JsonNode sr, G_EntityQuery q);
+	public boolean parse(G_SearchResult t, G_EntityQuery q);
 
 	/**
 	 * @param phgb

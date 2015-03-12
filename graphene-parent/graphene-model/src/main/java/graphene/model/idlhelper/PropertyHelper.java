@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class PropertyHelper extends G_Property {
 
@@ -131,10 +132,26 @@ public class PropertyHelper extends G_Property {
 		getTags().add(tag);
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param date
+	 *            will be the singleton range value
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final Date date, final List<G_PropertyTag> tags) {
 		this(key, friendlyText, date.getTime(), G_PropertyType.DATE, tags);
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param value
+	 *            a singleton range value
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final double value,
 			final List<G_PropertyTag> tags) {
 		this(key, friendlyText, value, G_PropertyType.DOUBLE, tags);
@@ -145,6 +162,47 @@ public class PropertyHelper extends G_Property {
 		this(key, friendlyText, value, G_PropertyType.GEO, tags);
 	}
 
+	public PropertyHelper(final String key, final String friendlyText, final G_PropertyType type,
+			final List<Object> value, final G_PropertyTag tag) {
+		setKey(key);
+		setFriendlyText(friendlyText);
+		setProvenance(null);
+		setUncertainty(null);
+		setTags(new ArrayList<G_PropertyTag>(2));
+		setRange(new ListRangeHelper(value, type));
+		getTags().add(tag);
+	}
+
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param type
+	 * @param value
+	 *            will be converted to a list for you
+	 * @param tag
+	 */
+	public PropertyHelper(final String key, final String friendlyText, final G_PropertyType type, final Set value,
+			final G_PropertyTag tag) {
+		setKey(key);
+		setFriendlyText(friendlyText);
+		setProvenance(null);
+		setUncertainty(null);
+		setTags(new ArrayList<G_PropertyTag>(2));
+		setRange(new ListRangeHelper(value, type));
+		getTags().add(tag);
+	}
+
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param provenance
+	 * @param uncertainty
+	 * @param tags
+	 * @param range
+	 *            any kind of range object
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final G_Provenance provenance,
 			final G_Uncertainty uncertainty, final List<G_PropertyTag> tags, final Object range) {
 		setKey(key);
@@ -155,10 +213,27 @@ public class PropertyHelper extends G_Property {
 		setRange(range);
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param value
+	 *            a singleton range value
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final long value, final List<G_PropertyTag> tags) {
 		this(key, friendlyText, value, G_PropertyType.LONG, tags);
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param value
+	 *            a singleton range value
+	 * @param type
+	 * @param tag
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
 			final G_PropertyTag tag) {
 		setKey(key);
@@ -171,6 +246,17 @@ public class PropertyHelper extends G_Property {
 		getTags().add(tag);
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param value
+	 *            a singleton range value
+	 * @param type
+	 * @param provenance
+	 * @param uncertainty
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
 			final G_Provenance provenance, final G_Uncertainty uncertainty, final List<G_PropertyTag> tags) {
 		setKey(key);
@@ -181,6 +267,15 @@ public class PropertyHelper extends G_Property {
 		setRange(new SingletonRangeHelper(value, type));
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param value
+	 *            a singleton range value
+	 * @param type
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
 			final List<G_PropertyTag> tags) {
 		setKey(key);
@@ -191,6 +286,17 @@ public class PropertyHelper extends G_Property {
 		setRange(new SingletonRangeHelper(value, type));
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param startValue
+	 *            bounded range start
+	 * @param endValue
+	 *            bounded range end
+	 * @param type
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final Object startValue, final Object endValue,
 			final G_PropertyType type, final List<G_PropertyTag> tags) {
 		setKey(key);
@@ -201,11 +307,24 @@ public class PropertyHelper extends G_Property {
 		setRange(G_BoundedRange.newBuilder().setStart(startValue).setEnd(endValue).setType(type));
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param friendlyText
+	 * @param value
+	 *            a singleton range value
+	 * @param tags
+	 */
 	public PropertyHelper(final String key, final String friendlyText, final String value,
 			final List<G_PropertyTag> tags) {
 		this(key, friendlyText, value, G_PropertyType.STRING, tags);
 	}
 
+	/**
+	 * 
+	 * @return the type of instance of the range, i.e. a
+	 *         {@link G_SingletonRange}, etc. Null if not one of the known types
+	 */
 	public G_PropertyType getType() {
 		final Object range = getRange();
 		if (range instanceof G_SingletonRange) {
