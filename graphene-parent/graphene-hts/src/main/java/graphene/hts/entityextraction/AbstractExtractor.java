@@ -1,14 +1,21 @@
 package graphene.hts.entityextraction;
 
 import graphene.model.idl.G_Entity;
+import graphene.model.idl.G_EntityTag;
+import graphene.model.idl.G_Property;
+import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_Provenance;
 import graphene.model.idl.G_Uncertainty;
 import graphene.model.idlhelper.EntityHelper;
+import graphene.model.idlhelper.PropertyHelper;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,11 +95,24 @@ public abstract class AbstractExtractor implements Extractor {
 		return list;
 	}
 
+	@Override
+	public List<G_EntityTag> getEntityTags() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * @return the groups
 	 */
 	public int[] getGroups() {
 		return groups;
+	}
+
+	@Override
+	public Map<String, G_Property> getProperties() {
+		final Map<String, G_Property> tags = new HashMap<String, G_Property>();
+		tags.put(G_PropertyTag.TYPE.name(), new PropertyHelper(G_PropertyTag.TYPE, getNodetype()));
+		return tags;
 	}
 
 	/**

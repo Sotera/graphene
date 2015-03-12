@@ -1,10 +1,7 @@
 package graphene.hts.entityextraction;
 
 import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class EmailToName extends AbstractExtractor {
@@ -17,12 +14,6 @@ public class EmailToName extends AbstractExtractor {
 	}
 
 	@Override
-	public List<G_EntityTag> getEntityTags() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getIdType() {
 		return "Potential Alias";
 	}
@@ -30,12 +21,6 @@ public class EmailToName extends AbstractExtractor {
 	@Override
 	public String getNodetype() {
 		return "Extracted" + G_CanonicalPropertyType.USERNAME.name();
-	}
-
-	@Override
-	public List<G_Property> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

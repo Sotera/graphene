@@ -2,8 +2,6 @@ package graphene.hts.sentences;
 
 import graphene.hts.entityextraction.AbstractExtractor;
 import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
 import graphene.util.StringUtils;
 
 import java.util.ArrayList;
@@ -52,15 +50,4 @@ public class SentenceExtractorImpl extends AbstractExtractor {
 		return "Contains Sentence";
 	}
 
-	@Override
-	public List<G_EntityTag> getEntityTags() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<G_Property> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

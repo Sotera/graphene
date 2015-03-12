@@ -3,9 +3,6 @@ package graphene.hts.entityextraction;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
-import graphene.model.idl.G_PropertyTag;
-import graphene.model.idlhelper.PropertyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +37,6 @@ public class AccountExtractor extends AbstractExtractor {
 	@Override
 	public String getNodetype() {
 		return "Extracted" + G_CanonicalPropertyType.ACCOUNT.name();
-	}
-
-	@Override
-	public List<G_Property> getProperties() {
-		final List<G_Property> tags = new ArrayList<G_Property>();
-		tags.add(new PropertyHelper(G_PropertyTag.TYPE, getNodetype()));
-		return tags;
 	}
 
 	@Override

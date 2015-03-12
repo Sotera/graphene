@@ -4,25 +4,22 @@ import graphene.dao.DocumentBuilder;
 import graphene.dao.G_Parser;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idlhelper.PropertyHelper;
 import graphene.util.validator.ValidationUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 
+@UsesConfiguration(G_Parser.class)
 public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 
 	protected ObjectMapper mapper = new ObjectMapper();
@@ -55,12 +52,12 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 						logger.error("Could not find the score of result. There may be something wrong with your ElasticSearch instance");
 					}
 					final G_Entity entity = delegate.buildEntityFromDocument(hit, sq);
-					final ArrayList<G_Property> listOfProperties = new ArrayList<G_Property>();
-					listOfProperties.add(new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
-					listOfProperties.add(new PropertyHelper(G_Parser.CARDINAL_ORDER, index + 1, G_PropertyTag.STAT));
-					entity.getProperties().addAll(listOfProperties);
-					final Map<String, List<G_Property>> namedProperties = new HashMap<String, List<G_Property>>();
-					sr = new G_SearchResult(score.asDouble(0.0d), entity, namedProperties);
+					entity.getProperties().put(G_Parser.SCORE,
+							new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
+					entity.getProperties().put(G_Parser.CARDINAL_ORDER,
+							new PropertyHelper(G_Parser.CARDINAL_ORDER, index + 1, G_PropertyTag.STAT));
+
+					sr = new G_SearchResult(score.asDouble(0.0d), entity);
 				} else {
 					logger.error("Could not find parser for type " + type);
 				}

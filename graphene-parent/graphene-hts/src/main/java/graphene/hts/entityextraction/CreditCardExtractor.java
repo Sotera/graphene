@@ -3,11 +3,8 @@ package graphene.hts.entityextraction;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_Entity;
-import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
 import graphene.util.validator.ValidationUtils;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -40,12 +37,6 @@ public class CreditCardExtractor extends AbstractExtractor {
 	}
 
 	@Override
-	public List<G_EntityTag> getEntityTags() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getIdType() {
 		return "Potential Credit Card";
 	}
@@ -53,12 +44,6 @@ public class CreditCardExtractor extends AbstractExtractor {
 	@Override
 	public String getNodetype() {
 		return "Extracted" + G_CanonicalPropertyType.ACCOUNT.name();
-	}
-
-	@Override
-	public List<G_Property> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

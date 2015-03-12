@@ -358,6 +358,7 @@ protocol G_DataTypes {
 		/** user-friendly short-text for key (displayable) */
 		union {null, string} friendlyText = null;			// CHANGED IN 1.8
 		
+		union {null, string} styleType = null;  //added in Graphene 4.1.2
 		/** range of values */
 		union {G_SingletonRange, G_ListRange, G_BoundedRange, G_DistributionRange} range = null; // CHANGED IN 1.6
 		
@@ -391,7 +392,7 @@ protocol G_DataTypes {
 		
 		union {G_Uncertainty, null} uncertainty = null;
 		
-		array<G_Property> properties;
+		map<G_Property> properties;
 	}
 
 	/**

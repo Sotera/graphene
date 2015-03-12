@@ -106,6 +106,8 @@ public interface G_Parser<T> {
 
 	public Map<String, Object> getAdditionalProperties(Object obj);
 
+	<T> T getDTO(G_SearchResult sr, Class<T> clazz);
+
 	/**
 	 * @return the phgb
 	 */
@@ -120,9 +122,9 @@ public interface G_Parser<T> {
 	 */
 	public V_GenericGraph getSubGraph(JsonNode sr, G_EntityQuery q);
 
-	public List<String> getSupportedObjects();
-
 	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
+
+	public List<String> getSupportedObjects();
 
 	/**
 	 * This method is the way for creating graph nodes and edges for a document

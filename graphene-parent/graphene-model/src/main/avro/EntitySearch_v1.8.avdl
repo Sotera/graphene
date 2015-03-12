@@ -37,8 +37,7 @@ protocol G_EntitySearch {
 		
 		/** search result */
 		union {G_Entity, G_Link} result;
-		/** Experimental, to get away from the setAdditionalProperties() problem */
-		map<array<G_Property>> namedProperties;
+
 	}
 	
 	/**

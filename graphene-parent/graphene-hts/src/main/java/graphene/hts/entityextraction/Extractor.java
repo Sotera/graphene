@@ -6,6 +6,7 @@ import graphene.model.idl.G_Property;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -59,7 +60,7 @@ public interface Extractor {
 	 * 
 	 * @return a list of properties
 	 */
-	public List<G_Property> getProperties();
+	public Map<String, G_Property> getProperties();
 
 	/**
 	 * 

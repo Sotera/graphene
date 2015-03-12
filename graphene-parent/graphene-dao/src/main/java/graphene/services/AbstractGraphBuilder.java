@@ -97,7 +97,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 		}
 	}
 
-	public void addReportDetails(final V_GenericNode reportNode, final List<G_Property> props,
+	public void addReportDetails(final V_GenericNode reportNode, final Map<String, G_Property> props,
 			final String reportLinkTitle, final String url) {
 		try {
 			// for now, prevent the log-based increase on node dimensions
@@ -107,29 +107,27 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 			 * MIN_NODE_SIZE, MAX_NODE_SIZE));
 			 */
 			reportNode.addData(reportLinkTitle, url);
-			reportNode.setLabel((String) PropertyHelper.getPropertyByKey(props, G_Parser.REPORT_LABEL).getRange());
-			reportNode
-					.addData("Type", (String) PropertyHelper.getPropertyByKey(props, G_Parser.REPORT_TYPE).getRange());
+			reportNode.setLabel((String) PropertyHelper.getSingletonValue(props.get(G_Parser.REPORT_LABEL)));
+			reportNode.addData("Type", (String) PropertyHelper.getSingletonValue(props.get(G_Parser.REPORT_TYPE)));
 			reportNode.addData("Amount involved",
-					(String) PropertyHelper.getPropertyByKey(props, G_Parser.TOTALAMOUNTSTR).getRange());
+					(String) PropertyHelper.getSingletonValue(props.get(G_Parser.TOTALAMOUNTSTR)));
 
-			final Set<String> datesOfEvents = (Set<String>) PropertyHelper.getPropertyByKey(props,
-					G_Parser.DATES_OF_EVENTS).getRange();
+			final List<String> datesOfEvents = (List<String>) PropertyHelper.getListValue(props
+					.get(G_Parser.DATES_OF_EVENTS));
 			if (ValidationUtils.isValid(datesOfEvents)) {
 				for (final String d : datesOfEvents) {
 					reportNode.addData("Date of Event", d);
 				}
 			}
 
-			final Set<String> datesFiled = (Set<String>) PropertyHelper.getPropertyByKey(props, G_Parser.DATES_FILED)
-					.getRange();
+			final List<String> datesFiled = (List<String>) PropertyHelper.getListValue(props.get(G_Parser.DATES_FILED));
 			if (ValidationUtils.isValid(datesFiled)) {
 				for (final String d : datesFiled) {
 					reportNode.addData("Date filed", d);
 				}
 			}
-			final Set<String> datesReceived = (Set<String>) PropertyHelper.getPropertyByKey(props,
-					G_Parser.DATES_RECEIVED).getRange();
+			final List<String> datesReceived = (List<String>) PropertyHelper.getListValue(props
+					.get(G_Parser.DATES_RECEIVED));
 			if (ValidationUtils.isValid(datesReceived)) {
 				for (final String d : datesReceived) {
 					reportNode.addData("Date received", d);
