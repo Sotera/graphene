@@ -28,7 +28,7 @@ Ext.define("DARPA.Node_Actions", {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
-				var nodes = graph.GraphVis.gv.$("node:selected");
+				var nodes = graph.GraphVis.getSelectedNodes();
 				if (nodes.length == 1) {
 					var unpivot = graph.getUnPivotButton();
 					if (unpivot) {
@@ -54,17 +54,13 @@ Ext.define("DARPA.Node_Actions", {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
-				var nodes = graph.GraphVis.gv.$("node:selected");
-				var edges = graph.GraphVis.gv.$("edge:selected");
-				if (nodes.length > 0 || edges.length > 0) {
-					for (var i = 0; i < nodes.length; i++) {
-						graph.GraphVis.hideNode(nodes[i], false);
-					}
-					
-					for (var i = 0; i < edges.length; i++) {
-						graph.GraphVis.hideEdge(edges[i], false);
-					}
-				};
+				
+				var nodes = graph.GraphVis.getSelectedNodes();
+				var edges = graph.GraphVis.getSelectedEdges();
+				
+				graph.setNodeVisibility(nodes, false, false);
+				graph.setEdgeVisibility(edges, false, false);
+				
 			} // handler
 		}); // hide
 
@@ -126,7 +122,7 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					var nodes = graph.GraphVis.gv.$("node:selected");
+					var nodes = graph.GraphVis.getSelectedNodes();
 					if (nodes.length == 1) {
 						/* FIXME: this makes consecutive REST calls;  change REST service to expand on an
 						 	array of nodes instead of just one */
@@ -141,16 +137,6 @@ Ext.define("DARPA.Node_Actions", {
 							"Please select only one node before attempting to expand the graph.";
 						Ext.Msg.alert("Warning", msg);
 					}
-
-					/* uncomment once the selection manager is implemented *//*
-						var nodes = graph.GraphVis.gv.$("node:selected");
-						but.disable();
-						for (var i = 0; i < nodes.length; i++) {
-							graph.expand(nodes[i]);
-							graph.SM.add(nodes[i]);
-						}
-						but.enable();
-					*/
 				}
 		    }
 		}); // expand
@@ -167,7 +153,7 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					var nodes = graph.GraphVis.gv.$("node:selected");
+					var nodes = graph.GraphVis.getSelectedNodes();
 					if (nodes.length > 0) {
 						// unexpand does not hit a REST service; iterate all you want
 						but.disable();
@@ -176,18 +162,6 @@ Ext.define("DARPA.Node_Actions", {
 						});
 						but.enable();
 					}
-
-					/* uncomment once the selection manager is implemented *//*
-						var nodes = graph.SM.getAll();
-						but.disable();
-						
-						for (var i = 0; i < nodes.length; i++) {
-							graph.unexpand(nodes[i]);
-						}
-						
-						but.enable();
-						graph.SM.clear();
-					*/
 				}
 		    }
 		}); // unexpand
@@ -203,7 +177,7 @@ Ext.define("DARPA.Node_Actions", {
 				var path = but.id.split('-');
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
-				var nodes = graph.GraphVis.gv.$("node:selected");
+				var nodes = graph.GraphVis.getSelectedNodes();
 				
 				if (nodes.length > 0) {
 					for (var i = 0; i < nodes.length; i++) {
@@ -254,8 +228,8 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					var nodes = graph.GraphVis.gv.$("node:selected");
-					var edges = graph.GraphVis.gv.$("edge:selected");
+					var nodes = graph.GraphVis.getSelectedNodes();
+					var edges = graph.GraphVis.getSelectedEdges();
 					if (nodes.length > 0 || edges.length > 0) {
 						Ext.Msg.confirm("Warning", "Deleting selected elements will remove them from the graph entirely.  Are you sure?", function(btn) {
 							if (btn == "yes") {
@@ -281,7 +255,7 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					var nodes = graph.GraphVis.gv.$("node:selected");
+					var nodes = graph.GraphVis.getSelectedNodes();
 					//nodes.each(function(i, n) {
 					//	graph.unmergeNode(n);
 					//});

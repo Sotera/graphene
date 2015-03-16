@@ -30,22 +30,18 @@ Ext.define("DARPA.GraphToolbar", {
 					},
 					params : {
 						"seed" : gr.prevLoadParams.value,
-						"username" : "unknownClient",
+						"username" : gr.GraphVis.getUserName(),
 						"timestamp" : new Date().getTime()
 					},
 					jsonData: Ext.encode(json),
 					scope : gr,
 					success : function(resp) {
 						console.log("Persist POST success. " + resp.responseText);
-						
-						var pb = scope.up().getProgressBar();
-						if (pb) pb.updateProgress(1, "Graph state persisted");
+						gr.GraphVis.utils.updateProgress("Graph state persisted", 1);
 					},
 					failure : function(resp) {
 						console.log("Persist POST failure.");
-						
-						var pb = scope.up().getProgressBar();
-						if (pb) pb.updateProgress(0, "Error in persisting graph state");
+						gr.GraphVis.utils.updateProgress("Error in persisting graph state", 0);
 					}
 				});
 			}

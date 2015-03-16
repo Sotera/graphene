@@ -593,7 +593,18 @@ CytoscapeGraphVis.prototype.resize = function(w, h) {
 CytoscapeGraphVis.prototype.setHandlers = function() {
 	var _this = this;
 	
-	var _highlightElements = function(ele, dir, addCls) {};
+	var _highlightElements = function(ele, dir, addCls) {
+		var accessProp = (dir == "incoming") ? "source" : "target";
+		var cssClass = (dir == "incoming") ? "child-of" : "parent-of";
+		
+		var node = _this.gv.nodes("node[id = '" + ele.data(accessProp) + "']")[0];
+		if (!ele.selected()) {
+			(addCls == true) ? ele.addClass(cssClass) : ele.removeClass(cssClass);
+		}
+		if (!node.selected()) {
+			(addCls == true) ?  node.addClass(cssClass) : node.removeClass(cssClass);
+		}
+	};
 	
 	_this.gv.on("click", function(e) {
 		var gg = _this.getGenerator();
