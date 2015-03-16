@@ -416,7 +416,7 @@ protocol G_DataTypes {
 		
 		union {G_Uncertainty, null} uncertainty = null;
 		
-		array<G_Property> properties;
+		map<G_Property> properties;
 	}
 	
 	/**

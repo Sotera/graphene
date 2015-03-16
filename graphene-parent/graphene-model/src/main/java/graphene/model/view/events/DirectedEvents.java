@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author not djue
  * 
  */
+@Deprecated
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DirectedEvents {

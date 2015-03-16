@@ -1,10 +1,10 @@
 package graphene.dao;
 
-import graphene.model.query.EventQuery;
-import graphene.model.view.events.DirectedEvents;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_TransactionResults;
 
 public interface EventServer {
 
-	public abstract DirectedEvents getEvents(EventQuery q);
+	public abstract G_TransactionResults getEvents(G_EntityQuery q);
 
 }

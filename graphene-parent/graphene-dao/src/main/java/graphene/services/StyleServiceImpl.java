@@ -88,6 +88,7 @@ public class StyleServiceImpl implements StyleService {
 	public String getHexColorForNode(final String key) {
 		String color = null;
 		if (!ValidationUtils.isValid(key)) {
+			logger.error("Invalid key!");
 			color = "#808080";
 		} else {
 			// Use presets if available
@@ -134,6 +135,7 @@ public class StyleServiceImpl implements StyleService {
 
 	@Override
 	public String getStyle(final String nodeType, final boolean highlighted) {
+		logger.debug("Getting Style for " + nodeType);
 		if (highlighted) {
 			return getHighlightStyle();
 		} else {
@@ -141,6 +143,7 @@ public class StyleServiceImpl implements StyleService {
 			if (s == null) {
 				final String color = getHexColorForNode(nodeType);
 				styleMap.put(nodeType, buildStyle(color, getContrastingColor(color)));
+				return s;
 			}
 			return styleMap.get(nodeType);
 		}

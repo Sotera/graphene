@@ -1,32 +1,29 @@
 package graphene.export;
 
-import graphene.model.view.events.DirectedEventRow;
-import graphene.model.view.events.DirectedEvents;
+import graphene.model.idl.G_Link;
+import graphene.model.idl.G_TransactionResults;
+import graphene.model.idlhelper.PropertyHelper;
+import graphene.util.StringUtils;
 
-public class DirectedEventsToCSV {
-	public String toCSV(DirectedEvents lt) {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CSVConverter {
+	public String toCSV(final G_TransactionResults lt, final String... keys) {
 		// String eol = System.getProperty("line.separator");
-		String eol = "\r\n"; // users want windows format - the above would be
-								// UNIX
+		final String eol = "\r\n"; // users want windows format - the above
+									// would be
+									// UNIX
 
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 
-		for (DirectedEventRow r : lt.getRows()) {
-
-			result.append(r.getDate() + ",");
-			// result.append("\"");
-			result.append(r.getSenderId());
-			// result.append("\"");
-			result.append(",");
-			result.append(r.getReceiverId());
-			// Remove commas from amounts. Replace commas in comments with
-			// spaces
-
-			result.append(r.getDebit().replace(",", "") + ",");
-			result.append(r.getCredit().replace(",", "") + ",");
-
-			result.append(r.getComments().replace(",", " "));
-
+		for (final G_Link r : lt.getResults()) {
+			final List<Object> objectList = new ArrayList<Object>();
+			for (final String k : keys) {
+				final PropertyHelper prop = PropertyHelper.from(r.getProperties().get(k));
+				objectList.add(prop.getValue());
+			}
+			result.append(StringUtils.coalesc(",", objectList));
 			result.append(eol);
 		}
 

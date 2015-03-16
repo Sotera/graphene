@@ -19,33 +19,23 @@ package graphene.model.idl;
  * @author djue
  * 
  */
+@Deprecated
 public enum G_Delimiter {
-	INVALID(999, "INVALID", "", "INVALID"), MULTIPLE_VALUE(
-			0,
-			"multiple",
-			",",
-			"Item1,Item2,Item3"), SEARCH_TYPE(
-			1,
-			"Search Type",
-			":",
-			"<SearchType>:Item1"), PROPERTY_TYPE(
-			2,
-			"Property Type",
-			"=",
-			"<PropertyType>=Item1");
+	INVALID(999, "INVALID", "", "INVALID"), MULTIPLE_VALUE(0, "multiple", ",", "Item1,Item2,Item3"), SEARCH_TYPE(1,
+			"Search Type", ":", "<SearchType>:Item1"), PROPERTY_TYPE(2, "Property Type", "=", "<PropertyType>=Item1");
 
-	public static G_Delimiter fromValue(String v) {
-		for (G_Delimiter c : values()) {
-			if (c.getValueString().equalsIgnoreCase(v)) {
+	public static G_Delimiter fromIndex(final int v) {
+		for (final G_Delimiter c : values()) {
+			if (c.index == v) {
 				return c;
 			}
 		}
 		return INVALID;
 	}
 
-	public static G_Delimiter fromIndex(int v) {
-		for (G_Delimiter c : values()) {
-			if (c.index == v) {
+	public static G_Delimiter fromValue(final String v) {
+		for (final G_Delimiter c : values()) {
+			if (c.getValueString().equalsIgnoreCase(v)) {
 				return c;
 			}
 		}
@@ -59,11 +49,11 @@ public enum G_Delimiter {
 
 	private String valueString;
 
-	G_Delimiter(int i, String friendlyName, String valueString, String usage) {
-		this.setIndex(i);
-		this.setFriendlyName(friendlyName);
-		this.setUsage(usage);
-		this.setValueString(valueString);
+	G_Delimiter(final int i, final String friendlyName, final String valueString, final String usage) {
+		setIndex(i);
+		setFriendlyName(friendlyName);
+		setUsage(usage);
+		setValueString(valueString);
 	}
 
 	public String getFriendlyName() {
@@ -82,19 +72,19 @@ public enum G_Delimiter {
 		return valueString;
 	}
 
-	public void setFriendlyName(String friendlyName) {
+	public void setFriendlyName(final String friendlyName) {
 		this.friendlyName = friendlyName;
 	}
 
-	public void setIndex(int index) {
+	public void setIndex(final int index) {
 		this.index = index;
 	}
 
-	public void setUsage(String usage) {
+	public void setUsage(final String usage) {
 		this.usage = usage;
 	}
 
-	public void setValueString(String valueString) {
+	public void setValueString(final String valueString) {
 		this.valueString = valueString;
 	}
 }

@@ -21,38 +21,31 @@ import org.slf4j.LoggerFactory;
  * @author djue
  * 
  */
+@Deprecated
 public class SearchTypeHelper {
-	private static Logger logger = LoggerFactory
-			.getLogger(SearchTypeHelper.class);
+	private static Logger logger = LoggerFactory.getLogger(SearchTypeHelper.class);
 
-	private SearchTypeHelper() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public static List<G_SearchTuple<String>> processSearchList(
-			String multiTermString, G_SearchType defaultSearchType) {
-		List<G_SearchTuple<String>> list = new ArrayList<G_SearchTuple<String>>(
-				2);
-		for (String s : StringUtils.tokenizeToStringCollection(multiTermString,
+	public static List<G_SearchTuple<String>> processSearchList(final String multiTermString,
+			final G_SearchType defaultSearchType) {
+		final List<G_SearchTuple<String>> list = new ArrayList<G_SearchTuple<String>>(2);
+		for (final String s : StringUtils.tokenizeToStringCollection(multiTermString,
 				G_Delimiter.MULTIPLE_VALUE.getValueString())) {
 			G_SearchTuple<String> tuple;
 			try {
-				tuple = SearchTypeHelper
-						.processSearchType(s, defaultSearchType);
+				tuple = SearchTypeHelper.processSearchType(s, defaultSearchType);
 				list.add(tuple);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				logger.error(e.getMessage());
 			}
 		}
 		return list;
 	}
 
-	public static G_SearchTuple<String> processSearchType(
-			String originalString, G_SearchType defaultSearchType)
-			throws Exception {
+	public static G_SearchTuple<String> processSearchType(final String originalString,
+			final G_SearchType defaultSearchType) throws Exception {
 		// Build from scratch since we don't know if it's malformed.
-		G_SearchTuple<String> tuple = new G_SearchTuple<String>();
-		String[] array = StringUtils.tokenizeToStringArray(originalString,
+		final G_SearchTuple<String> tuple = new G_SearchTuple<String>();
+		final String[] array = StringUtils.tokenizeToStringArray(originalString,
 				G_Delimiter.SEARCH_TYPE.getValueString());
 		if (array == null) {
 			return null;
@@ -68,5 +61,9 @@ public class SearchTypeHelper {
 		}
 
 		return tuple;
+	}
+
+	private SearchTypeHelper() {
+		// TODO Auto-generated constructor stub
 	}
 }

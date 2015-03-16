@@ -2,6 +2,7 @@ package graphene.model.idl;
 
 import graphene.model.idlhelper.PropertyHelper;
 
+@Deprecated
 public class G_SearchTuple<T> {
 	protected G_IdType nodeType;
 	protected G_SearchType searchType;
@@ -25,8 +26,8 @@ public class G_SearchTuple<T> {
 	 * @param specificPropertyType
 	 * @param value
 	 */
-	public G_SearchTuple(G_SearchType searchType, G_IdType nodeType,
-			String specificPropertyType, T value) {
+	public G_SearchTuple(final G_SearchType searchType, final G_IdType nodeType, final String specificPropertyType,
+			final T value) {
 		super();
 		this.searchType = searchType;
 		this.nodeType = nodeType;
@@ -41,7 +42,7 @@ public class G_SearchTuple<T> {
 	 * @param family
 	 * @param value
 	 */
-	public G_SearchTuple(G_SearchType searchType, G_IdType family, T value) {
+	public G_SearchTuple(final G_SearchType searchType, final G_IdType family, final T value) {
 		super();
 		this.searchType = searchType;
 		this.nodeType = family;
@@ -49,7 +50,7 @@ public class G_SearchTuple<T> {
 		this.value = value;
 	}
 
-	public G_SearchTuple(T value, G_SearchType searchType) {
+	public G_SearchTuple(final T value, final G_SearchType searchType) {
 		this.value = value;
 		this.searchType = searchType;
 	}
@@ -80,11 +81,11 @@ public class G_SearchTuple<T> {
 	 * @param nodeType
 	 *            the nodeType to set
 	 */
-	public final void setNodeType(G_IdType nodeType) {
+	public final void setNodeType(final G_IdType nodeType) {
 		this.nodeType = nodeType;
 	}
 
-	public void setSearchType(G_SearchType searchType) {
+	public void setSearchType(final G_SearchType searchType) {
 		this.searchType = searchType;
 	}
 
@@ -92,18 +93,17 @@ public class G_SearchTuple<T> {
 	 * @param specificPropertyType
 	 *            the specificPropertyType to set
 	 */
-	public final void setSpecificPropertyType(String specificPropertyType) {
+	public final void setSpecificPropertyType(final String specificPropertyType) {
 		this.specificPropertyType = specificPropertyType;
 	}
 
-	public void setValue(T value) {
+	public void setValue(final T value) {
 		this.value = value;
 	}
 
 	@Override
 	public String toString() {
-		return "G_SearchTuple ["
-				+ (searchType != null ? "searchType=" + searchType + ", " : "")
+		return "G_SearchTuple [" + (searchType != null ? "searchType=" + searchType + ", " : "")
 				+ (value != null ? "value=" + value : "") + "]";
 	}
 }

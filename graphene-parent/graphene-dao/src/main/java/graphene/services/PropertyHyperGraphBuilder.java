@@ -3,6 +3,7 @@ package graphene.services;
 import graphene.business.commons.DocumentError;
 import graphene.dao.G_Parser;
 import graphene.dao.GenericDAO;
+import graphene.dao.HyperGraphBuilder;
 import graphene.dao.StopWordService;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;

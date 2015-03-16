@@ -1,7 +1,7 @@
 package graphene.web.pages.experimental;
 
+import graphene.dao.HyperGraphBuilder;
 import graphene.model.idl.G_VisualType;
-import graphene.services.HyperGraphBuilder;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 import mil.darpa.vande.converters.cytoscapejs.V_CSGraph;

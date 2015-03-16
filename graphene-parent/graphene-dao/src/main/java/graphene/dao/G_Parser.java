@@ -3,7 +3,6 @@ package graphene.dao;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
-import graphene.services.HyperGraphBuilder;
 import graphene.services.PropertyHyperGraphBuilder;
 
 import java.util.List;

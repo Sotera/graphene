@@ -4,7 +4,6 @@ import graphene.dao.GenericDAO;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.query.EventQuery;
 import graphene.model.query.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
@@ -255,27 +254,6 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 	 * 
 	 * @param q
 	 * @param sq
-	 * @param defaultLimit
-	 * @return a modified SQLQuery object
-	 */
-	protected SQLQuery setOffsetAndLimit(final EventQuery q, SQLQuery sq, final long defaultLimit) {
-		if (ValidationUtils.isValid(q)) {
-			if (ValidationUtils.isValid(q.getFirstResult()) && (defaultLimit > q.getFirstResult())) {
-				sq = sq.offset(q.getFirstResult());
-			}
-			if (ValidationUtils.isValid(q.getMaxResult())) {
-				sq = sq.limit(q.getMaxResult());
-			} else {
-				sq = sq.limit(defaultLimit);
-			}
-		}
-		return sq;
-	}
-
-	/**
-	 * 
-	 * @param q
-	 * @param sq
 	 * @return a modified SQLQuery object
 	 */
 	protected SQLQuery setOffsetAndLimit(final G_EntityQuery q, SQLQuery sq) {
@@ -285,6 +263,27 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 			}
 			if (ValidationUtils.isValid(q.getMaxResult())) {
 				sq = sq.limit(q.getMaxResult());
+			}
+		}
+		return sq;
+	}
+
+	/**
+	 * 
+	 * @param q
+	 * @param sq
+	 * @param defaultLimit
+	 * @return a modified SQLQuery object
+	 */
+	protected SQLQuery setOffsetAndLimit(final G_EntityQuery q, SQLQuery sq, final long defaultLimit) {
+		if (ValidationUtils.isValid(q)) {
+			if (ValidationUtils.isValid(q.getFirstResult()) && (defaultLimit > q.getFirstResult())) {
+				sq = sq.offset(q.getFirstResult());
+			}
+			if (ValidationUtils.isValid(q.getMaxResult())) {
+				sq = sq.limit(q.getMaxResult());
+			} else {
+				sq = sq.limit(defaultLimit);
 			}
 		}
 		return sq;

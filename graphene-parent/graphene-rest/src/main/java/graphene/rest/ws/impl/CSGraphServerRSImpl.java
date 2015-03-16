@@ -1,5 +1,6 @@
 package graphene.rest.ws.impl;
 
+import graphene.dao.HyperGraphBuilder;
 import graphene.dao.LoggingDAO;
 import graphene.dao.WorkspaceDAO;
 import graphene.model.graph.G_PersistedGraph;
@@ -8,7 +9,6 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.rest.ws.CSGraphServerRS;
-import graphene.services.HyperGraphBuilder;
 import graphene.util.DataFormatConstants;
 import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;

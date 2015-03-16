@@ -4,6 +4,13 @@ import java.util.Set;
 
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 
+/**
+ * A service for allowing implementors/users to add words that should not be
+ * used in node creation.
+ * 
+ * @author djue
+ * 
+ */
 @UsesConfiguration(String.class)
 public interface StopWordService {
 	/**
@@ -14,21 +21,18 @@ public interface StopWordService {
 	public abstract void addWords(String... words);
 
 	/**
-	 * Remove one or more a words from the list.
+	 * Clear the stopword list
 	 * 
-	 * @param words
-	 * @return
+	 * @return true if the clear operation completed successfully.
 	 */
-	public abstract boolean removeWords(String... words);
+	public abstract boolean clear();
 
 	/**
-	 * Splits a string into individual words, and applies isValid to them.
+	 * Return stopwords
 	 * 
-	 * @param sentence
-	 * @return true if none of the words in the sentence were stopwords. False
-	 *         if any stopwords were contained in the sentence.
+	 * @return
 	 */
-	public abstract boolean tokensAreValid(String sentence);
+	public abstract Set<String> getStopwords();
 
 	/**
 	 * See if any of the words provided are stop words.
@@ -40,11 +44,12 @@ public interface StopWordService {
 	public abstract boolean isValid(String... words);
 
 	/**
-	 * Return stopwords
+	 * Remove one or more a words from the list.
 	 * 
+	 * @param words
 	 * @return
 	 */
-	public abstract Set<String> getStopwords();
+	public abstract boolean removeWords(String... words);
 
 	/**
 	 * Set the stopwords to the provided collection.
@@ -54,9 +59,11 @@ public interface StopWordService {
 	public abstract void setStopwords(Set<String> stopwords);
 
 	/**
-	 * Clear the stopword list
+	 * Splits a string into individual words, and applies isValid to them.
 	 * 
-	 * @return true if the clear operation completed successfully.
+	 * @param sentence
+	 * @return true if none of the words in the sentence were stopwords. False
+	 *         if any stopwords were contained in the sentence.
 	 */
-	public abstract boolean clear();
+	public abstract boolean tokensAreValid(String sentence);
 }

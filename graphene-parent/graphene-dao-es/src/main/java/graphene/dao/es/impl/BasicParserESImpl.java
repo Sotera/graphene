@@ -24,23 +24,26 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 
 	protected List<String> supported;
 
-	protected G_Property addSafeString(final G_PropertyType nodeType, final String... s) {
+	protected G_Property addSafeString(final String style, final G_PropertyType nodeType, final String... s) {
 		final String coalesc = graphene.util.StringUtils.coalesc(" ", s);
 		G_Property gp = null;
 		if (ValidationUtils.isValid(coalesc)) {
 			final List<G_PropertyTag> tags = new ArrayList<G_PropertyTag>();
 			gp = new PropertyHelper(coalesc, coalesc, coalesc, nodeType, tags);
+			gp.setStyleType(style);
 		}
 		return gp;
 	}
 
-	protected G_Property addSafeStringWithTitle(final G_PropertyType nodeType, final String title, final String... s) {
+	protected G_Property addSafeStringWithTitle(final String style, final G_PropertyType nodeType, final String title,
+			final String... s) {
 		final String coalesc = graphene.util.StringUtils.coalesc(" ", s);
 		G_Property gp = null;
 		if (ValidationUtils.isValid(coalesc)) {
 			final List<G_PropertyTag> tags = new ArrayList<G_PropertyTag>();
 			final String titled = StringUtils.coalesc(" ", title + ":", coalesc);
 			gp = new PropertyHelper(coalesc, titled, coalesc, nodeType, tags);
+			gp.setStyleType(style);
 		}
 		return gp;
 	}
@@ -58,7 +61,9 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 	@Override
 	public <T> T getDTO(final G_SearchResult sr, final Class<T> clazz) {
 		if (ValidationUtils.isValid(sr)) {
-			return (T) ((G_Entity) sr.getResult()).getProperties().get(G_Parser.DTO);
+			final G_Entity e = (G_Entity) sr.getResult();
+			final Object object = PropertyHelper.getSingletonValue(e.getProperties().get(G_Parser.DTO));
+			return (T) object;
 		} else {
 			return null;
 		}

@@ -1,9 +1,7 @@
 package graphene.rest.services;
 
 import graphene.dao.DAOModule;
-import graphene.rest.ws.EventServerRS;
 import graphene.rest.ws.MetaSearchRS;
-import graphene.rest.ws.impl.EventServerRSImpl;
 import graphene.rest.ws.impl.MetaSearchRSImpl;
 
 import org.apache.tapestry5.ioc.Configuration;
@@ -20,12 +18,6 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 public class RestModule {
 	public static void bind(final ServiceBinder binder) {
 		binder.bind(MetaSearchRS.class, MetaSearchRSImpl.class);
-		binder.bind(EventServerRS.class, EventServerRSImpl.class);
-	}
-
-	@Contribute(javax.ws.rs.core.Application.class)
-	public static void contributeApplication(final Configuration<Object> singletons, final EventServerRS restService) {
-		singletons.add(restService);
 	}
 
 	@Contribute(javax.ws.rs.core.Application.class)

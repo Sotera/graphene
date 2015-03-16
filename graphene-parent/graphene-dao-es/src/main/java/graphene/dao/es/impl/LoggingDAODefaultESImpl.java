@@ -9,7 +9,6 @@ import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserLoginEvent;
-import graphene.model.query.BasicQuery;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Search;
@@ -152,7 +151,8 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
+	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset,
+			final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 			if (ValidationUtils.isValid(partialTerm)) {

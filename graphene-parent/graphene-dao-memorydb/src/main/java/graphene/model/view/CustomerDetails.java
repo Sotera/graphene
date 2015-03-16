@@ -1,4 +1,6 @@
-package graphene.model.view.entities;
+package graphene.model.view;
+
+import graphene.model.view.entities.IdType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * Will be replaced by Entity
  */
+@Deprecated
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerDetails implements Cloneable {
 
@@ -42,53 +45,57 @@ public class CustomerDetails implements Cloneable {
 		// needed
 	}
 
-	public CustomerDetails(String nbr) {
+	public CustomerDetails(final String nbr) {
 		setCustomerNumber(nbr);
 	}
 
-	public void addAccount(String ac) {
+	public void addAccount(final String ac) {
 		accountSet.add(ac);
 	}
 
-	public void addIdentifier(IdType id, String value) {
-		if (value == null || value.length() == 0 || id == null) {
+	public void addIdentifier(final IdType id, String value) {
+		if ((value == null) || (value.length() == 0) || (id == null)) {
 			return;
 		}
 
-		String shortName = id.getShortName();
-		String family = id.getNodeType();
+		final String shortName = id.getShortName();
+		final String family = id.getNodeType();
 
-		if (id.getColumnSource().equals("Name,ResAddress1")) // kludge but
-																// needed as
-																// they used
-																// this for D/O
-																// etc which we
-																// consider
+		if (id.getColumnSource().equals("Name,ResAddress1")) {
+			// needed as
+			// they used
+			// this for D/O
+			// etc which we
+			// consider
 			// part of the name
 			setExpandedName(value);
-
-		else if (family.equals("name")) { // use the shortest version
-			int oldLen = customerName.length();
+		} else if (family.equals("name")) { // use the shortest version
+			final int oldLen = customerName.length();
 			// if (oldLen == 0 || oldLen > value.length())
-			if (oldLen == 0)
+			if (oldLen == 0) {
 				setCustomerName(value);
+			}
 		} else if (shortName.contains("Address")) {
 			setAddress(value);
 		} else if (family.equals("email")) {
-			if (email.contains(value))
+			if (email.contains(value)) {
 				return;
-			if (value.contains(" ")) // Fix for bad email addresses
+			}
+			if (value.contains(" ")) {
 				value = value.replace(" ", "");
-			if (email.length() > 0)
+			}
+			if (email.length() > 0) {
 				email += ", ";
+			}
 			setEmail(email + value);
 		}
 	}
 
+	@Override
 	public CustomerDetails clone() throws CloneNotSupportedException {
 		super.clone();
-		CustomerDetails cnew = new CustomerDetails(this.customerNumber);
-		cnew.setAddress(this.address);
+		final CustomerDetails cnew = new CustomerDetails(customerNumber);
+		cnew.setAddress(address);
 		cnew.setEmail(email);
 		cnew.setCustomerName(customerName);
 		cnew.setExpandedName(expandedName);
@@ -136,7 +143,7 @@ public class CustomerDetails implements Cloneable {
 	}
 
 	public void setAddress(final String addr) {
-		this.address = addr;
+		address = addr;
 	}
 
 	public void setCustomerName(final String customerName) {

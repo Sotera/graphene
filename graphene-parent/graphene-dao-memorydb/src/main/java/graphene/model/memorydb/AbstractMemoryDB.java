@@ -2,17 +2,20 @@ package graphene.model.memorydb;
 
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
-import graphene.model.idl.G_SearchType;
-import graphene.model.query.AdvancedSearch;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idl.G_PropertyType;
+import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
 import graphene.model.query.G_CallBack;
 import graphene.model.query.SearchFilter;
-import graphene.model.view.entities.CustomerDetails;
+import graphene.model.view.CustomerDetails;
 import graphene.model.view.entities.IdType;
+import graphene.util.FastNumberUtils;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.stats.MemoryReporter;
 import graphene.util.stats.TimeReporter;
@@ -33,8 +36,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractMemoryDB<T, I, Q extends G_EntityQuery> implements G_CallBack,
-		IMemoryDB<T, I, CustomerDetails> {
+public abstract class AbstractMemoryDB<T, I> implements G_CallBack, IMemoryDB<T, I, CustomerDetails> {
 	protected static MemIndex accounts;
 	protected static int currentRow;
 
@@ -137,25 +139,28 @@ public abstract class AbstractMemoryDB<T, I, Q extends G_EntityQuery> implements
 	}
 
 	@Override
-	public Set<String> entityIDsByAdvancedSearch(final AdvancedSearch srch) {
+	public Set<String> entityIDsByAdvancedSearch(final G_EntityQuery srch) {
 		boolean found = false;
-
 		final Set<String> results = new HashSet<String>();
 		final Set<String> pastResults = new HashSet<String>();
 
-		final List<SearchFilter> filters = srch.getFilters();
-
-		if (filters.size() == 1) {
-			final SearchFilter f = srch.getFilters().get(0);
-			if (f.getCompareType() == G_SearchType.COMPARE_EQUALS) {
-				return exactMatch(f);
+		final List<G_PropertyMatchDescriptor> descriptors = srch.getPropertyMatchDescriptors();
+		for (final G_PropertyMatchDescriptor d : descriptors) {
+			if (d.getConstraint().equals(G_Constraint.REQUIRED_EQUALS)) {
+				results.addAll(exactMatch(d));
 			}
 		}
+		// if (filters.size() == 1) {
+		// final SearchFilter f = srch.getFilters().get(0);
+		// if (f.getCompareType() == G_SearchType.COMPARE_EQUALS) {
+		// return exactMatch(f);
+		// }
+		// }
 		// TODO: can improve by doing the exact match first if it is
 		// one of multiple filters
 		String val;
 		int pass = 0;
-		final int limit = srch.getLimit();
+		final Long limit = srch.getMaxResult();
 		int numberFound = 0;
 		for (final SearchFilter f : filters) {
 			pass++;
@@ -201,19 +206,23 @@ public abstract class AbstractMemoryDB<T, I, Q extends G_EntityQuery> implements
 	}
 
 	@Override
-	public Set<String> exactMatch(final SearchFilter f) {
+	public Set<String> exactMatch(final G_PropertyMatchDescriptor d) {
 
 		final Set<String> results = new HashSet<String>();
 		Set<MemRow> rows;
-
-		rows = getRowsForIdentifier(f.getValue());
+		final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
+		int identifier = 0;
+		if (pmdh.getType().equals(G_PropertyType.STRING)) {
+			identifier = FastNumberUtils.parseIntWithCheck((String) pmdh.getValue());
+		} else if (pmdh.getType().equals(G_PropertyType.LONG)) {
+			identifier = (int) pmdh.getValue();
+		}
+		rows = getRowsForIdentifier(identifier);
 
 		for (final MemRow r : rows) {
-			if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(f.getFieldName())) {
-
+			if (idTypeDAO.getNodeType(r.getIdType()).equalsIgnoreCase(d.getKey())) {
 				logger.trace("Family for row : " + idTypeDAO.getNodeType(r.getIdType()));
-				logger.trace("Field name for search " + f.getFieldName());
-
+				logger.trace("Field name for search " + d.getKey());
 				final String cno = getCustomerNumberForID(r.entries[CUSTOMER]);
 				results.add(cno);
 			}

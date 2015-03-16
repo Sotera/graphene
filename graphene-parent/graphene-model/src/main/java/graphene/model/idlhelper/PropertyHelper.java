@@ -34,12 +34,14 @@ import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_Provenance;
 import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_Uncertainty;
+import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class PropertyHelper extends G_Property {
@@ -57,11 +59,15 @@ public class PropertyHelper extends G_Property {
 	}
 
 	public static Object getListValue(final G_Property property) {
-		final G_ListRange r = (G_ListRange) property.getRange();
-		if (r == null) {
-			return null;
+		if (ValidationUtils.isValid(property)) {
+			final G_ListRange r = (G_ListRange) property.getRange();
+			if (r == null) {
+				return null;
+			} else {
+				return r.getValues();
+			}
 		} else {
-			return r.getValues();
+			return null;
 		}
 	}
 
@@ -97,8 +103,39 @@ public class PropertyHelper extends G_Property {
 		return null;
 	}
 
+	public static Double getSingletonDoubleValueByKey(final Map<String, G_Property> entityProperties, final String key) {
+		if (ValidationUtils.isValid(entityProperties)) {
+			final G_Property property = entityProperties.get(key);
+			return (Double) getSingletonValue(property);
+		} else {
+			return null;
+		}
+	}
+
+	public static Long getSingletonLongByKey(final Map<String, G_Property> entityProperties, final String key) {
+		if (ValidationUtils.isValid(entityProperties)) {
+			final G_Property property = entityProperties.get(key);
+			return (Long) getSingletonValue(property);
+		} else {
+			return null;
+		}
+	}
+
+	public static String getSingletonStringByKey(final Map<String, G_Property> entityProperties, final String key) {
+		if (ValidationUtils.isValid(entityProperties)) {
+			final G_Property property = entityProperties.get(key);
+			return (String) getSingletonValue(property);
+		} else {
+			return null;
+		}
+	}
+
 	public static Object getSingletonValue(final G_Property property) {
-		return ((G_SingletonRange) property.getRange()).getValue();
+		if (ValidationUtils.isValid(property)) {
+			return ((G_SingletonRange) property.getRange()).getValue();
+		} else {
+			return null;
+		}
 	}
 
 	public static Object getSingletonValueByKey(final List<G_Property> props, final String key) {
@@ -193,6 +230,18 @@ public class PropertyHelper extends G_Property {
 		getTags().add(tag);
 	}
 
+	public PropertyHelper(final String key, final String friendlyText, final G_PropertyType type, final Set value,
+			final G_PropertyTag tag, final String styleType) {
+		setKey(key);
+		setFriendlyText(friendlyText);
+		setProvenance(null);
+		setUncertainty(null);
+		setTags(new ArrayList<G_PropertyTag>(2));
+		setRange(new ListRangeHelper(value, type));
+		getTags().add(tag);
+		setStyleType(styleType);
+	}
+
 	/**
 	 * 
 	 * @param key
@@ -243,6 +292,18 @@ public class PropertyHelper extends G_Property {
 		setTags(new ArrayList<G_PropertyTag>(2));
 		setRange(new SingletonRangeHelper(value, type));
 
+		getTags().add(tag);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final Object value, final G_PropertyType type,
+			final G_PropertyTag tag, final String styleString) {
+		setKey(key);
+		setFriendlyText(friendlyText);
+		setProvenance(null);
+		setUncertainty(null);
+		setTags(new ArrayList<G_PropertyTag>(2));
+		setRange(new SingletonRangeHelper(value, type));
+		setStyleType(styleString);
 		getTags().add(tag);
 	}
 

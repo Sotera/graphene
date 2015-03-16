@@ -11,6 +11,28 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 public class QueryHelper extends G_EntityQuery {
+	public QueryHelper(final G_PropertyMatchDescriptor... pmd) {
+		setAttributeList(null);
+		setCaseSensitive(false);
+		final List<String> filters = new ArrayList<String>();
+		setFilters(filters);
+		setFirstResult(0l);
+		setInitiatorId("");
+		setMaxResult((long) 1);
+		setMinimumScore(0.0d);
+		setSearchFreeText(true);
+		setTargetSchema("");
+		setTimeInitiated(DateTime.now().getMillis());
+		setUserId("Unknown");
+		setUsername("Unknown");
+		final List<G_PropertyMatchDescriptor> list = new ArrayList<G_PropertyMatchDescriptor>();
+
+		for (final G_PropertyMatchDescriptor pm : pmd) {
+			list.add(pm);
+		}
+		setPropertyMatchDescriptors(list);
+	}
+
 	// TODO: Stop using search tuples and start using property match descriptors
 	public QueryHelper(final List<G_SearchTuple> tuples) {
 		setAttributeList(tuples);

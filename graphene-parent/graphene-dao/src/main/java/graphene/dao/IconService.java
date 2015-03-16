@@ -1,7 +1,7 @@
 package graphene.dao;
 
 import graphene.model.idl.G_EntityQuery;
-import graphene.util.Tuple;
+import graphene.model.idl.G_Property;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +31,7 @@ public interface IconService {
 	 *            The narrative is checked to see if it contains the term(s)
 	 * @return
 	 */
-	public abstract Collection<Tuple<String, String>> getIconsForText(String text, String... otherKeys);
+	public abstract Collection<G_Property> getIconsForText(String text, String... otherKeys);
 
 	/**
 	 * Returns a list of tuples with <icon style, count> as the values, where
@@ -40,7 +40,7 @@ public interface IconService {
 	 * @param text
 	 * @return
 	 */
-	public abstract Collection<Tuple<String, String>> getIconsForTextWithCount(String text, String... otherKeys);
+	public abstract Collection<G_Property> getIconsForTextWithCount(String text, String... otherKeys);
 
 	public abstract void removePattern(String pattern, boolean caseSensitive);
 }

@@ -1,6 +1,5 @@
-package graphene.services;
+package graphene.dao;
 
-import graphene.dao.GenericDAO;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;

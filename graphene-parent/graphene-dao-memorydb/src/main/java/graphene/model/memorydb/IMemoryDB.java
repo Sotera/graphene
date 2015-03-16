@@ -1,7 +1,7 @@
 package graphene.model.memorydb;
 
-import graphene.model.query.AdvancedSearch;
-import graphene.model.query.SearchFilter;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 
 import java.util.List;
 import java.util.Set;
@@ -38,8 +38,7 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	 *            If true, return a row for each of the customer's accounts
 	 * @return a list of CustomerDetails objects
 	 */
-	List<CUSTOMERDETAILS> customersForIdentifier(String identifier,
-			String family, boolean rowPerAccount);
+	List<CUSTOMERDETAILS> customersForIdentifier(String identifier, String family, boolean rowPerAccount);
 
 	/**
 	 * 
@@ -47,14 +46,14 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	 *            AdvancedSearch object
 	 * @return Set<String> of customer Numbers (entity IDs)
 	 */
-	Set<String> entityIDsByAdvancedSearch(AdvancedSearch srch);
+	Set<String> entityIDsByAdvancedSearch(G_EntityQuery srch);
 
 	/**
 	 * 
 	 * @param f
 	 * @return
 	 */
-	Set<String> exactMatch(SearchFilter f);
+	Set<String> exactMatch(G_PropertyMatchDescriptor f);
 
 	/**
 	 * 
@@ -63,8 +62,7 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	 * @param caseSensitive
 	 * @return
 	 */
-	Set<String> findRegexMatches(String srchValue, String family,
-			boolean caseSensitive);
+	Set<String> findRegexMatches(String srchValue, String family, boolean caseSensitive);
 
 	/**
 	 * 
@@ -73,8 +71,7 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	 * @param caseSensitive
 	 * @return
 	 */
-	Set<MemRow> findRegexRows(String srchValue, String family,
-			boolean caseSensitive);
+	Set<MemRow> findRegexRows(String srchValue, String family, boolean caseSensitive);
 
 	/**
 	 * 
@@ -83,6 +80,48 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	 * @return
 	 */
 	Set<String> findSoundsLikeMatches(String name, String family);
+
+	/**
+	 * 
+	 * @param number
+	 * @return
+	 */
+	public abstract int getAccountIDForNumber(String number);
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public abstract String getAccountNumberForID(int id);
+
+	/**
+	 * 
+	 * @param number
+	 * @return
+	 */
+	public abstract int getCustomerIDForNumber(String number);
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public abstract String getCustomerNumberForID(int id);
+
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public abstract int getIdentifierIDForValue(String value);
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public abstract String getIdValueForID(int id);
 
 	/**
 	 * 
@@ -144,11 +183,6 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	Set<String> getValuesContaining(Set<String> vals, boolean caseSensitive);
 
 	/**
- * 
- */
-	void logInvalidTypes();
-
-	/**
 	 * 
 	 * @param maxRecords
 	 */
@@ -170,6 +204,11 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	public abstract boolean isLoaded();
 
 	/**
+ * 
+ */
+	void logInvalidTypes();
+
+	/**
 	 * 
 	 * @param loaded
 	 */
@@ -182,47 +221,5 @@ public interface IMemoryDB<T, IDTYPE, CUSTOMERDETAILS> {
 	 * @return
 	 */
 	public abstract Set<MemRow> soundsLikeSearch(String src, String family);
-
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public abstract String getIdValueForID(int id);
-
-	/**
-	 * 
-	 * @param value
-	 * @return
-	 */
-	public abstract int getIdentifierIDForValue(String value);
-
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public abstract String getCustomerNumberForID(int id);
-
-	/**
-	 * 
-	 * @param number
-	 * @return
-	 */
-	public abstract int getCustomerIDForNumber(String number);
-
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public abstract String getAccountNumberForID(int id);
-
-	/**
-	 * 
-	 * @param number
-	 * @return
-	 */
-	public abstract int getAccountIDForNumber(String number);
 
 }

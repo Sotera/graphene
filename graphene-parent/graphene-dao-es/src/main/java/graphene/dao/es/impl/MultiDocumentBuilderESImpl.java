@@ -55,7 +55,7 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 					entity.getProperties().put(G_Parser.SCORE,
 							new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
 					entity.getProperties().put(G_Parser.CARDINAL_ORDER,
-							new PropertyHelper(G_Parser.CARDINAL_ORDER, index + 1, G_PropertyTag.STAT));
+							new PropertyHelper(G_Parser.CARDINAL_ORDER, new Long(index + 1), G_PropertyTag.STAT));
 
 					sr = new G_SearchResult(score.asDouble(0.0d), entity);
 				} else {

@@ -1,4 +1,6 @@
-package graphene.model.view.events;
+package graphene.model.view;
+
+import graphene.model.view.events.SingleSidedEventRow;
 
 import java.util.List;
 import java.util.Vector;
@@ -19,6 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * 
  */
+@Deprecated
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EventStatistics {
@@ -32,14 +35,48 @@ public class EventStatistics {
 
 	public List<EventStat> stats = new Vector<EventStat>();
 
+	private final boolean transitionFound = false;
+
 	public EventStatistics() {
 		// needed for JAXB
 	}
 
-	private boolean transitionFound = false;
+	public String getAccount() {
+		return account;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public EventStat getStat(final int year, final int month, final int day) {
+		for (final EventStat m : stats) {
+			if ((m.month == month) && (m.year == year) && (m.day == day)) {
+				return m;
+			}
+
+		}
+		return null;
+	}
 
 	public List<EventStat> getStats() {
 		return stats;
+	}
+
+	public boolean isUseUnit() {
+		return useUnit;
+	}
+
+	public void setAccount(final String account) {
+		this.account = account;
+	}
+
+	public void setBalance(final double balance) {
+		this.balance = balance;
+	}
+
+	public void setUseUnit(final boolean useUnit) {
+		this.useUnit = useUnit;
 	}
 
 	/**
@@ -50,9 +87,9 @@ public class EventStatistics {
 	 *            true if daily, false if monthly
 	 */
 	public void updateFromEntry(final SingleSidedEventRow r, final boolean daily) {
-		int yr = r.getYear();
-		int mo = r.getMonth_zero_based();
-		int day = daily ? r.getDay_one_based() : 0;
+		final int yr = r.getYear();
+		final int mo = r.getMonth_zero_based();
+		final int day = daily ? r.getDay_one_based() : 0;
 
 		EventStat m = getStat(yr, mo, day);
 		if (m == null) {
@@ -67,39 +104,6 @@ public class EventStatistics {
 		m.addDebit(r.getDebitAsDouble());
 		m.setClosingBalance(r.getBalanceDouble()); // will be replaced each time
 		// and we assume they come in in transaction order
-	}
-
-	public EventStat getStat(final int year, final int month, final int day) {
-		for (EventStat m : stats) {
-			if (m.month == month && m.year == year && m.day == day)
-				return m;
-
-		}
-		return null;
-	}
-
-	public boolean isUseUnit() {
-		return useUnit;
-	}
-
-	public void setUseUnit(final boolean useUnit) {
-		this.useUnit = useUnit;
-	}
-
-	public double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(final double balance) {
-		this.balance = balance;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(final String account) {
-		this.account = account;
 	}
 
 }

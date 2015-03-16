@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
+@Deprecated
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DirectedEventRow implements Comparable<Object> {
 
@@ -68,26 +69,31 @@ public class DirectedEventRow implements Comparable<Object> {
 
 	@Override
 	public int compareTo(final Object o) {
-		DirectedEventRow c = (DirectedEventRow) o;
-		if (this.dateMilliSeconds > c.dateMilliSeconds)
+		final DirectedEventRow c = (DirectedEventRow) o;
+		if (dateMilliSeconds > c.dateMilliSeconds) {
 			return 1;
-		else if (this.dateMilliSeconds < c.dateMilliSeconds)
+		} else if (dateMilliSeconds < c.dateMilliSeconds) {
 			return -1;
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		DirectedEventRow other = (DirectedEventRow) obj;
-		if (id != other.id)
+		}
+		final DirectedEventRow other = (DirectedEventRow) obj;
+		if (id != other.id) {
 			return false;
+		}
 		return true;
 	}
 
@@ -122,13 +128,6 @@ public class DirectedEventRow implements Comparable<Object> {
 		return debit;
 	}
 
-	/**
-	 * @param date the date to set
-	 */
-	public final void setDate(String date) {
-		this.date = date;
-	}
-
 	public long getId() {
 		return id;
 	}
@@ -137,15 +136,12 @@ public class DirectedEventRow implements Comparable<Object> {
 		return localUnitBalance;
 	}
 
-
-
 	/**
 	 * @return the receiverId
 	 */
 	public final String getReceiverId() {
 		return receiverId;
 	}
-
 
 	/**
 	 * @return the senderId
@@ -166,13 +162,12 @@ public class DirectedEventRow implements Comparable<Object> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = (prime * result) + (int) (id ^ (id >>> 32));
 		return result;
 	}
 
 	public void setBalance(final double bal) {
-		unitBalance = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
-				.format(bal);
+		unitBalance = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(bal);
 	}
 
 	public void setComments(final String comments) {
@@ -180,26 +175,32 @@ public class DirectedEventRow implements Comparable<Object> {
 	}
 
 	public void setCredit(final double credit) {
-		this.credit = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING)
-				.format(credit);
+		this.credit = new DecimalFormat(DataFormatConstants.MONEY_FORMAT_STRING).format(credit);
 	}
 
 	/**
 	 * @param data
 	 *            the data to set
 	 */
-	public void setData(Map<String, String> data) {
+	public void setData(final Map<String, String> data) {
 		this.data = data;
 	}
 
 	public void setDate(final Date date) {
 		setDateMilliSeconds(date.getTime());
-		this.date = FastDateFormat.getInstance(
-				DataFormatConstants.DATE_FORMAT_STRING).format(date);
+		this.date = FastDateFormat.getInstance(DataFormatConstants.DATE_FORMAT_STRING).format(date);
+	}
+
+	/**
+	 * @param date
+	 *            the date to set
+	 */
+	public final void setDate(final String date) {
+		this.date = date;
 	}
 
 	public void setDateMilliSeconds(final long seconds) {
-		this.dateMilliSeconds = seconds;
+		dateMilliSeconds = seconds;
 	}
 
 	public void setDay_one_based(final int day_one_based) {
@@ -207,8 +208,7 @@ public class DirectedEventRow implements Comparable<Object> {
 	}
 
 	public void setDebit(final double debit) {
-		this.debit = new DecimalFormat(
-				DataFormatConstants.WHOLE_NUMBER_FORMAT_STRING).format(debit);
+		this.debit = new DecimalFormat(DataFormatConstants.WHOLE_NUMBER_FORMAT_STRING).format(debit);
 	}
 
 	public void setId(final long id) {
@@ -216,8 +216,7 @@ public class DirectedEventRow implements Comparable<Object> {
 	}
 
 	public void setLocalUnitBalance(final double bal) {
-		this.localUnitBalance = new DecimalFormat(
-				DataFormatConstants.WHOLE_NUMBER_FORMAT_STRING).format(bal);
+		localUnitBalance = new DecimalFormat(DataFormatConstants.WHOLE_NUMBER_FORMAT_STRING).format(bal);
 	}
 
 	public void setMonth_zero_based(final int month_zero_based) {
@@ -228,7 +227,7 @@ public class DirectedEventRow implements Comparable<Object> {
 	 * @param receiverId
 	 *            the receiverId to set
 	 */
-	public final void setReceiverId(String receiverId) {
+	public final void setReceiverId(final String receiverId) {
 		this.receiverId = receiverId;
 	}
 
@@ -236,7 +235,7 @@ public class DirectedEventRow implements Comparable<Object> {
 	 * @param senderId
 	 *            the senderId to set
 	 */
-	public final void setSenderId(String senderId) {
+	public final void setSenderId(final String senderId) {
 		this.senderId = senderId;
 	}
 
@@ -248,35 +247,22 @@ public class DirectedEventRow implements Comparable<Object> {
 		this.year = year;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "DirectedEventRow ["
-				+ (comments != null ? "comments=" + comments + ", " : "")
-				+ (credit != null ? "credit=" + credit + ", " : "")
-				+ (data != null ? "data=" + data + ", " : "")
-				+ (date != null ? "date=" + date + ", " : "")
-				+ "dateMilliSeconds="
-				+ dateMilliSeconds
-				+ ", day_one_based="
-				+ day_one_based
-				+ ", "
-				+ (debit != null ? "debit=" + debit + ", " : "")
-				+ "id="
-				+ id
-				+ ", "
-				+ (localUnitBalance != null ? "localUnitBalance="
-						+ localUnitBalance + ", " : "")
-				+ "month_zero_based="
-				+ month_zero_based
-				+ ", "
+		return "DirectedEventRow [" + (comments != null ? "comments=" + comments + ", " : "")
+				+ (credit != null ? "credit=" + credit + ", " : "") + (data != null ? "data=" + data + ", " : "")
+				+ (date != null ? "date=" + date + ", " : "") + "dateMilliSeconds=" + dateMilliSeconds
+				+ ", day_one_based=" + day_one_based + ", " + (debit != null ? "debit=" + debit + ", " : "") + "id="
+				+ id + ", " + (localUnitBalance != null ? "localUnitBalance=" + localUnitBalance + ", " : "")
+				+ "month_zero_based=" + month_zero_based + ", "
 				+ (receiverId != null ? "receiverId=" + receiverId + ", " : "")
-				+ (senderId != null ? "senderId=" + senderId + ", " : "")
-				+ (unit != null ? "unit=" + unit + ", " : "")
-				+ (unitBalance != null ? "unitBalance=" + unitBalance + ", "
-						: "") + "year=" + year + "]";
+				+ (senderId != null ? "senderId=" + senderId + ", " : "") + (unit != null ? "unit=" + unit + ", " : "")
+				+ (unitBalance != null ? "unitBalance=" + unitBalance + ", " : "") + "year=" + year + "]";
 	}
 
 }

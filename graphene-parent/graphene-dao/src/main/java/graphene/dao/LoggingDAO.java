@@ -5,7 +5,6 @@ import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_UserLoginEvent;
-import graphene.model.query.BasicQuery;
 
 import java.util.List;
 
