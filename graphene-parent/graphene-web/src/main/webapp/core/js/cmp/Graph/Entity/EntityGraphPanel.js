@@ -52,6 +52,14 @@ Ext.define("DARPA.EntityGraphPanel", {
 			height: 'auto',
 			collapsible: true,
 			collapseDirection: 'right',
+			listeners: {
+				collapse: function(e) {
+					self.GraphVis.resize();
+				},
+				expand: function(e) {
+					self.GraphVis.resize();
+				}
+			},
 			items: [
 				Ext.create("Ext.panel.Panel", {
 					title: "DETAILS/ACTIONS",
