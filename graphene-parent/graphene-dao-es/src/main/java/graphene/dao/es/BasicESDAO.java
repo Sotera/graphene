@@ -26,6 +26,7 @@ import io.searchbox.core.SearchScroll;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.IndicesExists;
 import io.searchbox.params.Parameters;
+import io.searchbox.params.SearchType;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -83,7 +84,6 @@ public class BasicESDAO<T extends JestResult> {
 	@Inject
 	@Symbol(JestModule.ES_SERVER)
 	private String host;
-
 	@Inject
 	private DocumentBuilder db;
 
@@ -152,12 +152,15 @@ public class BasicESDAO<T extends JestResult> {
 				final Object r = pmdh.getRange();
 				pmdh.getVariable();
 				if (key.equals(ESTYPE)) {
+
 					if (ValidationUtils.isValid(r)) {
 						if (r instanceof G_SingletonRange) {
 							esTypes.add((String) ((G_SingletonRange) r).getValue());
 						} else if (r instanceof G_ListRange) {
 							esTypes.addAll((Collection<? extends String>) r);
 						}
+
+						logger.debug("Adding type, types are now " + esTypes.toArray());
 					}
 				}
 				if (key.equals(ESID)) {
@@ -167,6 +170,7 @@ public class BasicESDAO<T extends JestResult> {
 						} else if (r instanceof G_ListRange) {
 							esIds.addAll((Collection<? extends String>) r);
 						}
+						logger.debug("Adding id, ids are now " + esIds.toArray());
 					}
 				} else {
 					bool = buildBooleanConstraints(pmdh, bool);
@@ -207,6 +211,7 @@ public class BasicESDAO<T extends JestResult> {
 		 * Set scrolling options for callback
 		 */
 		action.setParameter(Parameters.SIZE, PAGESIZE);
+		logger.debug("We built query " + action.toString());
 		return action;
 	}
 
@@ -523,24 +528,42 @@ public class BasicESDAO<T extends JestResult> {
 		JestResult jestResult = new JestResult(null);
 
 		try {
-			io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 
-			final boolean scrolling = false;
+			final boolean scrolling = true;
 			if (scrolling) {
-				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
-				action = action.setParameter(Parameters.SIZE, "200");
-				action = action.setParameter(Parameters.SCROLL, "5m");
-				jestResult = c.getClient().execute(action.build());
+				// io.searchbox.core.Search.Builder action =
+				// buildSearchAction(pq);
+				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN);
+				// action = action.setParameter(Parameters.SIZE, "200");
+				// action = action.setParameter(Parameters.SCROLL, "5m");
+				final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchPhraseQuery("_all",
+						"aksoy"));
+
+				/**
+				 * Make a search object first.
+				 */
+				final Search search = new Search.Builder(ssb.toString()).addIndex(index)
+						.setParameter(Parameters.SIZE, PAGESIZE).setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+						.setParameter("timeout", defaultESTimeout).setParameter(Parameters.SCROLL, "1m").build();
+				logger.debug(ssb.toString());
+
+				// jestResult = c.getClient().execute(action.build());
+				jestResult = c.getClient().execute(search);
 				// The first query will not have any results, just the scroll id
 
 				if (jestResult.isSucceeded()) {
-					String scrollId = jestResult.getJsonObject().get("_scroll_id").getAsString();
-					logger.debug(" scan completed, scroll id is " + scrollId);
+					logger.debug("execution completed (expected no results, just setting up scroll)");
+					logger.debug(jestResult.getJsonString());
 					int currentResultSize = 0;
 					int pageNumber = 1;
 					do {
+						final String scrollId = jestResult.getJsonObject().get("_scroll_id").getAsString();
+						logger.debug("Next scroll id is " + scrollId);
+						final SearchScroll scroll = new SearchScroll.Builder(scrollId, "1m").build();
+						jestResult = c.getClient().execute(scroll);
+						// Get the next scroll id
 
-						final JsonNode rootNode = mapper.readValue(jestResult.toString(), JsonNode.class);
+						final JsonNode rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
 						final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
 
 						final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
@@ -554,14 +577,14 @@ public class BasicESDAO<T extends JestResult> {
 						}
 						logger.debug("finished scrolling page # " + pageNumber++ + " which had " + currentResultSize
 								+ " hits.");
-						final SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
-						jestResult = c.getClient().execute(scroll);
-						scrollId = jestResult.getJsonObject().get("_scroll_id").getAsString();
+
 					} while (currentResultSize > 0);
 				} else {
 					logger.error("Scroll failed with " + jestResult.getErrorMessage());
 				}
 			} else {
+
+				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
 				action = action.setParameter(Parameters.SIZE, "200");
 
@@ -592,45 +615,9 @@ public class BasicESDAO<T extends JestResult> {
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
-			logger.error("Problem in callback " + e.getMessage());
 		}
 		return true;
-
 	}
-
-	//
-	// public String performQuery(final String basicAuth, final String baseurl,
-	// final G_EntityQuery q)
-	// throws DataAccessException {
-	//
-	// String retval = null;
-	// final G_PropertyMatchDescriptor tuple =
-	// q.getPropertyMatchDescriptors().get(0);
-	// try {
-	// if (tuple.getValue().isEmpty()) {
-	// retval = performIndexQuery(q);
-	// } else {
-	// if (!ValidationUtils.isValid(tuple.getConstraint())) {
-	// logger.error("No search type was supplied with tuple, using EQUALS");
-	// tuple.setConstraint(G_Constraint.COMPARE_EQUALS);
-	// }
-	//
-	// if (tuple.getConstraint().equals(G_Constraint.COMPARE_EQUALS)) {
-	// retval = performMatchQuery(q);
-	// } else if (tuple.getConstraint().equals(G_Constraint.COMPARE_CONTAINS)) {
-	// retval = performCommonTermsQuery(q);
-	// } else {
-	// retval = performCommonTermsQuery(q);
-	// }
-	// }
-	// } catch (final Exception e) {
-	// logger.error("performQuery " + e.getMessage());
-	// throw new DataAccessException(
-	// "Could not connect to one of the external resources needed for your request: "
-	// + e.getMessage());
-	// }
-	// return retval;
-	// }
 
 	public void recreateIndex() {
 		try {

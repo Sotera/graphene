@@ -106,19 +106,20 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 			String userId = null;
 			String username = null;
-			if (ValidationUtils.isValid(securityService.getSubject())) {
-				try {
-					username = (String) securityService.getSubject().getPrincipal();
-					final G_User byUsername = userDataAccess.getByUsername(username);
-					userId = byUsername.getId();
-				} catch (final Exception e) {
-					logger.error("Error getting user information during rest call: ", e);
-					// e.printStackTrace();
+			if(requireAuthentication){
+				if (ValidationUtils.isValid(securityService.getSubject())) {
+					try {
+						username = (String) securityService.getSubject().getPrincipal();
+						final G_User byUsername = userDataAccess.getByUsername(username);
+						userId = byUsername.getId();
+					} catch (final Exception e) {
+						logger.error("Error getting user information during rest call: ", e);
+						// e.printStackTrace();
+					}
+				} else {
+					logger.debug("User was not authenticated");
 				}
-			} else {
-				logger.debug("User was not authenticated");
 			}
-
 			if (ValidationUtils.isValid(value) && !"null".equals(value[0])) {
 				final String firstValue = value[0];
 				final G_GraphViewEvent gve = new G_GraphViewEvent();
