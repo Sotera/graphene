@@ -217,9 +217,11 @@ public abstract class PropertyHyperGraphBuilder<T> extends AbstractGraphBuilder<
 		// prime the entity query. On first entry, we don't know what types the
 		// ids are, so use ANY.
 		final G_IdType nodeType = nodeTypeAccess.getCommonNodeType(G_CanonicalPropertyType.ANY);
+		queryBuilder.setAttributeList(new ArrayList());
 		for (final String id : graphQuery.getSearchIds()) {
 			queryBuilder.getAttributeList().add(new G_SearchTuple<String>(G_SearchType.COMPARE_EQUALS, nodeType, id));
 		}
+		queryBuilder.setTimeInitiated(0L);
 		queriesToRun.add(queryBuilder.build());
 
 		Map<String, V_GenericEdge> saveEdgeMap = new HashMap<String, V_GenericEdge>();

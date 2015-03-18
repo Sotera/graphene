@@ -1,5 +1,7 @@
 package graphene.dao.es;
 
+import graphene.dao.DocumentBuilder;
+import graphene.dao.G_Parser;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchTuple;
@@ -22,6 +24,7 @@ import io.searchbox.params.SearchType;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -33,8 +36,11 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -67,8 +73,10 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
 	protected long defaultMaxSearchResults;
 	@Inject
-	@Symbol(JestModule.ES_SERVER)
+	@Symbol(JestModule.ES_SERVER)	
 	private String host;
+	@Inject
+	private DocumentBuilder db;
 
 	public long count() {
 		final String query = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).toString();
@@ -321,20 +329,19 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 
 	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery q) {
 		JestResult result = new JestResult(null);
-		final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).sort("_id");
+		
+		
+		String term= null;
 		final ArrayList<String> excludes = new ArrayList<String>();
 		for (final G_SearchTuple<String> a : q.getAttributeList()) {
-			if (a.getSearchType().equals(G_SearchType.COMPARE_NOTINCLUDE)) {
-				excludes.add(a.getValue());
-			}
+			term = a.getValue();
 		}
-		if (ValidationUtils.isValid(excludes)) {
-			ssb.fetchSource(null, excludes.toArray(new String[excludes.size()]));
-		}
+		final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchPhraseQuery("_all", term));
+	
 		/**
 		 * Make a search object first.
 		 */
-		final Search search = new Search.Builder(ssb.toString()).addIndex(index).addType(type)
+		final Search search = new Search.Builder(ssb.toString()).addIndex(index)
 				.setParameter(Parameters.SIZE, PAGESIZE).setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
 				.setParameter("timeout", defaultESTimeout).setParameter(Parameters.SCROLL, "5m").build();
 		logger.debug(ssb.toString());
@@ -348,15 +355,28 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 			int currentResultSize = 0;
 			int pageNumber = 1;
 			do {
-				final SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
+				final SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").setParameter(Parameters.SIZE, PAGESIZE).build();
 				result = c.getClient().execute(scroll);
 				scrollId = result.getJsonObject().get("_scroll_id").getAsString();
-				final JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
+				
+				JsonNode rootNode;
+				rootNode = mapper.readValue(result.getJsonString(), JsonNode.class);
+				final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
 				currentResultSize = hits.size();
 				logger.debug("finished scrolling page # " + pageNumber++ + " which had " + currentResultSize + " hits.");
-				final G_SearchResult sr = G_SearchResult.newBuilder().setResult(result).build();
+				
+				final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
 
-				cb.callBack(sr, q);
+				for (int i = 0; i < actualListOfHits.size(); i++) {
+					final JsonNode currentHit = actualListOfHits.get(i);
+					if (ValidationUtils.isValid(currentHit)) {
+						final G_SearchResult sr = db.buildSearchResultFromDocument(i, currentHit, q);
+						cb.callBack(sr, q);
+					} else {
+						logger.error("Invalid search result at index " + i + " for query " + q.toString());
+					}
+				}
+				
 			} while (currentResultSize > 0);
 
 		} catch (final Exception e) {
