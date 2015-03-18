@@ -3,8 +3,8 @@ package graphene.web.pages.workspace;
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.UserWorkspaceDAO;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_ReportViewEvent;
-import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_VisualType;
@@ -12,15 +12,12 @@ import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
 //import graphene.model.query.EntityQuery;
 import graphene.util.ExceptionUtil;
-import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 import graphene.web.pages.CombinedEntitySearchPage;
 import graphene.web.pages.SimpleBasePage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
@@ -71,7 +68,7 @@ public class View extends SimpleBasePage {
 	@Property
 	private List<String> currentFilters;
 	@Property
-	private G_SearchTuple<String> currentTuple;
+	private G_PropertyMatchDescriptor currentTuple;
 	@Property
 	private G_ReportViewEvent currentReportView;
 
@@ -114,13 +111,12 @@ public class View extends SimpleBasePage {
 	public BeanModel<G_EntityQuery> getEntityQueryModel() {
 		if (entityQuerymodel == null) {
 			entityQuerymodel = beanModelSource.createDisplayModel(G_EntityQuery.class, resources.getMessages());
-			entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues",
-					"minimumscore", "minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult",
-					"datasource", "userId", "username", "sortascending", "id", "schema");
+			entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "minimumscore", "minsecs",
+					"maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userId",
+					"username", "sortascending", "id", "schema");
 			entityQuerymodel.addEmpty("action");
-			entityQuerymodel.get("AttributeList").sortable(true);
-			entityQuerymodel.get("filters").sortable(true);
-			entityQuerymodel.reorder("action", "attributelist", "filters", "timeinitiated");
+			entityQuerymodel.get("query").sortable(true);
+			entityQuerymodel.reorder("action", "query", "timeinitiated");
 		}
 		return entityQuerymodel;
 	}
@@ -155,23 +151,8 @@ public class View extends SimpleBasePage {
 		return null;
 	}
 
-	public Map<String, Object> getQueryParameters() {
-		final Map<String, Object> qp = new HashMap<String, Object>();
-		final G_SearchTuple<String> searchTuple = currentQuery.getAttributeList().get(0);
-		final String typeFilter = StringUtils.toDelimitedString(currentQuery.getFilters().toArray(), ",");
-		qp.put("schema", dao.getDefaultSchema());
-		qp.put("type", typeFilter);
-		if (ValidationUtils.isValid(searchTuple)) {
-			if (ValidationUtils.isValid(searchTuple.getSearchType())) {
-				qp.put("match", searchTuple.getSearchType().name());
-			}
-			if (ValidationUtils.isValid(searchTuple.getValue())) {
-				qp.put("term", searchTuple.getValue());
-			}
-		}
-		qp.put("maxResults", currentQuery.getMaxResult());
-		return qp;
-
+	public List<G_PropertyMatchDescriptor> getQueryParameters() {
+		return currentQuery.getPropertyMatchDescriptors();
 	}
 
 	public BeanModel<G_ReportViewEvent> getReportViewModel() {

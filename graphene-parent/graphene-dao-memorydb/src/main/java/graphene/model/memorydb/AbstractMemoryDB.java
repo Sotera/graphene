@@ -2,6 +2,7 @@ package graphene.model.memorydb;
 
 import graphene.dao.EntityRefDAO;
 import graphene.dao.IdTypeDAO;
+import graphene.model.idl.G_CallBack;
 import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_EntityQuery;
@@ -11,10 +12,8 @@ import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
-import graphene.model.query.G_CallBack;
 import graphene.model.query.SearchFilter;
 import graphene.model.view.CustomerDetails;
-import graphene.model.view.entities.IdType;
 import graphene.util.FastNumberUtils;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.stats.MemoryReporter;
@@ -109,7 +108,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack, IMemoryDB<T,
 				c.setMatchString(identifier);
 				accounts.clear();
 				for (final MemRow crow : getRowsForCustomer(custno)) {
-					final IdType type = idTypeDAO.getByType(crow.getIdType());
+					final G_IdType type = idTypeDAO.getByType(crow.getIdType());
 					c.addIdentifier(type, getIdValueForID(crow.entries[IDENTIFIER]));
 					if (rowPerAccount) {
 						accounts.add(getIdValueForID(crow.entries[ACCOUNT]));
@@ -152,7 +151,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack, IMemoryDB<T,
 		}
 		// if (filters.size() == 1) {
 		// final SearchFilter f = srch.getFilters().get(0);
-		// if (f.getCompareType() == G_SearchType.COMPARE_EQUALS) {
+		// if (f.getCompareType() == G_Constraint.COMPARE_EQUALS) {
 		// return exactMatch(f);
 		// }
 		// }
@@ -512,7 +511,7 @@ public abstract class AbstractMemoryDB<T, I> implements G_CallBack, IMemoryDB<T,
 		currentRow = 0;
 		state = STATE_LOAD_GRID;
 		numProcessed = 0;
-		final G_EntityQuery q = G_EntityQuery.newBuilder().setAttributeList(null).build();
+		final G_EntityQuery q = G_EntityQuery.newBuilder().setPropertyMatchDescriptors(null).build();
 		final boolean loadGridSuccessful = dao.performCallback(0, maxRecords, this, q);
 		if (!loadGridSuccessful) {
 			logger.error("Unsuccessful attempt to populate MemoryDB: callback unsuccessful for loadGrid");

@@ -7,7 +7,7 @@ package graphene.model.idl;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_EntityQuery\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"targetSchema\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"firstResult\",\"type\":\"long\",\"default\":0},{\"name\":\"maxResult\",\"type\":\"long\",\"default\":0},{\"name\":\"userId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"None\"},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"None\"},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"attributeList\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\",\"java-class\":\"graphene.model.idl.G_SearchTuple\"}}},{\"name\":\"propertyMatchDescriptors\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_PropertyMatchDescriptor\",\"doc\":\"A PropertyDescriptor is used to describe a possible property that can be present in an entity or link. It describes \\r\\n\\t a single property that can be used in a property search. It can optionally include example or suggested values \\r\\n\\t for searching on.\\r\\n\\t \\r\\n\\t CHANGED IN 1.8\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field name or G_PropertyTag (or G_PathMatchTag) that could be searched on\"},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]}],\"doc\":\"value of the Property to search on\",\"default\":null},{\"name\":\"variable\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"If not null/empty, the value is relative to a logical variable specified here (e.g. \\\"X\\\")\\r\\n\\t\\t *  Other parameters using the same logical variable name are relative to this value.\\r\\n\\t\\t *  For instance, for a {key=\\\"amount\\\", value=\\\"0.98\\\", variable=\\\"A\\\"} means that the value\\r\\n\\t\\t *  of amount is 0.98A.  Another amount might be 0.55A, and the property match engine\\r\\n\\t\\t *  (e.g. search engine, database query or pattern match algorithm) should understand\\r\\n\\t\\t *  the relative values.\\r\\n\\t\\t *  \\r\\n\\t\\t *  If no variable is specified, then the value is an absolute number. For example,\\r\\n\\t\\t *  {key=\\\"amount\\\", value=\\\"0.98\\\"} refers to an amount of exactly 0.98.\",\"default\":\"\"},{\"name\":\"weight\",\"type\":[\"float\",\"null\"],\"doc\":\"Relative importance of this match criteria, where the default is 1.0.\",\"default\":1.0},{\"name\":\"similarity\",\"type\":[\"float\",\"null\"],\"doc\":\"Require similarity for fuzzy searches, the default is null.\",\"default\":1.0},{\"name\":\"include\",\"type\":\"boolean\",\"doc\":\"If true, INCLUDE all values matching this descriptor. If false, EXCLUDE all values matching this descriptor.\",\"default\":true},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\r\\n\\r\\n\\t ADDED IN 1.8\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\"]},\"null\"],\"doc\":\"MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT\"},{\"name\":\"typeMappings\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\r\\n\\r\\n\\t\\tADDED IN 1.8\\r\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}},\"doc\":\"List of type mappings to match in *\",\"default\":null}]}}],\"default\":null},{\"name\":\"filters\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"default\":null},{\"name\":\"caseSensitive\",\"type\":\"boolean\",\"default\":false},{\"name\":\"searchFreeText\",\"type\":\"boolean\",\"default\":false},{\"name\":\"minimumScore\",\"type\":\"double\",\"default\":0.25},{\"name\":\"initiatorId\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_EntityQuery\",\"namespace\":\"graphene.model.idl\",\"fields\":[{\"name\":\"id\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"targetSchema\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"firstResult\",\"type\":\"long\",\"default\":0},{\"name\":\"maxResult\",\"type\":\"long\",\"default\":0},{\"name\":\"userId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"None\"},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"None\"},{\"name\":\"timeInitiated\",\"type\":\"long\"},{\"name\":\"propertyMatchDescriptors\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_PropertyMatchDescriptor\",\"doc\":\"A PropertyDescriptor is used to describe a possible property that can be present in an entity or link. It describes \\r\\n\\t a single property that can be used in a property search. It can optionally include example or suggested values \\r\\n\\t for searching on.\\r\\n\\t \\r\\n\\t CHANGED IN 1.8\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field name or G_PropertyTag (or G_PathMatchTag) that could be searched on\"},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]}],\"doc\":\"value of the Property to search on\",\"default\":null},{\"name\":\"variable\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"If not null/empty, the value is relative to a logical variable specified here (e.g. \\\"X\\\")\\r\\n\\t\\t *  Other parameters using the same logical variable name are relative to this value.\\r\\n\\t\\t *  For instance, for a {key=\\\"amount\\\", value=\\\"0.98\\\", variable=\\\"A\\\"} means that the value\\r\\n\\t\\t *  of amount is 0.98A.  Another amount might be 0.55A, and the property match engine\\r\\n\\t\\t *  (e.g. search engine, database query or pattern match algorithm) should understand\\r\\n\\t\\t *  the relative values.\\r\\n\\t\\t *  \\r\\n\\t\\t *  If no variable is specified, then the value is an absolute number. For example,\\r\\n\\t\\t *  {key=\\\"amount\\\", value=\\\"0.98\\\"} refers to an amount of exactly 0.98.\",\"default\":\"\"},{\"name\":\"weight\",\"type\":[\"float\",\"null\"],\"doc\":\"Relative importance of this match criteria, where the default is 1.0.\",\"default\":1.0},{\"name\":\"similarity\",\"type\":[\"float\",\"null\"],\"doc\":\"Require similarity for fuzzy searches, the default is null.\",\"default\":1.0},{\"name\":\"include\",\"type\":\"boolean\",\"doc\":\"If true, INCLUDE all values matching this descriptor. If false, EXCLUDE all values matching this descriptor.\",\"default\":true},{\"name\":\"constraint\",\"type\":[{\"type\":\"enum\",\"name\":\"G_Constraint\",\"doc\":\"Property value matching constraints\\r\\n\\r\\n\\t ADDED IN 1.8\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\",\"COMPARE_CONTAINS\",\"COMPARE_ENDSWITH\",\"COMPARE_EQUALS\",\"COMPARE_GREATER\",\"COMPARE_INCLUDE\",\"COMPARE_LESS\",\"COMPARE_NOTINCLUDE\",\"COMPARE_REGEX\",\"COMPARE_SIMPLE\",\"COMPARE_SOUNDSLIKE\",\"COMPARE_STARTSWITH\"]},\"null\"],\"doc\":\"MUST_EQUALS, FUZZY_PARTIAL_OPTIONAL, MUST_NOT\"},{\"name\":\"typeMappings\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\r\\n\\r\\n\\t\\tADDED IN 1.8\\r\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}},\"doc\":\"List of type mappings to match in *\",\"default\":null}]}}],\"default\":null},{\"name\":\"caseSensitive\",\"type\":\"boolean\",\"default\":false},{\"name\":\"searchFreeText\",\"type\":\"boolean\",\"default\":false},{\"name\":\"minimumScore\",\"type\":\"double\",\"default\":0.25},{\"name\":\"initiatorId\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
    private java.lang.String targetSchema;
@@ -16,9 +16,7 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
    private java.lang.String userId;
    private java.lang.String username;
    private long timeInitiated;
-   private java.util.List<graphene.model.idl.G_SearchTuple> attributeList;
    private java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> propertyMatchDescriptors;
-   private java.util.List<java.lang.String> filters;
    private boolean caseSensitive;
    private boolean searchFreeText;
    private double minimumScore;
@@ -34,7 +32,7 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public G_EntityQuery(java.lang.String id, java.lang.String targetSchema, java.lang.Long firstResult, java.lang.Long maxResult, java.lang.String userId, java.lang.String username, java.lang.Long timeInitiated, java.util.List<graphene.model.idl.G_SearchTuple> attributeList, java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> propertyMatchDescriptors, java.util.List<java.lang.String> filters, java.lang.Boolean caseSensitive, java.lang.Boolean searchFreeText, java.lang.Double minimumScore, java.lang.String initiatorId) {
+  public G_EntityQuery(java.lang.String id, java.lang.String targetSchema, java.lang.Long firstResult, java.lang.Long maxResult, java.lang.String userId, java.lang.String username, java.lang.Long timeInitiated, java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> propertyMatchDescriptors, java.lang.Boolean caseSensitive, java.lang.Boolean searchFreeText, java.lang.Double minimumScore, java.lang.String initiatorId) {
     this.id = id;
     this.targetSchema = targetSchema;
     this.firstResult = firstResult;
@@ -42,9 +40,7 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     this.userId = userId;
     this.username = username;
     this.timeInitiated = timeInitiated;
-    this.attributeList = attributeList;
     this.propertyMatchDescriptors = propertyMatchDescriptors;
-    this.filters = filters;
     this.caseSensitive = caseSensitive;
     this.searchFreeText = searchFreeText;
     this.minimumScore = minimumScore;
@@ -62,13 +58,11 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     case 4: return userId;
     case 5: return username;
     case 6: return timeInitiated;
-    case 7: return attributeList;
-    case 8: return propertyMatchDescriptors;
-    case 9: return filters;
-    case 10: return caseSensitive;
-    case 11: return searchFreeText;
-    case 12: return minimumScore;
-    case 13: return initiatorId;
+    case 7: return propertyMatchDescriptors;
+    case 8: return caseSensitive;
+    case 9: return searchFreeText;
+    case 10: return minimumScore;
+    case 11: return initiatorId;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -83,13 +77,11 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     case 4: userId = (java.lang.String)value$; break;
     case 5: username = (java.lang.String)value$; break;
     case 6: timeInitiated = (java.lang.Long)value$; break;
-    case 7: attributeList = (java.util.List<graphene.model.idl.G_SearchTuple>)value$; break;
-    case 8: propertyMatchDescriptors = (java.util.List<graphene.model.idl.G_PropertyMatchDescriptor>)value$; break;
-    case 9: filters = (java.util.List<java.lang.String>)value$; break;
-    case 10: caseSensitive = (java.lang.Boolean)value$; break;
-    case 11: searchFreeText = (java.lang.Boolean)value$; break;
-    case 12: minimumScore = (java.lang.Double)value$; break;
-    case 13: initiatorId = (java.lang.String)value$; break;
+    case 7: propertyMatchDescriptors = (java.util.List<graphene.model.idl.G_PropertyMatchDescriptor>)value$; break;
+    case 8: caseSensitive = (java.lang.Boolean)value$; break;
+    case 9: searchFreeText = (java.lang.Boolean)value$; break;
+    case 10: minimumScore = (java.lang.Double)value$; break;
+    case 11: initiatorId = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -200,21 +192,6 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
   }
 
   /**
-   * Gets the value of the 'attributeList' field.
-   */
-  public java.util.List<graphene.model.idl.G_SearchTuple> getAttributeList() {
-    return attributeList;
-  }
-
-  /**
-   * Sets the value of the 'attributeList' field.
-   * @param value the value to set.
-   */
-  public void setAttributeList(java.util.List<graphene.model.idl.G_SearchTuple> value) {
-    this.attributeList = value;
-  }
-
-  /**
    * Gets the value of the 'propertyMatchDescriptors' field.
    */
   public java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> getPropertyMatchDescriptors() {
@@ -227,21 +204,6 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
    */
   public void setPropertyMatchDescriptors(java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> value) {
     this.propertyMatchDescriptors = value;
-  }
-
-  /**
-   * Gets the value of the 'filters' field.
-   */
-  public java.util.List<java.lang.String> getFilters() {
-    return filters;
-  }
-
-  /**
-   * Sets the value of the 'filters' field.
-   * @param value the value to set.
-   */
-  public void setFilters(java.util.List<java.lang.String> value) {
-    this.filters = value;
   }
 
   /**
@@ -332,9 +294,7 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     private java.lang.String userId;
     private java.lang.String username;
     private long timeInitiated;
-    private java.util.List<graphene.model.idl.G_SearchTuple> attributeList;
     private java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> propertyMatchDescriptors;
-    private java.util.List<java.lang.String> filters;
     private boolean caseSensitive;
     private boolean searchFreeText;
     private double minimumScore;
@@ -376,33 +336,25 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
         this.timeInitiated = data().deepCopy(fields()[6].schema(), other.timeInitiated);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.attributeList)) {
-        this.attributeList = data().deepCopy(fields()[7].schema(), other.attributeList);
+      if (isValidValue(fields()[7], other.propertyMatchDescriptors)) {
+        this.propertyMatchDescriptors = data().deepCopy(fields()[7].schema(), other.propertyMatchDescriptors);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.propertyMatchDescriptors)) {
-        this.propertyMatchDescriptors = data().deepCopy(fields()[8].schema(), other.propertyMatchDescriptors);
+      if (isValidValue(fields()[8], other.caseSensitive)) {
+        this.caseSensitive = data().deepCopy(fields()[8].schema(), other.caseSensitive);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.filters)) {
-        this.filters = data().deepCopy(fields()[9].schema(), other.filters);
+      if (isValidValue(fields()[9], other.searchFreeText)) {
+        this.searchFreeText = data().deepCopy(fields()[9].schema(), other.searchFreeText);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.caseSensitive)) {
-        this.caseSensitive = data().deepCopy(fields()[10].schema(), other.caseSensitive);
+      if (isValidValue(fields()[10], other.minimumScore)) {
+        this.minimumScore = data().deepCopy(fields()[10].schema(), other.minimumScore);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.searchFreeText)) {
-        this.searchFreeText = data().deepCopy(fields()[11].schema(), other.searchFreeText);
+      if (isValidValue(fields()[11], other.initiatorId)) {
+        this.initiatorId = data().deepCopy(fields()[11].schema(), other.initiatorId);
         fieldSetFlags()[11] = true;
-      }
-      if (isValidValue(fields()[12], other.minimumScore)) {
-        this.minimumScore = data().deepCopy(fields()[12].schema(), other.minimumScore);
-        fieldSetFlags()[12] = true;
-      }
-      if (isValidValue(fields()[13], other.initiatorId)) {
-        this.initiatorId = data().deepCopy(fields()[13].schema(), other.initiatorId);
-        fieldSetFlags()[13] = true;
       }
     }
     
@@ -437,33 +389,25 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
         this.timeInitiated = data().deepCopy(fields()[6].schema(), other.timeInitiated);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.attributeList)) {
-        this.attributeList = data().deepCopy(fields()[7].schema(), other.attributeList);
+      if (isValidValue(fields()[7], other.propertyMatchDescriptors)) {
+        this.propertyMatchDescriptors = data().deepCopy(fields()[7].schema(), other.propertyMatchDescriptors);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.propertyMatchDescriptors)) {
-        this.propertyMatchDescriptors = data().deepCopy(fields()[8].schema(), other.propertyMatchDescriptors);
+      if (isValidValue(fields()[8], other.caseSensitive)) {
+        this.caseSensitive = data().deepCopy(fields()[8].schema(), other.caseSensitive);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.filters)) {
-        this.filters = data().deepCopy(fields()[9].schema(), other.filters);
+      if (isValidValue(fields()[9], other.searchFreeText)) {
+        this.searchFreeText = data().deepCopy(fields()[9].schema(), other.searchFreeText);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.caseSensitive)) {
-        this.caseSensitive = data().deepCopy(fields()[10].schema(), other.caseSensitive);
+      if (isValidValue(fields()[10], other.minimumScore)) {
+        this.minimumScore = data().deepCopy(fields()[10].schema(), other.minimumScore);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.searchFreeText)) {
-        this.searchFreeText = data().deepCopy(fields()[11].schema(), other.searchFreeText);
+      if (isValidValue(fields()[11], other.initiatorId)) {
+        this.initiatorId = data().deepCopy(fields()[11].schema(), other.initiatorId);
         fieldSetFlags()[11] = true;
-      }
-      if (isValidValue(fields()[12], other.minimumScore)) {
-        this.minimumScore = data().deepCopy(fields()[12].schema(), other.minimumScore);
-        fieldSetFlags()[12] = true;
-      }
-      if (isValidValue(fields()[13], other.initiatorId)) {
-        this.initiatorId = data().deepCopy(fields()[13].schema(), other.initiatorId);
-        fieldSetFlags()[13] = true;
       }
     }
 
@@ -639,31 +583,6 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Gets the value of the 'attributeList' field */
-    public java.util.List<graphene.model.idl.G_SearchTuple> getAttributeList() {
-      return attributeList;
-    }
-    
-    /** Sets the value of the 'attributeList' field */
-    public graphene.model.idl.G_EntityQuery.Builder setAttributeList(java.util.List<graphene.model.idl.G_SearchTuple> value) {
-      validate(fields()[7], value);
-      this.attributeList = value;
-      fieldSetFlags()[7] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'attributeList' field has been set */
-    public boolean hasAttributeList() {
-      return fieldSetFlags()[7];
-    }
-    
-    /** Clears the value of the 'attributeList' field */
-    public graphene.model.idl.G_EntityQuery.Builder clearAttributeList() {
-      attributeList = null;
-      fieldSetFlags()[7] = false;
-      return this;
-    }
-
     /** Gets the value of the 'propertyMatchDescriptors' field */
     public java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> getPropertyMatchDescriptors() {
       return propertyMatchDescriptors;
@@ -671,46 +590,21 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'propertyMatchDescriptors' field */
     public graphene.model.idl.G_EntityQuery.Builder setPropertyMatchDescriptors(java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> value) {
-      validate(fields()[8], value);
+      validate(fields()[7], value);
       this.propertyMatchDescriptors = value;
-      fieldSetFlags()[8] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'propertyMatchDescriptors' field has been set */
     public boolean hasPropertyMatchDescriptors() {
-      return fieldSetFlags()[8];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'propertyMatchDescriptors' field */
     public graphene.model.idl.G_EntityQuery.Builder clearPropertyMatchDescriptors() {
       propertyMatchDescriptors = null;
-      fieldSetFlags()[8] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'filters' field */
-    public java.util.List<java.lang.String> getFilters() {
-      return filters;
-    }
-    
-    /** Sets the value of the 'filters' field */
-    public graphene.model.idl.G_EntityQuery.Builder setFilters(java.util.List<java.lang.String> value) {
-      validate(fields()[9], value);
-      this.filters = value;
-      fieldSetFlags()[9] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'filters' field has been set */
-    public boolean hasFilters() {
-      return fieldSetFlags()[9];
-    }
-    
-    /** Clears the value of the 'filters' field */
-    public graphene.model.idl.G_EntityQuery.Builder clearFilters() {
-      filters = null;
-      fieldSetFlags()[9] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -721,20 +615,20 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'caseSensitive' field */
     public graphene.model.idl.G_EntityQuery.Builder setCaseSensitive(boolean value) {
-      validate(fields()[10], value);
+      validate(fields()[8], value);
       this.caseSensitive = value;
-      fieldSetFlags()[10] = true;
+      fieldSetFlags()[8] = true;
       return this; 
     }
     
     /** Checks whether the 'caseSensitive' field has been set */
     public boolean hasCaseSensitive() {
-      return fieldSetFlags()[10];
+      return fieldSetFlags()[8];
     }
     
     /** Clears the value of the 'caseSensitive' field */
     public graphene.model.idl.G_EntityQuery.Builder clearCaseSensitive() {
-      fieldSetFlags()[10] = false;
+      fieldSetFlags()[8] = false;
       return this;
     }
 
@@ -745,20 +639,20 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'searchFreeText' field */
     public graphene.model.idl.G_EntityQuery.Builder setSearchFreeText(boolean value) {
-      validate(fields()[11], value);
+      validate(fields()[9], value);
       this.searchFreeText = value;
-      fieldSetFlags()[11] = true;
+      fieldSetFlags()[9] = true;
       return this; 
     }
     
     /** Checks whether the 'searchFreeText' field has been set */
     public boolean hasSearchFreeText() {
-      return fieldSetFlags()[11];
+      return fieldSetFlags()[9];
     }
     
     /** Clears the value of the 'searchFreeText' field */
     public graphene.model.idl.G_EntityQuery.Builder clearSearchFreeText() {
-      fieldSetFlags()[11] = false;
+      fieldSetFlags()[9] = false;
       return this;
     }
 
@@ -769,20 +663,20 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'minimumScore' field */
     public graphene.model.idl.G_EntityQuery.Builder setMinimumScore(double value) {
-      validate(fields()[12], value);
+      validate(fields()[10], value);
       this.minimumScore = value;
-      fieldSetFlags()[12] = true;
+      fieldSetFlags()[10] = true;
       return this; 
     }
     
     /** Checks whether the 'minimumScore' field has been set */
     public boolean hasMinimumScore() {
-      return fieldSetFlags()[12];
+      return fieldSetFlags()[10];
     }
     
     /** Clears the value of the 'minimumScore' field */
     public graphene.model.idl.G_EntityQuery.Builder clearMinimumScore() {
-      fieldSetFlags()[12] = false;
+      fieldSetFlags()[10] = false;
       return this;
     }
 
@@ -793,21 +687,21 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'initiatorId' field */
     public graphene.model.idl.G_EntityQuery.Builder setInitiatorId(java.lang.String value) {
-      validate(fields()[13], value);
+      validate(fields()[11], value);
       this.initiatorId = value;
-      fieldSetFlags()[13] = true;
+      fieldSetFlags()[11] = true;
       return this; 
     }
     
     /** Checks whether the 'initiatorId' field has been set */
     public boolean hasInitiatorId() {
-      return fieldSetFlags()[13];
+      return fieldSetFlags()[11];
     }
     
     /** Clears the value of the 'initiatorId' field */
     public graphene.model.idl.G_EntityQuery.Builder clearInitiatorId() {
       initiatorId = null;
-      fieldSetFlags()[13] = false;
+      fieldSetFlags()[11] = false;
       return this;
     }
 
@@ -822,13 +716,11 @@ public class G_EntityQuery extends org.apache.avro.specific.SpecificRecordBase i
         record.userId = fieldSetFlags()[4] ? this.userId : (java.lang.String) defaultValue(fields()[4]);
         record.username = fieldSetFlags()[5] ? this.username : (java.lang.String) defaultValue(fields()[5]);
         record.timeInitiated = fieldSetFlags()[6] ? this.timeInitiated : (java.lang.Long) defaultValue(fields()[6]);
-        record.attributeList = fieldSetFlags()[7] ? this.attributeList : (java.util.List<graphene.model.idl.G_SearchTuple>) defaultValue(fields()[7]);
-        record.propertyMatchDescriptors = fieldSetFlags()[8] ? this.propertyMatchDescriptors : (java.util.List<graphene.model.idl.G_PropertyMatchDescriptor>) defaultValue(fields()[8]);
-        record.filters = fieldSetFlags()[9] ? this.filters : (java.util.List<java.lang.String>) defaultValue(fields()[9]);
-        record.caseSensitive = fieldSetFlags()[10] ? this.caseSensitive : (java.lang.Boolean) defaultValue(fields()[10]);
-        record.searchFreeText = fieldSetFlags()[11] ? this.searchFreeText : (java.lang.Boolean) defaultValue(fields()[11]);
-        record.minimumScore = fieldSetFlags()[12] ? this.minimumScore : (java.lang.Double) defaultValue(fields()[12]);
-        record.initiatorId = fieldSetFlags()[13] ? this.initiatorId : (java.lang.String) defaultValue(fields()[13]);
+        record.propertyMatchDescriptors = fieldSetFlags()[7] ? this.propertyMatchDescriptors : (java.util.List<graphene.model.idl.G_PropertyMatchDescriptor>) defaultValue(fields()[7]);
+        record.caseSensitive = fieldSetFlags()[8] ? this.caseSensitive : (java.lang.Boolean) defaultValue(fields()[8]);
+        record.searchFreeText = fieldSetFlags()[9] ? this.searchFreeText : (java.lang.Boolean) defaultValue(fields()[9]);
+        record.minimumScore = fieldSetFlags()[10] ? this.minimumScore : (java.lang.Double) defaultValue(fields()[10]);
+        record.initiatorId = fieldSetFlags()[11] ? this.initiatorId : (java.lang.String) defaultValue(fields()[11]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

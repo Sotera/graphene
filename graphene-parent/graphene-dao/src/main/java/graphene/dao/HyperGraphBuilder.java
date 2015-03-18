@@ -1,10 +1,13 @@
 package graphene.dao;
 
+import graphene.model.idl.G_DataAccess;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 
 public interface HyperGraphBuilder<T> {
+
+	V_GenericGraph buildFromSubGraphs(V_GraphQuery graphQuery);
 
 	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
 
@@ -25,6 +28,24 @@ public interface HyperGraphBuilder<T> {
 	public abstract V_GenericNode createOrUpdateNode(double minimumScoreRequired, double inheritedScore,
 			double localPriority, String id, String idType, String nodeType, V_GenericNode attachTo,
 			String relationType, String relationValue, double nodeCertainty);
+
+	/**
+	 * Create a node or update an existing one. Also, force the color to the one
+	 * provided.
+	 * 
+	 * @param id
+	 * @param idType
+	 * @param nodeType
+	 * @param attachTo
+	 * @param relationType
+	 * @param relationValue
+	 * @param forceColor
+	 * @return
+	 */
+	// public abstract V_GenericNode createOrUpdateNode(String id, String
+	// idType,
+	// String nodeType, V_GenericNode attachTo, String relationType,
+	// String relationValue, String forceColor);
 
 	/**
 	 * Create a node or update an existing one. Also, use the color based on the
@@ -54,24 +75,6 @@ public interface HyperGraphBuilder<T> {
 			String relationType, String relationValue);
 
 	/**
-	 * Create a node or update an existing one. Also, force the color to the one
-	 * provided.
-	 * 
-	 * @param id
-	 * @param idType
-	 * @param nodeType
-	 * @param attachTo
-	 * @param relationType
-	 * @param relationValue
-	 * @param forceColor
-	 * @return
-	 */
-	// public abstract V_GenericNode createOrUpdateNode(String id, String
-	// idType,
-	// String nodeType, V_GenericNode attachTo, String relationType,
-	// String relationValue, String forceColor);
-
-	/**
 	 * Determine whether or not you want to traverse deeper on this node.
 	 * 
 	 * @param n
@@ -79,12 +82,12 @@ public interface HyperGraphBuilder<T> {
 	 */
 	boolean determineTraversability(V_GenericNode n);
 
+	// public abstract DocumentGraphParser getParserForObject(Object obj);
+
 	/**
 	 * This object will be supplied by the concrete implementation
 	 */
-	public abstract GenericDAO getDAO();
-
-	// public abstract DocumentGraphParser getParserForObject(Object obj);
+	public abstract G_DataAccess getDAO();
 
 	/**
 	 * Unrolled version.
@@ -98,6 +101,7 @@ public interface HyperGraphBuilder<T> {
 	 * @return
 	 * @throws Exception
 	 */
+	@Deprecated
 	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery) throws Exception;
 
 	/**

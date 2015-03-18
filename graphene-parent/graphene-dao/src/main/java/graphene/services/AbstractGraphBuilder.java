@@ -1,7 +1,8 @@
 package graphene.services;
 
-import graphene.business.commons.DocumentError;
 import graphene.dao.G_Parser;
+import graphene.model.idl.G_CallBack;
+import graphene.model.idl.G_DocumentError;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_NodeTypeAccess;
@@ -9,7 +10,6 @@ import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idlhelper.PropertyHelper;
-import graphene.model.query.G_CallBack;
 import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
@@ -20,17 +20,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
 
-import mil.darpa.vande.generic.V_EdgeList;
 import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.generic.V_LegendItem;
-import mil.darpa.vande.generic.V_NodeList;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -53,18 +50,20 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	@Inject
 	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 
-	protected V_EdgeList edgeList;
+	protected Map<String, V_GenericEdge> edgeList;
 
 	/**
 	 * This field is to inform other services about which data sources can be
 	 * graphed using this builder. Each implementation should specify at least
 	 * one datasource string that is supported by itself.
 	 */
+	@Deprecated
 	protected List<String> supportedDatasets = new ArrayList<String>(1);
 
-	protected Map<String, V_GenericEdge> edgeMap = new HashMap<String, V_GenericEdge>();
+	// protected Map<String, V_GenericEdge> edgeMap = new HashMap<String,
+	// V_GenericEdge>();
 
-	protected List<DocumentError> errors = new ArrayList<DocumentError>();
+	protected List<G_DocumentError> errors = new ArrayList<G_DocumentError>();
 
 	// TODO: Change this to a FIFO Queue and address any duplicate node issues
 	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(3);
@@ -73,10 +72,8 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 
 	protected Set<String> scannedResults = new HashSet<String>();
 
-	protected PriorityQueue<G_EntityQuery> queriesToRun = new PriorityQueue<G_EntityQuery>(10, new ScoreComparator());
-
 	protected Stack<G_EntityQuery> queriesToRunNextDegree = new Stack<G_EntityQuery>();
-	protected V_NodeList nodeList = new V_NodeList();
+	protected Map<String, V_GenericNode> nodeList = new HashMap<String, V_GenericNode>();
 	protected Set<V_LegendItem> legendItems = new HashSet<V_LegendItem>();
 	@Inject
 	private Logger logger;
@@ -91,13 +88,13 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 		super();
 	}
 
-	public void addError(final DocumentError e) {
+	public void addError(final G_DocumentError e) {
 		if (ValidationUtils.isValid(e)) {
 			errors.add(e);
 		}
 	}
 
-	public void addReportDetails(final V_GenericNode reportNode, final Map<String, G_Property> props,
+	public V_GenericNode addReportDetails(final V_GenericNode reportNode, final Map<String, G_Property> props,
 			final String reportLinkTitle, final String url) {
 		try {
 			// for now, prevent the log-based increase on node dimensions
@@ -136,6 +133,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 		} catch (final Exception e) {
 			logger.error("addReportDetails " + e.getMessage());
 		}
+		return reportNode;
 	}
 
 	public void addScannedResult(final String reportId) {
@@ -148,16 +146,16 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 			final String relationValue) {
 		if (ValidationUtils.isValid(fromId, toId)) {
 			final String key = generateEdgeId(fromId, relationType, toId);
-			final V_GenericNode a = nodeList.getNode(fromId);
-			final V_GenericNode b = nodeList.getNode(toId);
-			if (ValidationUtils.isValid(key, a, b) && !edgeMap.containsKey(key)) {
+			final V_GenericNode a = nodeList.get(fromId);
+			final V_GenericNode b = nodeList.get(toId);
+			if (ValidationUtils.isValid(key, a, b) && !edgeList.containsKey(key)) {
 
-				final V_GenericEdge v = new V_GenericEdge(a, b);
+				final V_GenericEdge v = new V_GenericEdge(key, a, b);
 				v.setIdType(relationType);
 				v.setLabel(null);
 				v.setIdVal(relationType);
 				v.addData("Value", StringUtils.coalesc(" ", a.getLabel(), relationValue, b.getLabel()));
-				edgeMap.put(key, v);
+				edgeList.put(key, v);
 				return true;
 			}
 		}
@@ -238,7 +236,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	/**
 	 * @return the errors
 	 */
-	public final List<DocumentError> getErrors() {
+	public final List<G_DocumentError> getErrors() {
 		return errors;
 	}
 
@@ -279,6 +277,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 		return scannedResults;
 	}
 
+	@Deprecated
 	public List<String> getSupportedDatasets() {
 		return supportedDatasets;
 	}
@@ -295,13 +294,17 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 
 	public abstract V_GenericGraph makeGraphResponse(V_GraphQuery graphQuery) throws Exception;
 
+	@Deprecated
 	public abstract void performPostProcess(V_GraphQuery graphQuery);
 
+	public abstract V_GenericGraph performPostProcess(V_GraphQuery graphQuery, V_GenericGraph g);
+
+	@Deprecated
 	public boolean removeEdge(final String fromId, final String relationType, final String toId,
 			final String relationValue) {
 		if (ValidationUtils.isValid(fromId, relationType, toId)) {
 			final String key = generateEdgeId(fromId, relationType, toId);
-			final V_GenericEdge removedEdge = edgeMap.remove(key);
+			final V_GenericEdge removedEdge = edgeList.remove(key);
 			if (removedEdge != null) {
 				return true;
 			}
@@ -313,7 +316,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	 * @param errors
 	 *            the errors to set
 	 */
-	public final void setErrors(final List<DocumentError> errors) {
+	public final void setErrors(final List<G_DocumentError> errors) {
 		this.errors = errors;
 	}
 
@@ -337,6 +340,7 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	 * @param supportedDatasets
 	 *            the supportedDatasets to set
 	 */
+	@Deprecated
 	void setSupportedDatasets(final List<String> supportedDatasets) {
 		this.supportedDatasets = supportedDatasets;
 	}

@@ -65,10 +65,6 @@
 		</dependency>
 
 		<!-- end Testing -->
-		<dependency>
-			<groupId>vande</groupId>
-			<artifactId>vande</artifactId>
-		</dependency>
 		<!-- Here we are enforcing a specific version of resteasy and it's modules. -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>

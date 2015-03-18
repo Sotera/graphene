@@ -1,7 +1,7 @@
 package graphene.web.components.navigation;
 
 import graphene.dao.DataSourceListDAO;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.pages.CombinedEntitySearchPage;
@@ -69,9 +69,9 @@ public class GlobalSearch {
 			selectedMaxResults = defaultMaxResults;
 		}
 		if (ValidationUtils.isValid(searchValue)) {
-			G_SearchType searchtype = G_SearchType.COMPARE_CONTAINS;
+			G_Constraint searchtype = G_Constraint.COMPARE_CONTAINS;
 			if (searchValue.startsWith("\"") && searchValue.endsWith("\"")) {
-				searchtype = G_SearchType.COMPARE_EQUALS;
+				searchtype = G_Constraint.COMPARE_EQUALS;
 			}
 			final Link link = searchPage.set(dao.getDefaultSchema(), selectedType, searchtype.name(), searchValue,
 					selectedMaxResults);

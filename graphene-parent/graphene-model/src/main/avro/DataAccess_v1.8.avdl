@@ -28,7 +28,7 @@
 */
 protocol G_DataAccess {
 	import idl "DataTypes_v1.8.avdl";
-
+	import idl "EntitySearch_v1.8.avdl";
 	/**
 	 Sort type for transactions
 	 */
@@ -70,6 +70,8 @@ protocol G_DataAccess {
 		FULL
 	}
 	
+
+		
 	/**
 	 The set of transactions from a single call to getAllTransactions.
 		  
@@ -180,7 +182,7 @@ protocol G_DataAccess {
 	 @param start			0-based index of first result to return
 	 @param max				Trim the number of results this this value.
 	 @return 				transactions for the set of entities	
-	 */
+	 
 	G_TransactionResults getAllTransactions(
 			array<string> entities,
 			union {G_LinkTag, null} tag,
@@ -189,5 +191,71 @@ protocol G_DataAccess {
 			union {array<string>, null} linkFilter, // ADDED IN 1.4
 			long start = 0, 
 			long max = -1
+	);	 */
+	G_TransactionResults getAllTransactions(
+			G_EntityQuery q
 	);
+	
+	/**
+	Moved from GenericDAO (non IDL)
+	*/
+	G_SearchResults findByQuery(G_EntityQuery pq);
+
+	/**
+	Moved from GenericDAO (non IDL)
+	*/
+	long count( G_EntityQuery q);
+	
+	/**
+	Moved from GenericDAO (non IDL)
+	*/
+	G_SearchResults getAll( long offset,  long maxResults);
+	
+	
+	/**
+	 * Within this method, the callback cb will be executed, usually on each
+	 * result the implementation finds. The implementation may choose to respect
+	 * the G_EntityQuery q. If maxResults is set to 0, that is usually understood
+	 * to mean that there is no upper bound to the number of results (aka All
+	 * results)
+	 * 
+	 * @param offset
+	 * @param maxResults
+	 * @param cb
+	 * @param q
+	 * @return true if the callback succeeded, or did not find any errors.
+	 */
+	boolean performCallback(long offset, long maxResults, @java-class("graphene.model.idl.G_CallBack") string cb, G_EntityQuery q);
+	
+	/**
+	 * This method is an expansion of the isReady system status. Individual
+	 * implementations can declare what their readiness state is, and methods
+	 * calling those implementations can decide whether the system is ready
+	 * enough the be queried. This is good for multi layered DAOs, such as those
+	 * backed by an InMemory portion. Depending on how much performance would be
+	 * lost if the In Memory portion was not available, the implementation can
+	 * adjust the strength of it's readiness accordingly.
+	 * 
+	 * @return a value between 0 (not ready) and 1 (fully operational)
+	 */
+	double getReadiness();
+
+	/**
+	 * 
+	 * @return true if this DAO is ready to be queried.
+	 */
+	boolean isReady();
+
+	/**
+	 * Allows end user implementations to record the readiness of the service,
+	 * for example if a procedure fails we may set the service to not ready, or
+	 * a larger service can cause this service to be available or unavailable
+	 * depending on it's settings.
+	 * 
+	 * @param b
+	 */
+	void setReady(boolean b);
+	
+	
 }
+

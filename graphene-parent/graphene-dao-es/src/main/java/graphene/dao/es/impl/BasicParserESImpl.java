@@ -1,6 +1,7 @@
 package graphene.dao.es.impl;
 
 import graphene.dao.G_Parser;
+import graphene.dao.StopWordService;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
@@ -14,6 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -21,8 +26,11 @@ import com.fasterxml.jackson.databind.node.DoubleNode;
 public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 
 	protected ObjectMapper mapper = new ObjectMapper();
-
+	Logger logger = LoggerFactory.getLogger(BasicParserESImpl.class);
 	protected List<String> supported;
+
+	@Inject
+	protected StopWordService stopwordService;
 
 	protected G_Property addSafeString(final String style, final G_PropertyType nodeType, final String... s) {
 		final String coalesc = graphene.util.StringUtils.coalesc(" ", s);

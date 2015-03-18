@@ -29,16 +29,7 @@
 protocol G_EntitySearch {
 	import idl "Search_v1.8.avdl";
 	
-	/*
-	 */
-	record G_SearchResult {
-		/** search score */
-		double score = 0;
-		
-		/** search result */
-		union {G_Entity, G_Link} result;
 
-	}
 	
 	/**
 	The set of results from a single search call. Each item also has a score.

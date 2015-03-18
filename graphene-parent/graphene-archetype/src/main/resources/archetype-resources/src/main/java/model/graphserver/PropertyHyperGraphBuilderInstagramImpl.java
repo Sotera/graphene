@@ -8,7 +8,7 @@ import ${package}.dao.GraphTraversalRuleService;
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_IdType;
-import graphene.model.idl.G_SearchTuple;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.query.EntityQuery;
 import graphene.services.PropertyHyperGraphBuilder;
 import graphene.util.DataFormatConstants;
@@ -94,7 +94,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 			if (determineTraversability(n)) {
 
 				for (final G_EntityQuery eq : createQueriesFromNode(n)) {
-					final String queryToString = eq.getAttributeList().get(0).getValue();
+					final String queryToString = eq.getPropertyMatchDescriptors().get(0).getValue();
 					// Have we done this EXACT query before?
 					if (!scannedQueries.contains(queryToString)) {
 
@@ -181,9 +181,9 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 	private List<EntityQuery> createQueriesFromNode(final V_GenericNode n) {
 		final List<EntityQuery> list = new ArrayList<EntityQuery>(2);
 		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
-		final G_SearchTuple<String> tuple = new G_SearchTuple<>();
+		final G_PropertyMatchDescriptor<String> tuple = new G_PropertyMatchDescriptor<>();
 		tuple.setValue(n.getIdVal());
-		tuple.setSearchType(ruleService.getRule(n.getIdType()));
+		tuple.setConstraint(ruleService.getRule(n.getIdType()));
 		final G_IdType type = new G_IdType();
 		type.setName(n.getNodeType());
 		tuple.setNodeType(type);
@@ -195,9 +195,9 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 		// make second query here, stripping leading zeroes.
 		if (n.getIdVal().startsWith("0")) {
 			final G_EntityQuery eq2 =  G_EntityQuery.newBuilder();
-			final G_SearchTuple<String> tuple2 = new G_SearchTuple<>();
+			final G_PropertyMatchDescriptor<String> tuple2 = new G_PropertyMatchDescriptor<>();
 			tuple2.setValue(StringUtils.removeLeadingZeros(n.getIdVal()));
-			tuple2.setSearchType(ruleService.getRule(n.getIdType()));
+			tuple2.setConstraint(ruleService.getRule(n.getIdType()));
 			final G_IdType type2 = new G_IdType();
 			type2.setName(n.getNodeType());
 			tuple2.setNodeType(type2);
@@ -210,7 +210,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 		// make a second query here, stripping leading ones for phone types.
 		if (n.getIdType().equals(G_CanonicalPropertyType.PHONE.name())) {
 			final G_EntityQuery eq2 =  G_EntityQuery.newBuilder();
-			final G_SearchTuple<String> tuple2 = new G_SearchTuple<>();
+			final G_PropertyMatchDescriptor<String> tuple2 = new G_PropertyMatchDescriptor<>();
 			if (n.getIdVal().startsWith("1")) {
 				// try without 1 code
 				tuple2.setValue(n.getIdVal().replaceFirst("1", ""));
@@ -218,7 +218,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 				// try with 1 code
 				tuple2.setValue("1" + n.getIdVal());
 			}
-			tuple2.setSearchType(ruleService.getRule(n.getIdType()));
+			tuple2.setConstraint(ruleService.getRule(n.getIdType()));
 			final G_IdType type2 = new G_IdType();
 			type2.setName(n.getNodeType());
 			tuple2.setNodeType(type2);

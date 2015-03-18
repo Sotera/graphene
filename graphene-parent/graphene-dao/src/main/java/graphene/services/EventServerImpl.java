@@ -1,7 +1,7 @@
 package graphene.services;
 
-import graphene.dao.CombinedDAO;
 import graphene.dao.EventServer;
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_TransactionResults;
 
@@ -35,10 +35,10 @@ public class EventServerImpl implements EventServer {
 	@Inject
 	private Logger logger;
 
-	private final CombinedDAO eventDAO;
+	private final G_DataAccess eventDAO;
 
 	@Inject
-	public EventServerImpl(final CombinedDAO dao) {
+	public EventServerImpl(final G_DataAccess dao) {
 		eventDAO = dao;
 	}
 

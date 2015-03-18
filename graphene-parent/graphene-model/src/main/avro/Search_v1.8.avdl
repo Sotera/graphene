@@ -27,8 +27,18 @@
 /**
  */
 protocol G_Search {
-	import idl "DataTypes_v1.8.avdl";
 
+	import idl "DataTypes_v1.8.avdl";
+	/*
+	 */
+	record G_SearchResult {
+		/** search score */
+		double score = 0;
+		
+		/** search result */
+		union {G_Entity, G_Link} result;
+
+	}
 	/**
 	 Property value matching constraints
 
@@ -40,7 +50,18 @@ protocol G_Search {
 		FUZZY_PARTIAL_OPTIONAL, // used for cases of FUZZY or PARTIAL or OPTIONAL match
 		NOT 		,			// used for MUST NOT match, or logical NOT
 		OPTIONAL_EQUALS,		// equals OR
-		FUZZY_REQUIRED			// fuzzy AND
+		FUZZY_REQUIRED,			// fuzzy AND
+		COMPARE_CONTAINS, 
+		COMPARE_ENDSWITH, 
+		COMPARE_EQUALS, 
+		COMPARE_GREATER, 
+		COMPARE_INCLUDE, 
+		COMPARE_LESS, 
+		COMPARE_NOTINCLUDE, 
+		COMPARE_REGEX, 
+		COMPARE_SIMPLE,
+		COMPARE_SOUNDSLIKE, 
+		COMPARE_STARTSWITH 
 	}
 
 	/**
@@ -161,9 +182,7 @@ protocol G_Search {
 		string userId = "None";
 		string username = "None";
 		long timeInitiated;
-		array<@java-class("graphene.model.idl.G_SearchTuple") string> attributeList;
 		union {null, array<G_PropertyMatchDescriptor>} propertyMatchDescriptors = null;
-		union {null, array<string>} filters = null;
 		boolean caseSensitive = false;
 		boolean searchFreeText = false;
 		double minimumScore = 0.25d;

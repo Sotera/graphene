@@ -112,6 +112,8 @@ public interface G_Parser<T> {
 	 */
 	public HyperGraphBuilder<Object> getPhgb();
 
+	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
+
 	/**
 	 * This is the method for creating graphs for 4.1.2 and above.
 	 * 
@@ -119,9 +121,7 @@ public interface G_Parser<T> {
 	 * @param q
 	 * @return
 	 */
-	public V_GenericGraph getSubGraph(JsonNode sr, G_EntityQuery q);
-
-	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
+	public V_GenericGraph getSubGraph(G_SearchResult sr, G_EntityQuery q);
 
 	public List<String> getSupportedObjects();
 
@@ -133,7 +133,7 @@ public interface G_Parser<T> {
 	 * information we want. The Query object q is provided so that we know which
 	 * query allowed us to arrive at this object. This can be useful for
 	 * highlighting fields that were in the original query. The Query object
-	 * also holds a key value for a potential node that was assosicated with the
+	 * also holds a key value for a potential node that was associated with the
 	 * query. In this way, we can tie the resulting object back to a node id
 	 * that initiated the query.
 	 * 

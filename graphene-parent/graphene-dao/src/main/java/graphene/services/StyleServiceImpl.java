@@ -5,7 +5,7 @@ package graphene.services;
 
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.view.LegendItem;
+import graphene.model.idl.G_LegendItem;
 import graphene.util.ColorUtil;
 import graphene.util.validator.ValidationUtils;
 
@@ -117,18 +117,18 @@ public class StyleServiceImpl implements StyleService {
 	}
 
 	@Override
-	public List<LegendItem> getLegendForReports() {
-		final List<LegendItem> list = new ArrayList<LegendItem>();
-		list.add(new LegendItem("Narrative", getStyle(G_CanonicalPropertyType.FREETEXT.name(), false),
-				"The narrative of the report"));
-		list.add(new LegendItem("Activity", getStyle(G_CanonicalPropertyType.EVENT.name(), false),
-				"The event or activity associated with this report."));
-		list.add(new LegendItem("Subject", getStyle(G_CanonicalPropertyType.ENTITY.name(), false),
-				"A person or group formally mentioned in the report."));
-		list.add(new LegendItem("Filing Institution", getStyle(G_CanonicalPropertyType.FILER.name(), false),
-				"The institution that filed the report."));
-		list.add(new LegendItem("Financial Institution", getStyle(G_CanonicalPropertyType.INSTITUTION.name(), false),
-				"An institution involved in the report."));
+	public List<G_LegendItem> getLegendForReports() {
+		final List<G_LegendItem> list = new ArrayList<G_LegendItem>();
+		list.add(new G_LegendItem("Narrative", getStyle(G_CanonicalPropertyType.FREETEXT.name(), false),
+				"The narrative of the report", null));
+		list.add(new G_LegendItem("Activity", getStyle(G_CanonicalPropertyType.EVENT.name(), false),
+				"The event or activity associated with this report.", null));
+		list.add(new G_LegendItem("Subject", getStyle(G_CanonicalPropertyType.ENTITY.name(), false),
+				"A person or group formally mentioned in the report.", null));
+		list.add(new G_LegendItem("Filing Institution", getStyle(G_CanonicalPropertyType.FILER.name(), false),
+				"The institution that filed the report.", null));
+		list.add(new G_LegendItem("Financial Institution", getStyle(G_CanonicalPropertyType.INSTITUTION.name(), false),
+				"An institution involved in the report.", null));
 
 		return list;
 	}

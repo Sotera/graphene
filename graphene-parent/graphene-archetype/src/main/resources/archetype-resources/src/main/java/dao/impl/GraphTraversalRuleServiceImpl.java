@@ -1,7 +1,7 @@
 package ${package}.dao.impl;
 
 import ${package}.dao.GraphTraversalRuleService;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,26 +10,26 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
 public class GraphTraversalRuleServiceImpl implements GraphTraversalRuleService {
-	Map<String, G_SearchType> typeQueryMap = new HashMap<String, G_SearchType>();
+	Map<String, G_Constraint> typeQueryMap = new HashMap<String, G_Constraint>();
 
 	@Inject
 	Logger logger;
 
-	public GraphTraversalRuleServiceImpl(final Map<String, G_SearchType> externalConfig) {
+	public GraphTraversalRuleServiceImpl(final Map<String, G_Constraint> externalConfig) {
 		typeQueryMap = externalConfig;
 	}
 
 	@Override
-	public void addRule(final String nodeType, final G_SearchType queryType) {
+	public void addRule(final String nodeType, final G_Constraint queryType) {
 		typeQueryMap.put(nodeType, queryType);
 	}
 
 	@Override
-	public G_SearchType getRule(final String nodeType) {
-		G_SearchType rule = typeQueryMap.get(nodeType);
+	public G_Constraint getRule(final String nodeType) {
+		G_Constraint rule = typeQueryMap.get(nodeType);
 		if (null == rule) {
 			// default search type
-			rule = G_SearchType.COMPARE_EQUALS;
+			rule = G_Constraint.COMPARE_EQUALS;
 			logger.warn("Could not find a search type for node type " + nodeType + ", using " + rule);
 		}
 		logger.debug("Using rule " + rule + " for type " + nodeType);
@@ -40,7 +40,7 @@ public class GraphTraversalRuleServiceImpl implements GraphTraversalRuleService 
 	 * @return the typeQueryMap
 	 */
 	@Override
-	public Map<String, G_SearchType> getTypeQueryMap() {
+	public Map<String, G_Constraint> getTypeQueryMap() {
 		return typeQueryMap;
 	}
 
@@ -49,7 +49,7 @@ public class GraphTraversalRuleServiceImpl implements GraphTraversalRuleService 
 	 *            the typeQueryMap to set
 	 */
 	@Override
-	public void setTypeQueryMap(final Map<String, G_SearchType> typeQueryMap) {
+	public void setTypeQueryMap(final Map<String, G_Constraint> typeQueryMap) {
 		this.typeQueryMap = typeQueryMap;
 	}
 }

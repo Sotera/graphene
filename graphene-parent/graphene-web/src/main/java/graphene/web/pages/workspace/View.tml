@@ -140,14 +140,7 @@
 												</t:loop>
 											</p:attributeListCell>
 
-											<p:filtersCell>
-												<t:if test="! currentQuery.filters.empty">
-													<t:loop source="currentQuery.filters" value="currentFilter">
-										${currentFilter} <br />
-													</t:loop>
-													<p:else>All Types</p:else>
-												</t:if>
-											</p:filtersCell>
+											
 											<p:timeInitiatedCell>
 												<t:graphene.jodatimeoutput value="currentQuery.timeInitiated" formatter="ISODate" />
 											</p:timeInitiatedCell>							

@@ -15,8 +15,22 @@ import com.google.common.collect.Lists;
 
 public class ListRangeHelper extends G_ListRange {
 
-	public static Object rangeValue(final Object range) {
-		return range instanceof G_SingletonRange ? ((G_SingletonRange) range).getValue() : null;
+	/**
+	 * Get a singleton or a list as a list of objects. You handle the casting to
+	 * the right type.
+	 * 
+	 * @param range
+	 * @return
+	 */
+	public static List<Object> rangeValue(final Object range) {
+		if (range instanceof G_ListRange) {
+			return ((G_ListRange) range).getValues();
+		} else if (range instanceof G_SingletonRange) {
+			final List<Object> list = new ArrayList<Object>();
+			list.add(((G_SingletonRange) range).getValue());
+			return list;
+		}
+		return null;
 	}
 
 	public static String toString(final Object range) {

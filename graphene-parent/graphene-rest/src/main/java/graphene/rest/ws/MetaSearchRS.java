@@ -11,7 +11,7 @@ import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_PropertyKey;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 
 import java.util.List;
 
@@ -80,6 +80,6 @@ public interface MetaSearchRS {
 	@Produces("application/json")
 	@GET
 	@Path("/searchtypes")
-	public abstract List<G_SearchType> getSearchTypes();
+	public abstract List<G_Constraint> getSearchTypes();
 
 }

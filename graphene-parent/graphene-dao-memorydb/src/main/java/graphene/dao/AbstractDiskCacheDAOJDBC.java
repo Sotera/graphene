@@ -1,13 +1,14 @@
 package graphene.dao;
 
 import graphene.model.diskcache.DiskCache;
+import graphene.model.idl.G_CallBack;
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.query.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
 import graphene.util.fs.FileUtils;
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnegative;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
@@ -39,7 +41,7 @@ import com.mysema.query.types.EntityPath;
  * @param <T>
  * @param <Q>
  */
-public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implements GenericDAO {
+public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implements G_DataAccess {
 
 	/**
 	 * If you need to change the database that is used, set it in the
@@ -466,9 +468,14 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p, q)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
+					try {
+						if (!cb.execute(p, q)) {
+							logger.error("Fatal error in callback from loading index");
+							break;
+						}
+					} catch (final AvroRemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					p = null;
 				}

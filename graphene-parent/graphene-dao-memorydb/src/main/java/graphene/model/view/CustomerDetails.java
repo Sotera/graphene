@@ -1,6 +1,6 @@
 package graphene.model.view;
 
-import graphene.model.view.entities.IdType;
+import graphene.model.idl.G_IdType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,7 +53,7 @@ public class CustomerDetails implements Cloneable {
 		accountSet.add(ac);
 	}
 
-	public void addIdentifier(final IdType id, String value) {
+	public void addIdentifier(final G_IdType id, String value) {
 		if ((value == null) || (value.length() == 0) || (id == null)) {
 			return;
 		}

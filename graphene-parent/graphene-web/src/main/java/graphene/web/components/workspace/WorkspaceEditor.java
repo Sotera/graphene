@@ -1,8 +1,8 @@
 package graphene.web.components.workspace;
 
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_ReportViewEvent;
-import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
@@ -171,7 +171,7 @@ public class WorkspaceEditor {
 	// Handle event "cancelUpdate"
 
 	@Property
-	private G_SearchTuple<String> currentTuple;
+	private G_PropertyMatchDescriptor currentTuple;
 
 	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
 	// form render

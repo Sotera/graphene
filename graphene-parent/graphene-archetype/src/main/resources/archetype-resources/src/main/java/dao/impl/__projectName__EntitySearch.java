@@ -9,8 +9,8 @@ import graphene.model.idl.G_Geocoding;
 import graphene.model.idl.G_PropertyDescriptor;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.idl.G_SearchTuple;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idl.G_Constraint;
 import graphene.model.query.EntityQuery;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public class InstagramEntitySearch implements G_EntitySearch {
 			final long max, final String type) throws AvroRemoteException {
 
 		final G_EntityQuery sq =  G_EntityQuery.newBuilder();
-		sq.addAttribute(new G_SearchTuple(query, G_SearchType.COMPARE_EQUALS));
+		sq.addAttribute(new G_PropertyMatchDescriptor(query, G_Constraint.COMPARE_EQUALS));
 		// final InstagramReportSearchIterator ssr =
 		// buildInstagramReportSearchIterator(
 		// c.getIndexName(), sq);

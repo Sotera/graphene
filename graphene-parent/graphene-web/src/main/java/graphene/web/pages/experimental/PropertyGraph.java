@@ -65,7 +65,7 @@ public class PropertyGraph {
 					q.setMaxNodes(300);
 					q.setMaxEdgesPerNode(20);
 					q.setMaxHops(5);
-					g = propertyGraphBuilder.makeGraphResponse(q);
+					g = propertyGraphBuilder.buildFromSubGraphs(q);
 					graph = new V_CSGraph(g, true);
 				} catch (final Exception e) {
 					logger.error(e.getMessage());

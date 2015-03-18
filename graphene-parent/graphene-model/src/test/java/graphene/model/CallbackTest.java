@@ -1,9 +1,10 @@
 package graphene.model;
 
+import graphene.model.idl.G_CallBack;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
-import graphene.model.query.G_CallBack;
 
+import org.apache.avro.AvroRemoteException;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
@@ -12,11 +13,9 @@ public class CallbackTest {
 	public class ExampleCallback implements G_CallBack {
 
 		@Override
-		public boolean callBack(final G_SearchResult t, final G_EntityQuery q) {
-			if (t == null) {
-				return false;
-			}
-			return true;
+		public boolean execute(final G_SearchResult sr, final G_EntityQuery q) throws AvroRemoteException {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}
@@ -26,7 +25,17 @@ public class CallbackTest {
 		final ExampleCallback t = new ExampleCallback();
 
 		final G_SearchResult var = G_SearchResult.newBuilder().setScore(1.0d).build();
-		AssertJUnit.assertTrue(t.callBack(var, null));
-		AssertJUnit.assertFalse(t.callBack(null, null));
+		try {
+			AssertJUnit.assertTrue(t.execute(var, null));
+		} catch (final AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			AssertJUnit.assertFalse(t.execute(null, null));
+		} catch (final AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

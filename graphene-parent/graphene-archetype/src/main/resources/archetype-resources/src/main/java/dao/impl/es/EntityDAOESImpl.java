@@ -7,8 +7,8 @@ import graphene.model.funnels.Funnel;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
-import graphene.model.idl.G_SearchTuple;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idlhelper.PropertyHelper;
 import graphene.model.query.AdvancedSearch;
 import graphene.model.query.EntityQuery;
@@ -67,7 +67,7 @@ public class EntityDAOESImpl implements EntityDAO {
 	@Override
 	public long count(final EventQuery q) {
 		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
-		eq.addAttribute(q.getAttributeList());
+		eq.addAttribute(q.getPropertyMatchDescriptors());
 		eq.setSchema(q.getSchema());
 		try {
 			return dao.count(eq);
@@ -90,7 +90,7 @@ public class EntityDAOESImpl implements EntityDAO {
 	@Override
 	public EntityLight getById(final String id) {
 		final G_EntityQuery eq =  G_EntityQuery.newBuilder();
-		eq.addAttribute(new G_SearchTuple(id, G_SearchType.COMPARE_EQUALS));
+		eq.addAttribute(new G_PropertyMatchDescriptor(id, G_Constraint.COMPARE_EQUALS));
 		try {
 			final List<Object> matches = dao.findByQuery(eq);
 			if (matches.size() > 0) {
@@ -118,8 +118,8 @@ public class EntityDAOESImpl implements EntityDAO {
 		for (final SearchFilter f : srch.getFilters()) {
 			// TODO: Fix this by hooking up the actual search time with the one
 			// that will be performed.
-			eq.addAttribute(new G_SearchTuple(f.getValue(),
-					G_SearchType.COMPARE_CONTAINS));
+			eq.addAttribute(new G_PropertyMatchDescriptor(f.getValue(),
+					G_Constraint.COMPARE_CONTAINS));
 		}
 		eq.setFirstResult(srch.getStart());
 

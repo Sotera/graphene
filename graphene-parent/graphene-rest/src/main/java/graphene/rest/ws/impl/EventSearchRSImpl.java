@@ -1,11 +1,11 @@
 package graphene.rest.ws.impl;
 
-import graphene.dao.CombinedDAO;
 import graphene.model.idl.G_BoundedRange;
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_Link;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
+import graphene.model.idl.G_TransactionResults;
 import graphene.model.idlhelper.ListRangeHelper;
 import graphene.model.idlhelper.QueryHelper;
 import graphene.rest.ws.EventSearchRS;
@@ -13,18 +13,17 @@ import graphene.util.FastNumberUtils;
 import graphene.util.StringUtils;
 import graphene.util.stats.TimeReporter;
 
-import java.util.List;
-
+import org.apache.avro.AvroRemoteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EventSearchRSImpl implements EventSearchRS {
 
 	static Logger logger = LoggerFactory.getLogger(EventSearchRSImpl.class);
-	private CombinedDAO dao;
+	private G_DataAccess dao;
 
 	@Override
-	public List<G_Link> getEvents(final String identifiers, int offset, final int limit, final String minSecs,
+	public G_TransactionResults getEvents(final String identifiers, int offset, final int limit, final String minSecs,
 			final String maxSecs, final String comments, final boolean intersectionOnly) {
 		final TimeReporter t = new TimeReporter("Getting events", logger);
 
@@ -56,9 +55,9 @@ public class EventSearchRSImpl implements EventSearchRS {
 				.build();
 
 		final QueryHelper qh = new QueryHelper(timeRange, identifierList, commentsList);
-		// final List<G_SearchTuple<String>> tupleList =
+		// final List<G_PropertyMatchDescriptor<String>> tupleList =
 		// SearchTypeHelper.processSearchList(identifiers,
-		// G_SearchType.COMPARE_CONTAINS);
+		// G_Constraint.COMPARE_CONTAINS);
 
 		/*
 		 * Note that we are purposefully using the same list for either side of
@@ -68,11 +67,17 @@ public class EventSearchRSImpl implements EventSearchRS {
 		 */
 
 		t.logElapsed();
-		return dao.getAllTransactions(qh);
+		try {
+			return dao.getAllTransactions(qh);
+		} catch (final AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
-	public List<G_Link> getEvents(final String from, final String to, int offset, final int limit,
+	public G_TransactionResults getEvents(final String from, final String to, int offset, final int limit,
 			final String minSecs, final String maxSecs, final String comments, final boolean intersectionOnly) {
 		final TimeReporter t = new TimeReporter("Getting events", logger);
 
@@ -107,16 +112,22 @@ public class EventSearchRSImpl implements EventSearchRS {
 				.setRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(to, ",")))
 				.build();
 		// q.setSources(SearchTypeHelper.processSearchList(from,
-		// G_SearchType.COMPARE_CONTAINS));
+		// G_Constraint.COMPARE_CONTAINS));
 		// q.setDestinations(SearchTypeHelper.processSearchList(to,
-		// G_SearchType.COMPARE_CONTAINS));
+		// G_Constraint.COMPARE_CONTAINS));
 		// q.setPayloadKeywords(SearchTypeHelper.processSearchList(comments,
-		// G_SearchType.COMPARE_CONTAINS));
+		// G_Constraint.COMPARE_CONTAINS));
 		final G_PropertyMatchDescriptor commentsList = G_PropertyMatchDescriptor.newBuilder().setKey("comments")
 				.setRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(comments, ",")))
 				.build();
 		final QueryHelper qh = new QueryHelper(timeRange, fromList, toList, commentsList);
-		final List<G_Link> s = dao.getAllTransactions(qh);
+		G_TransactionResults s = null;
+		try {
+			s = dao.getAllTransactions(qh);
+		} catch (final AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		t.logAsCompleted();
 		return s;
 	}

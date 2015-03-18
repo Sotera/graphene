@@ -2,7 +2,7 @@ package graphene.web.components.admin;
 
 import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_SearchTuple;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.web.components.BasicDataTable;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class EntityQueryList extends BasicDataTable {
 	@Property
 	private List<String> currentFilters;
 	@Property
-	private G_SearchTuple<String> currentTuple;
+	private G_PropertyMatchDescriptor currentTuple;
 
 	@Persist
 	private BeanModel<G_EntityQuery> model;

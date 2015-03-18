@@ -1,8 +1,8 @@
 package graphene.dao;
 
+import graphene.model.idl.G_Constraint;
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_SearchType;
-import graphene.model.query.AdvancedSearch;
 import graphene.model.view.entities.BasicEntityRef;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Set;
  * 
  */
 @Deprecated
-public interface EntityRefDAO<T> extends GenericDAO {
+public interface EntityRefDAO<T> extends G_DataAccess {
 
 	/**
 	 * 
@@ -33,7 +33,7 @@ public interface EntityRefDAO<T> extends GenericDAO {
 	 * @param srch
 	 * @return
 	 */
-	Set<String> entityIDsByAdvancedSearch(final AdvancedSearch srch);
+	Set<String> entityIDsByAdvancedSearch(final G_EntityQuery srch);
 
 	/**
 	 * 
@@ -105,7 +105,7 @@ public interface EntityRefDAO<T> extends GenericDAO {
 	 * Note that the original version of this query used 'like' search types
 	 * (aka COMPARE_CONTAINS) for the identifier values.
 	 * 
-	 * @see G_SearchType
+	 * @see G_Constraint
 	 * @param q
 	 *            A Query object
 	 * @return Set<String> of matching values

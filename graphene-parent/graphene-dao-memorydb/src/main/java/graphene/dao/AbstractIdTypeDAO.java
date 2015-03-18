@@ -2,10 +2,10 @@ package graphene.dao;
 
 import graphene.dao.sql.GenericDAOJDBCImpl;
 import graphene.model.funnels.Funnel;
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.view.entities.IdType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +15,10 @@ import java.util.Map;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
-public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> implements IdTypeDAO<T> {
+public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> implements G_DataAccess {
 	boolean loaded;
-	Map<Integer, IdType> loadedTypes = new HashMap<Integer, IdType>();
-	protected Funnel<G_SearchResult, IdType> funnel;
+	Map<Integer, G_IdType> loadedTypes = new HashMap<Integer, G_IdType>();
+	protected Funnel<G_SearchResult, G_IdType> funnel;
 	@Inject
 	protected Logger logger;
 
@@ -40,7 +40,7 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	}
 
 	@Override
-	public IdType getByType(final int typeno) {
+	public G_IdType getByType(final int typeno) {
 		return getLoadedTypes().get(typeno);
 	}
 
@@ -67,8 +67,8 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	}
 
 	@Override
-	public IdType getIdTypeByShortName(final String shortName) {
-		for (final IdType id : getLoadedTypes().values()) {
+	public G_IdType getIdTypeByShortName(final String shortName) {
+		for (final G_IdType id : getLoadedTypes().values()) {
 			if (id.getShortName().equals(shortName)) {
 				return id;
 			}
@@ -81,7 +81,7 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	 * called.
 	 */
 	@Override
-	public Map<Integer, IdType> getLoadedTypes() {
+	public Map<Integer, G_IdType> getLoadedTypes() {
 		if ((loadedTypes == null) || loadedTypes.isEmpty()) {
 			logger.debug("Loading types before returning getLoadedTypes()");
 			init();
@@ -98,7 +98,7 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	public String getNodeType(final int type) {
 		String family = "Unknown";
 		if (isLoaded()) {
-			final IdType id = getLoadedTypes().get(type);
+			final G_IdType id = getLoadedTypes().get(type);
 			if (id == null) {
 				logger.error("IdTypeCache: getNodeType: could not get id definition for type " + type);
 			} else {
@@ -149,7 +149,7 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	// FIXME: There should be an O(1) way of doing this.
 	@Override
 	public int getTypeByShortName(final String shortName) {
-		for (final IdType id : getLoadedTypes().values()) {
+		for (final G_IdType id : getLoadedTypes().values()) {
 			if (id.getShortName().equals(shortName)) {
 				return id.getIdType_id();
 			}
@@ -161,7 +161,7 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	@Override
 	public Integer[] getTypesForFamily(final G_IdType family) {
 		final List<Integer> results = new ArrayList<Integer>();
-		for (final IdType s : getLoadedTypes().values()) {
+		for (final G_IdType s : getLoadedTypes().values()) {
 			if (s.getNodeType().equalsIgnoreCase(family.getName())) {
 				results.add(Integer.valueOf(s.getIdType_id()));
 			}
@@ -174,11 +174,11 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 		logger.debug("Starting initialization");
 
 		try {
-			final Map<Integer, IdType> typeMap = new HashMap<Integer, IdType>(10);
+			final Map<Integer, G_IdType> typeMap = new HashMap<Integer, G_IdType>(10);
 			final G_SearchResults typeList = getAll(0, 0);
 			for (final G_SearchResult id : typeList.getResults()) {
 				if (applySkipRule(id) == false) {
-					final IdType idType = funnel.from(id);
+					final G_IdType idType = funnel.from(id);
 					// each idTypeId is unique.
 					typeMap.put(idType.getIdType_id(), idType);
 				}
@@ -212,7 +212,7 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	}
 
 	@Override
-	public void setLoadedTypes(final Map<Integer, IdType> lt) {
+	public void setLoadedTypes(final Map<Integer, G_IdType> lt) {
 		loadedTypes = lt;
 	}
 

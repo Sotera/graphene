@@ -9,7 +9,7 @@
 			
 				<span style="margin-right: 3px"> Legend: </span>	
 				<t:loop source="legendItems" value="currentLegendItem">
-					<span class="label legend" style="${currentLegendItem.style} margin: 3px;" title="${currentLegendItem.title}"> ${currentLegendItem.label} </span>
+					<span class="label legend" style="${currentLegendItem.style} margin: 3px;" title="${currentLegendItem.description}"> ${currentLegendItem.label} </span>
 				</t:loop>
 			
 		</div>

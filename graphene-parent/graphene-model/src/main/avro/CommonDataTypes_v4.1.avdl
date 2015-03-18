@@ -426,7 +426,23 @@ protocol G_CommonDataTypes {
 		long serverTime;
 
 	}
-	
-	
+	record G_LegendItem {
+		/** usually a longer explanation */
+		union {string, null} description;
+		/** the css style or hex color */
+		union {string, null} style;
+		/** the text that will be visible,REQUIRED */
+		string label;
+		/** the icon that will be visible */
+		union {string, null} icon;
+	}
+	record G_DocumentError {
+		/** title of the error */
+		string title;
+		/** description of the error */
+		union {string, null} description;
+		/** severity of the error */
+		union {string, null} severity;
+	}
 	
 }

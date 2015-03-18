@@ -1,4 +1,4 @@
-package ${package}.dao;
+package graphene.dao;
 
 import graphene.model.idl.G_Constraint;
 

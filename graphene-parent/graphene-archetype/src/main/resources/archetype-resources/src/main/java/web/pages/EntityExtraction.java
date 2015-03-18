@@ -1,7 +1,7 @@
 package ${package}.web.pages;
 
 import graphene.business.commons.exception.DataAccessException;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_VisualType;
 import graphene.util.validator.ValidationUtils;
@@ -113,7 +113,7 @@ public class EntityExtraction extends SimpleBasePage {
 	
 	public Link getNamePivotLink(final String term) {
 		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, "media", G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+		final Link l = searchPage.set(null, "media", G_Constraint.COMPARE_EQUALS.name(), term, defaultMaxResults);
 		return l;
 	}
 

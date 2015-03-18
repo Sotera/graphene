@@ -72,11 +72,7 @@ Ext.define("DARPA.GraphSettings",
 				xtype:'textfield',
 				fieldLabel:'Maximum Degree',
 				labelLength:150,
-<<<<<<< HEAD
 				value: "" + defaultDegree,
-=======
-				value:'1',
->>>>>>> origin/instagram
 				width:200
 			},
 			{

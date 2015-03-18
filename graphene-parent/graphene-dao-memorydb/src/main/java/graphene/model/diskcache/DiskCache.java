@@ -1,6 +1,6 @@
 package graphene.model.diskcache;
 
-import graphene.model.query.G_CallBack;
+import graphene.model.idl.G_CallBack;
 
 /**
  * @author djue

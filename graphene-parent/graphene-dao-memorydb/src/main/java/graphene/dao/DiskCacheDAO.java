@@ -1,11 +1,12 @@
 package graphene.dao;
 
 import graphene.model.diskcache.DiskCache;
+import graphene.model.idl.G_CallBack;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
-import graphene.model.query.G_CallBack;
 import graphene.util.stats.TimeReporter;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
@@ -85,7 +86,12 @@ public abstract class DiskCacheDAO<T> {
 			while (readerAvailable && ((e = diskCache.read()) != null)) {
 				// logger.debug("read from disk " + e);
 				final G_SearchResult sr = G_SearchResult.newBuilder().setResult(e).build();
-				cb.callBack(sr, q);
+				try {
+					cb.execute(sr, q);
+				} catch (final AvroRemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				numProcessed++;
 				if ((numProcessed % 1000) == 0) {
 					t.getSpeed(numProcessed, "Disk Cache Objects");

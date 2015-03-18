@@ -14,7 +14,7 @@ import graphene.model.idl.G_PropertyKey;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.rest.ws.MetaSearchRS;
 
@@ -124,8 +124,8 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	}
 
 	@Override
-	public List<G_SearchType> getSearchTypes() {
-		return Arrays.asList(G_SearchType.values());
+	public List<G_Constraint> getSearchTypes() {
+		return Arrays.asList(G_Constraint.values());
 	}
 
 }

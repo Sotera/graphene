@@ -1,7 +1,7 @@
 package graphene.web.components;
 
 import graphene.dao.StyleService;
-import graphene.model.view.LegendItem;
+import graphene.model.idl.G_LegendItem;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ public class ReportLegend {
 	private StyleService style;
 
 	@Property
-	private LegendItem currentLegendItem;
+	private G_LegendItem currentLegendItem;
 	@Property
-	private List<LegendItem> legendItems;
+	private List<G_LegendItem> legendItems;
 
 	@SetupRender
 	private void setupRender() {

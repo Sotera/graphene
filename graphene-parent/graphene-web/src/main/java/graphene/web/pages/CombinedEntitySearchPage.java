@@ -163,7 +163,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// public Link getAddressPivotLink(final String term) {
 	// // XXX: pick the right search type based on the link value
 	// final Link l = searchPage.set(null, null,
-	// G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+	// G_Constraint.COMPARE_EQUALS.name(), term, defaultMaxResults);
 	// return l;
 	// }
 
@@ -267,22 +267,22 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// final String value, final int maxResults) {
 	// G_SearchResults metaresults = null;
 	// if (ValidationUtils.isValid(value)) {
-	// G_SearchType g_SearchType = null;
+	// G_Constraint g_SearchType = null;
 	// if (ValidationUtils.isValid(matchType)) {
 	// try {
-	// g_SearchType = G_SearchType.valueOf(matchType);
+	// g_SearchType = G_Constraint.valueOf(matchType);
 	// } catch (final Exception e) {
-	// g_SearchType = G_SearchType.COMPARE_CONTAINS;
+	// g_SearchType = G_Constraint.COMPARE_CONTAINS;
 	// }
 	// } else {
-	// g_SearchType = G_SearchType.COMPARE_CONTAINS;
+	// g_SearchType = G_Constraint.COMPARE_CONTAINS;
 	// }
 	// if (isUserExists()) {
 	// getUser().getId();
 	// getUser().getUsername();
 	// }
-	// final List<G_SearchTuple> tuples = new ArrayList<G_SearchTuple>();
-	// final G_SearchTuple tuple = new G_SearchTuple<String>(value,
+	// final List<G_PropertyMatchDescriptor> tuples = new ArrayList<G_PropertyMatchDescriptor>();
+	// final G_PropertyMatchDescriptor tuple = new G_PropertyMatchDescriptor<String>(value,
 	// g_SearchType);
 	// tuples.add(tuple);
 	//
@@ -294,7 +294,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// }
 	//
 	// final G_EntityQuery.Builder queryBuilder =
-	// G_EntityQuery.newBuilder().setAttributeList(tuples)
+	// G_EntityQuery.newBuilder().setPropertyMatchDescriptors(tuples)
 	// .setFilters(filters).setMaxResult(maxResults).setTargetSchema(schema).setMinimumScore(0.0)
 	// .setTimeInitiated(DateTime.now().getMillis());
 	//
@@ -395,7 +395,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	// public Link getNamePivotLink(final String term) {
 	// // XXX: pick the right search type based on the link value
 	// final Link l = searchPage.set(null, "media",
-	// G_SearchType.COMPARE_EQUALS.name(), term, defaultMaxResults);
+	// G_Constraint.COMPARE_EQUALS.name(), term, defaultMaxResults);
 	// return l;
 	// }
 
@@ -405,7 +405,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	//
 	// public Link getPivotLink(final String term) {
 	// final Link l = searchPage.set(null, null,
-	// G_SearchType.COMPARE_CONTAINS.name(), term, defaultMaxResults);
+	// G_Constraint.COMPARE_CONTAINS.name(), term, defaultMaxResults);
 	// return l;
 	// }
 

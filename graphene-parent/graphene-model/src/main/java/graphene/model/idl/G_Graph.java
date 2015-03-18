@@ -8,13 +8,22 @@ package graphene.model.idl;
 /** * a Graph object */
 @org.apache.avro.specific.AvroGenerated
 public class G_Graph extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Graph\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* a Graph object\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* The id of the graph\"},{\"name\":\"nodes\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Entity\",\"doc\":\"The nodes in the social, financial, communications or other graphs. May represent concrete individuals or organizations,\\r\\n\\t specific proxies such as accounts, or the implicit individuals or groups behind those other entities.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"This uid must represent either (1) a globally unique identifier that can be used to retrieve data for an\\r\\n\\t\\t\\texplicit entity, or (2) encoded query information that can be used to find a set of associated record\\r\\n\\t\\t\\tnotionally representing an implicit entity (e.g. Loans&FirstName&LastName&Gender). Must not be used for\\r\\n\\t\\t\\tIDs that aren't globally unique.  For example, in Kiva, \\\"Lenders\\\" has a UID (\\\"L12345\\\") while \\\"Borrowers\\\"\\r\\n\\t\\t\\thave an encoded search in the Loans table for uid (\\\"B{loan:23456;name=Daniel}\\\").  The encoded information\\r\\n\\t\\t\\tis data layer-specific, may be different from entity to entity or data set to data set, and should be\\r\\n\\t\\t\\tconsidered opaque to the consumers of the entities.  Entities of type 2 should always have the Entity Tag\\r\\n\\t\\t\\tANONYMOUS to help distinguish them when required.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_EntityTag\",\"doc\":\"This is the current list of tags for Entities:\\r\\n\\t \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"GROUP\",\"CLUSTER\",\"CLUSTER_SUMMARY\",\"FILE\",\"ANONYMOUS\",\"PROMPT_FOR_DETAILS\",\"OTHER\"]}},\"doc\":\"Entity Tags (see above, e.g. \\\"ACCOUNT\\\")\"},{\"name\":\"provenance\",\"type\":[{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"This is a placeholder for future modeling of provenance. It is not a required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1},{\"name\":\"currency\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.\",\"default\":1}]},\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"map\",\"values\":{\"type\":\"record\",\"name\":\"G_Property\",\"doc\":\"Each property on an Entity or Link is a name-value pair, with data type information, as well as optional\\r\\n\\t provenance. Tags provide a way for the data provider to associate semantic annotations to each property\\r\\n\\t in terms of the semantics of the application.  \\r\\n\\t \\r\\n\\t CHANGED IN 1.6\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"styleType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"Describes a distribution of values. \\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"A frequency or probability element of a distribution.\\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]}}},{\"name\":\"rangeType\",\"type\":{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"doc\":\"Describes how the values in the distribution are summarised\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"The type of value that the distribution describes. One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]}],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"Tags are defined by the application layer as a taxonomy of user and application concepts,\\r\\n\\t independent of the data sources. This allows application semantics to be re-used with new\\r\\n\\t data, with a minimum of new software design and development. Data layer entity types, link\\r\\n\\t types and properties should be mapped into the list of tags. The application layer must be\\r\\n\\t able to search by native field name or by tag interchangeably, and properties returned must\\r\\n\\t contain both native field names as well as tags.\\r\\n\\t \\r\\n\\t The list of tags may change as application features evolve, though that will require\\r\\n\\t collaboration with the data layer providers. Evolving the tag list should not change the\\r\\n\\t Data Access or Search APIs.\\r\\n\\r\\n\\t This is the current list of tags for Properties:\\r\\n\\t \\r\\n\\t CHANGED in 1.5:\\r\\n\\t   - CREDIT/DEBIT changed to INFLOWING/OUTFLOWING\\r\\n\\t   - added USD\\r\\n\\t   - added DURATION\\r\\n\\t   \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ENTITY_TYPE\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY, COUNTRY_CODE\\r\\n\\t   \\r\\n\\t CHANGED in 1.7:\\r\\n\\t   - added CLUSTER\",\"symb","ols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"CLUSTER\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\"]}},\"doc\":\"one or more tags from the Tag list, used to map this source-specific field into the semantics of applications\"}]},\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"edges\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Link\",\"doc\":\"* The links in the social, financial, communications or other graphs. May represent communication events, financial transactions\\r\\n\\t * or social connections.\",\"fields\":[{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_LinkTag\",\"doc\":\"This is the current list of tags for Links:\",\"symbols\":[\"FINANCIAL\",\"SOCIAL\",\"COMMUNICATION\",\"OTHER\"]}},\"doc\":\"Link Tags (see above, e.g. \\\"FINANCIAL\\\")\"},{\"name\":\"source\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"source entity uid\",\"default\":null},{\"name\":\"target\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"target entity uid\",\"default\":null},{\"name\":\"directed\",\"type\":\"boolean\",\"doc\":\"true if directed, false if undirected\",\"default\":true},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"map\",\"values\":\"G_Property\",\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"properties\",\"type\":[{\"type\":\"array\",\"items\":\"G_Property\"},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Graph\",\"namespace\":\"graphene.model.idl\",\"doc\":\"* a Graph object\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"* The id of the graph\"},{\"name\":\"intStatus\",\"type\":\"int\",\"doc\":\"* Usually 0 for success, 1 otherwise\",\"default\":0},{\"name\":\"numEdges\",\"type\":\"int\"},{\"name\":\"numNodes\",\"type\":\"int\"},{\"name\":\"strStatus\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"OK\"},{\"name\":\"userId\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"username\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"default\":\"None\"},{\"name\":\"nodes\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Entity\",\"doc\":\"The nodes in the social, financial, communications or other graphs. May represent concrete individuals or organizations,\\r\\n\\t specific proxies such as accounts, or the implicit individuals or groups behind those other entities.\",\"fields\":[{\"name\":\"uid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"This uid must represent either (1) a globally unique identifier that can be used to retrieve data for an\\r\\n\\t\\t\\texplicit entity, or (2) encoded query information that can be used to find a set of associated record\\r\\n\\t\\t\\tnotionally representing an implicit entity (e.g. Loans&FirstName&LastName&Gender). Must not be used for\\r\\n\\t\\t\\tIDs that aren't globally unique.  For example, in Kiva, \\\"Lenders\\\" has a UID (\\\"L12345\\\") while \\\"Borrowers\\\"\\r\\n\\t\\t\\thave an encoded search in the Loans table for uid (\\\"B{loan:23456;name=Daniel}\\\").  The encoded information\\r\\n\\t\\t\\tis data layer-specific, may be different from entity to entity or data set to data set, and should be\\r\\n\\t\\t\\tconsidered opaque to the consumers of the entities.  Entities of type 2 should always have the Entity Tag\\r\\n\\t\\t\\tANONYMOUS to help distinguish them when required.\"},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_EntityTag\",\"doc\":\"This is the current list of tags for Entities:\\r\\n\\t \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"GROUP\",\"CLUSTER\",\"CLUSTER_SUMMARY\",\"FILE\",\"ANONYMOUS\",\"PROMPT_FOR_DETAILS\",\"OTHER\"]}},\"doc\":\"Entity Tags (see above, e.g. \\\"ACCOUNT\\\")\"},{\"name\":\"provenance\",\"type\":[{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"This is a placeholder for future modeling of provenance. It is not a required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1},{\"name\":\"currency\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.\",\"default\":1}]},\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"map\",\"values\":{\"type\":\"record\",\"name\":\"G_Property\",\"doc\":\"Each property on an Entity or Link is a name-value pair, with data type information, as well as optional\\r\\n\\t provenance. Tags provide a way for the data provider to associate semantic annotations to each property\\r\\n\\t in terms of the semantics of the application.  \\r\\n\\t \\r\\n\\t CHANGED IN 1.6\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"styleType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"Describes a distribution of values. \\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"A frequency or probability element of a distribution.\\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]}}},{\"name\":\"rangeType\",\"type\":{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"doc\":\"Describes how the values in the distribution are summarised\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"The type of value that the distribution describes. One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]}],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"Tags are defined by the application layer as a taxonomy of user and application concepts,\\r\\n\\t independent of the data sources. This allows application semantics to be re-used with new\\r\\n\\t data, with a minimum of new software design and development. Data layer entity types, link\\r\\n\\t types and properties should be mapped into the list of tags. The application layer must be\\r\\n\\t able to search by native field name or by tag interchangeably, and properties returned must\\r\\n\\t contain both native field names as well as tags.\\r\\n\\t \\r\\n\\t The list of tags may change as application features evolve, though that will require\\r\\n\\t collaboration with the data layer provide","rs. Evolving the tag list should not change the\\r\\n\\t Data Access or Search APIs.\\r\\n\\r\\n\\t This is the current list of tags for Properties:\\r\\n\\t \\r\\n\\t CHANGED in 1.5:\\r\\n\\t   - CREDIT/DEBIT changed to INFLOWING/OUTFLOWING\\r\\n\\t   - added USD\\r\\n\\t   - added DURATION\\r\\n\\t   \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ENTITY_TYPE\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY, COUNTRY_CODE\\r\\n\\t   \\r\\n\\t CHANGED in 1.7:\\r\\n\\t   - added CLUSTER\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"CLUSTER\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\"]}},\"doc\":\"one or more tags from the Tag list, used to map this source-specific field into the semantics of applications\"}]},\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"edges\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Link\",\"doc\":\"* The links in the social, financial, communications or other graphs. May represent communication events, financial transactions\\r\\n\\t * or social connections.\",\"fields\":[{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_LinkTag\",\"doc\":\"This is the current list of tags for Links:\",\"symbols\":[\"FINANCIAL\",\"SOCIAL\",\"COMMUNICATION\",\"OTHER\"]}},\"doc\":\"Link Tags (see above, e.g. \\\"FINANCIAL\\\")\"},{\"name\":\"source\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"source entity uid\",\"default\":null},{\"name\":\"target\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"target entity uid\",\"default\":null},{\"name\":\"directed\",\"type\":\"boolean\",\"doc\":\"true if directed, false if undirected\",\"default\":true},{\"name\":\"provenance\",\"type\":[\"G_Provenance\",\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[\"G_Uncertainty\",\"null\"],\"default\":null},{\"name\":\"properties\",\"type\":{\"type\":\"map\",\"values\":\"G_Property\",\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"properties\",\"type\":[{\"type\":\"array\",\"items\":\"G_Property\"},\"null\"]},{\"name\":\"legend\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_LegendItem\",\"fields\":[{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"usually a longer explanation\"},{\"name\":\"style\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"the css style or hex color\"},{\"name\":\"label\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the text that will be visible,REQUIRED\"},{\"name\":\"icon\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"the icon that will be visible\"}]}},\"null\"]},{\"name\":\"errors\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_DocumentError\",\"fields\":[{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"title of the error\"},{\"name\":\"description\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"description of the error\"},{\"name\":\"severity\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"doc\":\"severity of the error\"}]}},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** * The id of the graph */
    private java.lang.String id;
+  /** * Usually 0 for success, 1 otherwise */
+   private int intStatus;
+   private int numEdges;
+   private int numNodes;
+   private java.lang.String strStatus;
+   private java.lang.String userId;
+   private java.lang.String username;
    private java.util.List<graphene.model.idl.G_Entity> nodes;
    private java.util.List<graphene.model.idl.G_Link> edges;
    private java.util.List<graphene.model.idl.G_Property> properties;
+   private java.util.List<graphene.model.idl.G_LegendItem> legend;
+   private java.util.List<graphene.model.idl.G_DocumentError> errors;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -26,11 +35,19 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
   /**
    * All-args constructor.
    */
-  public G_Graph(java.lang.String id, java.util.List<graphene.model.idl.G_Entity> nodes, java.util.List<graphene.model.idl.G_Link> edges, java.util.List<graphene.model.idl.G_Property> properties) {
+  public G_Graph(java.lang.String id, java.lang.Integer intStatus, java.lang.Integer numEdges, java.lang.Integer numNodes, java.lang.String strStatus, java.lang.String userId, java.lang.String username, java.util.List<graphene.model.idl.G_Entity> nodes, java.util.List<graphene.model.idl.G_Link> edges, java.util.List<graphene.model.idl.G_Property> properties, java.util.List<graphene.model.idl.G_LegendItem> legend, java.util.List<graphene.model.idl.G_DocumentError> errors) {
     this.id = id;
+    this.intStatus = intStatus;
+    this.numEdges = numEdges;
+    this.numNodes = numNodes;
+    this.strStatus = strStatus;
+    this.userId = userId;
+    this.username = username;
     this.nodes = nodes;
     this.edges = edges;
     this.properties = properties;
+    this.legend = legend;
+    this.errors = errors;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -38,9 +55,17 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return id;
-    case 1: return nodes;
-    case 2: return edges;
-    case 3: return properties;
+    case 1: return intStatus;
+    case 2: return numEdges;
+    case 3: return numNodes;
+    case 4: return strStatus;
+    case 5: return userId;
+    case 6: return username;
+    case 7: return nodes;
+    case 8: return edges;
+    case 9: return properties;
+    case 10: return legend;
+    case 11: return errors;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -49,9 +74,17 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: id = (java.lang.String)value$; break;
-    case 1: nodes = (java.util.List<graphene.model.idl.G_Entity>)value$; break;
-    case 2: edges = (java.util.List<graphene.model.idl.G_Link>)value$; break;
-    case 3: properties = (java.util.List<graphene.model.idl.G_Property>)value$; break;
+    case 1: intStatus = (java.lang.Integer)value$; break;
+    case 2: numEdges = (java.lang.Integer)value$; break;
+    case 3: numNodes = (java.lang.Integer)value$; break;
+    case 4: strStatus = (java.lang.String)value$; break;
+    case 5: userId = (java.lang.String)value$; break;
+    case 6: username = (java.lang.String)value$; break;
+    case 7: nodes = (java.util.List<graphene.model.idl.G_Entity>)value$; break;
+    case 8: edges = (java.util.List<graphene.model.idl.G_Link>)value$; break;
+    case 9: properties = (java.util.List<graphene.model.idl.G_Property>)value$; break;
+    case 10: legend = (java.util.List<graphene.model.idl.G_LegendItem>)value$; break;
+    case 11: errors = (java.util.List<graphene.model.idl.G_DocumentError>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -69,6 +102,96 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
    */
   public void setId(java.lang.String value) {
     this.id = value;
+  }
+
+  /**
+   * Gets the value of the 'intStatus' field.
+   * * Usually 0 for success, 1 otherwise   */
+  public java.lang.Integer getIntStatus() {
+    return intStatus;
+  }
+
+  /**
+   * Sets the value of the 'intStatus' field.
+   * * Usually 0 for success, 1 otherwise   * @param value the value to set.
+   */
+  public void setIntStatus(java.lang.Integer value) {
+    this.intStatus = value;
+  }
+
+  /**
+   * Gets the value of the 'numEdges' field.
+   */
+  public java.lang.Integer getNumEdges() {
+    return numEdges;
+  }
+
+  /**
+   * Sets the value of the 'numEdges' field.
+   * @param value the value to set.
+   */
+  public void setNumEdges(java.lang.Integer value) {
+    this.numEdges = value;
+  }
+
+  /**
+   * Gets the value of the 'numNodes' field.
+   */
+  public java.lang.Integer getNumNodes() {
+    return numNodes;
+  }
+
+  /**
+   * Sets the value of the 'numNodes' field.
+   * @param value the value to set.
+   */
+  public void setNumNodes(java.lang.Integer value) {
+    this.numNodes = value;
+  }
+
+  /**
+   * Gets the value of the 'strStatus' field.
+   */
+  public java.lang.String getStrStatus() {
+    return strStatus;
+  }
+
+  /**
+   * Sets the value of the 'strStatus' field.
+   * @param value the value to set.
+   */
+  public void setStrStatus(java.lang.String value) {
+    this.strStatus = value;
+  }
+
+  /**
+   * Gets the value of the 'userId' field.
+   */
+  public java.lang.String getUserId() {
+    return userId;
+  }
+
+  /**
+   * Sets the value of the 'userId' field.
+   * @param value the value to set.
+   */
+  public void setUserId(java.lang.String value) {
+    this.userId = value;
+  }
+
+  /**
+   * Gets the value of the 'username' field.
+   */
+  public java.lang.String getUsername() {
+    return username;
+  }
+
+  /**
+   * Sets the value of the 'username' field.
+   * @param value the value to set.
+   */
+  public void setUsername(java.lang.String value) {
+    this.username = value;
   }
 
   /**
@@ -116,6 +239,36 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
     this.properties = value;
   }
 
+  /**
+   * Gets the value of the 'legend' field.
+   */
+  public java.util.List<graphene.model.idl.G_LegendItem> getLegend() {
+    return legend;
+  }
+
+  /**
+   * Sets the value of the 'legend' field.
+   * @param value the value to set.
+   */
+  public void setLegend(java.util.List<graphene.model.idl.G_LegendItem> value) {
+    this.legend = value;
+  }
+
+  /**
+   * Gets the value of the 'errors' field.
+   */
+  public java.util.List<graphene.model.idl.G_DocumentError> getErrors() {
+    return errors;
+  }
+
+  /**
+   * Sets the value of the 'errors' field.
+   * @param value the value to set.
+   */
+  public void setErrors(java.util.List<graphene.model.idl.G_DocumentError> value) {
+    this.errors = value;
+  }
+
   /** Creates a new G_Graph RecordBuilder */
   public static graphene.model.idl.G_Graph.Builder newBuilder() {
     return new graphene.model.idl.G_Graph.Builder();
@@ -138,9 +291,17 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
     implements org.apache.avro.data.RecordBuilder<G_Graph> {
 
     private java.lang.String id;
+    private int intStatus;
+    private int numEdges;
+    private int numNodes;
+    private java.lang.String strStatus;
+    private java.lang.String userId;
+    private java.lang.String username;
     private java.util.List<graphene.model.idl.G_Entity> nodes;
     private java.util.List<graphene.model.idl.G_Link> edges;
     private java.util.List<graphene.model.idl.G_Property> properties;
+    private java.util.List<graphene.model.idl.G_LegendItem> legend;
+    private java.util.List<graphene.model.idl.G_DocumentError> errors;
 
     /** Creates a new Builder */
     private Builder() {
@@ -154,17 +315,49 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.nodes)) {
-        this.nodes = data().deepCopy(fields()[1].schema(), other.nodes);
+      if (isValidValue(fields()[1], other.intStatus)) {
+        this.intStatus = data().deepCopy(fields()[1].schema(), other.intStatus);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.edges)) {
-        this.edges = data().deepCopy(fields()[2].schema(), other.edges);
+      if (isValidValue(fields()[2], other.numEdges)) {
+        this.numEdges = data().deepCopy(fields()[2].schema(), other.numEdges);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.properties)) {
-        this.properties = data().deepCopy(fields()[3].schema(), other.properties);
+      if (isValidValue(fields()[3], other.numNodes)) {
+        this.numNodes = data().deepCopy(fields()[3].schema(), other.numNodes);
         fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.strStatus)) {
+        this.strStatus = data().deepCopy(fields()[4].schema(), other.strStatus);
+        fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.userId)) {
+        this.userId = data().deepCopy(fields()[5].schema(), other.userId);
+        fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.username)) {
+        this.username = data().deepCopy(fields()[6].schema(), other.username);
+        fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.nodes)) {
+        this.nodes = data().deepCopy(fields()[7].schema(), other.nodes);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.edges)) {
+        this.edges = data().deepCopy(fields()[8].schema(), other.edges);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.properties)) {
+        this.properties = data().deepCopy(fields()[9].schema(), other.properties);
+        fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.legend)) {
+        this.legend = data().deepCopy(fields()[10].schema(), other.legend);
+        fieldSetFlags()[10] = true;
+      }
+      if (isValidValue(fields()[11], other.errors)) {
+        this.errors = data().deepCopy(fields()[11].schema(), other.errors);
+        fieldSetFlags()[11] = true;
       }
     }
     
@@ -175,17 +368,49 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.nodes)) {
-        this.nodes = data().deepCopy(fields()[1].schema(), other.nodes);
+      if (isValidValue(fields()[1], other.intStatus)) {
+        this.intStatus = data().deepCopy(fields()[1].schema(), other.intStatus);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.edges)) {
-        this.edges = data().deepCopy(fields()[2].schema(), other.edges);
+      if (isValidValue(fields()[2], other.numEdges)) {
+        this.numEdges = data().deepCopy(fields()[2].schema(), other.numEdges);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.properties)) {
-        this.properties = data().deepCopy(fields()[3].schema(), other.properties);
+      if (isValidValue(fields()[3], other.numNodes)) {
+        this.numNodes = data().deepCopy(fields()[3].schema(), other.numNodes);
         fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.strStatus)) {
+        this.strStatus = data().deepCopy(fields()[4].schema(), other.strStatus);
+        fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.userId)) {
+        this.userId = data().deepCopy(fields()[5].schema(), other.userId);
+        fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.username)) {
+        this.username = data().deepCopy(fields()[6].schema(), other.username);
+        fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.nodes)) {
+        this.nodes = data().deepCopy(fields()[7].schema(), other.nodes);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.edges)) {
+        this.edges = data().deepCopy(fields()[8].schema(), other.edges);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.properties)) {
+        this.properties = data().deepCopy(fields()[9].schema(), other.properties);
+        fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.legend)) {
+        this.legend = data().deepCopy(fields()[10].schema(), other.legend);
+        fieldSetFlags()[10] = true;
+      }
+      if (isValidValue(fields()[11], other.errors)) {
+        this.errors = data().deepCopy(fields()[11].schema(), other.errors);
+        fieldSetFlags()[11] = true;
       }
     }
 
@@ -214,6 +439,153 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
       return this;
     }
 
+    /** Gets the value of the 'intStatus' field */
+    public java.lang.Integer getIntStatus() {
+      return intStatus;
+    }
+    
+    /** Sets the value of the 'intStatus' field */
+    public graphene.model.idl.G_Graph.Builder setIntStatus(int value) {
+      validate(fields()[1], value);
+      this.intStatus = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'intStatus' field has been set */
+    public boolean hasIntStatus() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'intStatus' field */
+    public graphene.model.idl.G_Graph.Builder clearIntStatus() {
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'numEdges' field */
+    public java.lang.Integer getNumEdges() {
+      return numEdges;
+    }
+    
+    /** Sets the value of the 'numEdges' field */
+    public graphene.model.idl.G_Graph.Builder setNumEdges(int value) {
+      validate(fields()[2], value);
+      this.numEdges = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'numEdges' field has been set */
+    public boolean hasNumEdges() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'numEdges' field */
+    public graphene.model.idl.G_Graph.Builder clearNumEdges() {
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'numNodes' field */
+    public java.lang.Integer getNumNodes() {
+      return numNodes;
+    }
+    
+    /** Sets the value of the 'numNodes' field */
+    public graphene.model.idl.G_Graph.Builder setNumNodes(int value) {
+      validate(fields()[3], value);
+      this.numNodes = value;
+      fieldSetFlags()[3] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'numNodes' field has been set */
+    public boolean hasNumNodes() {
+      return fieldSetFlags()[3];
+    }
+    
+    /** Clears the value of the 'numNodes' field */
+    public graphene.model.idl.G_Graph.Builder clearNumNodes() {
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'strStatus' field */
+    public java.lang.String getStrStatus() {
+      return strStatus;
+    }
+    
+    /** Sets the value of the 'strStatus' field */
+    public graphene.model.idl.G_Graph.Builder setStrStatus(java.lang.String value) {
+      validate(fields()[4], value);
+      this.strStatus = value;
+      fieldSetFlags()[4] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'strStatus' field has been set */
+    public boolean hasStrStatus() {
+      return fieldSetFlags()[4];
+    }
+    
+    /** Clears the value of the 'strStatus' field */
+    public graphene.model.idl.G_Graph.Builder clearStrStatus() {
+      strStatus = null;
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'userId' field */
+    public java.lang.String getUserId() {
+      return userId;
+    }
+    
+    /** Sets the value of the 'userId' field */
+    public graphene.model.idl.G_Graph.Builder setUserId(java.lang.String value) {
+      validate(fields()[5], value);
+      this.userId = value;
+      fieldSetFlags()[5] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'userId' field has been set */
+    public boolean hasUserId() {
+      return fieldSetFlags()[5];
+    }
+    
+    /** Clears the value of the 'userId' field */
+    public graphene.model.idl.G_Graph.Builder clearUserId() {
+      userId = null;
+      fieldSetFlags()[5] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'username' field */
+    public java.lang.String getUsername() {
+      return username;
+    }
+    
+    /** Sets the value of the 'username' field */
+    public graphene.model.idl.G_Graph.Builder setUsername(java.lang.String value) {
+      validate(fields()[6], value);
+      this.username = value;
+      fieldSetFlags()[6] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'username' field has been set */
+    public boolean hasUsername() {
+      return fieldSetFlags()[6];
+    }
+    
+    /** Clears the value of the 'username' field */
+    public graphene.model.idl.G_Graph.Builder clearUsername() {
+      username = null;
+      fieldSetFlags()[6] = false;
+      return this;
+    }
+
     /** Gets the value of the 'nodes' field */
     public java.util.List<graphene.model.idl.G_Entity> getNodes() {
       return nodes;
@@ -221,21 +593,21 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
     
     /** Sets the value of the 'nodes' field */
     public graphene.model.idl.G_Graph.Builder setNodes(java.util.List<graphene.model.idl.G_Entity> value) {
-      validate(fields()[1], value);
+      validate(fields()[7], value);
       this.nodes = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'nodes' field has been set */
     public boolean hasNodes() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'nodes' field */
     public graphene.model.idl.G_Graph.Builder clearNodes() {
       nodes = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -246,21 +618,21 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
     
     /** Sets the value of the 'edges' field */
     public graphene.model.idl.G_Graph.Builder setEdges(java.util.List<graphene.model.idl.G_Link> value) {
-      validate(fields()[2], value);
+      validate(fields()[8], value);
       this.edges = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[8] = true;
       return this; 
     }
     
     /** Checks whether the 'edges' field has been set */
     public boolean hasEdges() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[8];
     }
     
     /** Clears the value of the 'edges' field */
     public graphene.model.idl.G_Graph.Builder clearEdges() {
       edges = null;
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[8] = false;
       return this;
     }
 
@@ -271,21 +643,71 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
     
     /** Sets the value of the 'properties' field */
     public graphene.model.idl.G_Graph.Builder setProperties(java.util.List<graphene.model.idl.G_Property> value) {
-      validate(fields()[3], value);
+      validate(fields()[9], value);
       this.properties = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[9] = true;
       return this; 
     }
     
     /** Checks whether the 'properties' field has been set */
     public boolean hasProperties() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[9];
     }
     
     /** Clears the value of the 'properties' field */
     public graphene.model.idl.G_Graph.Builder clearProperties() {
       properties = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[9] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'legend' field */
+    public java.util.List<graphene.model.idl.G_LegendItem> getLegend() {
+      return legend;
+    }
+    
+    /** Sets the value of the 'legend' field */
+    public graphene.model.idl.G_Graph.Builder setLegend(java.util.List<graphene.model.idl.G_LegendItem> value) {
+      validate(fields()[10], value);
+      this.legend = value;
+      fieldSetFlags()[10] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'legend' field has been set */
+    public boolean hasLegend() {
+      return fieldSetFlags()[10];
+    }
+    
+    /** Clears the value of the 'legend' field */
+    public graphene.model.idl.G_Graph.Builder clearLegend() {
+      legend = null;
+      fieldSetFlags()[10] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'errors' field */
+    public java.util.List<graphene.model.idl.G_DocumentError> getErrors() {
+      return errors;
+    }
+    
+    /** Sets the value of the 'errors' field */
+    public graphene.model.idl.G_Graph.Builder setErrors(java.util.List<graphene.model.idl.G_DocumentError> value) {
+      validate(fields()[11], value);
+      this.errors = value;
+      fieldSetFlags()[11] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'errors' field has been set */
+    public boolean hasErrors() {
+      return fieldSetFlags()[11];
+    }
+    
+    /** Clears the value of the 'errors' field */
+    public graphene.model.idl.G_Graph.Builder clearErrors() {
+      errors = null;
+      fieldSetFlags()[11] = false;
       return this;
     }
 
@@ -294,9 +716,17 @@ public class G_Graph extends org.apache.avro.specific.SpecificRecordBase impleme
       try {
         G_Graph record = new G_Graph();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.String) defaultValue(fields()[0]);
-        record.nodes = fieldSetFlags()[1] ? this.nodes : (java.util.List<graphene.model.idl.G_Entity>) defaultValue(fields()[1]);
-        record.edges = fieldSetFlags()[2] ? this.edges : (java.util.List<graphene.model.idl.G_Link>) defaultValue(fields()[2]);
-        record.properties = fieldSetFlags()[3] ? this.properties : (java.util.List<graphene.model.idl.G_Property>) defaultValue(fields()[3]);
+        record.intStatus = fieldSetFlags()[1] ? this.intStatus : (java.lang.Integer) defaultValue(fields()[1]);
+        record.numEdges = fieldSetFlags()[2] ? this.numEdges : (java.lang.Integer) defaultValue(fields()[2]);
+        record.numNodes = fieldSetFlags()[3] ? this.numNodes : (java.lang.Integer) defaultValue(fields()[3]);
+        record.strStatus = fieldSetFlags()[4] ? this.strStatus : (java.lang.String) defaultValue(fields()[4]);
+        record.userId = fieldSetFlags()[5] ? this.userId : (java.lang.String) defaultValue(fields()[5]);
+        record.username = fieldSetFlags()[6] ? this.username : (java.lang.String) defaultValue(fields()[6]);
+        record.nodes = fieldSetFlags()[7] ? this.nodes : (java.util.List<graphene.model.idl.G_Entity>) defaultValue(fields()[7]);
+        record.edges = fieldSetFlags()[8] ? this.edges : (java.util.List<graphene.model.idl.G_Link>) defaultValue(fields()[8]);
+        record.properties = fieldSetFlags()[9] ? this.properties : (java.util.List<graphene.model.idl.G_Property>) defaultValue(fields()[9]);
+        record.legend = fieldSetFlags()[10] ? this.legend : (java.util.List<graphene.model.idl.G_LegendItem>) defaultValue(fields()[10]);
+        record.errors = fieldSetFlags()[11] ? this.errors : (java.util.List<graphene.model.idl.G_DocumentError>) defaultValue(fields()[11]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

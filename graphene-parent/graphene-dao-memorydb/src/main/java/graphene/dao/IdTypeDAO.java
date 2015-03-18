@@ -2,7 +2,6 @@ package graphene.dao;
 
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchResult;
-import graphene.model.view.entities.IdType;
 
 import java.util.List;
 import java.util.Map;
@@ -47,13 +46,13 @@ public interface IdTypeDAO<T> extends GenericDAO {
 
 	public abstract void createFamilyMap();
 
-	public abstract IdType getByType(int typeno);
+	public abstract G_IdType getByType(int typeno);
 
 	public abstract String getColumnSource(int type);
 
-	public abstract IdType getIdTypeByShortName(String shortName);
+	public abstract G_IdType getIdTypeByShortName(String shortName);
 
-	public abstract Map<Integer, IdType> getLoadedTypes();
+	public abstract Map<Integer, G_IdType> getLoadedTypes();
 
 	public abstract String getLongName(int type);
 
@@ -77,7 +76,7 @@ public interface IdTypeDAO<T> extends GenericDAO {
 
 	public abstract void setLoaded(boolean l);
 
-	public abstract void setLoadedTypes(Map<Integer, IdType> lt);
+	public abstract void setLoadedTypes(Map<Integer, G_IdType> lt);
 
 	public abstract void setSkipTypes(List<Integer> skipTypes);
 

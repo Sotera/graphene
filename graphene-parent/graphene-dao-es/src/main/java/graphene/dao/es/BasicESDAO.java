@@ -1,11 +1,19 @@
 package graphene.dao.es;
 
+import graphene.dao.DocumentBuilder;
+import graphene.model.idl.G_CallBack;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ListRange;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_SearchResult;
-import graphene.model.idl.G_SearchTuple;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.query.G_CallBack;
+import graphene.model.idlhelper.ListRangeHelper;
+import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
+import graphene.model.idlhelper.QueryHelper;
+import graphene.model.idlhelper.SingletonRangeHelper;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Count;
@@ -18,23 +26,27 @@ import io.searchbox.core.SearchScroll;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.IndicesExists;
 import io.searchbox.params.Parameters;
-import io.searchbox.params.SearchType;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.JsonObject;
 
 /**
@@ -47,10 +59,12 @@ import com.google.gson.JsonObject;
  * @param <QUERYOBJECT>
  * 
  */
-public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
+public class BasicESDAO<T extends JestResult> {
 
+	public static final String ESTYPE = "estype";
 	private static final int MAX_TO_GET_AT_ONCE = 1000000;
 	private static final int PAGESIZE = 200;
+	public static final String ESID = "esid";
 	protected ObjectMapper mapper;
 	private String index;
 	protected Logger logger;
@@ -70,34 +84,198 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 	@Symbol(JestModule.ES_SERVER)
 	private String host;
 
-	public long count() {
-		final String query = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).toString();
-		try {
-			final CountResult result = c.getClient().execute(
-					new Count.Builder().query(query).addIndex(index).addType(type)
-							.setParameter("timeout", defaultESTimeout).build());
-			return result.getCount().longValue();
-		} catch (final Exception e) {
-			logger.error("Error counting users " + e.getMessage());
+	@Inject
+	private DocumentBuilder db;
+
+	protected BoolQueryBuilder buildBooleanConstraints(final PropertyMatchDescriptorHelper pmdh, BoolQueryBuilder bool) {
+
+		final String key = pmdh.getKey();
+		final Object r = pmdh.getRange();
+		final List<Object> values = ListRangeHelper.rangeValue(r);
+
+		boolean createdNew = false;
+		if (bool == null) {
+			bool = QueryBuilders.boolQuery();
+			createdNew = true;
 		}
-		return 0;
+		boolean constraintUsed = false;
+		for (final Object text : values) {
+
+			final G_Constraint constraint = pmdh.getConstraint();
+			logger.debug("Using constraint " + constraint + " with key " + key + " on value " + text);
+			switch (constraint) {
+			case REQUIRED_EQUALS:
+				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+				constraintUsed = true;
+				break;
+			case COMPARE_CONTAINS:
+				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+				constraintUsed = true;
+				break;
+			case COMPARE_EQUALS:
+				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+				constraintUsed = true;
+				break;
+			case COMPARE_STARTSWITH:
+				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+				constraintUsed = true;
+				break;
+			case COMPARE_NOTINCLUDE:
+				bool = bool.mustNot(QueryBuilders.matchPhraseQuery(key, text));
+				constraintUsed = true;
+				break;
+			default:
+				break;
+			}
+		}
+		if ((constraintUsed == false) && (createdNew == true)) {
+			bool = null;
+		}
+		return bool;
 	}
 
-	public long count(final Q pq) throws Exception {
-		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getAttributeList())) {
-			pq.getAttributeList().get(0);
+	protected io.searchbox.core.Search.Builder buildSearchAction(final G_EntityQuery pq) {
+		final Set<String> esTypes = new LinkedHashSet<String>();
+		final Set<String> esIds = new LinkedHashSet<String>();
+		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getPropertyMatchDescriptors())) {
+
 			String schema = pq.getTargetSchema();
 			if (!ValidationUtils.isValid(schema)) {
-
 				schema = c.getIndexName();
-				logger.debug("Setting schema to " + schema);
 			}
-			final String term = (String) pq.getAttributeList().get(0).getValue();
-			final long x = c.performCount(null, host, schema, null, null, term);
-			return x;
+			logger.debug("Setting index to " + schema);
+			BoolQueryBuilder bool = null;
+
+			for (final G_PropertyMatchDescriptor d : pq.getPropertyMatchDescriptors()) {
+				final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
+				final String key = pmdh.getKey();
+				final Object r = pmdh.getRange();
+				pmdh.getVariable();
+				if (key.equals(ESTYPE)) {
+					if (ValidationUtils.isValid(r)) {
+						if (r instanceof G_SingletonRange) {
+							esTypes.add((String) ((G_SingletonRange) r).getValue());
+						} else if (r instanceof G_ListRange) {
+							esTypes.addAll((Collection<? extends String>) r);
+						}
+					}
+				}
+				if (key.equals(ESID)) {
+					if (ValidationUtils.isValid(r)) {
+						if (r instanceof G_SingletonRange) {
+							esIds.add((String) ((G_SingletonRange) r).getValue());
+						} else if (r instanceof G_ListRange) {
+							esIds.addAll((Collection<? extends String>) r);
+						}
+					}
+				} else {
+					bool = buildBooleanConstraints(pmdh, bool);
+				}
+			}
+
+			SearchSourceBuilder ssb = new SearchSourceBuilder();
+			String queryString = null;
+			if (bool != null) {
+				queryString = bool.toString();
+			} else if (esIds.size() > 1) {
+				logger.debug("Using an id filter query instead");
+				queryString = QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
+						FilterBuilders.termsFilter("_id", esIds)).toString();
+			} else {
+				queryString = QueryBuilders.matchAllQuery().toString();
+			}
+			ssb = ssb.query(queryString);
+			/*
+			 * This is available as long as we don't do scan.
+			 */
+			// ssb = ssb.sort("_id");
+			logger.debug(ssb.toString());
 		}
-		logger.warn("Did not find any values for " + pq);
-		return 0;
+
+		final io.searchbox.core.Search.Builder action = new Search.Builder(QueryBuilders.matchAllQuery().toString())
+				.setParameter("timeout", defaultESTimeout);
+		if (ValidationUtils.isValid(pq.getTargetSchema())) {
+			action.addIndex(pq.getTargetSchema());
+			logger.debug("adding index: " + pq.getTargetSchema());
+		}
+		if (ValidationUtils.isValid(esTypes)) {
+			action.addType(esTypes);
+			logger.debug("adding types: " + pq.getTargetSchema());
+		}
+
+		/**
+		 * Set scrolling options for callback
+		 */
+		action.setParameter(Parameters.SIZE, PAGESIZE);
+		return action;
+	}
+
+	public long count() {
+		final G_PropertyMatchDescriptor pmdh = G_PropertyMatchDescriptor.newBuilder()
+				.setConstraint(G_Constraint.COMPARE_CONTAINS).setKey(ESTYPE)
+				.setRange(new SingletonRangeHelper(type, G_PropertyType.STRING)).build();
+		final G_EntityQuery q = new QueryHelper(pmdh);
+		return count(q);
+	}
+
+	public long count(final G_EntityQuery pq) {
+		long longCount = 0l;
+		try {
+			final io.searchbox.core.Count.Builder action = new Count.Builder()
+					.setParameter("timeout", defaultESTimeout);
+			if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getPropertyMatchDescriptors())) {
+
+				pq.getPropertyMatchDescriptors().get(0);
+				String schema = pq.getTargetSchema();
+				if (!ValidationUtils.isValid(schema)) {
+					schema = c.getIndexName();
+				}
+				BoolQueryBuilder bool = null;
+				for (final G_PropertyMatchDescriptor d : pq.getPropertyMatchDescriptors()) {
+					final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
+					final String key = pmdh.getKey();
+					final Object r = pmdh.getRange();
+					pmdh.getVariable();
+					if (key.equals(ESTYPE)) {
+						if (ValidationUtils.isValid(r)) {
+							if (r instanceof G_SingletonRange) {
+								final String type = (String) ((G_SingletonRange) r).getValue();
+								action.addType(type);
+								logger.debug("added type: " + type);
+
+							} else if (r instanceof G_ListRange) {
+								action.addType((Collection<? extends String>) r);
+							}
+						}
+					} else {
+						bool = buildBooleanConstraints(pmdh, bool);
+					}
+				}
+
+				SearchSourceBuilder ssb = new SearchSourceBuilder();
+				if (bool != null) {
+					ssb = ssb.query(bool);
+				} else {
+					ssb = ssb.query(QueryBuilders.matchAllQuery());
+				}
+				logger.debug(ssb.toString());
+				action.query(ssb.toString());
+
+				if (ValidationUtils.isValid(pq.getTargetSchema())) {
+					action.addIndex(pq.getTargetSchema());
+					logger.debug("index: " + pq.getTargetSchema());
+				}
+
+			}
+			final CountResult result = c.getClient().execute(action.build());
+			longCount = result.getCount().longValue();
+			return longCount;
+		} catch (final Exception e) {
+			logger.error("performCount Could not connect to one of the external resources needed for your request: "
+					+ e.getMessage());
+		}
+		logger.debug("Found a count of: " + longCount);
+		return longCount;
 	}
 
 	protected void createIndex(final String indexName) throws Exception {
@@ -224,15 +402,37 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 		return DateTime.now().getMillis();
 	}
 
+	/**
+	 * When given just the id. Uses default index and no types for this dao.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	protected JestResult getResultsById(final String id) {
 		// DONT use _all for type when searching by id.
 		return getResultsById(id, index, null);
 	}
 
+	/**
+	 * When given the id and a type (that is not _all). Uses default index for
+	 * this dao.
+	 * 
+	 * @param id
+	 * @param type
+	 * @return
+	 */
 	protected JestResult getResultsById(final String id, final String type) {
 		return getResultsById(id, index, type);
 	}
 
+	/**
+	 * When given an id a type and an index.
+	 * 
+	 * @param id
+	 * @param customIndex
+	 * @param customType
+	 * @return
+	 */
 	protected JestResult getResultsById(final String id, final String customIndex, final String customType) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
@@ -319,46 +519,77 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 		}
 	}
 
-	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery q) {
-		JestResult result = new JestResult(null);
-		final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchAllQuery()).sort("_id");
-		final ArrayList<String> excludes = new ArrayList<String>();
-		for (final G_SearchTuple<String> a : q.getAttributeList()) {
-			if (a.getSearchType().equals(G_SearchType.COMPARE_NOTINCLUDE)) {
-				excludes.add(a.getValue());
-			}
-		}
-		if (ValidationUtils.isValid(excludes)) {
-			ssb.fetchSource(null, excludes.toArray(new String[excludes.size()]));
-		}
-		/**
-		 * Make a search object first.
-		 */
-		final Search search = new Search.Builder(ssb.toString()).addIndex(index).addType(type)
-				.setParameter(Parameters.SIZE, PAGESIZE).setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
-				.setParameter("timeout", defaultESTimeout).setParameter(Parameters.SCROLL, "5m").build();
-		logger.debug(ssb.toString());
+	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery pq) {
+		JestResult jestResult = new JestResult(null);
 
 		try {
-			result = c.getClient().execute(search);
-			// The first query will not have any results, just the scroll id
-			assert (result.isSucceeded());
-			String scrollId = result.getJsonObject().get("_scroll_id").getAsString();
-			logger.debug(" scan completed, scroll id is " + scrollId);
-			int currentResultSize = 0;
-			int pageNumber = 1;
-			do {
-				final SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
-				result = c.getClient().execute(scroll);
-				scrollId = result.getJsonObject().get("_scroll_id").getAsString();
-				final JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
-				currentResultSize = hits.size();
-				logger.debug("finished scrolling page # " + pageNumber++ + " which had " + currentResultSize + " hits.");
-				final G_SearchResult sr = G_SearchResult.newBuilder().setResult(result).build();
+			io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 
-				cb.callBack(sr, q);
-			} while (currentResultSize > 0);
+			final boolean scrolling = false;
+			if (scrolling) {
+				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+				action = action.setParameter(Parameters.SIZE, "200");
+				action = action.setParameter(Parameters.SCROLL, "5m");
+				jestResult = c.getClient().execute(action.build());
+				// The first query will not have any results, just the scroll id
 
+				if (jestResult.isSucceeded()) {
+					String scrollId = jestResult.getJsonObject().get("_scroll_id").getAsString();
+					logger.debug(" scan completed, scroll id is " + scrollId);
+					int currentResultSize = 0;
+					int pageNumber = 1;
+					do {
+
+						final JsonNode rootNode = mapper.readValue(jestResult.toString(), JsonNode.class);
+						final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
+
+						final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
+						currentResultSize = actualListOfHits.size();
+						for (int i = 0; i < actualListOfHits.size(); i++) {
+							final JsonNode currentHit = actualListOfHits.get(i);
+							if (ValidationUtils.isValid(currentHit)) {
+								final G_SearchResult sr = db.buildSearchResultFromDocument(i, currentHit, pq);
+								cb.execute(sr, pq);
+							}
+						}
+						logger.debug("finished scrolling page # " + pageNumber++ + " which had " + currentResultSize
+								+ " hits.");
+						final SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
+						jestResult = c.getClient().execute(scroll);
+						scrollId = jestResult.getJsonObject().get("_scroll_id").getAsString();
+					} while (currentResultSize > 0);
+				} else {
+					logger.error("Scroll failed with " + jestResult.getErrorMessage());
+				}
+			} else {
+				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+				action = action.setParameter(Parameters.SIZE, "200");
+
+				// The first query will not have any results, just the scroll id
+
+				int currentResultSize = 0;
+				int pageNumber = 0;
+				do {
+					jestResult = c.getClient().execute(action.build());
+					logger.debug(jestResult.getJsonString());
+					final JsonNode rootNode = mapper.readValue(jestResult.toString(), JsonNode.class);
+					final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
+
+					final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
+					currentResultSize = actualListOfHits.size();
+					for (int i = 0; i < actualListOfHits.size(); i++) {
+						final JsonNode currentHit = actualListOfHits.get(i);
+						if (ValidationUtils.isValid(currentHit)) {
+							final G_SearchResult sr = db.buildSearchResultFromDocument(i, currentHit, pq);
+							cb.execute(sr, pq);
+						}
+					}
+					logger.debug("finished scrolling page # " + pageNumber + " which had " + currentResultSize
+							+ " hits.");
+					pageNumber++;
+					action.setParameter("from", (pageNumber * 200));
+				} while (currentResultSize > 0);
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error("Problem in callback " + e.getMessage());
@@ -366,6 +597,40 @@ public class BasicESDAO<T extends JestResult, Q extends G_EntityQuery> {
 		return true;
 
 	}
+
+	//
+	// public String performQuery(final String basicAuth, final String baseurl,
+	// final G_EntityQuery q)
+	// throws DataAccessException {
+	//
+	// String retval = null;
+	// final G_PropertyMatchDescriptor tuple =
+	// q.getPropertyMatchDescriptors().get(0);
+	// try {
+	// if (tuple.getValue().isEmpty()) {
+	// retval = performIndexQuery(q);
+	// } else {
+	// if (!ValidationUtils.isValid(tuple.getConstraint())) {
+	// logger.error("No search type was supplied with tuple, using EQUALS");
+	// tuple.setConstraint(G_Constraint.COMPARE_EQUALS);
+	// }
+	//
+	// if (tuple.getConstraint().equals(G_Constraint.COMPARE_EQUALS)) {
+	// retval = performMatchQuery(q);
+	// } else if (tuple.getConstraint().equals(G_Constraint.COMPARE_CONTAINS)) {
+	// retval = performCommonTermsQuery(q);
+	// } else {
+	// retval = performCommonTermsQuery(q);
+	// }
+	// }
+	// } catch (final Exception e) {
+	// logger.error("performQuery " + e.getMessage());
+	// throw new DataAccessException(
+	// "Could not connect to one of the external resources needed for your request: "
+	// + e.getMessage());
+	// }
+	// return retval;
+	// }
 
 	public void recreateIndex() {
 		try {

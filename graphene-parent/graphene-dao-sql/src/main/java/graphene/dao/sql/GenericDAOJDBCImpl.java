@@ -1,10 +1,10 @@
 package graphene.dao.sql;
 
-import graphene.dao.GenericDAO;
+import graphene.model.idl.G_CallBack;
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.query.G_CallBack;
 import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
@@ -17,6 +17,7 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnegative;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
@@ -28,7 +29,7 @@ import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.mysql.MySQLQuery;
 import com.mysema.query.types.EntityPath;
 
-public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
+public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 
 	/**
 	 * If you need to change the database that is used, set it in the
@@ -113,9 +114,14 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 				numProcessed += results.getResults().size();
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p, q)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
+					try {
+						if (!cb.execute(p, q)) {
+							logger.error("Fatal error in callback from loading index");
+							break;
+						}
+					} catch (final AvroRemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					p = null;
 				}
@@ -331,8 +337,9 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 	}
 
 	@Override
-	public void setReady(final boolean b) {
+	public Void setReady(final boolean b) {
 		this.ready = b;
+		return null;
 	}
 
 	/**
@@ -477,9 +484,14 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p, q)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
+					try {
+						if (!cb.execute(p, q)) {
+							logger.error("Fatal error in callback from loading index");
+							break;
+						}
+					} catch (final AvroRemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					p = null;
 				}
@@ -662,9 +674,14 @@ public abstract class GenericDAOJDBCImpl<T> implements GenericDAO {
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p, q)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
+					try {
+						if (!cb.execute(p, q)) {
+							logger.error("Fatal error in callback from loading index");
+							break;
+						}
+					} catch (final AvroRemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					p = null;
 				}
