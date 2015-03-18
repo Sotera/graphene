@@ -57,8 +57,6 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	 * graphed using this builder. Each implementation should specify at least
 	 * one datasource string that is supported by itself.
 	 */
-	@Deprecated
-	protected List<String> supportedDatasets = new ArrayList<String>(1);
 
 	// protected Map<String, V_GenericEdge> edgeMap = new HashMap<String,
 	// V_GenericEdge>();
@@ -277,11 +275,6 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 		return scannedResults;
 	}
 
-	@Deprecated
-	public List<String> getSupportedDatasets() {
-		return supportedDatasets;
-	}
-
 	/**
 	 * Returns true if this result id has previously been scanned.
 	 * 
@@ -334,15 +327,6 @@ public abstract class AbstractGraphBuilder<T, Q> implements G_CallBack {
 	 */
 	public final void setScannedResults(final Set<String> scannedResults) {
 		this.scannedResults = scannedResults;
-	}
-
-	/**
-	 * @param supportedDatasets
-	 *            the supportedDatasets to set
-	 */
-	@Deprecated
-	void setSupportedDatasets(final List<String> supportedDatasets) {
-		this.supportedDatasets = supportedDatasets;
 	}
 
 }
