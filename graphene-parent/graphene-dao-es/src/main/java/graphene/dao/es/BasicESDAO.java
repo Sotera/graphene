@@ -14,6 +14,7 @@ import graphene.model.idlhelper.ListRangeHelper;
 import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
 import graphene.model.idlhelper.QueryHelper;
 import graphene.model.idlhelper.SingletonRangeHelper;
+import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Count;
@@ -560,7 +561,9 @@ public class BasicESDAO<T extends JestResult> {
 						final String scrollId = jestResult.getJsonObject().get("_scroll_id").getAsString();
 						logger.debug("Next scroll id is " + scrollId);
 						final SearchScroll scroll = new SearchScroll.Builder(scrollId, "1m").build();
+						final TimeReporter tr = new TimeReporter("Executing scroll " + pageNumber, logger);
 						jestResult = c.getClient().execute(scroll);
+						tr.logAsCompleted();
 						// Get the next scroll id
 
 						final JsonNode rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
