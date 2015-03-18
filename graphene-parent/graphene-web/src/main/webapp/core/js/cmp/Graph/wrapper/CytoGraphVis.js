@@ -349,7 +349,7 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 						content: "Hide Edge",
 						select: function() {
 							var edge = this;
-							_this.hideEdge(edge, false);
+							_this.setEdgeVisibility(edge, false, false);
 						}
 					}]
 				}); // END EDGE CONTEXT MENU
@@ -597,6 +597,9 @@ CytoscapeGraphVis.prototype.setHandlers = function() {
 		var gg = _this.getGenerator();
 		
 		if (e.cyTarget === _this.gv) {
+
+			_this.utils.updateProgress(" ", 1);
+			
 			var pos = e.cyPosition;
 			// if you're trying to add a node and click white-space, add a node
 			if (gg.stateMatches("ADD")) {
@@ -642,7 +645,7 @@ CytoscapeGraphVis.prototype.setHandlers = function() {
 			// if ctrl + shift, select all nodes of the clicked node's type
 			if (isShift && isCtrl) {
 				_this.gv.elements().unselect();
-				_this.gv.nodes("idType = '" + node.data("idType") + "'").select();
+				_this.gv.nodes("[idType = '" + node.data("idType") + "']").select();
 				_this.gv.nodes("[id = '" + node.data("id") + "']").unselect();
 			}
 			
