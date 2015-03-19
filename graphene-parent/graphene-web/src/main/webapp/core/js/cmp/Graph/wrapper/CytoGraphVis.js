@@ -6,8 +6,6 @@ function CytoscapeGraphVis(div_id) {
 	this.currentLayout = null;
 	this.owner = null;
 	this.searchName = "";
-	this.dispWidth = 1000;
-	this.dispHeight = 800;
 	
 	this.userName = "unknown";
 	
@@ -110,14 +108,6 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 	var onLoadCallback = args.shift();
 	var isUndirected = args.shift();
 	// at this point, args is an array of whatever other arguments were passed to this function
-	
-	if (typeof config.width !== "undefined") _this.dispWidth = config.width;
-	if (typeof config.height !== "undefined") _this.dispHeight = config.height;
-	if (typeof config.rightBorder !== "undefined") _this.dispRightBorder = config.rightBorder;
-	if (typeof config.leftBorder !== "undefined") _this.dispLeftBorder = config.leftBorder;
-	if (typeof config.topBorder !== "undefined") _this.dispTopBorder = config.topBorder;
-	if (typeof config.botBorder !== "undefined") _this.dispBotBorder = config.botBorder;
-	
 	
 	if (_this.gv !== null) {
 		console.log("Graph Visualization already exists for id = " + _this.id);
@@ -359,7 +349,7 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 						content: "Hide Edge",
 						select: function() {
 							var edge = this;
-							_this.hideEdge(edge, false);
+							_this.setEdgeVisibility(edge, false, false);
 						}
 					}]
 				}); // END EDGE CONTEXT MENU
@@ -574,13 +564,10 @@ CytoscapeGraphVis.prototype.clear = function() {
 
 /**
  *	Called when the hosting div is resized.  Notifies cytoscape to recalculate its bounds
- *		@param w:int - the div's new width in pixels
- *		@param h:int - the div's new height in pixels
+ *		@param w:int - (optional) the div's new width in pixels
+ *		@param h:int - (optional) the div's new height in pixels
  */
 CytoscapeGraphVis.prototype.resize = function(w, h) {
-	this.dispWidth = w;
-	this.dispHeight = h;
-	
 	if (this.initialized == true && typeof this.gv != "undefined") {
 		this.gv.resize();
 		this.gv.fit();
@@ -610,6 +597,10 @@ CytoscapeGraphVis.prototype.setHandlers = function() {
 		var gg = _this.getGenerator();
 		
 		if (e.cyTarget === _this.gv) {
+
+			_this.utils.updateProgress(" ", 1);
+			_this.owner.getNodeDisplay().clear();
+			
 			var pos = e.cyPosition;
 			// if you're trying to add a node and click white-space, add a node
 			if (gg.stateMatches("ADD")) {
@@ -655,7 +646,7 @@ CytoscapeGraphVis.prototype.setHandlers = function() {
 			// if ctrl + shift, select all nodes of the clicked node's type
 			if (isShift && isCtrl) {
 				_this.gv.elements().unselect();
-				_this.gv.nodes("idType = '" + node.data("idType") + "'").select();
+				_this.gv.nodes("[idType = '" + node.data("idType") + "']").select();
 				_this.gv.nodes("[id = '" + node.data("id") + "']").unselect();
 			}
 			

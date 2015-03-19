@@ -192,12 +192,14 @@ function StateManager(graphRef) {
 	 * 	A separate filtering action from Hiding/Showing.  Nodes are filtered based on whether their 
 	 * 	"name" field contains any of the search terms provided.
 	 * 		@param str:String - A term or comma-separated terms. Nodes that contain a term are shown, the rest are hidden
+	 * 		@param nodeProperty:String - (optional) The data field of the node to filter against. Defaults to "name"
 	 */
-	this.applyFilter = function(str) {
+	this.applyFilter = function(str, nodeProperty) {
 		var nodes2Hide = []; 
 		var nodes2Show = [];
 		var isFilter = true;
 		var terms = str.toUpperCase().split(",");
+		var dataField = (typeof nodeProperty == "string") ? nodeProperty : "name";
 		
 		var _nodeNameContainsTerm = function(name, terms) {
 	        for (var i = 0; i < terms.length; i++) {
@@ -211,20 +213,22 @@ function StateManager(graphRef) {
 		// for each node (that does NOT have the toggled-hide class), determine if its
 		// name contains any of the search terms
 		graphRef.gv.nodes().not(".toggled-hide").each(function(i, node) {
-			var name = node.data("name");
-			if ( _nodeNameContainsTerm(name.toUpperCase(), terms) ) {
-				nodes2Show.push(node);
-			} else {
-				nodes2Hide.push(node);
+			var property = node.data(dataField);
+			if (typeof property != "undefined"){
+				if ( !node.hasClass("toggled-show") && _nodeNameContainsTerm(property.toUpperCase(), terms) ) {
+					nodes2Show.push(node);
+				} else {
+					nodes2Hide.push(node);
+				}
 			}
 		});
 
 		for (var i = 0; i < nodes2Hide.length; i++) {
 			this.setNodeVisibility(nodes2Hide[i], false, isFilter);
 		}
-		for (i = 0; i < nodes2Show.length; i++) {
-			this.setNodeVisibility(nodes2Show[i], true, isFilter);
-		}
+		//for (i = 0; i < nodes2Show.length; i++) {
+		//	this.setNodeVisibility(nodes2Show[i], true, isFilter);
+		//}
 		
 		graphRef.gv.fit(); // ugh...
 	};

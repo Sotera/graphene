@@ -85,6 +85,22 @@ Ext.define("DARPA.AbstractNodeDisplay", {
     	}
     },
     
+    clear: function() {
+		var idType, idVal, attrs;
+		
+		try {
+			idType = this.items.items[0].items.items[0];
+			idVal = this.items.items[0].items.items[1];
+			attrs = this.items.items[0].items.items[2];
+		} catch (e) {
+			console.error("Could not clear the Node Details panel");
+		}
+		
+		if (idType) idType.setValue("");
+		if (idVal) idVal.setValue("");
+		if (attrs) attrs.update("");
+	},
+    
 	getPivotButton: function() 		{ return Ext.getCmp(this.id + "-Actions").getPivotButton(); },
 	getUnPivotButton: function() 	{ return Ext.getCmp(this.id + "-Actions").getUnPivotButton(); },
 	getHideButton: function() 		{ return Ext.getCmp(this.id + "-Actions").getHideButton(); },

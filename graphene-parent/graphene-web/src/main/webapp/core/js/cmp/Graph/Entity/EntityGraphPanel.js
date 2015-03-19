@@ -104,14 +104,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 	afterLayout: function() {
 		var self = this;
 		if (self.GraphVis.getGv() == null) {
-			var config = {
-				//width: self.getWidth(),
-				//height: self.getHeight(),
-				rightBorder: 320,
-				leftBorder: 5,
-				topBorder: 5,
-				botBorder: 80
-			};
+			var config = {/* configs go here */};
 			self.GraphVis.init(config, self, function() {
 				//self.showjson(self.prevLoadParams.value);
 			}, true);
@@ -149,18 +142,20 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.getProgressBar().reset();
 
 				if (success == false || records == null || records.length == 0) {
-					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH");
-					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
-					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
+					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH", 0);
+					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH", 0);
+					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH", 0);
 					self.clear();
 					return;
 				}
 
-				self.setStatus("LOADED DATA", 1);
-				self.json = records[0].raw;
-				self.GraphVis.setUserName(self.json.userName);
+				var retJSON = records[0].raw;
 				
-				self.legendJSON = records[0].raw.legend;
+				self.json = retJSON;
+				self.GraphVis.setUserName(retJSON.userName);
+				self.setStatus(retJSON.strStatus, 1);
+				
+				self.legendJSON = retJSON.legend;
 				if (typeof self.legendJSON == "string") {
 					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
@@ -169,34 +164,33 @@ Ext.define("DARPA.EntityGraphPanel", {
 					if (scope.GraphVis.getGv() != null) {
 						//scope.clear();
 						scope.showjson(scope.prevLoadParams.value, useSaved);
+						scope.getNodeDisplay().updateLegend(scope.legendJSON, "EntityGraph");
 					}
 				};
 				
-				if (self.json != undefined) {
-					var THRESHOLD = 300;
-					var useSaved = false;
-					if (self.json.nodes.length == 0) {
-						self.setStatus("NO DATA FOUND TO PLOT");
-					} else if (self.json.nodes.length < THRESHOLD) {
-						useSaved = self.json.nodes[0].position != null;
-						loadGraph(self, useSaved);
-					} else {
-						useSaved = self.json.nodes[0].position != null;
-						Ext.Msg.confirm(
-							"Loading a Large Graph",
-							"The expected graph contains over " + THRESHOLD + " nodes.  This may take a moment to render.  Do you wish to wait?\n" +
-							"If not, the graph will not render.",
-							function(ans) {
-								if (ans == 'yes') {
-									loadGraph(self, useSaved);
-								}
+				if (typeof self.json == "undefined") {
+					//TODO error notice
+					return;
+				}
+				
+				var THRESHOLD = 300;
+				var useSaved = false;
+				
+				if (self.json.nodes.length < THRESHOLD) {
+					useSaved = self.json.nodes[0].position != null;
+					loadGraph(self, useSaved);
+				} else {
+					useSaved = self.json.nodes[0].position != null;
+					Ext.Msg.confirm(
+						"Loading a Large Graph",
+						"The expected graph contains over " + THRESHOLD + " nodes.  This may take a moment to render.  Do you wish to wait?\n" +
+						"If not, the graph will not render.",
+						function(ans) {
+							if (ans == 'yes') {
+								loadGraph(self, useSaved);
 							}
-						);
-					}
-					
-					var nodeCount = self.json.nodes.length;
-					self.appendTabTitle("(" + nodeCount.toString() + ")");
-					self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
+						}
+					);
 				}
 			}
 		});
@@ -246,50 +240,39 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.getProgressBar().reset();
 				
 				if (success == false || records == null || records.length == 0) {
-					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH");
-					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
-					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
+					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH", 0);
+					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH", 0);
+					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH", 0);
 					self.clear();
 					return;
 				}
 
-				self.setStatus("LOADED DATA", 1);
-				self.json = records[0].raw;;
+				var retJSON = records[0].raw;
+				
+				self.json = retJSON;
+				self.setStatus(retJSON.strStatus, 1);
 
-				self.legendJSON = records[0].raw.legend;
+				self.legendJSON = retJSON.legend;
 				if (typeof self.legendJSON == "string") {
 					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
-				// results could be empty, check for this here
-				if (self.json && self.json.nodes.length <= 2) { 
-					self.setStatus("No additional items were found for this id.");
-					self.json1HopNode = null;
-					// don't alter the existing graph
-				} else {
-					// should be self.json.nodes.length
-					if (self.json.length > maxNewCallsAlertThresh) {
-						Ext.Msg.confirm(
-							'Confirm',
-							'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
-							function(ans) {
-								if (ans == 'yes') {
-									self.GraphVis.expand(self.json, node);
-									self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
-								}
+				// should be self.json.nodes.length
+				if (self.json.length > maxNewCallsAlertThresh) {
+					Ext.Msg.confirm(
+						'Confirm',
+						'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
+						function(ans) {
+							if (ans == 'yes') {
+								self.GraphVis.expand(self.json, node);
+								self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 							}
-						);
-					} else {
-						self.GraphVis.expand(self.json, node);
-						self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
-					}
+						}
+					);
+				} else {
+					self.GraphVis.expand(self.json, node);
+					self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 				}
-
-				var nodeCount = self.json.nodes.length;
-				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				
-				// Update title to display the communicationId value and value of nodes found
-				// self.updateTitle(graph.nodes.length, self.prevLoadParams.value );
 			}
 		});
 	},
@@ -307,7 +290,12 @@ Ext.define("DARPA.EntityGraphPanel", {
 		} else {
 			isEntity = (type == 'customer' || type == 'LENDER' || type == 'BORROWER');
 		}
-		nodeDisp.enablePivot(isEntity);
+		
+		var len = this.GraphVis.getSelectedNodes().length;
+		var msg = "" + len + " selected node" + ((len > 1) ? "s" : "");
+		this.setStatus(msg, 1);
+		
+		nodeDisp.enablePivot(isEntity && len == 1);
 		nodeDisp.enableShow(type == 'account' || isEntity);
 		nodeDisp.enableHide(true);
 	},
