@@ -134,11 +134,7 @@
 												</t:pagelink>
 												<br />
 											</p:actionCell>
-											<p:attributeListCell>
-												<t:loop source="currentQuery.attributeList" value="currentTuple">
-						 ${currentTuple.value} : ${currentTuple.searchType} <br />
-												</t:loop>
-											</p:attributeListCell>
+											
 
 											
 											<p:timeInitiatedCell>

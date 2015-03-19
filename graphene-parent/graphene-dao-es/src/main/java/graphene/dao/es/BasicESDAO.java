@@ -14,6 +14,7 @@ import graphene.model.idlhelper.ListRangeHelper;
 import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
 import graphene.model.idlhelper.QueryHelper;
 import graphene.model.idlhelper.SingletonRangeHelper;
+import graphene.util.StringUtils;
 import graphene.util.stats.TimeReporter;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
@@ -31,7 +32,7 @@ import io.searchbox.params.SearchType;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -62,11 +63,12 @@ import com.google.gson.JsonObject;
  * 
  */
 public class BasicESDAO<T extends JestResult> {
-
-	public static final String ESTYPE = "estype";
+	public static final String ESQUERY = "_esquery";
+	public static final String ESFIELDS = "_esfields";
+	public static final String ESTYPE = "_estype";
 	private static final int MAX_TO_GET_AT_ONCE = 1000000;
 	private static final int PAGESIZE = 200;
-	public static final String ESID = "esid";
+	public static final String ESID = "_esid";
 	protected ObjectMapper mapper;
 	private String index;
 	protected Logger logger;
@@ -118,7 +120,7 @@ public class BasicESDAO<T extends JestResult> {
 				constraintUsed = true;
 				break;
 			case COMPARE_STARTSWITH:
-				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+				bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
 				constraintUsed = true;
 				break;
 			case COMPARE_NOTINCLUDE:
@@ -136,57 +138,92 @@ public class BasicESDAO<T extends JestResult> {
 	}
 
 	protected io.searchbox.core.Search.Builder buildSearchAction(final G_EntityQuery pq) {
-		final Set<String> esTypes = new LinkedHashSet<String>();
-		final Set<String> esIds = new LinkedHashSet<String>();
+		final Set<String> esTypes = new HashSet<String>();
+		final Set<String> esFields = new HashSet<String>();
+		final Set<String> esIds = new HashSet<String>();
+		new HashSet<String>();
+		SearchSourceBuilder ssb = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getPropertyMatchDescriptors())) {
 
-			String schema = pq.getTargetSchema();
-			if (!ValidationUtils.isValid(schema)) {
-				schema = c.getIndexName();
-			}
-			logger.debug("Setting index to " + schema);
 			BoolQueryBuilder bool = null;
+
+			String queryString = null;
 
 			for (final G_PropertyMatchDescriptor d : pq.getPropertyMatchDescriptors()) {
 				final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
 				final String key = pmdh.getKey();
 				final Object r = pmdh.getRange();
-				pmdh.getVariable();
-				if (key.equals(ESTYPE)) {
 
-					if (ValidationUtils.isValid(r)) {
+				if (ValidationUtils.isValid(r)) {
+					if (key.equals(ESTYPE)) {
 						if (r instanceof G_SingletonRange) {
-							esTypes.add((String) ((G_SingletonRange) r).getValue());
+							final String t = (String) ((G_SingletonRange) r).getValue();
+							if (ValidationUtils.isValid(t)) {
+								logger.debug("Adding type " + t);
+								esTypes.add(t);
+							}
 						} else if (r instanceof G_ListRange) {
-							esTypes.addAll((Collection<? extends String>) r);
+							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
+								logger.debug("Adding types " + t);
+								esTypes.add((String) t);
+							}
 						}
 
-						logger.debug("Adding type, types are now " + esTypes.toArray());
-					}
-				}
-				if (key.equals(ESID)) {
-					if (ValidationUtils.isValid(r)) {
+						logger.debug("Adding type, types are now " + StringUtils.coalesc("", esTypes.toArray()));
+
+					} else if (key.equals(ESID)) {
 						if (r instanceof G_SingletonRange) {
-							esIds.add((String) ((G_SingletonRange) r).getValue());
+							final String t = (String) ((G_SingletonRange) r).getValue();
+							if (ValidationUtils.isValid(t)) {
+								logger.debug("Adding id " + t);
+								esIds.add(t);
+							}
 						} else if (r instanceof G_ListRange) {
-							esIds.addAll((Collection<? extends String>) r);
+							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
+								logger.debug("Adding ids " + t);
+								esIds.add((String) t);
+							}
 						}
-						logger.debug("Adding id, ids are now " + esIds.toArray());
+						logger.debug("Adding id, ids are now " + StringUtils.coalesc("", esIds.toArray()));
+					} else if (key.equals(ESFIELDS)) {
+						if (r instanceof G_SingletonRange) {
+							final String t = (String) ((G_SingletonRange) r).getValue();
+							if (ValidationUtils.isValid(t)) {
+								logger.debug("Adding field " + t);
+								esFields.add(t);
+							}
+						} else if (r instanceof G_ListRange) {
+							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
+								logger.debug("Adding fields " + t);
+								esFields.add((String) t);
+							}
+						}
+					} else if (key.equals(ESQUERY)) {
+						if (r instanceof G_SingletonRange) {
+							final String t = (String) ((G_SingletonRange) r).getValue();
+							if (ValidationUtils.isValid(t)) {
+								logger.debug("Setting custom query " + t);
+								queryString = t;
+							}
+						}
+
+					} else {
+						bool = buildBooleanConstraints(pmdh, bool);
 					}
-				} else {
-					bool = buildBooleanConstraints(pmdh, bool);
 				}
 			}
 
-			SearchSourceBuilder ssb = new SearchSourceBuilder();
-			String queryString = null;
-			if (bool != null) {
+			if (queryString != null) {
+				logger.debug("We encountered a custom query so we will use that");
+			} else if (bool != null) {
+				logger.debug("Using a boolean query");
 				queryString = bool.toString();
-			} else if (esIds.size() > 1) {
+			} else if (esIds.size() > 0) {
 				logger.debug("Using an id filter query instead");
 				queryString = QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(),
 						FilterBuilders.termsFilter("_id", esIds)).toString();
 			} else {
+				logger.debug("Using an matchAllQuery instead");
 				queryString = QueryBuilders.matchAllQuery().toString();
 			}
 			ssb = ssb.query(queryString);
@@ -197,22 +234,30 @@ public class BasicESDAO<T extends JestResult> {
 			logger.debug(ssb.toString());
 		}
 
-		final io.searchbox.core.Search.Builder action = new Search.Builder(QueryBuilders.matchAllQuery().toString())
-				.setParameter("timeout", defaultESTimeout);
+		final io.searchbox.core.Search.Builder action = new Search.Builder(ssb.toString()).setParameter("timeout",
+				defaultESTimeout);
 		if (ValidationUtils.isValid(pq.getTargetSchema())) {
 			action.addIndex(pq.getTargetSchema());
-			logger.debug("adding index: " + pq.getTargetSchema());
+			logger.debug("adding specified index: " + pq.getTargetSchema());
+		} else if (!ValidationUtils.isValid(c.getIndexName())) {
+			action.addIndex(c.getIndexName());
+			logger.debug("adding default index: " + c.getIndexName());
+		} else {
+			logger.error("No index to set in query, check your es.properties to set a search index.");
+			action.addIndex("bsa_0_1");
+
 		}
+
 		if (ValidationUtils.isValid(esTypes)) {
 			action.addType(esTypes);
-			logger.debug("adding types: " + pq.getTargetSchema());
+			logger.debug("adding types: " + esTypes.toArray());
 		}
 
 		/**
 		 * Set scrolling options for callback
 		 */
 		action.setParameter(Parameters.SIZE, PAGESIZE);
-		logger.debug("We built query " + action.toString());
+		logger.debug("We built query " + action.build().toString());
 		return action;
 	}
 
@@ -530,31 +575,24 @@ public class BasicESDAO<T extends JestResult> {
 
 		try {
 
-			final boolean scrolling = true;
+			final boolean scrolling = false;
 			if (scrolling) {
-				// io.searchbox.core.Search.Builder action =
-				// buildSearchAction(pq);
-				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN);
-				// action = action.setParameter(Parameters.SIZE, "200");
-				// action = action.setParameter(Parameters.SCROLL, "5m");
-				final SearchSourceBuilder ssb = new SearchSourceBuilder().query(QueryBuilders.matchPhraseQuery("_all",
-						"aksoy"));
+				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
+				final Search build = action.build();
+				action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN);
+				action = action.setParameter(Parameters.SIZE, maxResults);
+				action = action.setParameter(Parameters.SCROLL, "1m");
 
 				/**
 				 * Make a search object first.
 				 */
-				final Search search = new Search.Builder(ssb.toString()).addIndex(index)
-						.setParameter(Parameters.SIZE, PAGESIZE).setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
-						.setParameter("timeout", defaultESTimeout).setParameter(Parameters.SCROLL, "1m").build();
-				logger.debug(ssb.toString());
+				jestResult = c.getClient().execute(action.build());
 
-				// jestResult = c.getClient().execute(action.build());
-				jestResult = c.getClient().execute(search);
 				// The first query will not have any results, just the scroll id
 
 				if (jestResult.isSucceeded()) {
 					logger.debug("execution completed (expected no results, just setting up scroll)");
-					logger.debug(jestResult.getJsonString());
+					// logger.debug(jestResult.getJsonString());
 					int currentResultSize = 0;
 					int pageNumber = 1;
 					do {
@@ -589,32 +627,47 @@ public class BasicESDAO<T extends JestResult> {
 
 				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
-				action = action.setParameter(Parameters.SIZE, "200");
+				action = action.setParameter(Parameters.SIZE, maxResults);
 
 				// The first query will not have any results, just the scroll id
 
 				int currentResultSize = 0;
-				int pageNumber = 0;
-				do {
-					jestResult = c.getClient().execute(action.build());
-					logger.debug(jestResult.getJsonString());
-					final JsonNode rootNode = mapper.readValue(jestResult.toString(), JsonNode.class);
-					final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
+				// int pageNumber = 0;
+				// do {
+				jestResult = c.getClient().execute(action.build());
+				// logger.debug(jestResult.getJsonString());
+				final JsonNode rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
+				final JsonNode outerHits = rootNode.get("hits");
+				if (outerHits == null) {
+					currentResultSize = 0;
+				} else {
+					final List<JsonNode> hits = outerHits.findValues("hits");
 
 					final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
 					currentResultSize = actualListOfHits.size();
 					for (int i = 0; i < actualListOfHits.size(); i++) {
 						final JsonNode currentHit = actualListOfHits.get(i);
+
 						if (ValidationUtils.isValid(currentHit)) {
+
+							/**
+							 * TODO: To improve speed, let's make a second
+							 * callback option that takes an Object. From there
+							 * the documentBuilder will have access to the raw
+							 * object for a short while, and it can pull out the
+							 * id of the document so see if we've already run
+							 * through it, BEFORE doing the expensive casting to
+							 * DTO object.
+							 */
 							final G_SearchResult sr = db.buildSearchResultFromDocument(i, currentHit, pq);
 							cb.execute(sr, pq);
 						}
 					}
-					logger.debug("finished scrolling page # " + pageNumber + " which had " + currentResultSize
-							+ " hits.");
-					pageNumber++;
-					action.setParameter("from", (pageNumber * 200));
-				} while (currentResultSize > 0);
+					logger.debug("finished executing on " + currentResultSize + " hits.");
+					// pageNumber++;
+					// action.setParameter("from", (pageNumber * 200));
+				}
+				// } while (currentResultSize > 0);
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();

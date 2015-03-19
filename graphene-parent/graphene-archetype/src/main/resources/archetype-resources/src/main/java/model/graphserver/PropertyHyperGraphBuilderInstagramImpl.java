@@ -260,7 +260,7 @@ public class PropertyHyperGraphBuilderInstagramImpl extends PropertyHyperGraphBu
 		} else {
 			for (final DocumentGraphParser s : singletons) {
 				if (s.getSupportedObjects().contains(obj.getClass().getCanonicalName())) {
-					logger.debug("Found DocumentGraphParser which supports " + s.getSupportedObjects());
+					//logger.debug("Found DocumentGraphParser which supports " + s.getSupportedObjects());
 					dgp = s;
 				}
 			}

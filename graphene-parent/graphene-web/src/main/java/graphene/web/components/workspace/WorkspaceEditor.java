@@ -135,6 +135,8 @@ public class WorkspaceEditor {
 	private G_ReportViewEvent currentReport;
 	@Property
 	private G_EntityQuery currentQuery;
+	@Property
+	private G_PropertyMatchDescriptor currentPmd;
 	@Parameter(required = true)
 	@Property
 	private String workspaceId;

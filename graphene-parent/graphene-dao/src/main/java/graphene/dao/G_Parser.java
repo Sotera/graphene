@@ -3,7 +3,6 @@ package graphene.dao;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
-import graphene.services.PropertyHyperGraphBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -110,7 +109,7 @@ public interface G_Parser<T> {
 	/**
 	 * @return the phgb
 	 */
-	public HyperGraphBuilder<Object> getPhgb();
+	public HyperGraphBuilder getPhgb();
 
 	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
 
@@ -150,6 +149,6 @@ public interface G_Parser<T> {
 	 * @param phgb
 	 *            the phgb to set
 	 */
-	public void setPhgb(PropertyHyperGraphBuilder<Object> phgb);
+	public void setPhgb(HyperGraphBuilder phgb);
 
 }

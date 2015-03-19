@@ -135,7 +135,7 @@ public class StyleServiceImpl implements StyleService {
 
 	@Override
 	public String getStyle(final String nodeType, final boolean highlighted) {
-		logger.debug("Getting Style for " + nodeType);
+		// logger.debug("Getting Style for " + nodeType);
 		if (highlighted) {
 			return getHighlightStyle();
 		} else {
@@ -208,6 +208,7 @@ public class StyleServiceImpl implements StyleService {
 
 		numberOfDefinedColors = colorMap.size();
 		styleMap.clear();
+		styleMap.put("ERROR", buildStyle("#ff0", BLACK));
 		styleMap.put(G_CanonicalPropertyType.NAME.name(),
 				buildStyle(colorMap.get(G_CanonicalPropertyType.NAME.name()), WHITE));
 		styleMap.put(G_CanonicalPropertyType.EMAIL_ADDRESS.name(),

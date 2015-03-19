@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.AvroRemoteException;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -86,7 +87,6 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 		auth = null;
 		this.c = c;
 		mapper = new ObjectMapper(); // can reuse, share globally
-		setType(TYPE);
 	}
 
 	//
@@ -156,14 +156,14 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		logger.debug(jestResult.getJsonString());
 		JsonNode rootNode;
+		long totalNumberOfPossibleResults = 0l;
 		try {
-			rootNode = mapper.readValue(jestResult.toString(), JsonNode.class);
+			rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
 
-			int totalNumberOfPossibleResults = 0;
 			if ((rootNode != null) && (rootNode.get("hits") != null) && (rootNode.get("hits").get("total") != null)) {
-				totalNumberOfPossibleResults = rootNode.get("hits").get("total").asInt();
+				totalNumberOfPossibleResults = rootNode.get("hits").get("total").asLong();
 				logger.debug("Found " + totalNumberOfPossibleResults + " hits in hitparent!");
 
 				final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
@@ -173,7 +173,10 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 					final JsonNode currentHit = actualListOfHits.get(i);
 					if (ValidationUtils.isValid(currentHit)) {
 						final G_SearchResult result = db.buildSearchResultFromDocument(i, currentHit, pq);
-						resultsList.add(result);
+						if (result == null) {
+							logger.error("could not build search result from hit " + currentHit.toString());
+						}
+						CollectionUtils.addIgnoreNull(resultsList, result);
 					} else {
 						logger.error("Invalid search result at index " + i + " for query " + pq.toString());
 					}
@@ -184,8 +187,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 			e.printStackTrace();
 		}
 		results.setResults(resultsList);
-		results.setTotal((long) resultsList.size());
-
+		results.setTotal(totalNumberOfPossibleResults);
 		return results;
 	}
 

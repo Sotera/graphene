@@ -39,33 +39,43 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 	@Override
 	public G_SearchResult buildSearchResultFromDocument(final int index, final JsonNode hit, final G_EntityQuery sq) {
 		G_SearchResult sr = null;
-		final JsonNode source = hit.findValue("_source");
-		if (ValidationUtils.isValid(source)) {
-			final JsonNode typeNode = hit.get("_type");
-			logger.debug("typenode " + typeNode.textValue());
-			if (typeNode != null) {
-				final String type = typeNode.asText();
-				final G_Parser delegate = getParserForObject(type);
-				if (delegate != null) {
-					final DoubleNode score = (DoubleNode) hit.findValue("_score");
-					if (score == null) {
-						logger.error("Could not find the score of result. There may be something wrong with your ElasticSearch instance");
-					}
-					final G_Entity entity = delegate.buildEntityFromDocument(hit, sq);
-					entity.getProperties().put(G_Parser.SCORE,
-							new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
-					entity.getProperties().put(G_Parser.CARDINAL_ORDER,
-							new PropertyHelper(G_Parser.CARDINAL_ORDER, new Long(index + 1), G_PropertyTag.STAT));
+		try {
+			final JsonNode source = hit.findValue("_source");
+			if (ValidationUtils.isValid(source)) {
+				final JsonNode typeNode = hit.get("_type");
+				// logger.debug("typenode " + typeNode.textValue());
+				if (typeNode != null) {
+					final String type = typeNode.asText();
+					final G_Parser delegate = getParserForObject(type);
+					if (delegate != null) {
+						final DoubleNode score = (DoubleNode) hit.findValue("_score");
+						if (score == null) {
+							logger.error("Could not find the score of result. There may be something wrong with your ElasticSearch instance");
+						}
 
-					sr = new G_SearchResult(score.asDouble(0.0d), entity);
+						final G_Entity entity = delegate.buildEntityFromDocument(hit, sq);
+						if (entity != null) {
+							entity.getProperties().put(G_Parser.SCORE,
+									new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
+							entity.getProperties()
+									.put(G_Parser.CARDINAL_ORDER,
+											new PropertyHelper(G_Parser.CARDINAL_ORDER, new Long(index + 1),
+													G_PropertyTag.STAT));
+
+							sr = new G_SearchResult(score.asDouble(0.0d), entity);
+						}
+
+					} else {
+						logger.error("Could not find parser for type " + type);
+					}
 				} else {
-					logger.error("Could not find parser for type " + type);
+					logger.error("Could not find the type of result. There may be something wrong with your ElasticSearch instance");
 				}
 			} else {
-				logger.error("Could not find the type of result. There may be something wrong with your ElasticSearch instance");
+				logger.error("Could not find the source of result. There may be something wrong with your ElasticSearch instance");
 			}
-		} else {
-			logger.error("Could not find the source of result. There may be something wrong with your ElasticSearch instance");
+		} catch (final Exception e) {
+			logger.error(e.getMessage());
 		}
 		return sr;
 	}
@@ -79,7 +89,8 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 			if (ValidationUtils.isValid(singletons)) {
 				for (final G_Parser s : singletons) {
 					if (s.getSupportedObjects().contains(typeToParse)) {
-						logger.debug("Found DocumentGraphParser which supports " + s.getSupportedObjects());
+						// logger.debug("Found DocumentGraphParser which supports "
+						// + s.getSupportedObjects());
 						dgp = s;
 					}
 				}

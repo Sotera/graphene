@@ -26,12 +26,14 @@ package graphene.model.idlhelper;
 
 import graphene.model.idl.G_BoundedRange;
 import graphene.model.idl.G_DistributionRange;
+import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_GeoData;
 import graphene.model.idl.G_ListRange;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_Provenance;
+import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_Uncertainty;
 import graphene.util.validator.ValidationUtils;
@@ -103,6 +105,11 @@ public class PropertyHelper extends G_Property {
 		return null;
 	}
 
+	public static Double getSingletonDoubleValueByKey(final G_SearchResult currentSearchResult, final String key) {
+		final G_Entity e = (G_Entity) currentSearchResult.getResult();
+		return getSingletonDoubleValueByKey(e.getProperties(), key);
+	}
+
 	public static Double getSingletonDoubleValueByKey(final Map<String, G_Property> entityProperties, final String key) {
 		if (ValidationUtils.isValid(entityProperties)) {
 			final G_Property property = entityProperties.get(key);
@@ -112,6 +119,11 @@ public class PropertyHelper extends G_Property {
 		}
 	}
 
+	public static Long getSingletonLongByKey(final G_SearchResult currentSearchResult, final String key) {
+		final G_Entity e = (G_Entity) currentSearchResult.getResult();
+		return getSingletonLongByKey(e.getProperties(), key);
+	}
+
 	public static Long getSingletonLongByKey(final Map<String, G_Property> entityProperties, final String key) {
 		if (ValidationUtils.isValid(entityProperties)) {
 			final G_Property property = entityProperties.get(key);
@@ -119,6 +131,11 @@ public class PropertyHelper extends G_Property {
 		} else {
 			return null;
 		}
+	}
+
+	public static String getSingletonStringByKey(final G_SearchResult currentSearchResult, final String key) {
+		final G_Entity e = (G_Entity) currentSearchResult.getResult();
+		return getSingletonStringByKey(e.getProperties(), key);
 	}
 
 	public static String getSingletonStringByKey(final Map<String, G_Property> entityProperties, final String key) {

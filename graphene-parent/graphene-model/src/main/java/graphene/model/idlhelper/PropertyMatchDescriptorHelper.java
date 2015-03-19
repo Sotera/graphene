@@ -127,6 +127,22 @@ public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 		return SerializationHelper.toJson(map, G_PropertyMatchDescriptor.getClassSchema());
 	}
 
+	public PropertyMatchDescriptorHelper() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public PropertyMatchDescriptorHelper(final String key, final String singletonString) {
+		setKey(key);
+		setRange(new SingletonRangeHelper(singletonString, G_PropertyType.STRING));
+		setConstraint(G_Constraint.REQUIRED_EQUALS);
+	}
+
+	public PropertyMatchDescriptorHelper(final String key, final String... singletonString) {
+		setKey(key);
+		setRange(new ListRangeHelper(singletonString, G_PropertyType.STRING));
+		setConstraint(G_Constraint.REQUIRED_EQUALS);
+	}
+
 	public G_PropertyType getType() {
 		final Object range = getRange();
 		if (range instanceof G_SingletonRange) {

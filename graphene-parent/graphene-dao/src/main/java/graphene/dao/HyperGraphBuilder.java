@@ -1,33 +1,26 @@
 package graphene.dao;
 
 import graphene.model.idl.G_DataAccess;
+import graphene.model.idl.G_DocumentError;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_Property;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
 
-public interface HyperGraphBuilder<T> {
+public interface HyperGraphBuilder {
 
-	V_GenericGraph buildFromSubGraphs(V_GraphQuery graphQuery);
+	public abstract void addError(final G_DocumentError e);
 
-	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
+	public abstract void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q);
 
-	/**
-	 * 
-	 * @param minimumScoreRequired
-	 * @param inheritedScore
-	 * @param localPriority
-	 * @param id
-	 * @param idType
-	 * @param nodeType
-	 * @param attachTo
-	 * @param relationType
-	 * @param relationValue
-	 * @param nodeCertainty
-	 * @return
-	 */
-	public abstract V_GenericNode createOrUpdateNode(double minimumScoreRequired, double inheritedScore,
-			double localPriority, String id, String idType, String nodeType, V_GenericNode attachTo,
-			String relationType, String relationValue, double nodeCertainty);
+	public abstract V_GenericNode addReportDetails(final V_GenericNode reportNode, final Map<String, G_Property> props,
+			final String reportLinkTitle, final String url);
 
 	/**
 	 * Create a node or update an existing one. Also, force the color to the one
@@ -46,6 +39,37 @@ public interface HyperGraphBuilder<T> {
 	// idType,
 	// String nodeType, V_GenericNode attachTo, String relationType,
 	// String relationValue, String forceColor);
+
+	public abstract void addScannedResult(final String reportId);
+
+	V_GenericGraph buildFromSubGraphs(V_GraphQuery graphQuery);
+
+	// public abstract DocumentGraphParser getParserForObject(Object obj);
+
+	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
+
+	public abstract V_GenericNode createNodeInSubgraph(final double minimumScoreRequired, final double inheritedScore,
+			final double localPriority, final String originalId, final String idType, final String nodeType,
+			final V_GenericNode attachTo, final String relationType, final String relationValue,
+			final double nodeCertainty, final V_GenericGraph subgraph);
+
+	/**
+	 * 
+	 * @param minimumScoreRequired
+	 * @param inheritedScore
+	 * @param localPriority
+	 * @param id
+	 * @param idType
+	 * @param nodeType
+	 * @param attachTo
+	 * @param relationType
+	 * @param relationValue
+	 * @param nodeCertainty
+	 * @return
+	 */
+	public abstract V_GenericNode createOrUpdateNode(double minimumScoreRequired, double inheritedScore,
+			double localPriority, String id, String idType, String nodeType, V_GenericNode attachTo,
+			String relationType, String relationValue, double nodeCertainty);
 
 	/**
 	 * Create a node or update an existing one. Also, use the color based on the
@@ -82,12 +106,14 @@ public interface HyperGraphBuilder<T> {
 	 */
 	boolean determineTraversability(V_GenericNode n);
 
-	// public abstract DocumentGraphParser getParserForObject(Object obj);
-
 	/**
 	 * This object will be supplied by the concrete implementation
 	 */
 	public abstract G_DataAccess getDAO();
+
+	public abstract List<G_DocumentError> getErrors();
+
+	public abstract boolean isPreviouslyScannedResult(final String reportId);
 
 	/**
 	 * Unrolled version.
@@ -111,5 +137,21 @@ public interface HyperGraphBuilder<T> {
 	 * 
 	 * @param graphQuery
 	 */
+	@Deprecated
 	public abstract void performPostProcess(V_GraphQuery graphQuery);
+
+	/**
+	 * Individual implementations can override this method to perform
+	 * modifications on the graph (or graph analysis) after the complete graph
+	 * has been built.
+	 * 
+	 * @param graphQuery
+	 */
+	V_GenericGraph performPostProcess(V_GraphQuery graphQuery, V_GenericGraph g);
+
+	public abstract void setScannedQueries(final Set<String> scannedQueries);
+
+	public abstract void setScannedResults(final Set<String> scannedResults);
+
+	public abstract void inheritLabelIfNeeded(final V_GenericNode a, final V_GenericNode... nodes);
 }

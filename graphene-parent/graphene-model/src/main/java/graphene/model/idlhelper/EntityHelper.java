@@ -86,6 +86,19 @@ public class EntityHelper extends G_Entity {
 		return null;
 	}
 
+	public static List<G_Property> getPropertiesByTag(final G_Entity entity, final G_PropertyTag tag) {
+		final List<G_Property> list = new ArrayList<G_Property>(1);
+		if ((entity != null) && (entity.getProperties() != null)) {
+			for (final G_Property x : entity.getProperties().values()) {
+				if (x.getTags().contains(tag)) {
+					list.add(x);
+				}
+			}
+			Collections.sort(list);
+		}
+		return list;
+	}
+
 	// @Deprecated
 	// public static List<G_Property> getPropertiesByKey(final G_Entity entity,
 	// final String key) {
@@ -101,19 +114,6 @@ public class EntityHelper extends G_Entity {
 	// return list;
 	// }
 
-	public static List<G_Property> getPropertiesByTag(final G_Entity entity, final G_PropertyTag tag) {
-		final List<G_Property> list = new ArrayList<G_Property>(1);
-		if ((entity != null) && (entity.getProperties() != null)) {
-			for (final G_Property x : entity.getProperties().values()) {
-				if (x.getTags().contains(tag)) {
-					list.add(x);
-				}
-			}
-			Collections.sort(list);
-		}
-		return list;
-	}
-
 	public static List<G_Property> getPropertiesByTags(final G_Entity entity, final G_PropertyTag... tags) {
 		final List<G_Property> list = new ArrayList<G_Property>(1);
 		if ((entity != null) && (entity.getProperties() != null)) {
@@ -125,6 +125,16 @@ public class EntityHelper extends G_Entity {
 			Collections.sort(list);
 		}
 		return list;
+	}
+
+	public static Object getPropertyValue(final G_Entity entity, final String key) {
+		if ((entity != null) && (entity.getProperties() != null)) {
+			final G_Property prop = entity.getProperties().get(key);
+			if (prop != null) {
+				return ListRangeHelper.rangeValue(prop.getRange());
+			}
+		}
+		return null;
 	}
 
 	public static List<G_Entity> listFromJson(final String json) throws IOException {

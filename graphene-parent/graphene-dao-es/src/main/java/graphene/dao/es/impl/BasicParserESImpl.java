@@ -52,6 +52,9 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 			final String titled = StringUtils.coalesc(" ", title + ":", coalesc);
 			gp = new PropertyHelper(coalesc, titled, coalesc, nodeType, tags);
 			gp.setStyleType(style);
+		} else {
+			// logger.error("Invalid property " + title + " nodetype " +
+			// nodeType + " s=" + s);
 		}
 		return gp;
 	}
