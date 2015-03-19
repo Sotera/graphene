@@ -599,6 +599,7 @@ CytoscapeGraphVis.prototype.setHandlers = function() {
 		if (e.cyTarget === _this.gv) {
 
 			_this.utils.updateProgress(" ", 1);
+			_this.owner.getNodeDisplay().clear();
 			
 			var pos = e.cyPosition;
 			// if you're trying to add a node and click white-space, add a node
