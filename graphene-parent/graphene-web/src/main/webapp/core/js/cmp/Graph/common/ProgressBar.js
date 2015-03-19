@@ -23,6 +23,7 @@ Ext.define("DARPA.ProgressBar", {
 	},
 	
 	listeners: {
+		/*
 		"update": function(obj, val) {
 			var color;
 			
@@ -39,5 +40,6 @@ Ext.define("DARPA.ProgressBar", {
 				"background-image": "-webkit-linear-gradient(top, " + color + ", #999999 50%, #999999 51%, " + color + ")"
 			});
 		}
+		*/
 	}
 });
