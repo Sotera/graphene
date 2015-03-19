@@ -4,7 +4,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 	constructor: function(config) {
 		var self = this;
 		
-		this.GraphVis = new CytoGraphVis(config.id + "-TXNcygraph");
+		this.GraphVis = new CytoscapeGraphVis(config.id + "-TXNcygraph");
 		
 		var graphSettings = Ext.create("DARPA.GraphSettings", {
 			id: config.id + "-Settings"
@@ -52,6 +52,14 @@ Ext.define("DARPA.TransactionGraphPanel", {
 			height: 'auto',
 			collapsible: true,
 			collapseDirection: 'right',
+			listeners: {
+				collapse: function(e) {
+					self.GraphVis.resize();
+				},
+				expand: function(e) {
+					self.GraphVis.resize();
+				}
+			},
 			items: [
 				Ext.create("Ext.panel.Panel", {
 					title: "DETAILS/ACTIONS",
@@ -104,7 +112,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 				topBorder: 5,
 				botBorder: 80
 			};
-			self.GraphVis.initGraph(config, self, function() {
+			self.GraphVis.init(config, self, function() {
 				self.showjson(self.prevLoadParams.value);
 			}, false);
 		}
@@ -249,13 +257,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 							'Do you want to continue displaying it?', 
 							function(ans) {
 								if (ans == 'yes') {
-									self.GraphVis.showGraph1Hop(self.json, node);
+									self.GraphVis.expand(self.json, node);
 									self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 								}
 							}
 						);
 					} else {
-						self.GraphVis.showGraph1Hop(self.json, node);
+						self.GraphVis.expand(self.json, node);
 						self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 					}
 				}

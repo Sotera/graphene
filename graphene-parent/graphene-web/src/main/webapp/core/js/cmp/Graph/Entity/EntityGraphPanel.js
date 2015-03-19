@@ -4,7 +4,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 	constructor: function(config) {
 		var self = this;
 		
-		this.GraphVis = new CytoGraphVis(config.id + "-ENTcygraph");
+		this.GraphVis = new CytoscapeGraphVis(config.id + "-ENTcygraph");
 		
 		var graphSettings = Ext.create("DARPA.GraphSettings", {
 			id: config.id + "-Settings"
@@ -52,6 +52,14 @@ Ext.define("DARPA.EntityGraphPanel", {
 			height: 'auto',
 			collapsible: true,
 			collapseDirection: 'right',
+			listeners: {
+				collapse: function(e) {
+					self.GraphVis.resize();
+				},
+				expand: function(e) {
+					self.GraphVis.resize();
+				}
+			},
 			items: [
 				Ext.create("Ext.panel.Panel", {
 					title: "DETAILS/ACTIONS",
@@ -104,7 +112,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 				topBorder: 5,
 				botBorder: 80
 			};
-			self.GraphVis.initGraph(config, self, function() {
+			self.GraphVis.init(config, self, function() {
 				//self.showjson(self.prevLoadParams.value);
 			}, true);
 		}
@@ -150,6 +158,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 
 				self.setStatus("LOADED DATA", 1);
 				self.json = records[0].raw;
+				self.GraphVis.setUserName(self.json.userName);
 				
 				self.legendJSON = records[0].raw.legend;
 				if (typeof self.legendJSON == "string") {
@@ -265,13 +274,13 @@ Ext.define("DARPA.EntityGraphPanel", {
 							'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
 							function(ans) {
 								if (ans == 'yes') {
-									self.GraphVis.showGraph1Hop(self.json, node);
+									self.GraphVis.expand(self.json, node);
 									self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 								}
 							}
 						);
 					} else {
-						self.GraphVis.showGraph1Hop(self.json, node);
+						self.GraphVis.expand(self.json, node);
 						self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 					}
 				}
