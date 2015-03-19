@@ -24,10 +24,6 @@
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>
-			<artifactId>graphene-search</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>graphene</groupId>
 			<artifactId>graphene-util</artifactId>
 		</dependency>
 		<dependency>
