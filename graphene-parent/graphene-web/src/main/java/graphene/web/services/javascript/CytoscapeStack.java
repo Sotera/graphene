@@ -22,7 +22,9 @@ import org.got5.tapestry5.jquery.utils.JQueryUtils;
  */
 public class CytoscapeStack implements JavaScriptStack {
 	public static final String STACK_ID = "CytoscapeStack";
-
+	private final List<Asset> javaScriptStack;
+	private final List<StylesheetLink> cssStack;
+	
 	public CytoscapeStack(
 			@Symbol(JQuerySymbolConstants.USE_MINIFIED_JS) final boolean minified,
 			final AssetSource assetSource) {
@@ -32,48 +34,43 @@ public class CytoscapeStack implements JavaScriptStack {
 				return assetSource.getExpandedAsset(path);
 			}
 		};
-
-		javaScriptStack = F
-				.flow("context:core/js/libs/cytoscape-2.2.12/cytoscape.js",
-						"context:core/js/libs/cytoscape-2.2.12/arbor.js",
-						"context:core/js/libs/cytoscape-2.2.12/cytoscape.js-cxtmenu.js",
-						"context:core/js/libs/cytoscape/jquery.cytoscape-navigator.js",
-						"context:core/js/libs/cytoscape/jquery.cytoscape-edgehandles.js",
-						"context:core/js/libs/cytoscape/jquery.cytoscape-panzoom.js")
-				.append("context:core/js/t5/T5CytoscapeGraph.js")
-				.map(pathToAsset).toList();
+		
+		javaScriptStack = F.flow(
+			"context:core/js/libs/cytoscape.js-2.3.9/cytoscape.js",
+			"context:core/js/libs/cytoscape.js-2.3.9/lib/arbor.js",
+			"context:core/js/libs/cytoscape-plugins/cytoscape.js-cxtmenu.js"
+			//"context:core/js/libs/cytoscape/jquery.cytoscape-navigator.js",
+			//"context:core/js/libs/cytoscape/jquery.cytoscape-edgehandles.js",
+			//"context:core/js/libs/cytoscape/jquery.cytoscape-panzoom.js"
+		)
+		.append("context:core/js/t5/T5CytoscapeGraph.js")
+		.map(pathToAsset).toList();
 
 		final Mapper<String, StylesheetLink> pathToStylesheetLink = F.combine(
-				pathToAsset, JQueryUtils.assetToStylesheetLink);
-		cssStack = F
-				.flow("context:core/css/cytoscapeT5.css",
-						"context:core/js/libs/cytoscape/jquery.cytoscape-navigator.css",
-						"context:core/js/libs/cytoscape/jquery.cytoscape-panzoom.css")
-				.map(pathToStylesheetLink).toList();
+			pathToAsset, JQueryUtils.assetToStylesheetLink
+		);
+		
+		cssStack = F.flow(
+			"context:core/css/cytoscapeT5.css"
+			//"context:core/js/libs/cytoscape/jquery.cytoscape-navigator.css",
+			//"context:core/js/libs/cytoscape/jquery.cytoscape-panzoom.css"
+		)
+		.map(pathToStylesheetLink).toList();
 	}
 
-	private final List<Asset> javaScriptStack;
-
-	private final List<StylesheetLink> cssStack;
-
 	public String getInitialization() {
-
 		return null;
 	}
 
 	public List<Asset> getJavaScriptLibraries() {
-
 		return javaScriptStack;
 	}
 
 	public List<StylesheetLink> getStylesheets() {
-
 		return cssStack;
 	}
 
 	public List<String> getStacks() {
-
 		return Collections.emptyList();
 	}
-
 }
