@@ -14,7 +14,6 @@ import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_NodeTypeAccess;
-import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
@@ -137,49 +136,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			createEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
 					G_CanonicalRelationshipType.CONTAINED_IN.name());
 		}
-	}
-
-	@Override
-	public V_GenericNode addReportDetails(final V_GenericNode reportNode, final Map<String, G_Property> props,
-			final String reportLinkTitle, final String url) {
-		try {
-			// for now, prevent the log-based increase on node dimensions
-			/*
-			 * reportNode.setSize(getLogSize(((Double)
-			 * properties.get(DocumentGraphParser.TOTALAMOUNTNBR)).longValue(),
-			 * MIN_NODE_SIZE, MAX_NODE_SIZE));
-			 */
-			reportNode.addData(reportLinkTitle, url);
-			reportNode.setLabel((String) PropertyHelper.getSingletonValue(props.get(G_Parser.REPORT_LABEL)));
-			reportNode.addData("Type", (String) PropertyHelper.getSingletonValue(props.get(G_Parser.REPORT_TYPE)));
-			reportNode.addData("Amount involved",
-					(String) PropertyHelper.getSingletonValue(props.get(G_Parser.TOTALAMOUNTSTR)));
-
-			final List<String> datesOfEvents = (List<String>) PropertyHelper.getListValue(props
-					.get(G_Parser.DATES_OF_EVENTS));
-			if (ValidationUtils.isValid(datesOfEvents)) {
-				for (final String d : datesOfEvents) {
-					reportNode.addData("Date of Event", d);
-				}
-			}
-
-			final List<String> datesFiled = (List<String>) PropertyHelper.getListValue(props.get(G_Parser.DATES_FILED));
-			if (ValidationUtils.isValid(datesFiled)) {
-				for (final String d : datesFiled) {
-					reportNode.addData("Date filed", d);
-				}
-			}
-			final List<String> datesReceived = (List<String>) PropertyHelper.getListValue(props
-					.get(G_Parser.DATES_RECEIVED));
-			if (ValidationUtils.isValid(datesReceived)) {
-				for (final String d : datesReceived) {
-					reportNode.addData("Date received", d);
-				}
-			}
-		} catch (final Exception e) {
-			logger.error("addReportDetails " + e.getMessage());
-		}
-		return reportNode;
 	}
 
 	@Override

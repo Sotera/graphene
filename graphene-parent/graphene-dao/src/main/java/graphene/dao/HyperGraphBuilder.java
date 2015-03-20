@@ -3,10 +3,8 @@ package graphene.dao;
 import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_DocumentError;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_Property;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import mil.darpa.vande.generic.V_GenericGraph;
@@ -18,9 +16,6 @@ public interface HyperGraphBuilder {
 	public abstract void addError(final G_DocumentError e);
 
 	public abstract void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q);
-
-	public abstract V_GenericNode addReportDetails(final V_GenericNode reportNode, final Map<String, G_Property> props,
-			final String reportLinkTitle, final String url);
 
 	/**
 	 * Create a node or update an existing one. Also, force the color to the one
@@ -113,6 +108,8 @@ public interface HyperGraphBuilder {
 
 	public abstract List<G_DocumentError> getErrors();
 
+	public abstract void inheritLabelIfNeeded(final V_GenericNode a, final V_GenericNode... nodes);
+
 	public abstract boolean isPreviouslyScannedResult(final String reportId);
 
 	/**
@@ -152,6 +149,4 @@ public interface HyperGraphBuilder {
 	public abstract void setScannedQueries(final Set<String> scannedQueries);
 
 	public abstract void setScannedResults(final Set<String> scannedResults);
-
-	public abstract void inheritLabelIfNeeded(final V_GenericNode a, final V_GenericNode... nodes);
 }

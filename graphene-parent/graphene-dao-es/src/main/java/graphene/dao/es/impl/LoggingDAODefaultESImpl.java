@@ -44,6 +44,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_DELETE_LOGS)
 	private boolean enableDelete;
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_LOGGING)
+	private boolean enableLogging;
 
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_GRAPHQUERY_TYPE)
@@ -261,19 +264,24 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 	@Override
 	public boolean recordExport(final String queryString) {
-		// TODO Auto-generated method stub
+		if (enableLogging) {
+			// TODO Auto-generated method stub
+
+		}
 		return false;
 	}
 
 	@Override
 	public void recordGraphViewEvent(final G_GraphViewEvent q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, graphQueryType);
-		} else {
-			logger.error("Attempted to save a null G_GraphViewEvent!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				// if (q.getId() == null) {
+				q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
+				// }
+				// saveObject(q, q.getId(), indexName, graphQueryType);
+			} else {
+				logger.error("Attempted to save a null G_GraphViewEvent!");
+			}
 		}
 		return;
 
@@ -281,52 +289,60 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
 	@Override
 	public void recordQuery(final G_EntityQuery q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, searchQueryType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, searchQueryType);
-		} else {
-			logger.error("Attempted to save a null BasicQuery!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				// if (q.getId() == null) {
+				q.setId(saveObject(q, q.getId(), indexName, searchQueryType, false));
+				// }
+				// saveObject(q, q.getId(), indexName, searchQueryType);
+			} else {
+				logger.error("Attempted to save a null BasicQuery!");
+			}
 		}
 		return;
 	}
 
 	@Override
 	public void recordQuery(final V_GraphQuery q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, graphQueryType);
-		} else {
-			logger.error("Attempted to save a null V_GraphQuery!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				// if (q.getId() == null) {
+				q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
+				// }
+				// saveObject(q, q.getId(), indexName, graphQueryType);
+			} else {
+				logger.error("Attempted to save a null V_GraphQuery!");
+			}
 		}
 		return;
 	}
 
 	@Override
 	public void recordReportViewEvent(final G_ReportViewEvent q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, reportViewType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, reportViewType);
-		} else {
-			logger.error("Attempted to save a null G_ReportViewEvent!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				// if (q.getId() == null) {
+				q.setId(saveObject(q, q.getId(), indexName, reportViewType, false));
+				// }
+				// saveObject(q, q.getId(), indexName, reportViewType);
+			} else {
+				logger.error("Attempted to save a null G_ReportViewEvent!");
+			}
 		}
 		return;
 	}
 
 	@Override
 	public void recordUserLoginEvent(final G_UserLoginEvent e) {
-		if (ValidationUtils.isValid(e)) {
-			// if (e.getId() == null) {
-			e.setId(saveObject(e, e.getId(), indexName, userLoginType, false));
-			// }
-			// saveObject(e, e.getId(), indexName, userLoginType);
-		} else {
-			logger.error("Attempted to save a null G_UserLoginEvent!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(e)) {
+				// if (e.getId() == null) {
+				e.setId(saveObject(e, e.getId(), indexName, userLoginType, false));
+				// }
+				// saveObject(e, e.getId(), indexName, userLoginType);
+			} else {
+				logger.error("Attempted to save a null G_UserLoginEvent!");
+			}
 		}
 		return;
 	}

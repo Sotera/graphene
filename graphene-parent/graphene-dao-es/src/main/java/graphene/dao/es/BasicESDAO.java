@@ -53,16 +53,18 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.JsonObject;
 
 /**
- * Note that when you extend this class, do not have a logger in your extended
- * class. Use the logger provided here, and see other implementations' examples
- * on how to set up the constructor and post injection initializer.
+ * This is a basic class that you can use to communicate with ElasticSearch
+ * through Jest, which does the talking over REST.
+ * 
+ * The benefit of using Jest over the ElasticSearchAPI directly, is that you are
+ * not bound to a specific version of the ElasticSearch API. (i.e. Changes at
+ * the REST level happen much less frequently, and you have greater flexibility
+ * with using multiple ElasticSearch versions at customer sites)
  * 
  * @author djue
- * @param <T>
- * @param <QUERYOBJECT>
  * 
  */
-public class BasicESDAO<T extends JestResult> {
+public class BasicESDAO {
 	public static final String ESQUERY = "_esquery";
 	public static final String ESFIELDS = "_esfields";
 	public static final String ESTYPE = "_estype";
@@ -239,13 +241,11 @@ public class BasicESDAO<T extends JestResult> {
 		if (ValidationUtils.isValid(pq.getTargetSchema())) {
 			action.addIndex(pq.getTargetSchema());
 			logger.debug("adding specified index: " + pq.getTargetSchema());
-		} else if (!ValidationUtils.isValid(c.getIndexName())) {
+		} else if (ValidationUtils.isValid(c.getIndexName())) {
 			action.addIndex(c.getIndexName());
 			logger.debug("adding default index: " + c.getIndexName());
 		} else {
 			logger.error("No index to set in query, check your es.properties to set a search index.");
-			action.addIndex("bsa_0_1");
-
 		}
 
 		if (ValidationUtils.isValid(esTypes)) {
@@ -277,10 +277,7 @@ public class BasicESDAO<T extends JestResult> {
 			if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getPropertyMatchDescriptors())) {
 
 				pq.getPropertyMatchDescriptors().get(0);
-				String schema = pq.getTargetSchema();
-				if (!ValidationUtils.isValid(schema)) {
-					schema = c.getIndexName();
-				}
+
 				BoolQueryBuilder bool = null;
 				for (final G_PropertyMatchDescriptor d : pq.getPropertyMatchDescriptors()) {
 					final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
@@ -311,10 +308,14 @@ public class BasicESDAO<T extends JestResult> {
 				}
 				logger.debug(ssb.toString());
 				action.query(ssb.toString());
-
 				if (ValidationUtils.isValid(pq.getTargetSchema())) {
 					action.addIndex(pq.getTargetSchema());
-					logger.debug("index: " + pq.getTargetSchema());
+					logger.debug("adding specified index: " + pq.getTargetSchema());
+				} else if (ValidationUtils.isValid(c.getIndexName())) {
+					action.addIndex(c.getIndexName());
+					logger.debug("adding default index: " + c.getIndexName());
+				} else {
+					logger.error("No index to set in query, check your es.properties to set a search index.");
 				}
 
 			}
@@ -647,9 +648,7 @@ public class BasicESDAO<T extends JestResult> {
 					currentResultSize = actualListOfHits.size();
 					for (int i = 0; i < actualListOfHits.size(); i++) {
 						final JsonNode currentHit = actualListOfHits.get(i);
-
 						if (ValidationUtils.isValid(currentHit)) {
-
 							/**
 							 * TODO: To improve speed, let's make a second
 							 * callback option that takes an Object. From there
@@ -664,10 +663,7 @@ public class BasicESDAO<T extends JestResult> {
 						}
 					}
 					logger.debug("finished executing on " + currentResultSize + " hits.");
-					// pageNumber++;
-					// action.setParameter("from", (pageNumber * 200));
 				}
-				// } while (currentResultSize > 0);
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();

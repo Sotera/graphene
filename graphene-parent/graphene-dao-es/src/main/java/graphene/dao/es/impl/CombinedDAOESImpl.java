@@ -89,53 +89,6 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 		mapper = new ObjectMapper(); // can reuse, share globally
 	}
 
-	//
-	// @Override
-	// public G_SearchResult findById(final G_EntityQuery pq) {
-	// logger.debug("Query " + pq);
-	//
-	// String schema = pq.getTargetSchema();
-	// if (!ValidationUtils.isValid(schema)) {
-	// schema = indexName;
-	// }
-	//
-	// final String id = (String)
-	// pq.getPropertyMatchDescriptors().get(0).getValue();
-	// final JestResult resultsById = getResultsById(id);
-	// final String jsonString = resultsById.getJsonString();
-	// G_SearchResult sr = null;
-	// if (jsonString != null) {
-	// JsonNode rootNode;
-	// try {
-	// rootNode = mapper.readValue(jsonString, JsonNode.class);
-	//
-	// int _totalResults = -1;
-	// if ((_totalResults == -1) && (rootNode != null) && (rootNode.get("hits")
-	// != null)
-	// && (rootNode.get("hits").get("total") != null)) {
-	// _totalResults = rootNode.get("hits").get("total").asInt();
-	// logger.debug("Found " + _totalResults + " hits in hitparent!");
-	// final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
-	// final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
-	//
-	// logger.debug("actualListOfHits was serialized into  " +
-	// actualListOfHits.size() + " object(s)");
-	// for (int i = 0; i < actualListOfHits.size(); i++) {
-	// final JsonNode currentHit = actualListOfHits.get(i);
-	// if (ValidationUtils.isValid(currentHit)) {
-	// sr = db.buildSearchResultFromDocument(i, currentHit, pq);
-	// }
-	// }
-	// } else {
-	// logger.warn("Response was unexpected: " + jsonString);
-	// }
-	// } catch (final IOException e) {
-	// logger.error("Mapping results from search: " + e.getMessage());
-	// }
-	// }
-	// return sr;
-	// }
-
 	@Override
 	public G_SearchResults findByQuery(final G_EntityQuery pq) {
 		final G_SearchResults results = G_SearchResults.newBuilder().setTotal(0)
@@ -147,13 +100,9 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 
 			final io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 			jestResult = c.getClient().execute(action.build());
-
-			// _qResp = c.performQuery(null, host, pq);
 		} catch (final DataAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		logger.debug(jestResult.getJsonString());
@@ -183,7 +132,6 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 				}
 			}
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		results.setResults(resultsList);
