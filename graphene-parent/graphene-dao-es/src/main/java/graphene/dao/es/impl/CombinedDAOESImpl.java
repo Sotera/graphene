@@ -18,7 +18,6 @@ import graphene.model.idl.G_Link;
 import graphene.model.idl.G_LinkEntityTypeFilter;
 import graphene.model.idl.G_LinkTag;
 import graphene.model.idl.G_PropertyDescriptors;
-import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SymbolConstants;
@@ -90,7 +89,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 	}
 
 	@Override
-	public G_SearchResults findByQuery(final G_EntityQuery pq) {
+	public G_SearchResults search(final G_EntityQuery pq) {
 		// TODO: Use a helper class
 		final G_SearchResults results = G_SearchResults.newBuilder().setTotal(0)
 				.setResults(new ArrayList<G_SearchResult>()).build();
@@ -105,7 +104,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug(jestResult.getJsonString());
+		// logger.debug(jestResult.getJsonString());
 		JsonNode rootNode;
 		long totalNumberOfPossibleResults = 0l;
 		try {
@@ -141,12 +140,6 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 
 	@Override
 	public Map<String, List<G_Entity>> getAccounts(final List<String> entities) throws AvroRemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public G_SearchResults getAll(final long offset, final long maxResults) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -202,13 +195,6 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 	@Override
 	public boolean isReady() {
 		return true;
-	}
-
-	@Override
-	public G_SearchResults search(final List<G_PropertyMatchDescriptor> terms, final long start, final long max)
-			throws AvroRemoteException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

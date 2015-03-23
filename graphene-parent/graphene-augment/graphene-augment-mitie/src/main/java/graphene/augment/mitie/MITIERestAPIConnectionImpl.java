@@ -1,4 +1,4 @@
-package org.graphene.augment.mitie;
+package graphene.augment.mitie;
 
 import graphene.business.commons.exception.DataAccessException;
 import graphene.util.net.HttpUtil;

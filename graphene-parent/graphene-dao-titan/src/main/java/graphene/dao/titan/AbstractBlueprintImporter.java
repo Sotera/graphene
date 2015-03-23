@@ -1,12 +1,8 @@
 package graphene.dao.titan;
 
-import graphene.model.idl.G_EdgeType;
-import graphene.model.idl.G_EdgeTypeAccess;
-import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.util.validator.ValidationUtils;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
@@ -16,12 +12,6 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
 public abstract class AbstractBlueprintImporter implements BlueprintImporter {
-
-	@Inject
-	protected G_EdgeTypeAccess edgeTypeAccess;
-
-	@Inject
-	protected G_NodeTypeAccess nodeTypeAccess;
 
 	@Inject
 	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
@@ -99,15 +89,10 @@ public abstract class AbstractBlueprintImporter implements BlueprintImporter {
 	public Edge getSafeEdge(final Graph g, final Vertex a, final String type, final Vertex b) {
 		Edge e = null;
 		if (ValidationUtils.isValid(a, b)) {
-			try {
-				final G_EdgeType edgeType = edgeTypeAccess.getEdgeType(type);
 
-				final String id = a.getId().toString() + b.getId().toString() + edgeType.getName();
-				e = g.addEdge(id, a, b, edgeType.getName());
-			} catch (final AvroRemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			final String id = a.getId().toString() + b.getId().toString() + type;
+			e = g.addEdge(id, a, b, type);
+
 		}
 		return e;
 	}

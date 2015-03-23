@@ -1,12 +1,12 @@
-package org.graphene.augment.mitie.dao;
+package graphene.augment.mitie.dao;
 
+import graphene.augment.mitie.MITIERestAPIConnection;
+import graphene.augment.mitie.model.MitieResponse;
 import graphene.business.commons.exception.DataAccessException;
 
 import java.io.IOException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.graphene.augment.mitie.MITIERestAPIConnection;
-import org.graphene.augment.mitie.model.MitieResponse;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

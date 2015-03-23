@@ -130,9 +130,14 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 				numProcessed += results.getResults().size();
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p, q)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
+					try {
+						if (!cb.execute(p, q)) {
+							logger.error("Fatal error in callback from loading index");
+							break;
+						}
+					} catch (final AvroRemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					p = null;
 				}
@@ -284,6 +289,12 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 		return ready;
 	}
 
+	@Override
+	public String saveObject(final Object g, final String id, final String indexName, final String type,
+			final boolean useDelay) {
+		return null;
+	}
+
 	/**
 	 * 
 	 * @param q
@@ -322,24 +333,9 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 	}
 
 	@Override
-	public void setReady(final boolean b) {
+	public Void setReady(final boolean b) {
 		this.ready = b;
-	}
-
-	/**
-	 * calls a throttlingCallback with initialChunkSize 25000, minChunkSize 10
-	 * and maxChunkSize 250000
-	 * 
-	 * @param initialOffset
-	 * @param maxResults
-	 * @param cb
-	 * @param q
-	 * @return true if successful, false otherwise.
-	 */
-	public boolean throttlingCallback(final long initialOffset, final long maxResults, final G_CallBack cb,
-			final G_EntityQuery q) {
-		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
-		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10, 250000);
+		return null;
 	}
 
 	/**
@@ -358,6 +354,22 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 	// protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
 	// return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
 	// }
+
+	/**
+	 * calls a throttlingCallback with initialChunkSize 25000, minChunkSize 10
+	 * and maxChunkSize 250000
+	 * 
+	 * @param initialOffset
+	 * @param maxResults
+	 * @param cb
+	 * @param q
+	 * @return true if successful, false otherwise.
+	 */
+	public boolean throttlingCallback(final long initialOffset, final long maxResults, final G_CallBack cb,
+			final G_EntityQuery q) {
+		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
+		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10, 250000);
+	}
 
 	/**
 	 * The purpose of the throttling code is to provide dynamic balance between
@@ -656,9 +668,14 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 
 				// Execute callbacks
 				for (G_SearchResult p : results.getResults()) {
-					if (!cb.callBack(p, q)) {
-						logger.error("Fatal error in callback from loading index");
-						break;
+					try {
+						if (!cb.execute(p, q)) {
+							logger.error("Fatal error in callback from loading index");
+							break;
+						}
+					} catch (final AvroRemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					p = null;
 				}
@@ -732,9 +749,5 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 		}
 		logger.debug("Processed " + numProcessed + " rows in " + t.report());
 		return true;
-	}
-
-	public String saveObject(final Object g, final String id, final String indexName, final String type, final boolean useDelay) {
-		return null;
 	}
 }

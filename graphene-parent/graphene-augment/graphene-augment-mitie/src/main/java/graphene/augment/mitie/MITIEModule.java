@@ -1,4 +1,4 @@
-package org.graphene.augment.mitie;
+package graphene.augment.mitie;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;

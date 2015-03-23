@@ -91,7 +91,7 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 					// results = findByQuery(offset, maxResults, q);
 					q.setFirstResult(offset);
 					q.setMaxResult(maxResults);
-					results = findByQuery(q);
+					results = search(q);
 				}
 			} catch (final Exception e) {
 				logger.error(e.getMessage());
@@ -240,6 +240,12 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 		return basicCallback(offset, maxResults, cb, q);
 	}
 
+	@Override
+	public String saveObject(final Object g, final String id, final String indexName, final String type,
+			final boolean useDelay) {
+		return null;
+	}
+
 	/**
 	 * @param cps
 	 *            the cps to set
@@ -343,22 +349,6 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 	}
 
 	/**
-	 * calls a throttlingCallback with initialChunkSize 25000, minChunkSize 10
-	 * and maxChunkSize 250000
-	 * 
-	 * @param initialOffset
-	 * @param maxResults
-	 * @param cb
-	 * @param q
-	 * @return true if successful, false otherwise.
-	 */
-	public boolean throttlingCallback(final long initialOffset, final long maxResults, final G_CallBack cb,
-			final G_EntityQuery q) {
-		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
-		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10, 250000);
-	}
-
-	/**
 	 * This is a safe way of adding the offset and limit. We can encapsulate
 	 * validation and error correction here to prevent duplicate code and reduce
 	 * maintenance.
@@ -374,6 +364,22 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 	// protected SQLQuery setOffsetAndLimit(BasicQuery q, SQLQuery sq) {
 	// return setOffsetAndLimit(q.getFirstResult(), q.getMaxResult(), sq);
 	// }
+
+	/**
+	 * calls a throttlingCallback with initialChunkSize 25000, minChunkSize 10
+	 * and maxChunkSize 250000
+	 * 
+	 * @param initialOffset
+	 * @param maxResults
+	 * @param cb
+	 * @param q
+	 * @return true if successful, false otherwise.
+	 */
+	public boolean throttlingCallback(final long initialOffset, final long maxResults, final G_CallBack cb,
+			final G_EntityQuery q) {
+		// chunkSize = 25000, minChunkSize = 10, maxChunkSize = 250000
+		return throttlingCallback(initialOffset, maxResults, cb, q, 25000, 10, 250000);
+	}
 
 	/**
 	 * The purpose of the throttling code is to provide dynamic balance between
@@ -438,17 +444,18 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 			}
 			G_SearchResults results = null;
 			try {
-				if (q == null) {
-					logger.debug("getAll(offset=" + offset + ", chunksize=" + chunkSize);
-					results = getAll(offset, chunkSize);
-				} else {
-					logger.debug("getAll(offset=" + offset + ", chunksize=" + chunkSize + " query=" + q);
+				// if (q == null) {
+				// logger.debug("getAll(offset=" + offset + ", chunksize=" +
+				// chunkSize);
+				// results = search(offset, chunkSize);
+				// } else {
+				logger.debug("getAll(offset=" + offset + ", chunksize=" + chunkSize + " query=" + q);
 
-					// results = findByQuery(offset, chunkSize, q);
-					q.setFirstResult(offset);
-					q.setMaxResult(chunkSize);
-					results = findByQuery(q);
-				}
+				// results = findByQuery(offset, chunkSize, q);
+				q.setFirstResult(offset);
+				q.setMaxResult(chunkSize);
+				results = search(q);
+				// }
 			} catch (final Exception e) {
 				logger.error("Problem in throttling callback: " + e.getMessage());
 
@@ -651,7 +658,7 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 					// results = findByQuery(offset, chunkSize, q);
 					q.setFirstResult(offset);
 					q.setMaxResult(chunkSize);
-					results = findByQuery(q);
+					results = search(q);
 				}
 			} catch (final Exception e) {
 				logger.error("Problem in throttling callback: " + e.getMessage());
@@ -753,9 +760,5 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 		}
 		logger.debug("Processed " + numProcessed + " rows in " + t.report());
 		return true;
-	}
-
-	public String saveObject(final Object g, final String id, final String indexName, final String type, final boolean useDelay) {
-		return null;
 	}
 }

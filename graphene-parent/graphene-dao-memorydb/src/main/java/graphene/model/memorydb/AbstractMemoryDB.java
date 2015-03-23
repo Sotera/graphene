@@ -12,7 +12,6 @@ import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
-import graphene.model.query.SearchFilter;
 import graphene.model.view.CustomerDetails;
 import graphene.util.FastNumberUtils;
 import graphene.util.jvm.JVMHelper;

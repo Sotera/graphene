@@ -43,19 +43,6 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 
 	}
 
-	@Override
-	public boolean callBack(final G_SearchResult t, final G_EntityQuery q) {
-		return write(t.getResult());
-	}
-
-	/**
-	 * In DiskCache, this callback writes the object t to an output stream,
-	 * usually a file.
-	 */
-	public boolean callBack(final T t) {
-		return write(t);
-	}
-
 	/**
 	 * closes any input or output streams that are open.
 	 */
@@ -80,6 +67,11 @@ public class KryoDiskCache<T> implements DiskCache<T> {
 			logger.error(e.getMessage());
 		}
 		return deleted;
+	}
+
+	@Override
+	public boolean execute(final G_SearchResult t, final G_EntityQuery q) {
+		return write(t.getResult());
 	}
 
 	@Override

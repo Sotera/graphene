@@ -13,6 +13,7 @@ import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -30,6 +31,12 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 	protected List<String> supported;
 	@Inject
 	protected StopWordService stopwordService;
+
+	protected void addSafeString(final Collection<String> datesFiled, final Object o) {
+		if (ValidationUtils.isValid(datesFiled, o)) {
+			datesFiled.add(o.toString());
+		}
+	}
 
 	protected G_Property addSafeString(final String style, final G_PropertyType nodeType, final String... s) {
 		final String coalesc = graphene.util.StringUtils.coalesc(" ", s);

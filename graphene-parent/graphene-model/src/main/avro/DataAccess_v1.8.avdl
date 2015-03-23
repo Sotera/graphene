@@ -196,10 +196,12 @@ protocol G_DataAccess {
 			G_EntityQuery q
 	);
 	
+	string saveObject(@java-class("java.lang.Object") string g, string id, string indexName, string type, boolean useDelay);
+	
 	/**
 	Moved from GenericDAO (non IDL)
 	*/
-	G_SearchResults findByQuery(G_EntityQuery pq);
+	G_SearchResults search(G_EntityQuery pq);
 
 	/**
 	Moved from GenericDAO (non IDL)

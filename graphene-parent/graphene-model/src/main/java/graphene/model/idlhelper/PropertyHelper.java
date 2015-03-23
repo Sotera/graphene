@@ -46,7 +46,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PropertyHelper extends G_Property {
+
+	static Logger logger = LoggerFactory.getLogger(PropertyHelper.class);
 
 	public static PropertyHelper from(final G_Property property) {
 		if (property == null) {
@@ -69,6 +74,7 @@ public class PropertyHelper extends G_Property {
 				return r.getValues();
 			}
 		} else {
+			logger.warn("Property was null, perhaps it's key was not defined for the source document.");
 			return null;
 		}
 	}

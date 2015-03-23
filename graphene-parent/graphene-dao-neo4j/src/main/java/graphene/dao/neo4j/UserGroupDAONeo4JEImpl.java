@@ -2,7 +2,6 @@ package graphene.dao.neo4j;
 
 import graphene.dao.UserGroupDAO;
 import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EdgeType;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_GroupFields;
 import graphene.model.idl.G_User;
@@ -12,7 +11,6 @@ import graphene.model.idl.G_UserGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.avro.AvroRemoteException;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
@@ -31,14 +29,10 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 		try (Transaction tx = beginTx()) {
 			final Node u = getUserNodeByUsername(username);
 			final Node g = getGroupNodeByGroupname(groupname);
-			final G_EdgeType edgeType = edgeTypeAccess.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
-			u.createRelationshipTo(g, DynamicRelationshipType.withName(edgeType.getName()));
+			u.createRelationshipTo(g, DynamicRelationshipType.withName(G_CanonicalRelationshipType.MEMBER_OF.name()));
 			tx.success();
 			return true;
-		} catch (final AvroRemoteException e) {
-			logger.error(e.getMessage());
 		}
-		return false;
 	}
 
 	@Override
@@ -87,28 +81,27 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 
 			if (users.hasNext()) {
 
-				try {
-					final G_EdgeType memberOf = edgeTypeAccess.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
-
-					final G_EdgeType partOf = edgeTypeAccess.getCommonEdgeType(G_CanonicalRelationshipType.PART_OF);
-					final Node j = users.next();
-					final TraversalDescription traversalDescription = n4jService.getGraphDb().traversalDescription()
-							.depthFirst().evaluator(Evaluators.excludeStartPosition())
-							.relationships(DynamicRelationshipType.withName(memberOf.getName()), Direction.OUTGOING)
-							.relationships(DynamicRelationshipType.withName(partOf.getName()), Direction.OUTGOING);
-					final Traverser traverser = traversalDescription.traverse(j);
-					for (final Path path : traverser) {
-						final Node n = path.endNode();
-						if (n.hasLabel(GrapheneNeo4JConstants.groupLabel)) {
-							final G_Group d = groupFunnel.from(n);
-							if (d != null) {
-								list.add(d);
-							}
+				final Node j = users.next();
+				final TraversalDescription traversalDescription = n4jService
+						.getGraphDb()
+						.traversalDescription()
+						.depthFirst()
+						.evaluator(Evaluators.excludeStartPosition())
+						.relationships(DynamicRelationshipType.withName(G_CanonicalRelationshipType.MEMBER_OF.name()),
+								Direction.OUTGOING)
+						.relationships(DynamicRelationshipType.withName(G_CanonicalRelationshipType.PART_OF.name()),
+								Direction.OUTGOING);
+				final Traverser traverser = traversalDescription.traverse(j);
+				for (final Path path : traverser) {
+					final Node n = path.endNode();
+					if (n.hasLabel(GrapheneNeo4JConstants.groupLabel)) {
+						final G_Group d = groupFunnel.from(n);
+						if (d != null) {
+							list.add(d);
 						}
 					}
-				} catch (final AvroRemoteException e) {
-					logger.error(e.getMessage());
 				}
+
 			}
 			tx.success();
 		}
@@ -123,7 +116,6 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.getGraphDb()
 						.findNodesByLabelAndProperty(GrapheneNeo4JConstants.groupLabel, G_GroupFields.name.name(),
 								groupName).iterator()) {
-			final G_EdgeType memberOf = edgeTypeAccess.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
 			if (g.hasNext()) {
 				final Node j = g.next();
 				final TraversalDescription traversalDescription = n4jService
@@ -131,8 +123,8 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 						.traversalDescription()
 						.breadthFirst()
 						.evaluator(
-								Evaluators.includeWhereLastRelationshipTypeIs(DynamicRelationshipType.withName(memberOf
-										.getName())));
+								Evaluators.includeWhereLastRelationshipTypeIs(DynamicRelationshipType
+										.withName(G_CanonicalRelationshipType.MEMBER_OF.name())));
 
 				final Traverser traverser = traversalDescription.traverse(j);
 				for (final Path path : traverser) {
@@ -144,8 +136,6 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 				}
 				tx.success();
 			}
-		} catch (final AvroRemoteException e) {
-			logger.error(e.getMessage());
 		}
 		return list;
 	}
@@ -156,19 +146,15 @@ public class UserGroupDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implements
 			return false;
 		}
 		try (Transaction tx = beginTx()) {
-			final G_EdgeType memberOf = edgeTypeAccess.getCommonEdgeType(G_CanonicalRelationshipType.MEMBER_OF);
 			for (final Relationship r : u.getRelationships(Direction.OUTGOING,
-					DynamicRelationshipType.withName(memberOf.getName()))) {
+					DynamicRelationshipType.withName(G_CanonicalRelationshipType.MEMBER_OF.name()))) {
 				if (r.getEndNode().hasLabel(GrapheneNeo4JConstants.groupLabel) && r.getEndNode().equals(g)) {
 					r.delete();
 				}
 			}
 			tx.success();
 			return true;
-		} catch (final AvroRemoteException e) {
-			logger.error(e.getMessage());
 		}
-		return false;
 	}
 
 	@Override

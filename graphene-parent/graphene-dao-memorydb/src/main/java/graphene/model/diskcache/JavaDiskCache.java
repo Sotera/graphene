@@ -37,15 +37,6 @@ public class JavaDiskCache<T> implements DiskCache<T> {
 	}
 
 	@Override
-	public boolean callBack(final G_SearchResult t, final G_EntityQuery q) {
-		return write(t.getResult());
-	}
-
-	public boolean callBack(final T t) {
-		return write(t);
-	}
-
-	@Override
 	public void closeStreams() {
 		if (output != null) {
 			try {
@@ -73,6 +64,11 @@ public class JavaDiskCache<T> implements DiskCache<T> {
 	public boolean dropExisting(final String fileName) {
 		final File f = new File(fileName);
 		return f.delete();
+	}
+
+	@Override
+	public boolean execute(final G_SearchResult t, final G_EntityQuery q) {
+		return write(t.getResult());
 	}
 
 	@Override

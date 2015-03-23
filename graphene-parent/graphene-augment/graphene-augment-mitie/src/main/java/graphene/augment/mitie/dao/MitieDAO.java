@@ -1,8 +1,7 @@
-package org.graphene.augment.mitie.dao;
+package graphene.augment.mitie.dao;
 
+import graphene.augment.mitie.model.MitieResponse;
 import graphene.business.commons.exception.DataAccessException;
-
-import org.graphene.augment.mitie.model.MitieResponse;
 
 public interface MitieDAO {
 

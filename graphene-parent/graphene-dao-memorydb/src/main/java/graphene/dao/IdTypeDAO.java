@@ -1,5 +1,6 @@
 package graphene.dao;
 
+import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_IdType;
 import graphene.model.idl.G_SearchResult;
 
@@ -27,7 +28,7 @@ import java.util.Map;
  * @param <T>
  * @param <Q>
  */
-public interface IdTypeDAO<T> extends GenericDAO {
+public interface IdTypeDAO<T> extends G_DataAccess {
 
 	/**
 	 * TOTO: remove the side effect nature of this method for a more graceful

@@ -28,18 +28,10 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 		super();
 	}
 
-	@Override
 	public boolean applySkipRule(final G_SearchResult id) {
 		return false;
 	}
 
-	@Override
-	public void createFamilyMap() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public G_IdType getByType(final int typeno) {
 		return getLoadedTypes().get(typeno);
 	}
@@ -47,7 +39,6 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	/**
 	 * XXX:This is from an old version, remove this.
 	 */
-	@Override
 	public String getColumnSource(final int type) {
 		if (isLoaded()) {
 			String retValue = null;
@@ -66,7 +57,6 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 		}
 	}
 
-	@Override
 	public G_IdType getIdTypeByShortName(final String shortName) {
 		for (final G_IdType id : getLoadedTypes().values()) {
 			if (id.getShortName().equals(shortName)) {
@@ -80,7 +70,6 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	 * This public version causes a caching event to occur when it is first
 	 * called.
 	 */
-	@Override
 	public Map<Integer, G_IdType> getLoadedTypes() {
 		if ((loadedTypes == null) || loadedTypes.isEmpty()) {
 			logger.debug("Loading types before returning getLoadedTypes()");
@@ -89,12 +78,10 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 		return loadedTypes;
 	}
 
-	@Override
 	public String getLongName(final int type) {
 		return getColumnSource(type);
 	}
 
-	@Override
 	public String getNodeType(final int type) {
 		String family = "Unknown";
 		if (isLoaded()) {
@@ -207,6 +194,12 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	}
 
 	@Override
+	public String saveObject(final Object g, final String id, final String indexName, final String type,
+			final boolean useDelay) {
+		return null;
+	}
+
+	@Override
 	public void setLoaded(final boolean l) {
 		loaded = l;
 	}
@@ -219,10 +212,6 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 	@Override
 	public void setSkipTypes(final List<Integer> skipTypes) {
 		this.skipTypes = skipTypes;
-	}
-
-	public String saveObject(final Object g, final String id, final String indexName, final String type, final boolean useDelay) {
-		return null;
 	}
 
 }

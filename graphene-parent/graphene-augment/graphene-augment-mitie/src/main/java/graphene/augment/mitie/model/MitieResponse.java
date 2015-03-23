@@ -1,4 +1,4 @@
-package org.graphene.augment.mitie.model;
+package graphene.augment.mitie.model;
 
 import java.util.List;
 

@@ -415,12 +415,6 @@ public class BasicESDAO implements G_DataAccess {
 	}
 
 	@Override
-	public G_SearchResults findByQuery(final G_EntityQuery pq) throws AvroRemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Map<String, List<G_Entity>> getAccounts(final List<String> entities) throws AvroRemoteException {
 		// TODO Auto-generated method stub
 		return null;
@@ -830,8 +824,7 @@ public class BasicESDAO implements G_DataAccess {
 	}
 
 	@Override
-	public G_SearchResults search(final List<G_PropertyMatchDescriptor> terms, final long start, final long max)
-			throws AvroRemoteException {
+	public G_SearchResults search(final G_EntityQuery pq) throws AvroRemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}

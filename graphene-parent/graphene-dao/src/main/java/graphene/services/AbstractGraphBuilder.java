@@ -10,10 +10,8 @@ import graphene.model.idl.G_CanonicalRelationshipType;
 import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_DocumentError;
-import graphene.model.idl.G_EdgeTypeAccess;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
@@ -29,7 +27,6 @@ import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,10 +49,7 @@ import org.apache.tapestry5.services.URLEncoder;
 import org.slf4j.Logger;
 
 public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuilder {
-	@Inject
-	protected G_EdgeTypeAccess edgeTypeAccess;
 
-	// protected Collection<DocumentGraphParser> singletons;
 	private static final boolean INHERIT_ATTRIBUTES = true;
 	@Inject
 	protected StopWordService stopwordService;
@@ -72,9 +66,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	private DocumentBuilder db;
 
 	@Inject
-	protected G_NodeTypeAccess nodeTypeAccess;
-
-	@Inject
 	protected URLEncoder encoder;
 
 	public static final int MIN_NODE_SIZE = 16;
@@ -86,19 +77,7 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 	protected Map<String, V_GenericEdge> edgeList;
 
-	/**
-	 * This field is to inform other services about which data sources can be
-	 * graphed using this builder. Each implementation should specify at least
-	 * one datasource string that is supported by itself.
-	 */
-
-	// protected Map<String, V_GenericEdge> edgeMap = new HashMap<String,
-	// V_GenericEdge>();
-
 	protected List<G_DocumentError> errors = new ArrayList<G_DocumentError>();
-
-	// TODO: Change this to a FIFO Queue and address any duplicate node issues
-	protected Collection<V_GenericNode> unscannedNodeList = new HashSet<V_GenericNode>(3);
 
 	protected Set<String> scannedQueries = new HashSet<String>();
 
@@ -191,7 +170,7 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					// getDAO().performCallback(0, 0, this, eq);
 					G_SearchResults searchResults;
 					try {
-						searchResults = getDAO().findByQuery(eq);
+						searchResults = getDAO().search(eq);
 
 						for (final G_SearchResult t : searchResults.getResults()) {
 							V_GenericGraph subGraph = null;
@@ -705,25 +684,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	public V_GenericGraph performPostProcess(final V_GraphQuery graphQuery, final V_GenericGraph g) {
 		// default blank
 		return g;
-	}
-
-	@Deprecated
-	public boolean removeEdge(final String fromId, final String relationType, final String toId,
-			final String relationValue) {
-		if (ValidationUtils.isValid(fromId, relationType, toId)) {
-			final String key = generateEdgeId(fromId, relationType, toId);
-			final V_GenericEdge removedEdge = edgeList.remove(key);
-			if (removedEdge != null) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Deprecated
-	public void removeGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q) {
-		removeEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
-				G_CanonicalRelationshipType.CONTAINED_IN.name());
 	}
 
 	/**

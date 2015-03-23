@@ -1,4 +1,4 @@
-package org.graphene.augment.mitie;
+package graphene.augment.mitie;
 
 /**
  * Hello world!
