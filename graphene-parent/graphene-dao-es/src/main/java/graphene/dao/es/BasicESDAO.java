@@ -677,6 +677,7 @@ public class BasicESDAO implements G_DataAccess {
 			if (scrolling) {
 				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 				final Search build = action.build();
+				action.addIndex(pq.getTargetSchema());
 				action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN);
 				action = action.setParameter(Parameters.SIZE, maxResults);
 				action = action.setParameter(Parameters.SCROLL, "1m");
@@ -725,6 +726,7 @@ public class BasicESDAO implements G_DataAccess {
 				// Not scrolling
 				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+				action.addIndex(pq.getTargetSchema());
 				action = action.setParameter(Parameters.SIZE, maxResults);
 
 				// The first query will not have any results, just the scroll id
