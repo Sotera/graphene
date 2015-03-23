@@ -162,7 +162,6 @@ public class BasicESDAO implements G_DataAccess {
 		final Set<String> esFields = new HashSet<String>();
 		final Set<String> esNotFields = new HashSet<String>();
 		final Set<String> esIds = new HashSet<String>();
-		new HashSet<String>();
 		SearchSourceBuilder ssb = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getPropertyMatchDescriptors())) {
 
@@ -287,10 +286,8 @@ public class BasicESDAO implements G_DataAccess {
 			logger.debug("adding types: " + esTypes.toArray());
 		}
 
-		/**
-		 * Set scrolling options for callback
-		 */
-		// action.setParameter(Parameters.SIZE, PAGESIZE);
+		action.setParameter(Parameters.SIZE, pq.getMaxResult());
+
 		logger.debug("We built query " + action.build().toString());
 		return action;
 	}
