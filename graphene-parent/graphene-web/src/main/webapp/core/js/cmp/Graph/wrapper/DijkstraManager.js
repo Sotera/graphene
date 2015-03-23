@@ -24,9 +24,12 @@ function DijkstraManager(graphRef) {
 		_this.isWaiting = (bool === true) ? true : false;
 	};
 	
-	this.run = function(followDirection) {
-		var eles = graphRef.gv.elements();
+	this.run = function(followDirection, onlyTraverseVisibleElements) {
+		var selector = (onlyTraverseVisibleElements === true) ? "[?visible]" : "";
 		var directed = (followDirection === true) ? true : false;
+		
+		var eles = graphRef.gv.elements(selector);
+		
 		// function that returns edge weight where this == current edge
 		var getEdgeWeight = function() {
 			var a = this.data("weight"); 
