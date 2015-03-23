@@ -34,9 +34,11 @@ function CytoscapeGraphVis(div_id) {
 			incomingHoverColor: "#111111",
 			incomingHoverSize: 2,
 
-			borderWidth: 3,
+			imageSize: 40,
+			
+			borderWidth: 4,
 			borderColor: "black",
-			borderStyle: "solid", // or "dotted" or "dashed"
+			borderStyle: "dashed", // or "dotted" or "dashed"
 			
 			fillColor: "rgba(0, 0, 200, 0.75)",
 			activeFillColor: "rgba(92, 194, 237, 0.75)",
@@ -135,6 +137,15 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 				'width': 'data(size)',
 				'height': 'data(size)'
 			});
+			style.selector("node[?imgUrl]").css({
+				'background-image' : 'data(imgUrl)',
+				'background-fit': 'cover',
+				'border-color': 'data(color)',
+				'border-width': _this.CONSTANTS("borderWidth"),
+				'width': _this.CONSTANTS("imageSize"),
+				'height': _this.CONSTANTS("imageSize")
+			});
+			/*
 			style.selector("$node > node").css({
 				'padding-top': '10px',
 				'padding-left': '10px',
@@ -148,6 +159,7 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 				'text-outline-width': 1,
 				'text-outline-color': _this.CONSTANTS("textOutlineColor")   
 			});
+			*/
 			style.selector("node:selected").css({
 				'background-color': _this.CONSTANTS("selectedNode"),
 				'line-color': 'black',
