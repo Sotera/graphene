@@ -55,6 +55,7 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 
 						final G_Entity entity = delegate.buildEntityFromDocument(hit, sq);
 						if (entity != null) {
+
 							entity.getProperties().put(G_Parser.SCORE,
 									new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
 							entity.getProperties()

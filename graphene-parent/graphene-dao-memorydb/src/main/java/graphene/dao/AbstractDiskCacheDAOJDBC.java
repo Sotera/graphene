@@ -733,4 +733,8 @@ public abstract class AbstractDiskCacheDAOJDBC<T> extends DiskCacheDAO<T> implem
 		logger.debug("Processed " + numProcessed + " rows in " + t.report());
 		return true;
 	}
+
+	public String saveObject(final Object g, final String id, final String indexName, final String type, final boolean useDelay) {
+		return null;
+	}
 }

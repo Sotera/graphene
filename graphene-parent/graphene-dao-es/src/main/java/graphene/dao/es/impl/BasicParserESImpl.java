@@ -28,7 +28,6 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 	protected ObjectMapper mapper = new ObjectMapper();
 	Logger logger = LoggerFactory.getLogger(BasicParserESImpl.class);
 	protected List<String> supported;
-
 	@Inject
 	protected StopWordService stopwordService;
 
@@ -78,6 +77,10 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 		} else {
 			return null;
 		}
+	}
+
+	public String getRawJsonFromSource(final JsonNode json) {
+		return json.findValue("_source").toString();
 	}
 
 	public double getScore(final JsonNode n) {

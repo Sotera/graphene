@@ -29,6 +29,7 @@ import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_Provenance;
+import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_Uncertainty;
 
 import java.io.IOException;
@@ -130,8 +131,13 @@ public class EntityHelper extends G_Entity {
 	public static Object getPropertyValue(final G_Entity entity, final String key) {
 		if ((entity != null) && (entity.getProperties() != null)) {
 			final G_Property prop = entity.getProperties().get(key);
+
 			if (prop != null) {
-				return ListRangeHelper.rangeValue(prop.getRange());
+				if (prop.getRange() instanceof G_SingletonRange) {
+					return SingletonRangeHelper.rangeValue(prop.getRange());
+				} else {
+					return ListRangeHelper.rangeValue(prop.getRange());
+				}
 			}
 		}
 		return null;

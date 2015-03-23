@@ -91,6 +91,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 
 	@Override
 	public G_SearchResults findByQuery(final G_EntityQuery pq) {
+		// TODO: Use a helper class
 		final G_SearchResults results = G_SearchResults.newBuilder().setTotal(0)
 				.setResults(new ArrayList<G_SearchResult>()).build();
 
@@ -193,6 +194,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 	@Override
 	@PostInjection
 	public void initialize() {
+		logger.debug("Doing specific initialization!");
 		setIndex(indexName);
 		setType(TYPE);
 		super.initialize();

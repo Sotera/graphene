@@ -71,7 +71,7 @@ public interface G_Parser<T> {
 
 	public static final String REPORT_LABEL = "reportlabel";
 	public static final String REPORT_LINK = "reportlink";
-
+	public static final String INTERNAL_TYPE = "_type";
 	public static final String REPORT_TYPE = "reporttype";
 	public static final String SCORE = "score";
 	public static final String SUBJECTADDRESSLIST = "subjectaddresslist";
@@ -91,6 +91,7 @@ public interface G_Parser<T> {
 	public static final String CARDINAL_ORDER = "cardinalOrder";
 	public static final String ROWFORTABLE = "summary";
 	public static final String DTO = "_dto";
+	public static final String JSON = "_json";
 
 	/**
 	 * SearchResult properties are the things returned in a table view after an

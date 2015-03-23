@@ -129,7 +129,9 @@ public interface G_DataAccess {
 	 * @param b */
   java.lang.Void setReady(boolean b) throws org.apache.avro.AvroRemoteException;
 
-  @SuppressWarnings("all")
+  public abstract String saveObject(final Object g, final String id, final String indexName, final String type, final boolean useDelay);
+
+@SuppressWarnings("all")
   /**  */
   public interface Callback extends G_DataAccess {
     public static final org.apache.avro.Protocol PROTOCOL = graphene.model.idl.G_DataAccess.PROTOCOL;
