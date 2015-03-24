@@ -221,4 +221,8 @@ public abstract class AbstractIdTypeDAO<T> extends GenericDAOJDBCImpl<T> impleme
 		this.skipTypes = skipTypes;
 	}
 
+	public String saveObject(final Object g, final String id, final String indexName, final String type, final boolean useDelay) {
+		return null;
+	}
+
 }

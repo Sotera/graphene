@@ -3,13 +3,24 @@ package graphene.dao.es;
 import graphene.dao.DocumentBuilder;
 import graphene.model.idl.G_CallBack;
 import graphene.model.idl.G_Constraint;
+import graphene.model.idl.G_DataAccess;
+import graphene.model.idl.G_DateRange;
+import graphene.model.idl.G_DirectionFilter;
+import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_LevelOfDetail;
+import graphene.model.idl.G_Link;
+import graphene.model.idl.G_LinkEntityTypeFilter;
+import graphene.model.idl.G_LinkTag;
 import graphene.model.idl.G_ListRange;
+import graphene.model.idl.G_PropertyDescriptors;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_SearchResult;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
+import graphene.model.idl.G_TransactionResults;
 import graphene.model.idlhelper.ListRangeHelper;
 import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
 import graphene.model.idlhelper.QueryHelper;
@@ -34,9 +45,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -64,7 +77,11 @@ import com.google.gson.JsonObject;
  * @author djue
  * 
  */
-public class BasicESDAO {
+public class BasicESDAO implements G_DataAccess {
+	/**
+	 * Use this flag if you want to supply an es string query that will go
+	 * directly into a SearchSourceBuilder.
+	 */
 	public static final String ESQUERY = "_esquery";
 	public static final String ESFIELDS = "_esfields";
 	public static final String ESTYPE = "_estype";
@@ -141,9 +158,10 @@ public class BasicESDAO {
 
 	protected io.searchbox.core.Search.Builder buildSearchAction(final G_EntityQuery pq) {
 		final Set<String> esTypes = new HashSet<String>();
+
 		final Set<String> esFields = new HashSet<String>();
+		final Set<String> esNotFields = new HashSet<String>();
 		final Set<String> esIds = new HashSet<String>();
-		new HashSet<String>();
 		SearchSourceBuilder ssb = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(pq) && ValidationUtils.isValid(pq.getPropertyMatchDescriptors())) {
 
@@ -188,16 +206,31 @@ public class BasicESDAO {
 						}
 						logger.debug("Adding id, ids are now " + StringUtils.coalesc("", esIds.toArray()));
 					} else if (key.equals(ESFIELDS)) {
+						// TODO: Finish up the logic here, because ES has a
+						// different meaning of searching by field, versus
+						// excluding it in the return value
 						if (r instanceof G_SingletonRange) {
 							final String t = (String) ((G_SingletonRange) r).getValue();
 							if (ValidationUtils.isValid(t)) {
-								logger.debug("Adding field " + t);
-								esFields.add(t);
+
+								if (d.getInclude()) {
+									logger.debug("Adding field " + t);
+									esFields.add(t);
+								} else {
+									logger.debug("Do not include field " + t);
+									esNotFields.add(t);
+								}
 							}
 						} else if (r instanceof G_ListRange) {
 							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
-								logger.debug("Adding fields " + t);
-								esFields.add((String) t);
+
+								if (d.getInclude()) {
+									logger.debug("Adding field " + t);
+									esFields.add((String) t);
+								} else {
+									logger.debug("Do not include field " + t);
+									esNotFields.add((String) t);
+								}
 							}
 						}
 					} else if (key.equals(ESQUERY)) {
@@ -253,10 +286,8 @@ public class BasicESDAO {
 			logger.debug("adding types: " + esTypes.toArray());
 		}
 
-		/**
-		 * Set scrolling options for callback
-		 */
-		action.setParameter(Parameters.SIZE, PAGESIZE);
+		action.setParameter(Parameters.SIZE, pq.getMaxResult());
+
 		logger.debug("We built query " + action.build().toString());
 		return action;
 	}
@@ -269,6 +300,7 @@ public class BasicESDAO {
 		return count(q);
 	}
 
+	@Override
 	public long count(final G_EntityQuery pq) {
 		long longCount = 0l;
 		try {
@@ -330,7 +362,7 @@ public class BasicESDAO {
 		return longCount;
 	}
 
-	protected void createIndex(final String indexName) throws Exception {
+	public void createIndex(final String indexName) throws Exception {
 		logger.debug("Creating index " + indexName + " with client " + c.getClient().toString());
 		// create new index (if u have this in elasticsearch.yml and prefer
 		// those defaults, then leave this out
@@ -382,6 +414,24 @@ public class BasicESDAO {
 		return false;
 	}
 
+	@Override
+	public G_SearchResults findByQuery(final G_EntityQuery pq) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<G_Entity>> getAccounts(final List<String> entities) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public G_SearchResults getAll(final long offset, final long maxResults) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public JestResult getAllResults() {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(MAX_TO_GET_AT_ONCE);
@@ -396,6 +446,12 @@ public class BasicESDAO {
 			logger.error("Get all: " + e.getMessage());
 		}
 		return result;
+	}
+
+	@Override
+	public G_TransactionResults getAllTransactions(final G_EntityQuery q) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public JestResult getByField(final String field, final String value) {
@@ -434,6 +490,27 @@ public class BasicESDAO {
 		return result;
 	}
 
+	@Override
+	public G_PropertyDescriptors getDescriptors() throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<G_Entity> getEntities(final List<String> entities, final G_LevelOfDetail levelOfDetail)
+			throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<G_Link>> getFlowAggregation(final List<String> entities, final List<String> focusEntities,
+			final G_DirectionFilter direction, final G_LinkEntityTypeFilter entityType, final G_LinkTag tag,
+			final G_DateRange date) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public String getIdByFirstHit(final JestResult jr) {
 		String id = null;
 		try {
@@ -452,6 +529,12 @@ public class BasicESDAO {
 
 	public long getModifiedTime() {
 		return DateTime.now().getMillis();
+	}
+
+	@Override
+	public double getReadiness() throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	/**
@@ -535,6 +618,13 @@ public class BasicESDAO {
 		return result;
 	}
 
+	@Override
+	public Map<String, List<G_Link>> getTimeSeriesAggregation(final List<String> entities,
+			final List<String> focusEntities, final G_LinkTag tag, final G_DateRange date) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -571,6 +661,13 @@ public class BasicESDAO {
 		}
 	}
 
+	@Override
+	public boolean isReady() throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public boolean performCallback(final long offset, final long maxResults, final G_CallBack cb, final G_EntityQuery pq) {
 		JestResult jestResult = new JestResult(null);
 
@@ -580,6 +677,7 @@ public class BasicESDAO {
 			if (scrolling) {
 				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 				final Search build = action.build();
+				action.addIndex(pq.getTargetSchema());
 				action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN);
 				action = action.setParameter(Parameters.SIZE, maxResults);
 				action = action.setParameter(Parameters.SCROLL, "1m");
@@ -625,9 +723,10 @@ public class BasicESDAO {
 					logger.error("Scroll failed with " + jestResult.getErrorMessage());
 				}
 			} else {
-
+				// Not scrolling
 				io.searchbox.core.Search.Builder action = buildSearchAction(pq);
 				// action.setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+				action.addIndex(pq.getTargetSchema());
 				action = action.setParameter(Parameters.SIZE, maxResults);
 
 				// The first query will not have any results, just the scroll id
@@ -641,11 +740,13 @@ public class BasicESDAO {
 				final JsonNode outerHits = rootNode.get("hits");
 				if (outerHits == null) {
 					currentResultSize = 0;
+					logger.warn("Found 0 results");
 				} else {
 					final List<JsonNode> hits = outerHits.findValues("hits");
 
 					final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
 					currentResultSize = actualListOfHits.size();
+					logger.debug("Found " + currentResultSize + " results");
 					for (int i = 0; i < actualListOfHits.size(); i++) {
 						final JsonNode currentHit = actualListOfHits.get(i);
 						if (ValidationUtils.isValid(currentHit)) {
@@ -659,6 +760,8 @@ public class BasicESDAO {
 							 * DTO object.
 							 */
 							final G_SearchResult sr = db.buildSearchResultFromDocument(i, currentHit, pq);
+							// logger.debug("Executing callback with sr = " +
+							// sr);
 							cb.execute(sr, pq);
 						}
 					}
@@ -684,13 +787,25 @@ public class BasicESDAO {
 		}
 	}
 
+	/**
+	 * 
+	 * @param g
+	 * @param id
+	 * @param indexName
+	 * @param type
+	 * @param useDelay
+	 * @return the id used by the saved object.
+	 */
+	@Override
 	public String saveObject(final Object g, final String id, final String indexName, final String type,
 			final boolean useDelay) {
 		Index saveAction;
 		if (!ValidationUtils.isValid(id)) {
+			// saving without an id.
 			saveAction = new Index.Builder(g).index(indexName).type(type).setParameter("timeout", defaultESTimeout)
 					.build();
 		} else {
+			// saving with a given id.
 			saveAction = new Index.Builder(g).index(indexName).id(id).type(type)
 					.setParameter("timeout", defaultESTimeout).build();
 		}
@@ -716,8 +831,21 @@ public class BasicESDAO {
 		return generatedId;
 	}
 
+	@Override
+	public G_SearchResults search(final List<G_PropertyMatchDescriptor> terms, final long start, final long max)
+			throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public void setIndex(final String index) {
 		this.index = index;
+	}
+
+	@Override
+	public Void setReady(final boolean b) throws AvroRemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public void setType(final String type) {

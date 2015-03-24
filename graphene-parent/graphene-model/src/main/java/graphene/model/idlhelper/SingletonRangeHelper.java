@@ -30,57 +30,70 @@ import graphene.model.idl.G_SingletonRange;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SingletonRangeHelper extends G_SingletonRange {
+
+	private static Logger logger = LoggerFactory.getLogger(SingletonRangeHelper.class);
+
+	public static Object rangeValue(final Object range) {
+		if (range instanceof G_SingletonRange) {
+			return ((G_SingletonRange) range).getValue();
+		} else if (range instanceof SingletonRangeHelper) {
+			return ((SingletonRangeHelper) range).getValue();
+		} else {
+			logger.error("Range value was not G_SingletonRange or SingletonRangeHelper: " + range);
+			return null;
+		}
+	}
+
+	public static String toString(final Object range) {
+		return String.valueOf(rangeValue(range));
+	}
 
 	public SingletonRangeHelper(Object value) {
 		G_PropertyType type = G_PropertyType.STRING;
-		
-		if (value != null && !(value instanceof String)) {
+
+		if ((value != null) && !(value instanceof String)) {
 			type = G_PropertyType.STRING;
-			
+
 			if (value instanceof Number) {
-				Number number = (Number)value;
-				
+				final Number number = (Number) value;
+
 				if (number instanceof Integer) {
 					type = G_PropertyType.LONG;
 					value = Long.valueOf(number.longValue());
-					
+
 				} else if (number instanceof Long) {
 					type = G_PropertyType.LONG;
-					
+
 				} else {
 					type = G_PropertyType.DOUBLE;
 					value = Double.valueOf(number.doubleValue());
 				}
-				
+
 			} else if (value instanceof Boolean) {
 				type = G_PropertyType.BOOLEAN;
-				
+
 			} else if (value instanceof Date) {
 				type = G_PropertyType.DATE;
-				value = Long.valueOf(((Date)value).getTime());
-				
+				value = Long.valueOf(((Date) value).getTime());
+
 			} else if (value instanceof G_GeoData) {
 				type = G_PropertyType.GEO;
-				
+
 			} else {
 				value = value.toString();
 			}
 		}
-		
-		setValue(value);
-		setType(type);
-	}
-	public SingletonRangeHelper(Object value, G_PropertyType type) {
+
 		setValue(value);
 		setType(type);
 	}
 
-	public static Object rangeValue(Object range) {
-		return range instanceof G_SingletonRange? ((G_SingletonRange)range).getValue() : null;
-	}
-	
-	public static String toString(Object range) {
-		return String.valueOf(rangeValue(range));
+	public SingletonRangeHelper(final Object value, final G_PropertyType type) {
+		setValue(value);
+		setType(type);
 	}
 }
