@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>graphene-dao-sql</artifactId>
 	<name>${project.artifactId}</name>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -27,12 +27,30 @@
 			<artifactId>graphene-util</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-sql-codegen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-sql</artifactId>
+		</dependency>
+
+		<!-- Only need this if you want to support QueryDSL over Java Collections -->
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-collections</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>

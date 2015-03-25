@@ -26,6 +26,51 @@
 
 protocol G_DataTypes {
 	/**
+	 * A set of canonical types/tags for visual pages (T5 page classes). This is
+	 * mostly for helping with menu selection, menu organization and styling with
+	 * css or icons.
+	 * 
+	 * Later on, a user might be able to search for a particular type of visual
+	 * display, and we would show a list of pages that support that display.
+	 * 
+	 * Might be changed to G_VisualTag, so that annotations can suggest multiple per
+	 * page/component.
+	 * 
+	 * 
+	 * HIDDEN will cause a page to not be displayed in automatically generated
+	 * menus.
+	 * 
+	 * @author djue
+	 * 
+	 */
+	enum G_VisualType {
+	HELP, 
+	TOP, 
+	CHART, 
+	DEFAULT, 
+	GRAPH, 
+	HIDDEN, 
+	IMAGE, 
+	INFINITE_SCROLL, 
+	LIST, 
+	MONEY, 
+	PLUGIN, 
+	SEARCH, 
+	TEXT, 
+	WEBGL, 
+	EVENT, 
+	META, 
+	DEMO, 
+	REDACTED, 
+	GEO, 
+	EXPERIMENTAL, 
+	SETTINGS, 
+	MANAGE_WORKSPACES, 
+	ADMIN, 
+	VIEW_WORKSPACE
+	}
+
+	/**
 	 Tags are defined by the application layer as a taxonomy of user and application concepts,
 	 independent of the data sources. This allows application semantics to be re-used with new
 	 data, with a minimum of new software design and development. Data layer entity types, link
@@ -214,7 +259,7 @@ protocol G_DataTypes {
 		/** continent */
 		G_ContinentCode continent;
 	}
-
+	
 	/**
 	 Temporal resolution of a duration
 	 

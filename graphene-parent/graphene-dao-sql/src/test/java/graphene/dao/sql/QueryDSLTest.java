@@ -1,7 +1,5 @@
 package graphene.dao.sql;
 
-import graphene.util.db.DBConnectionPoolService;
-
 import org.apache.tapestry5.ioc.Registry;
 import org.slf4j.Logger;
 

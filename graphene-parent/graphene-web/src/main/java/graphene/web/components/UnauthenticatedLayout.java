@@ -10,8 +10,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
 
-import com.trsvax.bootstrap.annotations.Exclude;
-
 /**
  * A layout for pages like login, logout, register, etc. Where The user has not
  * logged in yet.
@@ -19,7 +17,7 @@ import com.trsvax.bootstrap.annotations.Exclude;
  * @author djue
  * 
  */
-@Exclude(stylesheet = { "core" })
+// @Exclude(stylesheet = { "core" })
 @Import(stylesheet = { "context:/core/css/t5default.css", "context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css", "context:/core/css/graphene-production.css",
 		"context:/core/css/graphene-skins.css", "context:/core/css/demo.css", "context:/core/css/googlefonts.css" },

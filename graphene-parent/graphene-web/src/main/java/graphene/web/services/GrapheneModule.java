@@ -110,7 +110,7 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.REQUIRE_AUTHENTICATION, false);
 		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
 		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
-
+		configuration.add(JQuerySymbolConstants.USE_MINIFIED_JS, false);
 		configuration.add(G_SymbolConstants.ENABLE_EXPERIMENTAL, false);
 		configuration.add(G_SymbolConstants.ENABLE_MISC, false);
 		configuration.add(G_SymbolConstants.ENABLE_SETTINGS, true);

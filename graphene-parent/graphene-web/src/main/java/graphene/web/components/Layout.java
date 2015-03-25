@@ -31,19 +31,16 @@ import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.slf4j.Logger;
 import org.tynamo.security.services.SecurityService;
 
-import com.trsvax.bootstrap.annotations.Exclude;
-
 /**
  * 
  * @author djue
  * 
  */
-@Exclude(stylesheet = { "core" })
+// @Exclude(stylesheet = { "core" })
 @Import(stylesheet = { "context:/core/css/t5default.css", "context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css", "context:/core/css/graphene-production.css",
 		"context:/core/css/pace-radar.css", "context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
-		"context:/core/css/googlefonts.css" }, library = {
-		"classpath:/com/trsvax/bootstrap/assets/bootstrap/js/bootstrap.js", "context:/core/js/logout.js" })
+		"context:/core/css/googlefonts.css" }, library = { "context:/core/js/logout.js" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 public class Layout {
 	@Property

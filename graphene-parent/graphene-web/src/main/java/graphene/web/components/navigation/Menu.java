@@ -10,6 +10,7 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_VisualType;
 import graphene.util.Triple;
 import graphene.web.annotations.PluginPage;
+import graphene.web.model.MenuItem;
 import graphene.web.model.MenuType;
 
 import java.util.ArrayList;
@@ -20,14 +21,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.corelib.components.Tree;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.tree.TreeModel;
 import org.slf4j.Logger;
 
 public class Menu {
@@ -90,6 +96,15 @@ public class Menu {
 	@Inject
 	private UserRoleDAO urDao;
 
+	private static final MenuItem rootNode = new MenuItem("home", "Home", "index");
+
+	@InjectComponent
+	private Tree tree;
+
+	@Property
+	@Persist(PersistenceConstants.FLASH)
+	private MenuItem menuItem;
+
 	public Collection<Triple<String, String, String>> getActionPages() {
 		return menuHierarchy.get(MenuType.ACTION);
 	}
@@ -114,6 +129,26 @@ public class Menu {
 		return menuHierarchy.get(MenuType.LASTACTION);
 	}
 
+	public TreeModel<MenuItem> getMenuItemModel(){
+		final ValueEncoder<MenuItem> encoder = new ValueEncoder<MenuItem>() {
+
+		
+
+			@Override
+			public String toClient(final MenuItem value) {
+				// TODO Auto-generated method stub
+				return return value.uuid;
+			}
+
+			@Override
+			public MenuItem toValue(final String clientValue) {
+				// TODO Auto-generated method stub
+				return rootNode.seek(clientValue);
+			}
+		
+		};
+	}
+
 	public Collection<Triple<String, String, String>> getMetaPages() {
 		return menuHierarchy.get(MenuType.META);
 	}
@@ -133,6 +168,7 @@ public class Menu {
 		if (menuHierarchy == null) {
 			logger.info("Constructing page links for side menu items.");
 			final List<String> pageList = componentClassResolver.getPageNames();
+
 			menuHierarchy = new HashMap<MenuType, Collection<Triple<String, String, String>>>();
 			menuHierarchy.put(MenuType.ACTION, new ArrayList<Triple<String, String, String>>(1));
 			menuHierarchy.put(MenuType.LASTACTION, new ArrayList<Triple<String, String, String>>(1));
@@ -140,8 +176,14 @@ public class Menu {
 			menuHierarchy.put(MenuType.EXPERIMENTAL, new ArrayList<Triple<String, String, String>>(1));
 			menuHierarchy.put(MenuType.ADMIN, new ArrayList<Triple<String, String, String>>(1));
 			menuHierarchy.put(MenuType.SETTINGS, new ArrayList<Triple<String, String, String>>(1));
+
+			// TODO: Work this out. I think this is a better solution to the
+			// problem of a dynamic, pluggable, contributable menu tree.
+			rootNode.addChild(new MenuItem("", "Action", ""));
+
 			for (final String pageName : pageList) {
 				final String className = componentClassResolver.resolvePageNameToClassName(pageName);
+
 				final Class clazz = loadClass(className);
 				if (clazz.isAnnotationPresent(PluginPage.class)) {
 					final PluginPage p = (PluginPage) clazz.getAnnotation(PluginPage.class);
@@ -192,6 +234,14 @@ public class Menu {
 		}
 	}
 
+	private Class loadClass(final String className) {
+		try {
+			return Thread.currentThread().getContextClassLoader().loadClass(className);
+		} catch (final ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	// public boolean isAdmin() {
 	// boolean userIsAnAdmin = false;
 	// if (userExists) {
@@ -209,11 +259,7 @@ public class Menu {
 	// return enableAdmin && isAdmin();
 	// }
 
-	private Class loadClass(final String className) {
-		try {
-			return Thread.currentThread().getContextClassLoader().loadClass(className);
-		} catch (final ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+	void onActionFromClear() {
+		tree.clearExpansions();
 	}
 }

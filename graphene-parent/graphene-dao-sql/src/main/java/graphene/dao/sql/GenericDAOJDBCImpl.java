@@ -5,7 +5,6 @@ import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.util.db.DBConnectionPoolService;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
 import graphene.util.stats.MemoryReporter;

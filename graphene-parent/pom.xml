@@ -16,7 +16,6 @@
 		<module>graphene-dao</module>
 		<module>graphene-dao-sql</module>
 		<module>graphene-dao-neo4j</module>
-		<!-- <module>graphene-dao-memorydb</module> -->
 		<module>graphene-dao-titan</module>
 		<module>graphene-dao-es</module>
 		<module>graphene-export</module>
@@ -348,22 +347,22 @@
 					if we switch to Tapestry 5.4, which includes JQuery support by default -->
 				<groupId>org.got5</groupId>
 				<artifactId>tapestry5-jquery</artifactId>
-				<version>3.3.1</version>
+				<version>3.4.2</version>
 			</dependency>
 			<!-- This is less ideal, but it's in our local repos. Note that we have 
 				to specify a particular snapshot version, because putting 2.0-SNAPSHOT as 
 				the version number was not working properly. Ideally we'll stop using snapshots, 
 				and stop using this lib altogether when T5.4 is ready, as it include bootstrap 
 				support natively. -->
-			<dependency>
+		<!-- 	<dependency>
 				<groupId>com.trsvax.bootstrap</groupId>
 				<artifactId>tapestry-bootstrap</artifactId>
 				<version>2.0-20120526.123746-2</version>
 			</dependency>
-
-			<dependency><!-- Sometimes this one has problems because not all files 
+ -->
+			<!-- <dependency>Sometimes this one has problems because not all files 
 					are in the local repo. Note that this is a different group ID than the above 
-					one -->
+					one
 				<groupId>com.trsvax</groupId>
 				<artifactId>tapestry-bootstrap</artifactId>
 				<version>2.1.3</version>
@@ -373,7 +372,7 @@
 						<artifactId>tapestry5-jquery</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
+			</dependency> -->
 			<dependency><!-- The Yahoo User Interface compressor allows compression 
 					of CSS and Javascript, for faster transfer to the client -->
 				<groupId>com.yahoo.platform.yui</groupId>

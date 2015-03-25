@@ -1,9 +1,8 @@
 package graphene.dao.sql;
 
 import graphene.dao.DAOModule;
+import graphene.dao.sql.util.JDBCUtil;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.util.db.DBConnectionPoolService;
-import graphene.util.db.JDBCUtil;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
 
@@ -35,7 +34,7 @@ import org.slf4j.Logger;
 @SubModule({ DAOModule.class })
 public class DAOSQLModule {
 	public static void bind(final ServiceBinder binder) {
-
+		binder.bind(JDBCUtil.class).eagerLoad();
 	}
 
 	/**
