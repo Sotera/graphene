@@ -11,6 +11,7 @@ import graphene.model.idl.G_VisualType;
 import graphene.util.Triple;
 import graphene.web.annotations.PluginPage;
 import graphene.web.model.MenuItem;
+import graphene.web.model.MenuItemTreeModelAdapter;
 import graphene.web.model.MenuType;
 
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ import java.util.Map;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -33,6 +33,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.tree.DefaultTreeModel;
 import org.apache.tapestry5.tree.TreeModel;
 import org.slf4j.Logger;
 
@@ -98,7 +99,7 @@ public class Menu {
 
 	private static final MenuItem rootNode = new MenuItem("home", "Home", "index");
 
-	@InjectComponent
+	// @InjectComponent
 	private Tree tree;
 
 	@Property
@@ -129,15 +130,13 @@ public class Menu {
 		return menuHierarchy.get(MenuType.LASTACTION);
 	}
 
-	public TreeModel<MenuItem> getMenuItemModel(){
+	public TreeModel<MenuItem> getMenuItemModel() {
 		final ValueEncoder<MenuItem> encoder = new ValueEncoder<MenuItem>() {
-
-		
 
 			@Override
 			public String toClient(final MenuItem value) {
 				// TODO Auto-generated method stub
-				return return value.uuid;
+				return value.uuid;
 			}
 
 			@Override
@@ -145,8 +144,10 @@ public class Menu {
 				// TODO Auto-generated method stub
 				return rootNode.seek(clientValue);
 			}
-		
+
 		};
+		return new DefaultTreeModel<MenuItem>(encoder, new MenuItemTreeModelAdapter(), rootNode.getChildren());
+
 	}
 
 	public Collection<Triple<String, String, String>> getMetaPages() {
@@ -258,8 +259,8 @@ public class Menu {
 	// public boolean isShowAdmin() {
 	// return enableAdmin && isAdmin();
 	// }
-
-	void onActionFromClear() {
-		tree.clearExpansions();
-	}
+	// Save this until we get the new tree code
+	// void onActionFromClear() {
+	// tree.clearExpansions();
+	// }
 }
