@@ -76,6 +76,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 				fieldLabel: "From:",
 				margin: 2,
 				labelWidth: 30,
+				//submitFormat: 'U000',
 				emptyText: "MM/DD/YYYY",
 				width: '50%'
 			}, {
@@ -83,6 +84,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 				fieldLabel: "To:",
 				margin: 2,
 				labelWidth: 30,
+				//submitFormat: 'U000',
 				emptyText: "MM/DD/YYYY",
 				width: '50%'
 			}]
@@ -232,14 +234,14 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 	getDates: function() {
 		var datePanel = Ext.getCmp(this.id + "-DATE-PANEL");
 		var items = datePanel.items.items;
-		var fromDate = items[0].getValue();
-		var toDate = items[1].getValue();
+		var fromDateMillis = items[0].getValue().getTime();
+		var toDateMillis = items[1].getValue().getTime();
 		
 		// TODO: date conversions/reformatting if necessary
 		
 		return {
-			from : fromDate,
-			to : toDate
+			from : fromDateMillis,
+			to : toDateMillis
 		};
 	},
 	
@@ -283,8 +285,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			autoDestroy: true,
 			storeId: "node_type_store",
 			fields: [
-			    // if you change the field names, don't forget to change them
-			    // in the combobox too
+			    // if you change the field names, don't forget to change them in the combobox too
 				{name: 'value', type: 'string'},
 				{name: 'label', type: 'string'}
 			],
