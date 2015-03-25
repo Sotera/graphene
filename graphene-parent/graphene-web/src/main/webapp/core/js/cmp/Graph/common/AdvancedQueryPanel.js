@@ -61,7 +61,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			xtype: 'panel',
 			title: "*Record Types",
 			layout: "hbox",
-			margin: "2 0 2 0",
+			margin: 2,
 			items: [nodeTypeCB, selectAll, clearSelection]
 		};
 		
@@ -70,7 +70,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			id: config.id + "-DATE-PANEL",
 			title: '*Dates',
 			layout: 'hbox',
-			margin: '2 0 2 0',
+			margin: 2,
 			items: [{
 				xtype: 'datefield',
 				fieldLabel: "From:",
@@ -95,7 +95,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			title: "*Amounts",
 			id: config.id + "-AMOUNT-PANEL",
 			layout: 'hbox',
-			margin: '2 0 2 0',
+			margin: 2,
 			items: [{
 				xtype: 'textfield',
 				fieldLabel: "From:",
@@ -115,7 +115,10 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			title: 'ADVANCED QUERY FORM',
 			border: 0,
 			flex: 1,
-			margin: '0 2 0 2',
+			maxHeight: 400,
+			autoScroll: true,
+			collapsible: true,
+			collapseDirection: "top",
 			items: [
 				_nodeTypeLine,
 				_dateLine, 
@@ -126,7 +129,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		var postBtn = Ext.create("Ext.Button", {
 			text: "POST",
 			margin: 4,
-			height: 25,
+			height: 30,
 		    margin: 2,
 			columnWidth: .5,
 			handler: function() {
@@ -137,7 +140,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		var clearBtn = Ext.create("Ext.Button", {
 			text: "CLEAR ALL",
 			margin: 4,
-			height: 25,
+			height: 30,
 		    margin: 2,
 			columnWidth: .5,
 			handler: function() {
@@ -151,6 +154,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			icon: Config.helpIcon,
 			width: 30,
 		    scale: 'medium',
+			height: 30,
 		    margin: 2,
 		    handler: function() {
 			    Ext.Msg.alert(
@@ -179,7 +183,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			height: 'auto',
 			width: 'auto',
 			collapsible: true,
-			collapseDirection: "bottom",
+			collapseDirection: "top",
 			layout: {
 				type: 'vbox',
 				align: 'stretch'
@@ -203,19 +207,45 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		// -call loadRecordTypes() with those node types
 		// -default select all?
 		// -set min and max dates based on the date range of the data
+
+		// get the parent container of the node type combobox and disable it
+		Ext.getCmp(_this.id + "-NODE-TYPE-CB").up().setDisabled(true);
 		
-		// example data
-		var data = {
-		// 	{"value" : "label"}
-			'1': 'USERNAME',
-			'2': 'MEDIA',
-			'3': 'Comment'
-		};
-		
-		_this.loadRecordTypes(data, false);
-		
-		// -default select all?
-		_this.selectAllRecordTypes();
+		Ext.Ajax.request({
+			url: "rest/meta/nodetypes",
+			success: function(resp) {
+				var array = Ext.decode(resp.responseText);
+				// example data
+				var data = {
+				// 	{"value" : "label"}
+					'1': 'USERNAME',
+					'2': 'MEDIA',
+					'3': 'Comment'
+				};
+				
+				//var data = {};
+				for (var i = 0; i < array.length; i++) {
+					data[array[i].name] = array[i].friendlyName;
+				}
+				
+				_this.loadRecordTypes(data, false);
+				
+				// -default select all?
+				_this.selectAllRecordTypes();
+				
+				// get the parent container of the node type combobox and enable it
+				Ext.getCmp(_this.id + "-NODE-TYPE-CB").up().setDisabled(false);
+			},
+			failure: function(resp) {
+				console.error("could not load any record types");
+				
+				// load nothing
+				_this.loadRecordTypes({}, true);
+
+				// get the parent container of the node type combobox and enable it
+				Ext.getCmp(_this.id + "-NODE-TYPE-CB").up().setDisabled(false);
+			}
+		});
 	},
 	
 	clearRecordTypes: function() {
@@ -234,8 +264,21 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 	getDates: function() {
 		var datePanel = Ext.getCmp(this.id + "-DATE-PANEL");
 		var items = datePanel.items.items;
-		var fromDateMillis = items[0].getValue().getTime();
-		var toDateMillis = items[1].getValue().getTime();
+		// FIXME depending on the service, we may want different default values if the field(s) is/are blank
+		var fromDateMillis = 0;	// null?
+		var toDateMillis = 0;	// null?
+		
+		try {
+			fromDateMillis = items[0].getValue().getTime();
+		} catch(e) {
+			// from date field is blank
+		}
+		
+		try {
+			toDateMillis = items[1].getValue().getTime();
+		} catch (e) {
+			// to date field is blank
+		}
 		
 		// TODO: date conversions/reformatting if necessary
 		
@@ -259,7 +302,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		var fromAmount = items[0].getValue();
 		var toAmount = items[1].getValue();
 		
-		// TODO parseInt/reformatting if necesary
+		// TODO parseInt/reformatting if necessary
 		
 		return {
 			from : fromAmount,
@@ -272,13 +315,41 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		combo.select(combo.getStore().collect(combo.valueField));
 	},
 	
+	/**
+	 * 	Expects the data object to resemble JSON:
+	 * 		{
+	 * 			"type1Value" : "Type 1 Label",
+	 * 			...,
+	 * 			"typeNValue" : "Type n Label"
+	 * 		}
+	 */
 	loadRecordTypes: function(obj, isAppend) {
 		var combo = Ext.getCmp(this.id + "-NODE-TYPE-CB");
+		var dataArray = [];
 		
-		var array = [];
+		// if isAppend is true, get the existing store and assign it to 'dataArray'
+		// else 'dataArray' will be an empty array
+		if (isAppend === true) {
+			var items = combo.getStore().data.items;
+			for (var i = 0; i < items.length; i++) {
+				var item = items[i];
+				dataArray.push([item.data.value, item.data.label]);
+			}
+		}
+		
+		// iterate over the JSON object and add each name/value pair to 'dataArray'
+		// prevent duplicates
 		for (var key in obj) {
 			if (!obj.hasOwnProperty(key)) continue;
-			array.push([key, obj[key]]);
+			var newVal = [key, obj[key]];
+			var isDuplicate = false;
+			for (var i = 0; i < dataArray.length; i++) {
+				if (dataArray[i][0] == newVal[0] && dataArray[i][1] == newVal[1]) {
+					isDuplicate = true;
+					break;
+				}
+			}
+			if (!isDuplicate) dataArray.push(newVal);
 		}
 		
 		var array_store = new Ext.data.ArrayStore({
@@ -290,7 +361,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 				{name: 'label', type: 'string'}
 			],
 			expandData: true, 
-			data: array
+			data: dataArray
 		});
 
 		combo.bindStore(array_store);
