@@ -105,18 +105,19 @@ public class EntityExtraction extends SimpleBasePage {
 	}
 
 	Object onSuccessFromAugmentTextForm() {
+		logger.debug("Set value to " + textAreaValue);
 		r = null;
 		currentEntity = null;
 		if (ValidationUtils.isValid(textAreaValue)) {
 			try {
 				textAreaValue = textAreaValue.trim();
 				r = dao.augment(textAreaValue);
-				logger.debug("Set value to " + textReturnValue);
+
 			} catch (final DataAccessException e) {
-				alertManager.alert(Duration.SINGLE, Severity.ERROR, e.getMessage());
+				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, e.getMessage());
 			}
 		} else {
-			alertManager.alert(Duration.SINGLE, Severity.INFO, "Please enter text to extract entities from.");
+			alertManager.alert(Duration.TRANSIENT, Severity.INFO, "Please enter text to extract entities from.");
 		}
 		return request.isXHR() ? extractionZone.getBody() : null;
 	}
