@@ -28,7 +28,6 @@ public class DAOModule {
 		binder.bind(G_UserDataAccess.class, UserServiceImpl.class);
 		binder.bind(EventServer.class, EventServerImpl.class);
 		binder.bind(G_PropertyKeyTypeAccess.class, G_PropertyKeyTypeAccessImpl.class);
-
 	}
 
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
