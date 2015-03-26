@@ -1,4 +1,4 @@
-package graphene.web.model;
+package graphene.workflow.web.model;
 
 import java.util.Date;
 

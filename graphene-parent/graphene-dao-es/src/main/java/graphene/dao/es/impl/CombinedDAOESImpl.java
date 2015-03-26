@@ -38,7 +38,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
@@ -85,57 +84,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 		this.logger = logger;
 		auth = null;
 		this.c = c;
-		mapper = new ObjectMapper(); // can reuse, share globally
-	}
 
-	@Override
-	public G_SearchResults search(final G_EntityQuery pq) {
-		// TODO: Use a helper class
-		final G_SearchResults results = G_SearchResults.newBuilder().setTotal(0)
-				.setResults(new ArrayList<G_SearchResult>()).build();
-
-		final List<G_SearchResult> resultsList = new ArrayList<G_SearchResult>();
-		JestResult jestResult = new JestResult(null);
-		try {
-			final io.searchbox.core.Search.Builder action = buildSearchAction(pq);
-			jestResult = c.getClient().execute(action.build());
-		} catch (final DataAccessException e) {
-			e.printStackTrace();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		// logger.debug(jestResult.getJsonString());
-		JsonNode rootNode;
-		long totalNumberOfPossibleResults = 0l;
-		try {
-			rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
-
-			if ((rootNode != null) && (rootNode.get("hits") != null) && (rootNode.get("hits").get("total") != null)) {
-				totalNumberOfPossibleResults = rootNode.get("hits").get("total").asLong();
-				logger.debug("Found " + totalNumberOfPossibleResults + " hits in hitparent!");
-
-				final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
-				final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
-
-				for (int i = 0; i < actualListOfHits.size(); i++) {
-					final JsonNode currentHit = actualListOfHits.get(i);
-					if (ValidationUtils.isValid(currentHit)) {
-						final G_SearchResult result = db.buildSearchResultFromDocument(i, currentHit, pq);
-						if (result == null) {
-							logger.error("could not build search result from hit " + currentHit.toString());
-						}
-						CollectionUtils.addIgnoreNull(resultsList, result);
-					} else {
-						logger.error("Invalid search result at index " + i + " for query " + pq.toString());
-					}
-				}
-			}
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		results.setResults(resultsList);
-		results.setTotal(totalNumberOfPossibleResults);
-		return results;
 	}
 
 	@Override
@@ -195,6 +144,54 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 	@Override
 	public boolean isReady() {
 		return true;
+	}
+
+	@Override
+	public G_SearchResults search(final G_EntityQuery pq) {
+		// TODO: Use a helper class
+		final G_SearchResults results = G_SearchResults.newBuilder().setTotal(0)
+				.setResults(new ArrayList<G_SearchResult>()).build();
+
+		final List<G_SearchResult> resultsList = new ArrayList<G_SearchResult>();
+		JestResult jestResult = new JestResult(null);
+		try {
+			final io.searchbox.core.Search.Builder action = buildSearchAction(pq);
+			jestResult = c.getClient().execute(action.build());
+		} catch (final DataAccessException e) {
+			e.printStackTrace();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		// logger.debug(jestResult.getJsonString());
+		JsonNode rootNode;
+		long totalNumberOfPossibleResults = 0l;
+		try {
+			rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
+
+			if ((rootNode != null) && (rootNode.get("hits") != null) && (rootNode.get("hits").get("total") != null)) {
+				totalNumberOfPossibleResults = rootNode.get("hits").get("total").asLong();
+				logger.debug("Found " + totalNumberOfPossibleResults + " hits in hitparent!");
+				final ArrayNode actualListOfHits = getListOfHitsFromResult(jestResult);
+
+				for (int i = 0; i < actualListOfHits.size(); i++) {
+					final JsonNode currentHit = actualListOfHits.get(i);
+					if (ValidationUtils.isValid(currentHit)) {
+						final G_SearchResult result = db.buildSearchResultFromDocument(i, currentHit, pq);
+						if (result == null) {
+							logger.error("could not build search result from hit " + currentHit.toString());
+						}
+						CollectionUtils.addIgnoreNull(resultsList, result);
+					} else {
+						logger.error("Invalid search result at index " + i + " for query " + pq.toString());
+					}
+				}
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		results.setResults(resultsList);
+		results.setTotal(totalNumberOfPossibleResults);
+		return results;
 	}
 
 	@Override

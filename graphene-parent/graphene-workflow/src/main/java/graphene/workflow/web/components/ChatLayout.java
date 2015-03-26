@@ -1,4 +1,4 @@
-package graphene.web.components;
+package graphene.workflow.web.components;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.AlertStorage;

@@ -13,7 +13,6 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
@@ -37,16 +36,11 @@ import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.atmosphere.cpr.ApplicationConfig;
 import org.got5.tapestry5.jquery.JQuerySymbolConstants;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
-import org.lazan.t5.atmosphere.services.AtmosphereModule;
-import org.lazan.t5.atmosphere.services.TopicAuthorizer;
-import org.lazan.t5.atmosphere.services.TopicListener;
-import org.lazan.t5.atmosphere.services.internal.AtmosphereHttpServletRequestFilter;
 import org.slf4j.Logger;
 
 /**
@@ -57,7 +51,7 @@ import org.slf4j.Logger;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ DAOModule.class, AtmosphereModule.class })
+@SubModule({ DAOModule.class })
 public class GrapheneModule {
 
 	/**
@@ -75,10 +69,6 @@ public class GrapheneModule {
 		// configuration.addInstance("NeoCytoscapeStack",
 		// NeoCytoscapeStack.class);
 		// configuration.addInstance("GlobeStack", GlobeStack.class);
-	}
-
-	public static void bind(final ServiceBinder binder) {
-		binder.bind(ChatManager.class, ChatManagerImpl.class);
 	}
 
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
@@ -129,11 +119,6 @@ public class GrapheneModule {
 
 	}
 
-	@Contribute(AtmosphereHttpServletRequestFilter.class)
-	public static void contributeAtmosphere(final MappedConfiguration<String, String> config) {
-		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
-	}
-
 	public static void contributeBeanBlockSource(final Configuration<BeanBlockContribution> configuration) {
 
 		// Display blocks
@@ -173,14 +158,6 @@ public class GrapheneModule {
 		configuration.add(LocalDateTime.class, "localDateTime");
 		configuration.add(LocalDate.class, "localDate");
 		configuration.add(LocalTime.class, "localTime");
-	}
-
-	public static void contributeTopicAuthorizer(final OrderedConfiguration<TopicAuthorizer> config) {
-		config.addInstance("chat", ChatTopicAuthorizer.class);
-	}
-
-	public static void contributeTopicListener(final OrderedConfiguration<TopicListener> config) {
-		config.addInstance("chat", ChatTopicListener.class);
 	}
 
 	/**

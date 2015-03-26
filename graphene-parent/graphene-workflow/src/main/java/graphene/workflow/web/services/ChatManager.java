@@ -1,17 +1,24 @@
-package graphene.web.services;
+package graphene.workflow.web.services;
 
-import graphene.web.model.ChatMessage;
+import graphene.workflow.web.model.ChatMessage;
 
 import java.util.Collection;
 import java.util.List;
 
 public interface ChatManager {
-	Collection<String> getRooms();
-	Collection<String> getRoomUsers(String room);
-	void joinRoom(String room, String user);
-	void leaveRoom(String room, String user);
-	void sendRoomMessage(String room, String user, String message);
-	void sendPrivateMessage(String fromUser, String toUser, String message);
 	List<ChatMessage> getRecentMessages(String room);
+
+	Collection<String> getRooms();
+
+	Collection<String> getRoomUsers(String room);
+
+	void joinRoom(String room, String user);
+
 	void leaveAllRooms(String chatUser);
+
+	void leaveRoom(String room, String user);
+
+	void sendPrivateMessage(String fromUser, String toUser, String message);
+
+	void sendRoomMessage(String room, String user, String message);
 }

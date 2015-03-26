@@ -60,10 +60,11 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.gson.JsonObject;
 
 /**
  * This is a basic class that you can use to communicate with ElasticSearch
@@ -88,7 +89,20 @@ public class BasicESDAO implements G_DataAccess {
 	private static final int MAX_TO_GET_AT_ONCE = 1000000;
 	private static final int PAGESIZE = 200;
 	public static final String ESID = "_esid";
-	protected ObjectMapper mapper;
+	/*
+	 * can reuse, share globally;
+	 */
+	protected static ObjectMapper mapper = new ObjectMapper();
+
+	public static ArrayNode getListOfHitsFromResult(final JestResult jestResult) throws JsonParseException,
+			JsonMappingException, IOException {
+		final JsonNode rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
+		final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
+
+		final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
+		return actualListOfHits;
+	}
+
 	private String index;
 	protected Logger logger;
 	protected ESRestAPIConnection c;
@@ -106,6 +120,7 @@ public class BasicESDAO implements G_DataAccess {
 	@Inject
 	@Symbol(JestModule.ES_SERVER)
 	private String host;
+
 	@Inject
 	private DocumentBuilder db;
 
@@ -429,7 +444,6 @@ public class BasicESDAO implements G_DataAccess {
 	public JestResult getAllResults() {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(MAX_TO_GET_AT_ONCE);
-		// .sort("modified")
 		final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
 				.setParameter("timeout", defaultESTimeout).build();
 		logger.debug(searchSourceBuilder.toString());
@@ -508,8 +522,7 @@ public class BasicESDAO implements G_DataAccess {
 	public String getIdByFirstHit(final JestResult jr) {
 		String id = null;
 		try {
-			id = ((JsonObject) ((JsonObject) jr.getJsonObject().get("hits")).getAsJsonArray("hits").get(0)).get("_id")
-					.getAsString();
+			id = getListOfHitsFromResult(jr).get(0).get("_id").asText();
 		} catch (final Exception e) {
 			logger.error("Problem getting id from first hit: ", e);
 		}
@@ -696,11 +709,7 @@ public class BasicESDAO implements G_DataAccess {
 						jestResult = c.getClient().execute(scroll);
 						tr.logAsCompleted();
 						// Get the next scroll id
-
-						final JsonNode rootNode = mapper.readValue(jestResult.getJsonString(), JsonNode.class);
-						final List<JsonNode> hits = rootNode.get("hits").findValues("hits");
-
-						final ArrayNode actualListOfHits = (ArrayNode) hits.get(0);
+						final ArrayNode actualListOfHits = getListOfHitsFromResult(jestResult);
 						currentResultSize = actualListOfHits.size();
 						for (int i = 0; i < actualListOfHits.size(); i++) {
 							final JsonNode currentHit = actualListOfHits.get(i);

@@ -9,12 +9,7 @@
 	</parent>
 	<artifactId>graphene-web</artifactId>
 	<name>${project.artifactId}</name>
-	<repositories>
-		<repository>
-			<id>lazan-releases</id>
-			<url>https://raw.githubusercontent.com/uklance/releases/master</url>
-		</repository>
-	</repositories>
+
 
 	<dependencies>
 		<dependency>
@@ -48,20 +43,11 @@
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.lazan</groupId>
-			<artifactId>tapestry-atmosphere</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.atmosphere</groupId>
-			<artifactId>atmosphere-runtime-native</artifactId>
-			<version>2.1.0-RC2</version>
-		</dependency>
+
 		<dependency><!-- Tapestry integration with JQuery. This may be removed 
 				if we switch to Tapestry 5.4, which includes JQuery support by default -->
 			<groupId>org.got5</groupId>
 			<artifactId>tapestry5-jquery</artifactId>
-			<version>3.4.2</version>
 		</dependency>
 		<!-- We'll eventually stop using the version with this group id, or go 
 			to T5.4, which will eliminate the need for this. -->

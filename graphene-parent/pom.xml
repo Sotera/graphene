@@ -27,6 +27,7 @@
 		<module>graphene-archetype</module>
 
 		<module>graphene-augment</module>
+		<module>graphene-workflow</module>
 	</modules>
 
 	<properties>
