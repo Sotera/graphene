@@ -280,7 +280,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 				// edges do not have a "name" field
 				if (ele.isNode()) {
 					ele.data({
-						"imgUrl": window.getImgUrl(),
+						//"imgUrl": window.getImgUrl(),
 						"name": window.getName(false)
 					});
 				}
