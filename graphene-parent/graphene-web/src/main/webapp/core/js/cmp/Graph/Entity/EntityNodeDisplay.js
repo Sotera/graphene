@@ -95,7 +95,7 @@ Ext.define("DARPA.EntityNodeDisplay", {
 			var attrs = (!isNodeJSON) ? node.data("attrs") : node.data.attrs;
 			var name = (!isNodeJSON) ? node.data("name") : node.data.name;
 			var reason = (!isNodeJSON) ? node.data("reason") : node.data.reason;
-			var imageUrl = (!isNodeJSON) ? node.data("imageUrl") : node.data.imageUrl;
+			var imageUrl = (!isNodeJSON) ? node.data("imgUrl") : node.data.imgUrl;
 			
 			var runningHTML = "<tr><th colspan='3'><b>" + index + "_" + name + "</b></th></tr>";
 			
