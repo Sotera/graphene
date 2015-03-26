@@ -133,7 +133,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		    margin: 2,
 			columnWidth: .5,
 			handler: function() {
-				
+				alert("Not yet implemented; coming soon");
 			}
 		});
 		
@@ -212,27 +212,29 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		Ext.getCmp(_this.id + "-NODE-TYPE-CB").up().setDisabled(true);
 		
 		Ext.Ajax.request({
-			url: "rest/meta/nodetypes",
+			url: "rest/meta/canonicaltypes",
 			success: function(resp) {
-				var array = Ext.decode(resp.responseText);
-				// example data
-				var data = {
-				// 	{"value" : "label"}
-					'1': 'USERNAME',
-					'2': 'MEDIA',
-					'3': 'Comment'
-				};
-				
-				//var data = {};
-				for (var i = 0; i < array.length; i++) {
-					data[array[i].name] = array[i].friendlyName;
+				try {
+					var array = Ext.decode(resp.responseText);
+					
+					// example data
+					var data = {
+						'1': 'USERNAME',
+						'2': 'MEDIA',
+						'3': 'Comment'
+					};
+					
+					for (var i = 0; i < array.length; i++) {
+						data[array[i].name] = array[i].friendlyName;
+					}
+					
+					_this.loadRecordTypes(data, false);
+					
+					// -default select all?
+					_this.selectAllRecordTypes();
+				} catch (e) {
+					console.error(e.message);
 				}
-				
-				_this.loadRecordTypes(data, false);
-				
-				// -default select all?
-				_this.selectAllRecordTypes();
-				
 				// get the parent container of the node type combobox and enable it
 				Ext.getCmp(_this.id + "-NODE-TYPE-CB").up().setDisabled(false);
 			},
