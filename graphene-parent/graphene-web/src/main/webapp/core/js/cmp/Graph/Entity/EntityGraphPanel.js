@@ -81,6 +81,11 @@ Ext.define("DARPA.EntityGraphPanel", {
 							items: filterSettings
 						})
 					] // END settings/filter items
+				}),
+				Ext.create("DARPA.AdvancedQueryPanel", {
+					title: "ADV. QUERY",
+					id: config.id + "-AdvQuery",
+					graphRef: self.GraphVis
 				})
 			] // END settings panel items
 		});
