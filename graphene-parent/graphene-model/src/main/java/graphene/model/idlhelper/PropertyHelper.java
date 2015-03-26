@@ -27,6 +27,7 @@ package graphene.model.idlhelper;
 import graphene.model.idl.G_BoundedRange;
 import graphene.model.idl.G_DistributionRange;
 import graphene.model.idl.G_Entity;
+import graphene.model.idl.G_Frequency;
 import graphene.model.idl.G_GeoData;
 import graphene.model.idl.G_ListRange;
 import graphene.model.idl.G_Property;
@@ -36,6 +37,7 @@ import graphene.model.idl.G_Provenance;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_Uncertainty;
+import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
@@ -166,6 +168,35 @@ public class PropertyHelper extends G_Property {
 			return null;
 		} else {
 			return getSingletonValue(getPropertyByKey(props, key));
+		}
+	}
+
+	public static String getStringifiedValue(final G_Property property, final String subDelimiter) {
+		if (ValidationUtils.isValid(property)) {
+			final Object range = property.getRange();
+			if (range == null) {
+				return null;
+			}
+
+			if (range instanceof G_SingletonRange) {
+				return ((G_SingletonRange) range).getValue().toString();
+			} else if (range instanceof G_ListRange) {
+				final List<Object> values = ((G_ListRange) range).getValues();
+				return StringUtils.toDelimitedString(values.toArray(), subDelimiter);
+			} else if (range instanceof G_BoundedRange) {
+				final G_BoundedRange bounded = (G_BoundedRange) range;
+				return StringUtils.toDelimitedString(subDelimiter, bounded.getStart(), bounded.getEnd());
+
+			} else if (range instanceof G_DistributionRange) {
+				final G_DistributionRange dist = (G_DistributionRange) range;
+				final List<G_Frequency> f = dist.getDistribution();
+				return StringUtils.toDelimitedString(f.toArray(), subDelimiter);
+			}
+
+			return null;
+		} else {
+			logger.warn("Property was null, perhaps it's key was not defined for the source document.");
+			return null;
 		}
 	}
 

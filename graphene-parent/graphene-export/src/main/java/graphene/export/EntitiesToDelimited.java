@@ -1,32 +1,27 @@
 package graphene.export;
 
-import graphene.model.view.events.SingleSidedEventRow;
-import graphene.model.view.events.SingleSidedEvents;
+import graphene.model.idl.G_Entity;
+import graphene.model.idl.G_Property;
+import graphene.model.idlhelper.PropertyHelper;
 
-public class SingleSidedEventsToCSV {
-	public String toCSV(SingleSidedEvents lt) {
+import java.util.List;
+
+public class EntitiesToDelimited {
+	public String toDelimited(final List<G_Entity> lt, final List<String> keys, final String delimiter,
+			final String subDelimiter) {
 		// String eol = System.getProperty("line.separator");
-		String eol = "\r\n"; // users want windows format - the above would be
-								// UNIX
+		final String eol = "\r\n"; // users want windows format - the above
+									// would be
+									// UNIX
 
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 
-		for (SingleSidedEventRow r : lt.getRows()) {
-
-			result.append(r.getDate() + ",");
-			// result.append("\"");
-			result.append(r.getAccount());
-			// result.append("\"");
-			result.append(",");
-
-			// Remove commas from amounts. Replace commas in comments with
-			// spaces
-
-			result.append(r.getDebit().replace(",", "") + ",");
-			result.append(r.getCredit().replace(",", "") + ",");
-
-			result.append(r.getComments().replace(",", " "));
-
+		for (final G_Entity r : lt) {
+			for (final String k : keys) {
+				final G_Property property = PropertyHelper.getPropertyByKey((List<G_Property>) r.getProperties()
+						.values(), k);
+				PropertyHelper.getStringifiedValue(property, subDelimiter);
+			}
 			result.append(eol);
 		}
 
