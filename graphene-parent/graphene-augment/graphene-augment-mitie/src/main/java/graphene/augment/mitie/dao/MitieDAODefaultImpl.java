@@ -26,10 +26,10 @@ public class MitieDAODefaultImpl implements MitieDAO {
 	@Override
 	public MitieResponse augment(String input) throws DataAccessException {
 		MitieResponse x = null;
-		String performQuery;
+		String results;
 		try {
-			performQuery = connection.performQuery(input.trim());
-			x = mapper.readValue(performQuery, MitieResponse.class);
+			results = connection.performQuery(input.trim());
+			x = mapper.readValue(results, MitieResponse.class);
 		} catch (DataAccessException | IOException e) {
 			logger.error("augment : "+e.getMessage());
 			throw new graphene.business.commons.exception.DataAccessException(
