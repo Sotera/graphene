@@ -460,6 +460,7 @@ CytoscapeGraphVis.prototype.expand = function(json, rootNode) {
 		
 		if (node.data.id != rootNode.data("id")) {
 			node.data.expanded = true;
+			node.data.parentId = rootNode.data("id");
 			node.position = {
 				x: pos.x + (radius * Math.cos(rad)),
 				y: pos.y + (radius * Math.sin(rad))
@@ -519,7 +520,7 @@ CytoscapeGraphVis.prototype.unexpand = function(rootNode) {
 	var _this = this;
 	var nodesToDelete = [];
 	var edgesToDelete = [];
-	var nonLeafNodeIDs = [];
+	var nonLeafNodes = [];
 	
 	// "[?expanded]" filters for all elements which element.data("expanded") == true
 	rootNode.connectedEdges("[?expanded]").connectedNodes().each(function (i, n) {
@@ -527,16 +528,16 @@ CytoscapeGraphVis.prototype.unexpand = function(rootNode) {
 			if (n.data("id") !== rootNode.data("id")) {
 				nodesToDelete.push(n);
 			}
-		} else {
-			// TODO: handle non-leaf expanded nodes differently, if at all
-			nonLeafNodeIDs.push(n.data("id"));
+		// if connected node's parentId matches the root node, store it for another recursive unexpand
+		} else if (n.data("parentId") == rootNode.data("id")){
+			nonLeafNodes.push(n);
 		}
 	});
 	
 	rootNode.connectedEdges("[?expanded]").each(function(i, edge) {
 		var s = edge.data("source");
 		var t = edge.data("target");
-		if (s !== t /*&& nonLeafNodeIDs.indexOf(t) == -1 && nonLeafNodeIDs.indexOf(s) == -1*/) {
+		if (s !== t) {
 			edgesToDelete.push(edge);
 		}
 	});
@@ -544,6 +545,10 @@ CytoscapeGraphVis.prototype.unexpand = function(rootNode) {
 	if (nodesToDelete.length > 0 || edgesToDelete.length > 0) {
 		_this.deleteNodes(nodesToDelete, true);
 		_this.deleteEdges(edgesToDelete, true);
+		
+		for (var i = 0; i < nonLeafNodes.length; i++) {
+			_this.unexpand(nonLeafNodes[i]);
+		}
 		
 		if (rootNode.connectedEdges().length <= 0) {
 			_this.deleteNodes([rootNode], true);
