@@ -8,7 +8,7 @@ import graphene.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVConverter {
+public class EventsToDelimited {
 	public String toCSV(final G_TransactionResults lt, final String... keys) {
 		// String eol = System.getProperty("line.separator");
 		final String eol = "\r\n"; // users want windows format - the above

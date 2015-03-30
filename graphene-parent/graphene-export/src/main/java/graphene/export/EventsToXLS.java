@@ -24,8 +24,8 @@ import jxl.write.biff.RowsExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XLSConverter {
-	private static Logger logger = LoggerFactory.getLogger(XLSConverter.class);
+public class EventsToXLS {
+	private static Logger logger = LoggerFactory.getLogger(EventsToXLS.class);
 
 	/**
 	 * @param workbook
