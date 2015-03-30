@@ -88,7 +88,7 @@ Ext.define("DARPA.EntityNodeDisplay", {
 		};
 		
 		var _showMedia = function(mediaArray) {
-			if (mediaArray == null || mediaArray == undefined) return "";
+			if (mediaArray == null || mediaArray == undefined || mediaArray.length <= 0) return "";
 			
 			var runningHTML = "";
 			var carouselDivStart = "<tr><th colspan='3'><div style='width:100%; overflow:hidden;'><figure style='margin:0;'>";
