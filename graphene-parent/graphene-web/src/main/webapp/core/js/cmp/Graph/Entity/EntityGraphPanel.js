@@ -123,11 +123,13 @@ Ext.define("DARPA.EntityGraphPanel", {
 		var self = this;
 
 		// TODO write catch to make sure variable useSaved is a boolean
+		// useSaved = useSaved === true;
 		
 		var graphStore = self.graphStore;
 		var hops = self.getSettings().getMaxHops();
 		var degree = parseInt(hops);// + 1; //djue
-
+		var s = self.getSettings();
+		
 		self.json = null;
 		self.prevLoadParams.searchValue = self.prevLoadParams.value = self.prevLoadParams.prevValue = custno;
 		
@@ -140,6 +142,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 
 		graphStore.proxy.extraParams.degree = degree;
 		graphStore.proxy.extraParams.useSaved = useSaved;
+		graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
+		graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
+		
 		graphStore.proxy.url = Config.entityGraphCSUrl + 'customer/' + custno;
 		
 		graphStore.load({
@@ -175,8 +180,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 					}
 				};
 				
-				if (typeof self.json == "undefined") {
+				if (typeof self.json == "undefined" || self.json.nodes.length <= 0) {
 					//TODO error notice
+					console.log("Problem with Entity graph - No nodes to load");
 					return;
 				}
 				
@@ -209,20 +215,19 @@ Ext.define("DARPA.EntityGraphPanel", {
 		var s = self.getSettings();
 		var maxNewCallsAlertThresh = 30; // Adjust as needed
 		
-		graphStore.proxy.extraParams.degree = 1; // labelled hops. only 1 hop out from this node
+		graphStore.proxy.extraParams.degree = 1; // labeled hops. only 1 hop out from this node
 		graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
 		graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
-		if (graphStore.proxy.extraParams.maxNodes > 200) {
-			graphStore.proxy.extraParams.maxNodes = 200; // hard limit for this case
-		}
+		graphStore.proxy.extraParams.minWeight = s.getMinWeight();
+		
 		if (maxNewCallsAlertThresh > graphStore.proxy.extraParams.maxEdgesPerNode) {
 			maxNewCallsAlertThresh = graphStore.proxy.extraParams.maxEdgesPerNode;
 		}
-		graphStore.proxy.extraParams.minWeight = s.getMinWeight();
-
+		
 		if (intype == null || intype.length == 0) {
 			intype = "customer";
 		}
+		
 		graphStore.proxy.extraParams.Type = intype;
 
 		// FIXME: REST services don't seem to like properly encoded symbols. Re-address when time permits
