@@ -1,7 +1,6 @@
 Ext.define("DARPA.AdvancedQueryPanel", {
 	extend: "Ext.panel.Panel",
 	height: 'auto',
-	
 	graphRef: null,
 	
 	constructor: function(config) {
@@ -21,7 +20,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		var nodeTypeCB = Ext.create("Ext.form.ComboBox", {
 			id: config.id + "-NODE-TYPE-CB",
 			maxHeight: 150,
-			width: "78%",
+			width: "65%",
 			multiSelect: true,
 			emptyText: "Select Types",
 			store: array_store,
@@ -48,6 +47,15 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			}
 		});
 		
+		var invertSelection = Ext.create("Ext.Button", {
+			text: "Invert",
+			width: "13%",
+			height: "100%",
+			handler: function() {
+				_this.invertSelectedRecordTypes();
+			}
+		});
+		
 		var clearSelection = Ext.create("Ext.Button", {
 			text: "None",
 			width: "12%",
@@ -62,7 +70,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			title: "*Record Types",
 			layout: "hbox",
 			margin: 2,
-			items: [nodeTypeCB, selectAll, clearSelection]
+			items: [nodeTypeCB, selectAll, invertSelection, clearSelection]
 		};
 		
 		var _dateLine = {
@@ -115,7 +123,7 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			title: 'ADVANCED QUERY FORM',
 			border: 0,
 			flex: 1,
-			maxHeight: 400,
+			maxHeight: 600,
 			autoScroll: true,
 			collapsible: true,
 			collapseDirection: "top",
@@ -126,23 +134,21 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			]
 		});
 		
-		var postBtn = Ext.create("Ext.Button", {
-			text: "POST",
+		var applyBtn = Ext.create("Ext.Button", {
+			text: "APPLY TO GRAPH",
 			margin: 4,
-			height: 30,
+			height: 25,
 		    margin: 2,
-			columnWidth: .5,
 			handler: function() {
 				alert("Not yet implemented; coming soon");
 			}
 		});
 		
 		var clearBtn = Ext.create("Ext.Button", {
-			text: "CLEAR ALL",
+			text: "CLEAR",
 			margin: 4,
-			height: 30,
+			height: 25,
 		    margin: 2,
-			columnWidth: .5,
 			handler: function() {
 				_this.clearRecordTypes();
 				_this.clearDates();
@@ -152,46 +158,52 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		
 		var helpBtn = Ext.create("Ext.Button", {
 			icon: Config.helpIcon,
-			width: 30,
+			maxWidth: 30,
 		    scale: 'medium',
 			height: 30,
 		    margin: 2,
 		    handler: function() {
+				// TODO: write actual help documentation
+				// right now, this is just for testing's sake; it just lists the current data constraints in the form
+				
+				var HTML = "<ul><li><b>SelectedRecordTypes:</b> <ul><li>";
+				var selectedTypes = _this.getRecordTypes();
+				var dates = _this.getDates();
+				var amounts = _this.getAmounts();
+				
+				for (var i = 0; i < selectedTypes.length; i++) {
+					HTML += selectedTypes[i];
+					
+					// if we're not at the last entry, add a comma and a space
+					if (i != selectedTypes.length - 1) {
+						HTML += ", ";
+					}
+				}
+				HTML += "</li></ul></li>";
+				HTML += "<li><b>Date Range:</b> <ul><li><i>From: </i>" + new Date(dates.from).toString() + "</li><li><i>To: </i>" + new Date(dates.to).toString() + "</li></ul></li>";
+				HTML += "<li><b>Amount Range:</b> <ul><li><i>From: </i>" + amounts.from + "</li><li><i>To: </i>" + amounts.to + "</li></ul></li>";
+				HTML += "</ul>";
+				
 			    Ext.Msg.alert(
-			       'Help',
-				   _this.getDates().toString()
+			       'Advanced Query Help',
+				   HTML
 			    );
 			}
 		});
 		
-		var actionButtonsLine1 = Ext.create("Ext.form.FieldSet", {
-			border: 0,
-			maxHeight: 40,
-			padding: 0,
-			margin: 0,
-			items: [{
-				xtype: 'fieldcontainer',
-				height: 'auto',
-				width: '100%',
-				layout: "column",
-				items: [ postBtn, clearBtn, helpBtn ]
-			}]
-		});
-		
-		var actionsPanel = Ext.create("Ext.panel.Panel", {
+		var actionsPanel = Ext.create("Ext.Panel", {
 			title: 'ACTIONS',
 			height: 'auto',
 			width: 'auto',
+			buttonAlign: "center",
 			collapsible: true,
 			collapseDirection: "top",
+			border: true,
 			layout: {
 				type: 'vbox',
 				align: 'stretch'
 			},
-			items: [
-				actionButtonsLine1
-				// ,actionButtonsLine2
-			]
+			buttons: [ clearBtn, applyBtn, helpBtn ]
 		});
 		
 		this.items = [form, actionsPanel];
@@ -203,9 +215,6 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 		var _this = this;
 		
 		// TODO:
-		// -call REST service and get all node types for this data set
-		// -call loadRecordTypes() with those node types
-		// -default select all?
 		// -set min and max dates based on the date range of the data
 
 		// get the parent container of the node type combobox and disable it
@@ -216,21 +225,13 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 			success: function(resp) {
 				try {
 					var array = Ext.decode(resp.responseText);
-					
-					// example data
-					var data = {
-						'1': 'USERNAME',
-						'2': 'MEDIA',
-						'3': 'Comment'
-					};
+					var data = {};
 					
 					for (var i = 0; i < array.length; i++) {
-						data[array[i].name] = array[i].friendlyName;
+						data[array[i]] = array[i];
 					}
 					
 					_this.loadRecordTypes(data, false);
-					
-					// -default select all?
 					_this.selectAllRecordTypes();
 				} catch (e) {
 					console.error(e.message);
@@ -253,6 +254,11 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 	clearRecordTypes: function() {
 		var combo = Ext.getCmp(this.id + "-NODE-TYPE-CB");
 		combo.select();
+	},
+	
+	getRecordTypes: function() {
+		var combo = Ext.getCmp(this.id + "-NODE-TYPE-CB");
+		return combo.getValue();
 	},
 	
 	clearDates: function() {
@@ -315,6 +321,32 @@ Ext.define("DARPA.AdvancedQueryPanel", {
 	selectAllRecordTypes: function() {
 		var combo = Ext.getCmp(this.id + "-NODE-TYPE-CB");
 		combo.select(combo.getStore().collect(combo.valueField));
+	},
+	
+	invertSelectedRecordTypes: function() {
+		var currentlySelectedItems = this.getRecordTypes();
+		var combo = Ext.getCmp(this.id + "-NODE-TYPE-CB");
+		var indicesToInvert = [];
+		var indicesToSelect = [];
+		
+		// gather the indices of the selected items; these will be used to select everything else
+		while (currentlySelectedItems.length > 0) {
+			var item = currentlySelectedItems.shift();
+			var record = combo.findRecord(combo.valueField, item);
+			indicesToInvert.push( combo.store.indexOf(record) );
+		}
+		
+		// at this point, the store has been completely emptied by the shift() calls
+		
+		var store = combo.getStore().collect(combo.valueField);
+		
+		for (var i = 0; i < store.length; i++) {
+			if (indicesToInvert.indexOf(i) == -1) {
+				indicesToSelect.push( store[i] );
+			}
+		}
+		
+		combo.select( indicesToSelect );
 	},
 	
 	/**
