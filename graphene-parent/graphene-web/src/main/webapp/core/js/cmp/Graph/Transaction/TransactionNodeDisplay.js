@@ -71,13 +71,11 @@ Ext.define("DARPA.TransactionNodeDisplay", {
     
 	showNodeAttrs: function(node) {
 		var self = this;
-		var html = "<table rules='rows'>";
-		var data = node.data();
-		var attrs = data.attrs;
+		var html = "<table width='100%' cellspacing='0' cellpadding='0' border='0' rules='rows'>";
 		var detailsItems = self.items.items[0].items.items;
 		
-		detailsItems[0].setValue(data.idType);
-		detailsItems[1].setValue(data.idVal);
+		detailsItems[0].setValue(node.data("idType"));
+		detailsItems[1].setValue(node.data("idVal"));
 		
 		var _showAttrs = function(attrs) {
 			var runningHTML = "";
@@ -88,14 +86,40 @@ Ext.define("DARPA.TransactionNodeDisplay", {
 			return runningHTML;
 		};
 		
+		var _showMedia = function(mediaArray) {
+			if (mediaArray == null || mediaArray == undefined || mediaArray.length <= 0) return "";
+			
+			var runningHTML = "";
+			var carouselDivStart = "<tr><th colspan='3'><div style='width:100%; overflow:hidden;'><figure style='margin:0;'>";
+			var carouselDivEnd = "</figure></div></th></tr>";
+			
+			for (var i = 0; i < mediaArray.length; i++) {
+				var a = mediaArray[i];
+				switch (a.key) {
+				case "IMAGE":
+					carouselDivStart += "<img src='" + a.val + "'>";
+				}
+			}
+			// return runningHTML;
+			return carouselDivStart + carouselDivEnd;
+		};
+		
 		var _recurse = function(node, index) {
 			var isNodeJSON = typeof node.data != "function";
 			var subNodes = (!isNodeJSON) ? node.data("subNodes") : node.data.subNodes;
 			var attrs = (!isNodeJSON) ? node.data("attrs") : node.data.attrs;
-			
 			var name = (!isNodeJSON) ? node.data("name") : node.data.name;
+			var reason = (!isNodeJSON) ? node.data("reason") : node.data.reason;
+			var mediaArray = (!isNodeJSON) ? node.data("media") : node.data.media;
+			
 			var runningHTML = "<tr><th colspan='3'><b>" + index + "_" + name + "</b></th></tr>";
+			
+			runningHTML += _showMedia(mediaArray);
 			runningHTML += _showAttrs(attrs);
+			
+			if (reason !== null && reason !== undefined) {
+				runningHTML += "<tr><td>Reason for Merge</td> <td>&nbsp;:&nbsp;</td> <td>" + reason + "</td></tr>";
+			}
 			
 			// base case -- no subnodes
 			if (subNodes === null || typeof subNodes == "undefined" || subNodes.length <= 0) {
@@ -107,12 +131,8 @@ Ext.define("DARPA.TransactionNodeDisplay", {
 				return runningHTML;
 			}
 		};
-		
-		//if (typeof node.data().subNodes == "undefined") {
-		//	html += _showAttrs(attrs);
-		//} else {
-			html += _recurse(node, 1);
-		//}
+			
+		html += _recurse(node, 1);
 		html += "</table>";
 		detailsItems[2].update(html);
 	},

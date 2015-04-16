@@ -13,32 +13,9 @@ Ext.define("DARPA.TransactionGraphPanel", {
 		graphSettings.setGraph(self);
 		
 		var filterSettings = Ext.create("DARPA.FilterSettings", {
-			id: config.id + "-Filter"
+			id: config.id + "-Filter",
+			graphRef: self
 		});
-		
-		filterSettings.setAdditionalFields([{
-			dispFieldName: "Node Color", 		dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode",	dataSourceType: "nodes", 	dataSourceField: "color"
-		}, {
-			dispFieldName: "Node Name", 		dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode", 	dataSourceType: "nodes", 	dataSourceField: "name"
-		}, {
-			dispFieldName: "Identifier Type", 	dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode", 	dataSourceType: "nodes", 	dataSourceField: "idType"
-		}, {
-			dispFieldName: "getfromkey", 	dispFieldType: "text", 		dispFieldWidth: 100,
-			dispFieldChoices: "", 			dataSourceType: "nodes", 	dataSourceField: "attrs"
-		}, {
-			dispFieldName: "Amount", 	dispFieldType: "text", 		dispFieldWidth: 100,
-			dispFieldChoices: "", 		dataSourceType: "edges", 	dataSourceField: "amount"
-		}, {
-			dispFieldName: "getfromkey", dispFieldType: "text", dispFieldWidth: 100,
-			dispFieldChoices: "", dataSourceType: "edges", dataSourceField: "attrs"
-		}]);
-		
-		filterSettings.setGraph(self);
-		filterSettings.enableTimeFilter(false); // TODO renable based on graph type or if data is temporally-based
-		filterSettings.setSearchFieldLabel("Identifiers(s)");
 		
 		var graphContainer = Ext.create("Ext.Container", {
 			width: 'auto',

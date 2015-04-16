@@ -139,8 +139,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 							} else {
 								gve.setReportType("Existing");
 								loggingDao.recordGraphViewEvent(gve);
-								m.setStrStatus("This graph was previously saved on "
-										+ DataFormatConstants.formatDate(existingGraph.getModified()));
+								m.setStrStatus("This graph was previously saved on " + DataFormatConstants.formatDate(existingGraph.getModified()));
+								m.createPositionMapping(); // necessary for preset layout in Cytoscape 3.2.9
 							}
 						} else {
 							logger.info("Could not find previously saved graph, will regenerate");
@@ -210,19 +210,19 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			return Response.status(200).entity("Unable to save, you must be logged in. ").build();
 		} else {
 			String authenticatedUsername = username;
-			if (ValidationUtils.isValid(securityService.getSubject())) {
-				try {
+			try {
+				if (ValidationUtils.isValid(securityService.getSubject())) {
 					authenticatedUsername = (String) securityService.getSubject().getPrincipal();
 					// final G_User byUsername =
 					// userDataAccess.getByUsername(authenticatedUsername);
 					// byUsername.getId();
 
-				} catch (final Exception e) {
-					logger.error("Error getting user information during rest call: ", e);
-					// e.printStackTrace();
+				} else {
+					logger.debug("User was not authenticated");
 				}
-			} else {
-				logger.debug("User was not authenticated");
+			} catch (final Exception e) {
+				logger.error("Error getting user information during rest call: ", e);
+				// e.printStackTrace();
 			}
 
 			final G_PersistedGraph pg = new G_PersistedGraph();
