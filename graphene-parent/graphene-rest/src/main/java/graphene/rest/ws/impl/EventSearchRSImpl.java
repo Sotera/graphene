@@ -14,11 +14,11 @@ import graphene.util.StringUtils;
 import graphene.util.stats.TimeReporter;
 
 import org.apache.avro.AvroRemoteException;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EventSearchRSImpl implements EventSearchRS {
-
 	static Logger logger = LoggerFactory.getLogger(EventSearchRSImpl.class);
 	private G_DataAccess dao;
 
@@ -130,6 +130,11 @@ public class EventSearchRSImpl implements EventSearchRS {
 		}
 		t.logAsCompleted();
 		return s;
+	}
+
+	@PostInjection
+	public void initialize() {
+		logger.debug("Event Search now available");
 	}
 
 }

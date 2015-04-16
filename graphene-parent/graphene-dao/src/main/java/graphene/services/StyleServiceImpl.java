@@ -119,16 +119,16 @@ public class StyleServiceImpl implements StyleService {
 	@Override
 	public List<G_LegendItem> getLegendForReports() {
 		final List<G_LegendItem> list = new ArrayList<G_LegendItem>();
-		list.add(new G_LegendItem("Narrative", getStyle(G_CanonicalPropertyType.FREETEXT.name(), false),
-				"The narrative of the report", null));
-		list.add(new G_LegendItem("Activity", getStyle(G_CanonicalPropertyType.EVENT.name(), false),
-				"The event or activity associated with this report.", null));
-		list.add(new G_LegendItem("Subject", getStyle(G_CanonicalPropertyType.ENTITY.name(), false),
-				"A person or group formally mentioned in the report.", null));
-		list.add(new G_LegendItem("Filing Institution", getStyle(G_CanonicalPropertyType.FILER.name(), false),
-				"The institution that filed the report.", null));
-		list.add(new G_LegendItem("Financial Institution", getStyle(G_CanonicalPropertyType.INSTITUTION.name(), false),
-				"An institution involved in the report.", null));
+		list.add(new G_LegendItem("The narrative of the report", getStyle(G_CanonicalPropertyType.FREETEXT.name(),
+				false), "Narrative", null));
+		list.add(new G_LegendItem("The event or activity associated with this report.", getStyle(
+				G_CanonicalPropertyType.EVENT.name(), false), "Activity", null));
+		list.add(new G_LegendItem("A person or group formally mentioned in the report.", getStyle(
+				G_CanonicalPropertyType.NAME.name(), false), "Subject", null));
+		list.add(new G_LegendItem("The institution that filed the report.", getStyle(
+				G_CanonicalPropertyType.FILER.name(), false), "Filing Institution", null));
+		list.add(new G_LegendItem("An institution involved in the report.", getStyle(
+				G_CanonicalPropertyType.INSTITUTION.name(), false), "Financial Institution", null));
 
 		return list;
 	}

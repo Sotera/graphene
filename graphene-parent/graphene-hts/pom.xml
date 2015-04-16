@@ -18,6 +18,15 @@
 			<groupId>graphene</groupId>
 			<artifactId>graphene-util</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-export</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>1.7</version>
+		</dependency>
 	</dependencies>
-	<description>Experimental module for use during ingest, to extract implied and contextual information using known cultural and social patterns.</description>
+	<description>Extract implied and contextual information using known cultural and social patterns.</description>
 </project>

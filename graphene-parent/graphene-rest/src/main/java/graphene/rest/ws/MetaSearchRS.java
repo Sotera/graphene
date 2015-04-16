@@ -7,7 +7,6 @@ import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_Delimiter;
 import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Gender;
-import graphene.model.idl.G_PropertyDescriptors;
 import graphene.model.idl.G_PropertyKey;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
@@ -43,7 +42,7 @@ public interface MetaSearchRS {
 	@Produces("application/json")
 	@GET
 	@Path("/descriptors")
-	public abstract G_PropertyDescriptors getDescriptors();
+	public abstract String getDescriptors();
 
 	@Produces("application/json")
 	@GET

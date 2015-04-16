@@ -42,6 +42,11 @@ public class JestModule {
 
 	public static final String ES_READ_DELAY_MS = "graphene.es-read-delay-ms";
 
+	public static final String ES_INGEST_INDEX = "ingest_index";
+	public static final String ES_INGEST_TYPE = "ingest_type";
+	public static final String ES_INGEST_ENCODED_FILE_TYPE = "ingest_encoded_file_type";
+	public static final String ES_CROSSREFERENCE_TYPE = "crossreference_type";
+
 	private static JestHttpClient c;
 
 	public static void bind(final ServiceBinder binder) {

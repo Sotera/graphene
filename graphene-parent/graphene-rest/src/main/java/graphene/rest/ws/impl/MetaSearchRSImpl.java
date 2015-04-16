@@ -14,20 +14,22 @@ import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_SymbolConstants;
+import graphene.model.idlhelper.SerializationHelper;
 import graphene.rest.ws.MetaSearchRS;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
 public class MetaSearchRSImpl implements MetaSearchRS {
-
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_NAME)
@@ -68,10 +70,15 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	}
 
 	@Override
-	public G_PropertyDescriptors getDescriptors() {
+	public String getDescriptors() {
 		try {
-			return dao.getDescriptors();
+
+			final G_PropertyDescriptors descriptors = dao.getDescriptors();
+			return SerializationHelper.toJson(descriptors);
 		} catch (final AvroRemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -111,6 +118,11 @@ public class MetaSearchRSImpl implements MetaSearchRS {
 	@Override
 	public List<G_Constraint> getSearchTypes() {
 		return Arrays.asList(G_Constraint.values());
+	}
+
+	@PostInjection
+	public void initialize() {
+		logger.debug("MetaSearch now available");
 	}
 
 }

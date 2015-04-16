@@ -134,21 +134,18 @@ public class RecentWorkspaces {
 
 	private void selectMostRecentWorkspace() {
 		logger.debug("Selecting most recent workspace");
-		Long modified = 0l;
-		final Long mostRecent = 0l;
-		for (final G_Workspace w : workspaces) {
-			modified = w.getModified();
-			if (modified > mostRecent) {
-				currentSelectedWorkspace = w;
-			}
+		if (workspaces.size() > 1) {
+			// already sorted, just grab the top one.
+			currentSelectedWorkspace = workspaces.get(0);
+		} else {
+			currentSelectedWorkspace = null;
 		}
 	}
 
 	private void updateListOfWorkspaces() {
 		try {
-			workspaces = userDataAccess.getWorkspacesForUser(user.getId());
-			final int limit = workspaces.size() < 10 ? workspaces.size() : 9;
-			workspaces = workspaces.subList(0, limit);
+			// already sorted for us
+			workspaces = userDataAccess.getLatestWorkspacesForUser(user.getId(), 10);
 		} catch (final AvroRemoteException e) {
 			workspaces = null;
 			logger.error(e.getMessage());

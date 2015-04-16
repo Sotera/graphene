@@ -210,17 +210,10 @@ public class UserServiceImpl implements G_UserDataAccess {
 	}
 
 	@Override
-	public G_Workspace getMostRecentWorkspaceForUserId(final String userId) {
-		Long modified = 0l;
-		final Long mostRecent = 0l;
-		G_Workspace currentSelectedWorkspace = null;
-		for (final G_Workspace w : getWorkspacesForUser(userId)) {
-			modified = w.getModified();
-			if (modified > mostRecent) {
-				currentSelectedWorkspace = w;
-			}
-		}
-		return currentSelectedWorkspace;
+	public List<G_Workspace> getLatestWorkspacesForUser(final String userId, final int quantity)
+			throws AvroRemoteException {
+		return uwDao.getMostRecentWorkspacesForUser(userId, quantity);
+
 	}
 
 	@Override

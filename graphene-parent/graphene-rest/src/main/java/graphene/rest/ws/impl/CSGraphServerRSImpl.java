@@ -23,6 +23,7 @@ import mil.darpa.vande.generic.V_GraphQuery;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -68,7 +69,6 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	private SecurityService securityService;
 
 	public CSGraphServerRSImpl() {
-
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 			String userId = null;
 			String username = null;
-			if(requireAuthentication){
+			if (requireAuthentication) {
 				if (ValidationUtils.isValid(securityService.getSubject())) {
 					try {
 						username = (String) securityService.getSubject().getPrincipal();
@@ -195,6 +195,11 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		}
 		return m;
 
+	}
+
+	@PostInjection
+	public void initialize() {
+		logger.debug("CS Graph Server now available");
 	}
 
 	@Override

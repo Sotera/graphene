@@ -86,6 +86,13 @@ public class GlobalSearch {
 		return retval;
 	}
 
+	void onValidateFromGlobalSearchForm() {
+		// The searchValue must be valid -- no script tags, etc.
+		// The search type must be a valid type from the list
+		// The search number must be a valid number from the list.
+
+	}
+
 	@SetupRender
 	private void setupRender() {
 		maxResultsList = new ArrayList<Integer>(3);

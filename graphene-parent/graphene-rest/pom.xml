@@ -25,19 +25,6 @@
 			<groupId>graphene</groupId>
 			<artifactId>graphene-util</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson2-provider</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxb-provider</artifactId>
-		</dependency>
-
 		<dependency><!-- Tapestry integration with RESTEasy. -->
 			<groupId>org.tynamo</groupId>
 			<artifactId>tapestry-resteasy</artifactId>
@@ -67,11 +54,7 @@
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<version>${resteasy.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>${resteasy.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
@@ -88,6 +71,16 @@
 			<artifactId>resteasy-jaxb-provider</artifactId>
 			<version>${resteasy.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-avro</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>avro</artifactId>
+					<groupId>org.apache.avro</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -103,20 +96,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<!-- <plugins>
-			This changes the WAR file packaging so that what would normally go 
-				into WEB-INF/classes is instead packaged as WEB-INF/lib/<appname>.jar. This 
-				is necessary for Tapestry to be able to search for page and component classes 
-				at startup. Only certain application servers require this configuration, 
-				please see the documentation at the Tapestry 5 project page (http://tapestry.apache.org/tapestry5/).
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<archiveClasses>false</archiveClasses>
-				</configuration>
-			</plugin>
-		</plugins> -->
 	</build>
 	<description>Baseline rest services</description>
 </project>

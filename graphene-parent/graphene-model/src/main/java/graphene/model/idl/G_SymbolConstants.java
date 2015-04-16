@@ -91,6 +91,18 @@ public class G_SymbolConstants {
 	public static final String ENABLE_LOGGING = "graphene.enable-logging";
 	public static final String REQUIRE_AUTHENTICATION = "graphene.require-authentication";
 
+	/**
+	 * Input validation symbols
+	 */
+	public static final String USER_PASSWORD_VALIDATION = "graphene.user-password-validation";
+	public static final String USER_PASSWORD_VALIDATION_MESSAGE = "graphene.user-password-validation-message";
+
+	public static final String USER_NAME_VALIDATION = "graphene.user-name-validation";
+	public static final String USER_NAME_VALIDATION_MESSAGE = "graphene.user-name-validation-message";
+
+	public static final String WORKSPACE_NAME_VALIDATION = "graphene.workspace-name-validation";
+	public static final String WORKSPACE_NAME_VALIDATION_MESSAGE = "graphene.workspace-name-validation-message";
+
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub
 	}

@@ -24,9 +24,12 @@
  */
 package graphene.export.anb;
 
-import graphene.business.commons.exception.ConflictException;
 import graphene.export.ExportDataService;
 import graphene.export.graphml.GraphMLUtil;
+import graphene.services.store.ConflictException;
+import graphene.services.store.ContentService;
+import graphene.services.store.ContentService.Document;
+import graphene.services.store.ContentService.DocumentDescriptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -37,8 +40,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class AnbExportDataService implements ExportDataService {
 
@@ -52,24 +59,25 @@ public class AnbExportDataService implements ExportDataService {
 		this.service = service;
 	}
 
-	private ByteArrayOutputStream convertJSONToGraphML(final JSONObject jsonData) throws JSONException, JAXBException {
+	private ByteArrayOutputStream convertJSONToGraphML(final ObjectNode jsonData) throws JsonProcessingException,
+			JAXBException {
 
 		final Chart chart = new Chart();
 		chart.setChartItemCollection(new ChartItemCollection());
 		chart.getChartItemCollection().setChartItems(new ArrayList<ChartItem>());
 
-		final JSONArray columns = jsonData.getJSONArray("columns");
-		for (int i = 0; i < columns.length(); i++) {
-			final JSONArray files = columns.getJSONObject(i).getJSONArray("files");
-			for (int j = 0; j < files.length(); j++) {
-				if (files.get(j) instanceof JSONObject) {
+		final ArrayNode columns = (ArrayNode) jsonData.get("columns");
+		for (int i = 0; i < columns.size(); i++) {
+			final ArrayNode files = (ArrayNode) columns.get(i).get("files");
+			for (int j = 0; j < files.size(); j++) {
+				if (files.get(j) instanceof JsonNode) {
 
-					final JSONObject file = files.getJSONObject(j);
+					final JsonNode file = files.get(j);
 
 					final ChartItem nodeItem = new ChartItem();
 					chart.getChartItemCollection().getChartItems().add(nodeItem);
 
-					nodeItem.setAttrLabel(file.getString("title"));
+					nodeItem.setAttrLabel(file.get("title").asText());
 
 					nodeItem.setCIStyle(new CIStyle());
 					nodeItem.getCIStyle().setFont(new Font());
@@ -77,27 +85,27 @@ public class AnbExportDataService implements ExportDataService {
 
 					nodeItem.setEnd(new End());
 					nodeItem.getEnd().setEntity(new Entity());
-					nodeItem.getEnd().getEntity().setAttrEntityId(file.getString("xfId"));
+					nodeItem.getEnd().getEntity().setAttrEntityId(file.get("xfId").asText());
 					nodeItem.getEnd().getEntity().setIcon(new Icon());
 					nodeItem.getEnd().getEntity().getIcon().setIconStyle(new IconStyle());
 
 					nodeItem.setAttributeCollection(new AttributeCollection());
 					nodeItem.getAttributeCollection().setAttributes(new ArrayList<Attribute>());
 
-					final JSONArray links = file.getJSONArray("links");
-					for (int k = 0; k < links.length(); k++) {
-						if (links.get(k) instanceof JSONObject) {
-							final JSONObject link = links.getJSONObject(k);
+					final ArrayNode links = (ArrayNode) file.get("links");
+					for (int k = 0; k < links.size(); k++) {
+						if (links.get(k) instanceof JsonNode) {
+							final JsonNode link = links.get(k);
 
 							final ChartItem linkItem = new ChartItem();
 							chart.getChartItemCollection().getChartItems().add(linkItem);
 
 							linkItem.setLink(new Link());
-							linkItem.getLink().setAttrEnd1Id(file.getString("xfId"));
-							linkItem.getLink().setAttrEnd2Id(link.getString("destination"));
+							linkItem.getLink().setAttrEnd1Id(file.get("xfId").asText());
+							linkItem.getLink().setAttrEnd2Id(link.get("destination").asText());
 
 							linkItem.getLink().setLinkStyle(new LinkStyle());
-							linkItem.getLink().getLinkStyle().setAttrType(link.getString("type"));
+							linkItem.getLink().getLinkStyle().setAttrType(link.get("type").asText());
 						}
 					}
 				}
@@ -121,28 +129,34 @@ public class AnbExportDataService implements ExportDataService {
 	 * @see influent.server.spi.ExportDataService#toXMLDoc(org.json.JSONObject)
 	 */
 	@Override
-	public String exportToXML(final JSONObject jsonData) throws JSONException {
+	public String exportToXML(final ObjectNode jsonData) throws JsonProcessingException {
 		try {
 			final ByteArrayOutputStream baoStream = convertJSONToGraphML(jsonData);
 			return baoStream.toString("UTF-8");
 
 		} catch (final JAXBException e) {
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Failure serializing graph data with JAXB", e);
+			throw new JsonMappingException("Failure serializing graph data with JAXB");
+			// throw new
+			// JsonParseException("Failure serializing graph data with JAXB");
 		} catch (final UnsupportedEncodingException e) {
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Failure converting graph data to UTF-8", e);
+			throw new JsonMappingException("Failure converting graph data to UTF-8");
+			// throw new
+			// JsonParseException("Failure converting graph data to UTF-8");
 		}
 	}
 
 	@Override
-	public DocumentDescriptor exportToXMLDoc(final JSONObject JSONData, final String version) throws ConflictException,
-			JSONException {
+	public DocumentDescriptor exportToXMLDoc(final ObjectNode JSONData, final String version) throws ConflictException,
+			JsonProcessingException {
 
 		byte[] XMLdata;
 		try {
 			final ByteArrayOutputStream baoStream = convertJSONToGraphML(JSONData);
 			XMLdata = baoStream.toByteArray();
 		} catch (final JAXBException e) {
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Failure serializing graph data with JAXB", e);
+			// throw new JsonParseException(Status.SERVER_ERROR_INTERNAL,
+			// "Failure serializing graph data with JAXB", e);
+			throw new JsonMappingException("Failure serializing graph data with JAXB");
 		}
 		final String xmlType = "application/xml";
 

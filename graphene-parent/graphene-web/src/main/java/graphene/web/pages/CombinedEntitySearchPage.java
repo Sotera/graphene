@@ -1,13 +1,16 @@
 package graphene.web.pages;
 
+import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_VisualType;
 import graphene.services.LinkGenerator;
 import graphene.web.annotations.PluginPage;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PageRenderLinkSource;
@@ -64,6 +67,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Property
 	private String searchValue;
 
+	// @ActivationRequestParameter(value = "prebuiltQuery")
+	@Persist(PersistenceConstants.FLASH)
+	@Property
+	private G_EntityQuery prebuiltQuery;
+
 	@InjectPage
 	private CombinedEntitySearchPage searchPage;
 
@@ -88,10 +96,15 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		return pageRenderLinkSource.createPageRenderLink(this.getClass());
 	}
 
+	public void setPrebuilt(final G_EntityQuery q) {
+		prebuiltQuery = q;
+	}
+
 	/**
 	 * This should help with persisted values.
 	 */
 
 	void setupRender() {
+		logger.debug("In Combined search, prebuilt is " + prebuiltQuery);
 	}
 }

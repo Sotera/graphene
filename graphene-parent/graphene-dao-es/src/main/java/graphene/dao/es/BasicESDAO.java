@@ -136,34 +136,38 @@ public class BasicESDAO implements G_DataAccess {
 			createdNew = true;
 		}
 		boolean constraintUsed = false;
-		for (final Object text : values) {
+		if (ValidationUtils.isValid(values)) {
+			for (final Object text : values) {
 
-			final G_Constraint constraint = pmdh.getConstraint();
-			logger.debug("Using constraint " + constraint + " with key " + key + " on value " + text);
-			switch (constraint) {
-			case REQUIRED_EQUALS:
-				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
-				constraintUsed = true;
-				break;
-			case COMPARE_CONTAINS:
-				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
-				constraintUsed = true;
-				break;
-			case COMPARE_EQUALS:
-				bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
-				constraintUsed = true;
-				break;
-			case COMPARE_STARTSWITH:
-				bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
-				constraintUsed = true;
-				break;
-			case COMPARE_NOTINCLUDE:
-				bool = bool.mustNot(QueryBuilders.matchPhraseQuery(key, text));
-				constraintUsed = true;
-				break;
-			default:
-				break;
+				final G_Constraint constraint = pmdh.getConstraint();
+				logger.debug("Using constraint " + constraint + " with key " + key + " on value " + text);
+				switch (constraint) {
+				case REQUIRED_EQUALS:
+					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+					constraintUsed = true;
+					break;
+				case COMPARE_CONTAINS:
+					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+					constraintUsed = true;
+					break;
+				case COMPARE_EQUALS:
+					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+					constraintUsed = true;
+					break;
+				case COMPARE_STARTSWITH:
+					bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
+					constraintUsed = true;
+					break;
+				case COMPARE_NOTINCLUDE:
+					bool = bool.mustNot(QueryBuilders.matchPhraseQuery(key, text));
+					constraintUsed = true;
+					break;
+				default:
+					break;
+				}
 			}
+		} else {
+			logger.error("Values were not valid.");
 		}
 		if ((constraintUsed == false) && (createdNew == true)) {
 			bool = null;

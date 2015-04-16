@@ -24,13 +24,16 @@
  */
 package graphene.export;
 
-import graphene.business.commons.exception.ConflictException;
+import graphene.services.store.ConflictException;
+import graphene.services.store.ContentService.DocumentDescriptor;
 
-import org.apache.tapestry5.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface ExportDataService {
 
-	public String exportToXML(JSONObject data) throws JSONException;
+	public String exportToXML(ObjectNode data) throws JsonProcessingException;
 
-	public DocumentDescriptor exportToXMLDoc(JSONObject data, String version) throws ConflictException, JSONException;
+	public DocumentDescriptor exportToXMLDoc(ObjectNode data, String version) throws ConflictException,
+			JsonProcessingException;
 }

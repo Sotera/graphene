@@ -33,7 +33,7 @@ table td {
 }
 </style>
 <section id="widget-grid" class="">
-	<t:searchresultsview maxResults="maxResults" searchMatch="searchMatch" searchSchema="searchSchema" searchTypeFilter="searchTypeFilter" searchValue="searchValue" />
+	<t:searchresultsview prebuiltquery="prebuiltquery" maxResults="maxResults" searchMatch="searchMatch" searchSchema="searchSchema" searchTypeFilter="searchTypeFilter" searchValue="searchValue" />
 	
 </section>
 </html>

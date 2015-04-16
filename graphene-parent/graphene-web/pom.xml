@@ -43,7 +43,11 @@
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 		</dependency>
-
+		<!-- ESAPI Library -->
+		<dependency>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+		</dependency>
 		<dependency><!-- Tapestry integration with JQuery. This may be removed 
 				if we switch to Tapestry 5.4, which includes JQuery support by default -->
 			<groupId>org.got5</groupId>

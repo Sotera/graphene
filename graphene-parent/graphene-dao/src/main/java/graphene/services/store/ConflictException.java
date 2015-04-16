@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package graphene.dao;
+package graphene.services.store;
 
 /**
  * An exception thrown indicating that a document could not be written/updated

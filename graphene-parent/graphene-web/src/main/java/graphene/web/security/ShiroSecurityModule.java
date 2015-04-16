@@ -1,5 +1,6 @@
 package graphene.web.security;
 
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_Workspace;
 
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -45,7 +46,15 @@ public class ShiroSecurityModule {
 		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/pub/pagedenied");
 		configuration.add(SecuritySymbols.SUCCESS_URL, "/graphene/index");
 		configuration.add(SecuritySymbols.REDIRECT_TO_SAVED_URL, "true");
+		configuration.add(G_SymbolConstants.USER_PASSWORD_VALIDATION,
+				"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
+		configuration
+				.add(G_SymbolConstants.USER_PASSWORD_VALIDATION_MESSAGE,
+						"password must be longer than 8 characters and contain a number, upper and lower case, and a special character (no spaces)");
+		configuration.add(G_SymbolConstants.USER_NAME_VALIDATION, "[0-9A-Za-z@.]+");
 
+		configuration.add(G_SymbolConstants.WORKSPACE_NAME_VALIDATION,
+				"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
 		/*
 		 * This is a workaround for a problem with Tynamo Security using Subject
 		 * Aware Parallel Executor that is unresolved. Version 0.6 should fix

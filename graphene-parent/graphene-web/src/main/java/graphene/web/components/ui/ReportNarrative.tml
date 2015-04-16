@@ -11,7 +11,8 @@
 			<ul>
 				<li id="narrative"><t:if test="r">
 						<p>
-							<t:outputraw value="${r}" />
+							<!-- setting filter to false is not XSS safe -->
+							<t:output format="narrativeFormat" value="${r}" filter="true" />
 						</p>
 						<p:else>
 							<t:loop source="sentences" value="sentence">

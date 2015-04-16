@@ -17,7 +17,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 @SubModule({ DAOModule.class })
 public class RestModule {
 	public static void bind(final ServiceBinder binder) {
-		binder.bind(MetaSearchRS.class, MetaSearchRSImpl.class);
+		binder.bind(MetaSearchRS.class, MetaSearchRSImpl.class).eagerLoad();
 	}
 
 	@Contribute(javax.ws.rs.core.Application.class)

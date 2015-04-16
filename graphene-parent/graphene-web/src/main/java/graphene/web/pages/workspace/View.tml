@@ -47,7 +47,9 @@
 					<!-- Start report view area -->
 					<t:if test="reportViewList">
 						<t:zone t:id="reportViewListZone">
-							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false"
+								data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false"
+								data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 								<header>
 									<span class="widget-icon"> <i class="fa fa-table"></i>
 									</span>
@@ -94,11 +96,13 @@
 								</div>
 								<!-- end widget div -->
 							</div>
-							
+
 						</t:zone>
 						<p:else>
-								<div id="noreportviews"><strong>(No report views found)</strong></div>
-							</p:else>
+							<div id="noreportviews">
+								<strong>(No report views found)</strong>
+							</div>
+						</p:else>
 					</t:if>
 					<!-- end report view area -->
 
@@ -106,7 +110,9 @@
 					<!-- Start results area -->
 					<t:if test="searchQueryList">
 						<t:zone t:id="searchQueryListZone">
-							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+							<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false"
+								data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false"
+								data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 								<header>
 									<span class="widget-icon"> <i class="fa fa-search"></i>
 									</span>
@@ -118,6 +124,7 @@
 									<div class="widget-body no-padding">
 
 										<div class="widget-body-toolbar"></div>
+
 										<t:jquery.datatable t:id="queryList" t:source="searchQueryList" t:row="currentQuery"
 											t:model="entityquerymodel" t:options="options"
 											class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="20"
@@ -128,20 +135,20 @@
 													<span t:type="any" t:mixins="jquery/Confirm" t:message="Are you sure?"><i class="fa fa-ban" />
 														Remove</span>
 												</t:eventLink>
-												<t:pagelink class="btn btn-action" page="graphene/CombinedEntitySearchPage" t:parameters="queryParameters"
-													target="_new" title="Launch this search in a new tab">
-													<i class="fa fa-search" /> Launch Search
-												</t:pagelink>
+												<t:eventLink class="btn btn-action" t:event="search" t:context="${currentQuery}" title="Launch this search in a new tab"><i class="fa fa-search" />Launch Search</t:eventLink>
 												<br />
 											</p:actionCell>
-											
-
-											
+											<p:queryDescriptionCell>
+												<t:loop source="currentQuery.propertyMatchDescriptors" value="currentpmd">
+												${currentpmd.constraint}  values: ${currentpmdvalues} <br />
+												</t:loop>
+											</p:queryDescriptionCell>
 											<p:timeInitiatedCell>
 												<t:graphene.jodatimeoutput value="currentQuery.timeInitiated" formatter="ISODate" />
 											</p:timeInitiatedCell>							
 										[Grid here]
-							</t:jquery.datatable>
+										</t:jquery.datatable>
+
 										<t:block t:id="emptyQueryList">
 											<div id="noqueries">(No queries found)</div>
 										</t:block>
@@ -150,10 +157,12 @@
 								</div>
 								<!-- end widget div -->
 							</div>
-							
+
 						</t:zone>
 						<p:else>
-								<div id="noqueries"><strong>(No queries found)</strong></div>
+							<div id="noqueries">
+								<strong>(No queries found)</strong>
+							</div>
 						</p:else>
 					</t:if>
 					<!-- end results area -->
@@ -172,8 +181,10 @@
 										<span style="font-weight: bold;">There is no currently selected workspace to view. </span>
 									</h2>
 									<br />
-									<p>Please select a workspace from the home page, if you have one available, or 
-										<a t:type="pagelink" page="graphene/workspace/manage" >click here to create a new workspace</a></p>
+									<p>
+										Please select a workspace from the home page, if you have one available, or <a t:type="pagelink"
+											page="graphene/workspace/manage">click here to create a new workspace</a>
+									</p>
 								</div>
 
 							</div>

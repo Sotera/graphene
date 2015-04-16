@@ -2,14 +2,24 @@ package graphene.web.services;
 
 import graphene.dao.DAOModule;
 import graphene.dao.StartupProcedures;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ListRange;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idl.G_PropertyType;
+import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
+import graphene.web.security.xss.XSSFilterModule;
 import graphene.web.services.javascript.CytoscapeStack;
+import graphene.web.validators.Password;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -43,6 +53,10 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
  * it's a good place to configure and extend Tapestry, or to place your own
@@ -51,7 +65,7 @@ import org.slf4j.Logger;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ DAOModule.class })
+@SubModule({ DAOModule.class, XSSFilterModule.class })
 public class GrapheneModule {
 
 	/**
@@ -161,6 +175,18 @@ public class GrapheneModule {
 	}
 
 	/**
+	 * Contribute custom validators for user input fields.
+	 * 
+	 * @param configuration
+	 */
+	@SuppressWarnings("rawtypes")
+	public static void contributeFieldValidatorSource(final MappedConfiguration<String, Validator> configuration,
+			@Inject @Symbol(G_SymbolConstants.USER_PASSWORD_VALIDATION) final String validation,
+			@Inject @Symbol(G_SymbolConstants.USER_PASSWORD_VALIDATION_MESSAGE) final String validationMessage) {
+		configuration.add("password", new Password(validation, validationMessage));
+	}
+
+	/**
 	 * Tell Tapestry how to coerce Joda Time types to and from Java Date types
 	 * for the TypeCoercers example.
 	 * 
@@ -247,6 +273,64 @@ public class GrapheneModule {
 
 		configuration.add(new CoercionTuple<>(DateTime.class, java.lang.Long.class, fromDateTimetoLong));
 		// End DateTime ///////////////////////////
+
+		// From String to G_EntityQuery
+
+		final Coercion<String, G_EntityQuery> fromStringtoGEntityQuery = new Coercion<String, G_EntityQuery>() {
+			private final ObjectMapper mapper = new ObjectMapper();
+
+			@Override
+			public G_EntityQuery coerce(final String input) {
+				new ObjectMapper();
+				G_EntityQuery value = null;
+				try {
+					// value = SerializationHelper.fromJson(input,
+					// G_EntityQuery.getClassSchema());
+					value = mapper.readValue(input, G_EntityQuery.class);
+					for (final G_PropertyMatchDescriptor f : value.getPropertyMatchDescriptors()) {
+						// f.getRange()
+						final LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) f.getRange();
+						ArrayList<Object> propValues = null;
+						Object propValue = null;
+						G_PropertyType propType = null;
+						for (final String k : lhm.keySet()) {
+							if (k.equals("values")) {
+								propValues = (ArrayList<Object>) lhm.get(k);
+							} else if (k.equals("value")) {
+								propValue = lhm.get(k);
+							} else if (k.equals("type")) {
+								propType = G_PropertyType.valueOf((String) lhm.get(k));
+
+							}
+
+							System.out.println("k =" + k + " v=" + lhm.get(k));
+						}
+						if (propValues != null) {
+							final G_ListRange l = G_ListRange.newBuilder().setType(propType).setValues(propValues)
+									.build();
+							f.setRange(l);
+						} else if (propValue != null) {
+							final G_SingletonRange l = G_SingletonRange.newBuilder().setType(propType)
+									.setValue(propValue).build();
+							f.setRange(l);
+						}
+					}
+				} catch (final JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return value;
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(String.class, G_EntityQuery.class, fromStringtoGEntityQuery));
+		// End G_EntityQuery ///////////////////////////
 	}
 
 	@Contribute(SymbolSource.class)

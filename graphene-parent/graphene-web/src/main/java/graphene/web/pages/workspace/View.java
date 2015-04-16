@@ -12,12 +12,15 @@ import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
 //import graphene.model.query.EntityQuery;
 import graphene.util.ExceptionUtil;
+import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 import graphene.web.pages.CombinedEntitySearchPage;
 import graphene.web.pages.SimpleBasePage;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
@@ -35,6 +38,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -62,7 +66,8 @@ public class View extends SimpleBasePage {
 
 	@Property
 	private G_EntityQuery currentQuery;
-
+	@Property
+	private G_PropertyMatchDescriptor currentPmd;
 	@Property
 	private String currentFilter;
 	@Property
@@ -107,16 +112,35 @@ public class View extends SimpleBasePage {
 	@Inject
 	private UserWorkspaceDAO uwDao;
 
+	@Inject
+	private PageRenderLinkSource pageRenderLinkSource;
+
+	@Persist
+	private G_EntityQuery selectedQuery;
+
+	public String getCurrentPMDValues() {
+		final Map<String, Object> range = (Map<String, Object>) currentPmd.getRange();
+		if (range.containsKey("values")) {
+			final ArrayList<String> a = ((ArrayList<String>) range.get("values"));
+			return StringUtils.toDelimitedString(a.toArray(), " ");
+		} else if (range.containsKey("value")) {
+			return (String) range.get("value");
+		} else {
+			return null;
+		}
+
+	}
+
 	// Generally useful bits and pieces
 	public BeanModel<G_EntityQuery> getEntityQueryModel() {
 		if (entityQuerymodel == null) {
 			entityQuerymodel = beanModelSource.createDisplayModel(G_EntityQuery.class, resources.getMessages());
 			entityQuerymodel.exclude("caseSensitive", "searchFreeText", "initiatorId", "minimumscore", "minsecs",
 					"maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource", "userId",
-					"username", "sortascending", "id", "schema");
+					"username", "sortascending", "id", "schema", "targetSchema", "propertyMatchDescriptors");
 			entityQuerymodel.addEmpty("action");
-			entityQuerymodel.get("query").sortable(true);
-			entityQuerymodel.reorder("action", "query", "timeinitiated");
+			entityQuerymodel.addEmpty("queryDescription");
+			entityQuerymodel.reorder("action", "queryDescription", "timeinitiated");
 		}
 		return entityQuerymodel;
 	}
@@ -131,7 +155,7 @@ public class View extends SimpleBasePage {
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
 		// Sort by score then by date.
-		json.put("aaSorting", new JSONArray().put(new JSONArray().put(3).put("desc")));
+		json.put("aaSorting", new JSONArray().put(new JSONArray().put(2).put("desc")));
 		// new JSONObject().put("aTargets", new JSONArray().put(0, 4));
 		// final JSONObject sortType = new JSONObject("sType", "formatted-num");
 		// final JSONArray columnArray = new JSONArray();
@@ -159,7 +183,6 @@ public class View extends SimpleBasePage {
 		if (reportViewmodel == null) {
 			reportViewmodel = beanModelSource.createDisplayModel(G_ReportViewEvent.class, resources.getMessages());
 			reportViewmodel.exclude("schema", "id", "userId", "username", "reportpagelink");
-
 			reportViewmodel.addEmpty("action");
 			reportViewmodel.reorder("action", "reportId", "reporttype", "timeinitiated");
 			reportViewmodel.get("action").sortable(true);
@@ -244,27 +267,31 @@ public class View extends SimpleBasePage {
 	}
 
 	void onDeleteQuery(final long timeInitiated) {
-		G_EntityQuery q = null;
-		for (final G_EntityQuery x : currentSelectedWorkspace.getQueryObjects()) {
-			if (x.getTimeInitiated() == timeInitiated) {
-				q = x;
+		for (int i = 1; i < currentSelectedWorkspace.getQueryObjects().size(); i++) {
+			if (currentSelectedWorkspace.getQueryObjects().get(i).getTimeInitiated() == timeInitiated) {
+				currentSelectedWorkspace.getQueryObjects().remove(i);
+				break;
 			}
 		}
-		if (q != null) {
-			final boolean success = currentSelectedWorkspace.getQueryObjects().remove(q);
-			if (success) {
-				alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Removed saved query " + timeInitiated);
-			} else {
-				alertManager
-						.alert(Duration.TRANSIENT, Severity.ERROR, "Could not remove query report " + timeInitiated);
-			}
-		} else {
-			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Could not find query to remove with id "
-					+ timeInitiated);
-		}
+		// if (q != null) {
+		//
+		// final boolean success =
+		// currentSelectedWorkspace.getQueryObjects().remove(q);
+		// if (success) {
+		// alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS,
+		// "Removed saved query " + timeInitiated);
+		// } else {
+		// alertManager
+		// .alert(Duration.TRANSIENT, Severity.ERROR,
+		// "Could not remove query report " + timeInitiated);
+		// }
+		// } else {
+		// alertManager.alert(Duration.TRANSIENT, Severity.ERROR,
+		// "Could not find query to remove with id "
+		// + timeInitiated);
+		// }
 		try {
 			currentSelectedWorkspace = userDataAccess.saveWorkspace(user.getId(), currentSelectedWorkspace);
-
 		} catch (final UnauthorizedActionException e) {
 			logger.error(e.getMessage());
 		} catch (final AvroRemoteException e) {
@@ -284,5 +311,18 @@ public class View extends SimpleBasePage {
 		} else {
 			return null;
 		}
+	}
+
+	public Object onSearch(final G_EntityQuery q) {
+		logger.debug("onSelectedFromSearch, prebuilt is " + q);
+		selectedQuery = q;
+		searchPage.setPrebuilt(selectedQuery);
+		return searchPage;
+	}
+
+	public Object onSuccess() {
+		logger.debug("In View, prebuilt is " + selectedQuery);
+		searchPage.setPrebuilt(selectedQuery);
+		return searchPage;
 	}
 }

@@ -17,6 +17,8 @@ import io.searchbox.core.CountResult;
 import io.searchbox.core.Delete;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -129,6 +131,27 @@ public class UserWorkspaceDAOESImpl extends BasicESDAO implements UserWorkspaceD
 	@Override
 	public List<G_UserWorkspace> getByWorkspaceId(final String id) {
 		return getByField("workspaceId", id).getSourceAsObjectList(G_UserWorkspace.class);
+	}
+
+	@Override
+	public List<G_Workspace> getMostRecentWorkspacesForUser(final String userId, final int quantity) {
+		if (quantity == 0) {
+			return new ArrayList<G_Workspace>();
+		}
+		final List<G_Workspace> returnValue = getWorkspacesForUser(userId);
+
+		Collections.sort(returnValue, new Comparator<G_Workspace>() {
+			@Override
+			public int compare(final G_Workspace o1, final G_Workspace o2) {
+				return o1.getModified().compareTo(o2.getModified());
+			}
+		});
+
+		if (returnValue.size() < quantity) {
+			return returnValue;
+		} else {
+			return returnValue.subList(0, quantity);
+		}
 	}
 
 	@Override

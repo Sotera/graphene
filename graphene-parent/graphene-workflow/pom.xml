@@ -42,18 +42,20 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-jar-plugin</artifactId>
-			<inherited>true</inherited>
-			<configuration>
-				<archive>
-					<manifestEntries>
-						<Tapestry-Module-Classes>graphene.worksflow.web.services.WorkflowModule
-						</Tapestry-Module-Classes>
-					</manifestEntries>
-				</archive>
-			</configuration>
-		</plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Tapestry-Module-Classes>graphene.worksflow.web.services.WorkflowModule
+							</Tapestry-Module-Classes>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

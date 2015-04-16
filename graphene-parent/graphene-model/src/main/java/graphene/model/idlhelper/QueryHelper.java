@@ -19,6 +19,7 @@ public class QueryHelper extends G_EntityQuery {
 		setSearchFreeText(true);
 		setTargetSchema("");
 		setTimeInitiated(DateTime.now().getMillis());
+		setId("" + DateTime.now().getMillis());
 		setUserId("Unknown");
 		setUsername("Unknown");
 		final List<G_PropertyMatchDescriptor> list = new ArrayList<G_PropertyMatchDescriptor>();
@@ -53,8 +54,10 @@ public class QueryHelper extends G_EntityQuery {
 	// public QueryHelper(final String value, final G_Constraint g_SearchType,
 	// final List<String> filters,
 	// final int maxResults, final String schema) {
-	// final List<G_PropertyMatchDescriptor> tuples = new ArrayList<G_PropertyMatchDescriptor>();
-	// final G_PropertyMatchDescriptor tuple = new G_PropertyMatchDescriptor<String>(value,
+	// final List<G_PropertyMatchDescriptor> tuples = new
+	// ArrayList<G_PropertyMatchDescriptor>();
+	// final G_PropertyMatchDescriptor tuple = new
+	// G_PropertyMatchDescriptor<String>(value,
 	// g_SearchType);
 	// tuples.add(tuple);
 	// setPropertyMatchDescriptors(tuples);
