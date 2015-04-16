@@ -27,6 +27,12 @@ public class NoSecurityModule {
 		binder.bind(Realm.class, NoSecurityRealm.class).eagerLoad();
 	}
 
+	/**
+	 * This is just for the form validators, it will apply the correct client
+	 * side validation. You still need to handle server side validation.
+	 * 
+	 * @param configuration
+	 */
 	@Contribute(ValidatorMacro.class)
 	public static void combineValidators(final MappedConfiguration<String, String> configuration) {
 		configuration.add("username", "required, minlength=3, maxlength=15");
@@ -47,15 +53,6 @@ public class NoSecurityModule {
 		configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "1");
 	}
 
-	// @Contribute(HttpServletRequestFilter.class)
-	// @Marker(Security.class)
-	// public static void setupSecurity(
-	// Configuration<SecurityFilterChain> configuration,
-	// SecurityFilterChainFactory factory,
-	// WebSecurityManager securityManager) {
-	// // Set everything to anonymous access
-	// configuration.add(factory.createChain("/**").add(factory.anon()).build());
-	// }
 	public static void contributeSecurityConfiguration(final Configuration<SecurityFilterChain> configuration,
 			final SecurityFilterChainFactory factory) {
 		// /authc/** rule covers /authc , /authc?q=name /authc#anchor urls as

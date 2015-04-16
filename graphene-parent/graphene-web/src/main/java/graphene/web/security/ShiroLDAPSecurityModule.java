@@ -28,6 +28,13 @@ import org.tynamo.security.services.SecurityFilterChainFactory;
 import org.tynamo.security.services.SecurityModule;
 import org.tynamo.security.services.impl.SecurityFilterChain;
 
+/**
+ * This module is for connecting directly to an LDAP after hitting the built in
+ * login page. It is not complete.
+ * 
+ * @author djue
+ * 
+ */
 @SubModule({ SecurityModule.class })
 public class ShiroLDAPSecurityModule {
 	public static void bind(final ServiceBinder binder) {

@@ -4,7 +4,7 @@ import graphene.model.idl.G_Permission;
 import graphene.model.idl.G_Role;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
-import graphene.util.crypto.PasswordHash;
+import graphene.util.validator.ValidationUtils;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.shiro.authc.AccountException;
@@ -43,10 +43,10 @@ public class NoSecurityRealm extends AuthorizingRealm {
 	public NoSecurityRealm() {
 		setName(REALM_NAME);
 		setCredentialsMatcher(new CredentialsMatcher() {
-			private final PasswordHash hasher = new PasswordHash();
-
 			@Override
 			public boolean doCredentialsMatch(final AuthenticationToken token, final AuthenticationInfo info) {
+				// This is why it's called the NoSecurityRealm, we're always
+				// returning true.
 				return true;
 			}
 		});
@@ -63,7 +63,7 @@ public class NoSecurityRealm extends AuthorizingRealm {
 		} catch (final AvroRemoteException e) {
 			logger.error(e.getMessage());
 		}
-		if (user != null) {
+		if (ValidationUtils.isValid(user)) {
 			// We are putting the previously stored hashed password in here.
 			return new SimpleAuthenticationInfo(user.getUsername(), user.getHashedpassword(), getName());
 		} else {
