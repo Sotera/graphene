@@ -163,7 +163,7 @@ public class EntitiesToXLS {
 				// the range value in there.
 				//
 
-				++row;
+				row++;
 			}
 		} else {
 			final List<String> warnings = new ArrayList<String>();

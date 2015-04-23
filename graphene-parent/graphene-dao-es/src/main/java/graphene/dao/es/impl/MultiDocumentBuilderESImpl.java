@@ -100,7 +100,8 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 			}
 		}
 		if (dgp == null) {
-			logger.error("No handler for class " + typeToParse);
+			logger.error("No handler for class " + typeToParse
+					+ ".  Check to make sure your parsers have the correct supported types (case sensitive)");
 		}
 		return dgp;
 	}

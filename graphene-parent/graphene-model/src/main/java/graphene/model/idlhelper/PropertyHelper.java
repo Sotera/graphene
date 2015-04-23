@@ -69,11 +69,12 @@ public class PropertyHelper extends G_Property {
 
 	public static Object getListValue(final G_Property property) {
 		if (ValidationUtils.isValid(property)) {
-			final G_ListRange r = (G_ListRange) property.getRange();
-			if (r == null) {
-				return null;
+			final Object range = property.getRange();
+			if ((range != null) && (range instanceof G_ListRange)) {
+				return ((G_ListRange) range).getValues();
 			} else {
-				return r.getValues();
+				logger.warn("Property was not a list range as expected: " + range.getClass());
+				return null;
 			}
 		} else {
 			logger.warn("Property was null, perhaps it's key was not defined for the source document.");
@@ -141,6 +142,16 @@ public class PropertyHelper extends G_Property {
 		}
 	}
 
+	public static Long getSingletonLongByKey(final Map<String, G_Property> entityProperties, final String key,
+			final Long defaultValue) {
+		if (ValidationUtils.isValid(entityProperties)) {
+			final G_Property property = entityProperties.get(key);
+			return (Long) getSingletonValue(property);
+		} else {
+			return defaultValue;
+		}
+	}
+
 	public static String getSingletonStringByKey(final G_SearchResult currentSearchResult, final String key) {
 		final G_Entity e = (G_Entity) currentSearchResult.getResult();
 		return getSingletonStringByKey(e.getProperties(), key);
@@ -152,6 +163,16 @@ public class PropertyHelper extends G_Property {
 			return (String) getSingletonValue(property);
 		} else {
 			return null;
+		}
+	}
+
+	public static String getSingletonStringByKey(final Map<String, G_Property> entityProperties, final String key,
+			final String defaultValue) {
+		if (ValidationUtils.isValid(entityProperties)) {
+			final G_Property property = entityProperties.get(key);
+			return (String) getSingletonValue(property);
+		} else {
+			return defaultValue;
 		}
 	}
 
@@ -207,6 +228,16 @@ public class PropertyHelper extends G_Property {
 	public PropertyHelper(final G_PropertyTag tag, final double value) {
 		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
 	}
+
+	// public PropertyHelper(final G_PropertyTag tag, final ListRangeHelper
+	// value) {
+	// setKey(tag.name());
+	// setFriendlyText(tag.name());
+	// setProvenance(null);
+	// setUncertainty(null);
+	// setTags(Collections.singletonList(tag));
+	// setRange(value);
+	// }
 
 	public PropertyHelper(final G_PropertyTag tag, final String value) {
 		this(tag.name(), tag.name(), value, Collections.singletonList(tag));
@@ -314,6 +345,11 @@ public class PropertyHelper extends G_Property {
 		setUncertainty(uncertainty);
 		setTags(tags);
 		setRange(range);
+	}
+
+	public PropertyHelper(final String key, final String friendlyText, final ListRangeHelper value,
+			final List<G_PropertyTag> tags) {
+		this(key, friendlyText, value, G_PropertyType.STRING, tags);
 	}
 
 	/**

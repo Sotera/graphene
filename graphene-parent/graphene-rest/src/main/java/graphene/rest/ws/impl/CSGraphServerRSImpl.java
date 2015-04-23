@@ -139,8 +139,11 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 							} else {
 								gve.setReportType("Existing");
 								loggingDao.recordGraphViewEvent(gve);
-								m.setStrStatus("This graph was previously saved on " + DataFormatConstants.formatDate(existingGraph.getModified()));
-								m.createPositionMapping(); // necessary for preset layout in Cytoscape 3.2.9
+								m.setStrStatus("This graph was previously saved on "
+										+ DataFormatConstants.formatDate(existingGraph.getModified()));
+								m.createPositionMapping(); // necessary for
+															// preset layout in
+															// Cytoscape 3.2.9
 							}
 						} else {
 							logger.info("Could not find previously saved graph, will regenerate");
@@ -155,7 +158,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 					V_GenericGraph g = null;
 					try {
 						final V_GraphQuery q = new V_GraphQuery();
-						q.addSearchIds(value);
+						for (final String v : value) {
+							q.addSearchIds(StringUtils.split(v, ','));
+						}
 						q.setDirected(false);
 						q.setMaxNodes(maxNodesInt);
 						q.setMaxEdgesPerNode(maxEdgesPerNodeInt);

@@ -1,6 +1,7 @@
 package graphene.rest.ws.impl;
 
 import graphene.rest.ws.ExportGraphRS;
+import graphene.util.validator.ValidationUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -188,6 +189,15 @@ public class ExportGraphRSImpl implements ExportGraphRS {
 
 		} catch (final Exception gfe) {
 			logger.error("getExportedGraph: Failed to read file. Details: " + gfe.getLocalizedMessage());
+		} finally {
+			if (ValidationUtils.isValid(inStream)) {
+				try {
+					inStream.close();
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 
 		// DEBUG

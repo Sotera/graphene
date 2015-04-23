@@ -71,7 +71,7 @@ public class GlobalSearch {
 		if (ValidationUtils.isValid(searchValue)) {
 			G_Constraint searchtype = G_Constraint.COMPARE_CONTAINS;
 			if (searchValue.startsWith("\"") && searchValue.endsWith("\"")) {
-				searchtype = G_Constraint.COMPARE_EQUALS;
+				searchtype = G_Constraint.REQUIRED_EQUALS;
 			}
 			final Link link = searchPage.set(dao.getDefaultSchema(), selectedType, searchtype.name(), searchValue,
 					selectedMaxResults);

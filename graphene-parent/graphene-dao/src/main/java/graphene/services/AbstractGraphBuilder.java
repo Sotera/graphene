@@ -250,25 +250,31 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 	@Override
 	public void buildQueryForNextIteration(final V_GenericNode... nodes) {
-		for (final V_GenericNode n : nodes) {
-			if (determineTraversability(n)) {
-				for (final G_EntityQuery eq : createQueriesFromNode(n)) {
-					final String queryToString = eq.toString();
-					// Have we done this EXACT query before? Note: a query id
-					// may be different than a node id, depending on how the
-					// query is constructed.
-					// TODO: Use a bloom filter
-					// XXX: make sure the .toString is unique since we now have
-					// time and user, etc.
-					if (!scannedQueries.contains(queryToString)) {
-						scannedQueries.add(queryToString);
-						logger.debug("Query eq is new: " + queryToString);
-						queriesToRunNextDegree.add(eq);
-					} else {
-						logger.debug("Skipping query eq! " + queryToString);
+		if (ValidationUtils.isValid(nodes)) {
+			for (final V_GenericNode n : nodes) {
+				if (determineTraversability(n)) {
+					for (final G_EntityQuery eq : createQueriesFromNode(n)) {
+						final String queryToString = eq.toString();
+						// Have we done this EXACT query before? Note: a query
+						// id
+						// may be different than a node id, depending on how the
+						// query is constructed.
+						// TODO: Use a bloom filter
+						// XXX: make sure the .toString is unique since we now
+						// have
+						// time and user, etc.
+						if (!scannedQueries.contains(queryToString)) {
+							scannedQueries.add(queryToString);
+							logger.debug("Query eq is new: " + queryToString);
+							queriesToRunNextDegree.add(eq);
+						} else {
+							logger.debug("Skipping query eq! " + queryToString);
+						}
 					}
 				}
 			}
+		} else {
+			logger.warn("Will not build a query for the node passed in");
 		}
 		logger.debug("There are " + queriesToRunNextDegree.size() + " queries to run for the next degree. ref ");
 	}
@@ -293,6 +299,46 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Creates an edge between two nodes, and sets relationship information.
+	 * Override this if you want to style nodes or add attributes as you build
+	 * the edges.
+	 * 
+	 * @return
+	 */
+	@Override
+	public V_GenericEdge createEdge(final V_GenericNode a, final String relationType, final String relationValue,
+			final V_GenericNode attachTo, final double localPriority, final double inheritedScore,
+			final double nodeCertainty, final double minimumScoreRequired) {
+		V_GenericEdge edge = null;
+		if (ValidationUtils.isValid(attachTo)) {
+			final String key = generateEdgeId(attachTo.getId(), relationType, a.getId());
+			if ((key != null) && !edgeList.containsKey(key)) {
+				edge = new V_GenericEdge(key, a, attachTo);
+				edge.setIdType(relationType);
+				edge.setLabel(null);
+				edge.setIdVal(relationType);
+				if (nodeCertainty < 100.0) {
+					edge.addData("Certainty", DataFormatConstants.formatPercent(nodeCertainty));
+					edge.setLineStyle("dotted");
+					// edge.setColor("#787878");
+				}
+				edge.addData("Local_Priority", "" + localPriority);
+				edge.addData("Min_Score_Required", "" + minimumScoreRequired);
+				edge.addData("Parent_Score", "" + inheritedScore);
+				edge.addData("Value", StringUtils.coalesc(" ", a.getLabel(), relationValue, attachTo.getLabel()));
+				edgeList.put(key, edge);
+			}
+
+			// if this flag is set, we'll add the attributes to the
+			// attached node.
+			if (/* INHERIT_ATTRIBUTES */true) {
+				attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
+			}
+		}
+		return edge;
 	}
 
 	@Override
@@ -400,34 +446,10 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 				}
 				// now we have a valid node. Attach it to the other node
 				// provided.
-				if (ValidationUtils.isValid(a, attachTo)) {
-					final String key = generateEdgeId(attachTo.getId(), relationType, a.getId());
-					if ((key != null) && (edgeList.get(key) == null)) {
-						final V_GenericEdge edge = new V_GenericEdge(key, a, attachTo);
-						edge.setIdType(relationType);
-						edge.setLabel(null);
-						edge.setIdVal(relationType);
-						if (nodeCertainty < 100.0) {
-							edge.addData("Certainty", DataFormatConstants.formatPercent(nodeCertainty));
-							edge.setLineStyle("dotted");
-							// edge.setColor("#787878");
-						}
-						edge.addData("Local_Priority", "" + localPriority);
-						edge.addData("Min_Score_Required", "" + minimumScoreRequired);
-						edge.addData("Parent_Score", "" + inheritedScore);
-						edge.addData("Value",
-								StringUtils.coalesc(" ", a.getLabel(), relationValue, attachTo.getLabel()));
-						edgeList.put(key, edge);
-					}
-
-					// if this flag is set, we'll add the attributes to the
-					// attached
-					// node.
-					if (INHERIT_ATTRIBUTES) {
-						// attachTo.addData(a.getNodeType(), a.getIdVal());
-						attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
-					}
-				}
+				// now we have a valid node. Attach it to the other node
+				// provided.
+				createEdge(a, relationType, relationValue, attachTo, localPriority, inheritedScore, nodeCertainty,
+						minimumScoreRequired);
 			}
 		} else {
 			logger.error("Invalid id for " + nodeType + " of node " + attachTo);

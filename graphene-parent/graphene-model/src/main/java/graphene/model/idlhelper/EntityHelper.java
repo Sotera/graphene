@@ -185,6 +185,11 @@ public class EntityHelper extends G_Entity {
 			final Map<String, G_Property> properties) {
 
 		this(id, tagList, null, null, merge(properties, new HashMap<String, G_Property>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			{
 				put(G_PropertyTag.LABEL.name(), new PropertyHelper(G_PropertyTag.LABEL, label));
 				put(G_PropertyTag.TYPE.name(), new PropertyHelper(G_PropertyTag.TYPE, type));

@@ -2,6 +2,7 @@ package graphene.rest.ws.impl;
 
 import graphene.rest.ws.UDSessionRS;
 import graphene.util.FastNumberUtils;
+import graphene.util.validator.ValidationUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -260,10 +261,18 @@ public class UDSessionRSImpl implements UDSessionRS {
 		try {
 			inStream = new FileInputStream(fullFileName);
 			sessionData = IOUtils.toString(inStream);
-			inStream.close();
 
 		} catch (final Exception gfe) {
 			logger.error("getSessionFromFile: Failed to read file. Details: " + gfe.getLocalizedMessage());
+		} finally {
+			if (ValidationUtils.isValid(inStream)) {
+				try {
+					inStream.close();
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 
 		// TODO get the data for the sessionId

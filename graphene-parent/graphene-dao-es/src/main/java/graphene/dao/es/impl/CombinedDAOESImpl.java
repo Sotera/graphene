@@ -156,6 +156,7 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 		JestResult jestResult = new JestResult(null);
 		try {
 			final io.searchbox.core.Search.Builder action = buildSearchAction(pq);
+
 			jestResult = c.getClient().execute(action.build());
 		} catch (final DataAccessException e) {
 			e.printStackTrace();

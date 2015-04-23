@@ -19,6 +19,8 @@ public interface DataSourceListDAO {
 
 	public List<String> getAvailableTypes();
 
+	public abstract List<String> getAvailableTypes(final String schema);
+
 	public String getDefaultSchema();
 
 }

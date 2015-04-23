@@ -147,13 +147,10 @@ public class BasicESDAO implements G_DataAccess {
 					constraintUsed = true;
 					break;
 				case COMPARE_CONTAINS:
-					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+					bool = bool.should(QueryBuilders.matchPhraseQuery(key, text));
 					constraintUsed = true;
 					break;
-				case COMPARE_EQUALS:
-					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
-					constraintUsed = true;
-					break;
+
 				case COMPARE_STARTSWITH:
 					bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
 					constraintUsed = true;
@@ -172,6 +169,7 @@ public class BasicESDAO implements G_DataAccess {
 		if ((constraintUsed == false) && (createdNew == true)) {
 			bool = null;
 		}
+
 		return bool;
 	}
 

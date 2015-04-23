@@ -32,6 +32,7 @@ import graphene.services.store.ContentService.Document;
 import graphene.services.store.ContentService.DocumentDescriptor;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -130,10 +131,11 @@ public class AnbExportDataService implements ExportDataService {
 	 */
 	@Override
 	public String exportToXML(final ObjectNode jsonData) throws JsonProcessingException {
+		String retval = null;
 		try {
 			final ByteArrayOutputStream baoStream = convertJSONToGraphML(jsonData);
-			return baoStream.toString("UTF-8");
-
+			retval = baoStream.toString("UTF-8");
+			baoStream.close();
 		} catch (final JAXBException e) {
 			throw new JsonMappingException("Failure serializing graph data with JAXB");
 			// throw new
@@ -142,21 +144,29 @@ public class AnbExportDataService implements ExportDataService {
 			throw new JsonMappingException("Failure converting graph data to UTF-8");
 			// throw new
 			// JsonParseException("Failure converting graph data to UTF-8");
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return retval;
 	}
 
 	@Override
 	public DocumentDescriptor exportToXMLDoc(final ObjectNode JSONData, final String version) throws ConflictException,
 			JsonProcessingException {
 
-		byte[] XMLdata;
+		byte[] XMLdata = null;
 		try {
 			final ByteArrayOutputStream baoStream = convertJSONToGraphML(JSONData);
 			XMLdata = baoStream.toByteArray();
+			baoStream.close();
 		} catch (final JAXBException e) {
 			// throw new JsonParseException(Status.SERVER_ERROR_INTERNAL,
 			// "Failure serializing graph data with JAXB", e);
 			throw new JsonMappingException("Failure serializing graph data with JAXB");
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		final String xmlType = "application/xml";
 

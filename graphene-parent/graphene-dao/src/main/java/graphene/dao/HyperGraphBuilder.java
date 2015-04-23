@@ -7,6 +7,7 @@ import graphene.model.idl.G_EntityQuery;
 import java.util.List;
 import java.util.Set;
 
+import mil.darpa.vande.generic.V_GenericEdge;
 import mil.darpa.vande.generic.V_GenericGraph;
 import mil.darpa.vande.generic.V_GenericNode;
 import mil.darpa.vande.generic.V_GraphQuery;
@@ -42,6 +43,9 @@ public interface HyperGraphBuilder {
 	// public abstract DocumentGraphParser getParserForObject(Object obj);
 
 	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
+
+	V_GenericEdge createEdge(V_GenericNode a, String relationType, String relationValue, V_GenericNode attachTo,
+			double localPriority, double inheritedScore, double nodeCertainty, double minimumScoreRequired);
 
 	public abstract V_GenericNode createNodeInSubgraph(final double minimumScoreRequired, final double inheritedScore,
 			final double localPriority, final String originalId, final String idType, final String nodeType,

@@ -108,5 +108,6 @@ public class CrossReferenceResult {
 				fos.write((s.getKey() + "\t" + s.getValue() + "\n").getBytes());
 			}
 		}
+		fos.close();
 	}
 }
