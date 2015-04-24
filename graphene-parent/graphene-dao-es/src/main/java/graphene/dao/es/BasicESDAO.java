@@ -200,13 +200,15 @@ public class BasicESDAO implements G_DataAccess {
 								esTypes.add(t);
 							}
 						} else if (r instanceof G_ListRange) {
-							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
-								logger.debug("Adding types " + t);
-								esTypes.add((String) t);
+							final List<Object> values = ((G_ListRange) r).getValues();
+							for (final Object t : values) {
+								final String ts = (String) t;
+								logger.debug("Adding type " + ts);
+								esTypes.add(ts);
 							}
 						}
 
-						logger.debug("Adding type, types are now " + StringUtils.coalesc("", esTypes.toArray()));
+						logger.debug("Types are now " + StringUtils.coalesc(", ", esTypes.toArray()));
 
 					} else if (key.equals(ESID)) {
 						if (r instanceof G_SingletonRange) {

@@ -78,6 +78,7 @@ public interface G_Parser<T> {
 	public static final String SUBJECTCIDLIST = "subjectcidlist";
 	public static final String SUBJECTIDLIST = "subjectidlist";
 	public static final String SUBJECTNAMELIST = "subjectnamelist";
+	public static final String SUBJECTACCOUNTLIST = "subjectaccountlist";
 	/**
 	 * The key for storing the numeric amount of money involved in the report,
 	 * in a format that can be sorted and scaled.

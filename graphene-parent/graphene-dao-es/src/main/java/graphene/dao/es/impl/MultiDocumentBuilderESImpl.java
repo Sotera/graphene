@@ -64,6 +64,8 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 													G_PropertyTag.STAT));
 
 							sr = new G_SearchResult(score.asDouble(0.0d), entity);
+						} else {
+							logger.error("Delegate was unable to build entity from document.");
 						}
 
 					} else {

@@ -248,6 +248,10 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		return g;
 	}
 
+	/**
+	 * Override this in your graph builder so you can control how queries are
+	 * made based on node types/properties.
+	 */
 	@Override
 	public void buildQueryForNextIteration(final V_GenericNode... nodes) {
 		if (ValidationUtils.isValid(nodes)) {

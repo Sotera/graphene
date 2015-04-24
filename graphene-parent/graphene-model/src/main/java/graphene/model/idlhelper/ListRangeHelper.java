@@ -9,6 +9,7 @@ import graphene.model.idl.G_SingletonRange;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -38,9 +39,16 @@ public class ListRangeHelper extends G_ListRange {
 		return String.valueOf(rangeValue(range));
 	}
 
-	public ListRangeHelper(final G_PropertyType type, final Object... value) {
+	public ListRangeHelper(final G_PropertyType type, final Collection<? extends String> value) {
 		final List<Object> list = new ArrayList<Object>();
-		for (final Object v : value) {
+		list.addAll(value);
+		setValues(list);
+		setType(type);
+	}
+
+	public ListRangeHelper(final G_PropertyType type, final String... value) {
+		final List<Object> list = new ArrayList<Object>();
+		for (final String v : value) {
 			list.add(v);
 		}
 		setValues(list);
