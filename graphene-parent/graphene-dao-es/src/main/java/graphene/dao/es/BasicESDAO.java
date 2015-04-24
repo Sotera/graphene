@@ -89,6 +89,7 @@ public class BasicESDAO implements G_DataAccess {
 	private static final int MAX_TO_GET_AT_ONCE = 1000000;
 	private static final int PAGESIZE = 200;
 	public static final String ESID = "_esid";
+	public static final String ESBOOST = "_esboost";
 	/*
 	 * can reuse, share globally;
 	 */
@@ -258,6 +259,15 @@ public class BasicESDAO implements G_DataAccess {
 							if (ValidationUtils.isValid(t)) {
 								logger.debug("Setting custom query " + t);
 								queryString = t;
+							}
+						}
+
+					} else if (key.equals(ESBOOST)) {
+						if (r instanceof G_SingletonRange) {
+							final String t = (String) ((G_SingletonRange) r).getValue();
+							if (ValidationUtils.isValid(t)) {
+								logger.debug("Setting boost custom query " + t);
+								// not working yet
 							}
 						}
 

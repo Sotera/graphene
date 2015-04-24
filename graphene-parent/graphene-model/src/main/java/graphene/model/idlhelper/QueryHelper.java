@@ -23,9 +23,10 @@ public class QueryHelper extends G_EntityQuery {
 		setUserId("Unknown");
 		setUsername("Unknown");
 		final List<G_PropertyMatchDescriptor> list = new ArrayList<G_PropertyMatchDescriptor>();
-
 		for (final G_PropertyMatchDescriptor pm : pmd) {
-			list.add(pm);
+			if (pm != null) {
+				list.add(pm);
+			}
 		}
 		setPropertyMatchDescriptors(list);
 	}
