@@ -136,6 +136,7 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 				'text-outline-color': _this.CONSTANTS("textOutlineColor"),
 				'width': 'data(size)',
 				'height': 'data(size)'
+				
 			});
 			/* We no longer want node images to appear in the nodes themselves *//*
 			style.selector("node[?imgUrl]").css({
@@ -147,6 +148,19 @@ CytoscapeGraphVis.prototype.init = function(/*config, owner[, callbackFn, isUndi
 				'height': _this.CONSTANTS("imageSize")
 			});
 			*/
+			style.selector("node[?pie]").css({
+				'width': 'data(size)',
+				'height': 'data(size)',
+				'pie-size': '90%',
+                'pie-1-background-color': '#9A151C',
+                'pie-1-background-size': 'mapData(p1, 0, 1, 0, 100)',
+                'pie-2-background-color': '#6F0006',
+                'pie-2-background-size': 'mapData(p2, 0, 1, 0, 100)',
+                'pie-3-background-color': '#163767',
+                'pie-3-background-size': 'mapData(p3, 0, 1, 0, 100)',
+                'pie-4-background-color': '#05214A',
+                'pie-4-background-size': 'mapData(p4, 0, 1, 0, 100)'
+			});
 			style.selector("node:selected").css({
 				'background-color': _this.CONSTANTS("selectedNode"),
 				'line-color': 'black',
