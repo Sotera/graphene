@@ -1,19 +1,19 @@
 Graphene: Search and Graph your data 
 ======
- Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J or Titan (and to that extent, Tinkerpop Blueprints), from your non-graph datastore (RDBMS, Solr, etc).
+ Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.
 
 For configurations, building, and deployment instructions, view the [Graphene Wiki](https://github.com/Sotera/graphene/wiki).
 Please see the road maps in the wiki for new features and their slated order.
  
 Using Graphene 
 ------
- The core of the Graphene project is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.
+ The core of the Graphene project contains multiple modules, some of which are optional.  The main module that you'll need it the graphene-web module, since it acts as a WAR overlay for your Java based web application.  The current example that will be released soon is based on Instagram data, and will be shown as a separate github project.  Previous demos included Enron, Scott Walker email data, and Kiva Microloan data.
 
- It is our goal that you should not have to modify this project in order to suit your individual needs (although we welcome ideas and suggestions).  The intent is that this project be used as an underlying framework, and that your individual implementations can be wired within your code using IOC.
+ It's our goal that you use the available modules if they make sense for your needs, but we allow you to wire in your own code in most places.  In addition, Graphene leverages Apache Tapestry's auto discovery of modules, so we will be expanding the number of 'plugin' modules available.  Currently we offer the graphene-augment-mitie as an example of such a module.  It's abilities are made available in your app simply by including the jar file in your POM, no code changes necessary!
  
 Building Graphene 
 ------ 
- Graphene is built using [Apache Maven](http://maven.apache.org) version 3.0.4 or later and a recent version of [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html). 
+ Graphene is built using [Apache Maven](http://maven.apache.org) version 3.0.4 or later and a recent version of [currenly Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html). 
  
  * A plain 'mvn clean install' will build all the jar files and a single war file (to be overlaid on your project)
  * Test execution is part of the build, but you can add -DskipTests=true to cut down on the build time.
@@ -60,9 +60,14 @@ Graphene is structured as a multi module maven project. The modules are:
           <li>Defines some DAO implementations for standardized SQL tables.  These are not used unless you wire them in IOC</li>
         </ul>
      </li>
+      <li><h4>graphene-dao-es</h4>
+        <ul> 
+          <li>Defines some DAO implementations for working with Elastic Search with JEST.  Using JEST allows us to be compatible through the REST layer, instead of binding to a particular version of ElasticSearch.  These are not used unless you wire them in IOC</li>
+        </ul>
+     </li>
       <li><h4>graphene-export</h4>
         <ul> 
-          <li>Defines utilities for converting internal lists into CSV and native Excel XLS files</li>
+          <li>Defines utilities for converting internal lists into CSV and native Excel XLSX files</li>
         </ul>
       </li>
     <li><h4>graphene-hts</h4>
@@ -80,17 +85,9 @@ Graphene is structured as a multi module maven project. The modules are:
           <li>Used during the ingest phase.  Currently its main function is to run a series of queries against every table and every column, so you can get a feel for the bounds of your data and which columns are interesting.</li>
         </ul>
       </li>
-      <li><h4>graphene-memorydb</h4>
-        <ul> 
-          <li>An in house memory database for property graphs, for small datasets and when a graph database is not available.  An implementation of this is preloaded into memory when the application is started (which may take several minutes depending on how much you tell it to load)</li>
-        </ul>
-      </li>
       <li><h4>graphene-model</h4>
         <ul> 
-          <li>This module contains generic model and view classes which are used by graphene's services.  </li>
-<li>Your DAO implementations translate your domain specific (and database specific) objects into the more generic objects defined in this module.</li>
-<li>Your DAO implementations receive query objects (POJOs) defined in this module.</li>
-<li>Many of the objects are generated use [Apache Avro](http://avro.apache.org/).</li>
+          <li>This module contains IDL classes generated by  [Apache Avro](http://avro.apache.org/).  These classes are the lingua franca between modules in Graphene. </li>
         </ul>
       </li>
       <li><h4>graphene-rest</h4>
@@ -115,7 +112,7 @@ Graphene is structured as a multi module maven project. The modules are:
       <li><h4>graphene-web</h4>
         <ul> 
           <li>This module defines some basic wiring and imports many other of the *Module.java classes from other graphene maven modules.</li>
-<li>The web module also contains shared html, css and js resources used by ExtJs, Cytoscape and many other libraries.</li>
+<li>The web module also contains shared html, css and js resources used by ExtJs, [Cytoscape.js](http://js.cytoscape.org/) and many other js libraries.</li>
 <li>It also contains Apache Tapestry based UI components and pages (currently limited)</li>
         </ul>
       </li>
