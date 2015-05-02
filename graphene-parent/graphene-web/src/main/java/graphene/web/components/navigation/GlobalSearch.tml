@@ -17,7 +17,7 @@ margin-top: 4px;
 		t:type="form" t:id="globalsearchform">
 
 		<input style="width: 67%; margin-right: 3px; "
-			t:id="searchValue" t:type="TextField" type="text"
+			t:id="searchValue" t:type="TextField" type="text" value="searchValue"
 			class="form-control globalsearch" placeholder="Search" id="search-fld" title="Enter Search Terms" />
 		<t:select
 			style="float: none;
