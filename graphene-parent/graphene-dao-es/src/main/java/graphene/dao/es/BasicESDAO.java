@@ -667,6 +667,8 @@ public class BasicESDAO implements G_DataAccess {
 	}
 
 	public void initialize() {
+		logger.debug("Initializing index " + index + " and type " + type);
+
 		if (ValidationUtils.isValid(index)) {
 			if (indexExists()) {
 				logger.debug("Index " + index + " already exists.  This is fine.");
@@ -674,7 +676,7 @@ public class BasicESDAO implements G_DataAccess {
 				try {
 					createIndex(index);
 				} catch (final Exception e) {
-					logger.error("Problem initializing index: ", e);
+					logger.error("Problem initializing index: " + index, e);
 				}
 			}
 		} else {

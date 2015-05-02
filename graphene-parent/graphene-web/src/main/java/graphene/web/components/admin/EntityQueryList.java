@@ -3,6 +3,7 @@ package graphene.web.components.admin;
 import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_EntityQuery;
 import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idlhelper.RangeHelper;
 import graphene.web.components.BasicDataTable;
 
 import java.util.List;
@@ -18,17 +19,19 @@ public class EntityQueryList extends BasicDataTable {
 	protected LoggingDAO loggingDao;
 	@Property
 	private G_EntityQuery current;
+
 	@Property
-	private String currentFilter;
-	@Property
-	private List<String> currentFilters;
-	@Property
-	private G_PropertyMatchDescriptor currentTuple;
+	private G_PropertyMatchDescriptor currentPmd;
 
 	@Persist
 	private BeanModel<G_EntityQuery> model;
+
 	@Property
 	private List<G_EntityQuery> list;
+
+	public String getCurrentRange() {
+		return RangeHelper.toString(currentPmd.getRange());
+	}
 
 	public BeanModel<G_EntityQuery> getModel() {
 		if (model == null) {
@@ -37,9 +40,8 @@ public class EntityQueryList extends BasicDataTable {
 					"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource",
 					"userId", "sortascending", "id", "schema");
 
-			model.get("AttributeList").sortable(true);
-			model.reorder("timeinitiated", "username", "AttributeList", "filters");
-			model.get("filters").sortable(true);
+			model.get("propertyMatchDescriptors").sortable(true);
+			model.reorder("timeinitiated", "username", "propertyMatchDescriptors");
 		}
 		return model;
 	}

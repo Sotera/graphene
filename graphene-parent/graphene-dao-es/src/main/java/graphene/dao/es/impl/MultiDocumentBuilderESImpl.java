@@ -78,6 +78,7 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 				logger.error("Could not find the source of result. There may be something wrong with your ElasticSearch instance");
 			}
 		} catch (final Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 		return sr;

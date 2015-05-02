@@ -77,7 +77,7 @@ public class PropertyHelper extends G_Property {
 				return null;
 			}
 		} else {
-			logger.warn("Property was null, perhaps it's key was not defined for the source document.");
+			// logger.warn("Property was null, perhaps it's key was not defined for the source document.");
 			return null;
 		}
 	}
@@ -216,7 +216,7 @@ public class PropertyHelper extends G_Property {
 
 			return null;
 		} else {
-			logger.warn("Property was null, perhaps it's key was not defined for the source document.");
+			// logger.warn("Property was null, perhaps it's key was not defined for the source document.");
 			return null;
 		}
 	}

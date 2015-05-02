@@ -175,11 +175,12 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			}
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(false);
-
-		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
-				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(searchQueryType)
-				.setParameter("from", offset).setParameter("size", limit).build();
-		System.out.println(searchSourceBuilder.toString());
+		final String ssb = searchSourceBuilder.sort(byDate).from(offset).size(limit).toString();
+		final Search search = new Search.Builder(ssb).addIndex(indexName).setParameter("timeout", defaultESTimeout)
+				.addType(searchQueryType).setParameter("from", offset).setParameter("size", limit).build();
+		System.out.println("index: " + indexName + " type:" + searchQueryType);
+		System.out.println(ssb);
+		System.out.println(search.getURI());
 		JestResult result;
 		List<G_EntityQuery> returnValue = new ArrayList<G_EntityQuery>(0);
 		try {
@@ -192,6 +193,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			// }
 		} catch (final Exception e) {
 			logger.error("getQueries " + e.getMessage());
+			e.printStackTrace();
 		}
 		return returnValue;
 
@@ -291,10 +293,7 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	public void recordQuery(final G_EntityQuery q) {
 		if (enableLogging) {
 			if (ValidationUtils.isValid(q)) {
-				// if (q.getId() == null) {
 				q.setId(saveObject(q, q.getId(), indexName, searchQueryType, false));
-				// }
-				// saveObject(q, q.getId(), indexName, searchQueryType);
 			} else {
 				logger.error("Attempted to save a null BasicQuery!");
 			}

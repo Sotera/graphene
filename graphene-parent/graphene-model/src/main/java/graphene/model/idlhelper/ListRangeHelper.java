@@ -29,7 +29,10 @@ public class ListRangeHelper extends G_ListRange {
 			return ((G_ListRange) range).getValues();
 		} else if (range instanceof G_SingletonRange) {
 			final List<Object> list = new ArrayList<Object>();
-			list.add(((G_SingletonRange) range).getValue());
+			final Object value = ((G_SingletonRange) range).getValue();
+			if (value != null) {
+				list.add(value);
+			}
 			return list;
 		}
 		return null;
@@ -49,7 +52,9 @@ public class ListRangeHelper extends G_ListRange {
 	public ListRangeHelper(final G_PropertyType type, final String... value) {
 		final List<Object> list = new ArrayList<Object>();
 		for (final String v : value) {
-			list.add(v);
+			if (v != null) {
+				list.add(v);
+			}
 		}
 		setValues(list);
 		setType(type);

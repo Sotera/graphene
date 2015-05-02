@@ -45,7 +45,10 @@ public abstract class AbstractExtractor implements Extractor {
 				m = p.matcher(s);
 				while (m.find()) {
 					for (final int groupIndex : groups) {
-						matchList.add(postProcessMatch(m.group(groupIndex)));
+						final String match = postProcessMatch(m.group(groupIndex));
+						if (match != null) {
+							matchList.add(match);
+						}
 					}
 				}
 			}
@@ -63,7 +66,10 @@ public abstract class AbstractExtractor implements Extractor {
 			m = p.matcher(source);
 			while (m.find()) {
 				for (final int groupIndex : groups) {
-					matchList.add(postProcessMatch(m.group(groupIndex)));
+					final String match = postProcessMatch(m.group(groupIndex));
+					if (match != null) {
+						matchList.add(match);
+					}
 				}
 			}
 		}
