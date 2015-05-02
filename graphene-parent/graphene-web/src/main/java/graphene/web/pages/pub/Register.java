@@ -3,10 +3,10 @@ package graphene.web.pages.pub;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idlhelper.AuthenticatorHelper;
 import graphene.util.ExceptionUtil;
 import graphene.web.annotations.AnonymousAccess;
 import graphene.web.pages.Index;
-import graphene.web.security.AuthenticatorHelper;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.EventConstants;

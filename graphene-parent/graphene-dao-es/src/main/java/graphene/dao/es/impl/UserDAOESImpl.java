@@ -187,21 +187,29 @@ public class UserDAOESImpl extends BasicESDAO implements UserDAO {
 
 	@Override
 	public G_User loginUser(final String id, final String password) throws AuthenticationException {
-		final G_User user = getById(id);
-		if (user != null) {
-			final String hash = user.getHashedpassword();
-			try {
-				if (passwordHasher.validatePassword(password, hash)) {
-					user.setNumberlogins(user.getNumberlogins() + 1);
-					user.setLastlogin(DateTime.now().getMillis());
-					// This should be faster, no waiting.
-					saveObject(user, user.getId(), indexName, type, false);
+		G_User user = null;
+		if (ValidationUtils.isValid(id, password)) {
+			user = getById(id);
+			if (ValidationUtils.isValid(user) && ValidationUtils.isValid(user.getHashedpassword())) {
+				try {
+					if (passwordHasher.validatePassword(password, user.getHashedpassword())) {
+						if (user.getNumberlogins() == null) {
+							user.setNumberlogins(1);
+						} else {
+							user.setNumberlogins(user.getNumberlogins() + 1);
+						}
+						user.setLastlogin(DateTime.now().getMillis());
+						// This should be faster, no waiting.
+						saveObject(user, user.getId(), indexName, type, false);
+					}
+				} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+					logger.error("Error logging in, could not validate password for " + id);
 				}
-			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-				logger.error("Error logging in, could not validate password for " + id);
+			} else {
+				logger.warn("Could not get user with id " + id);
 			}
 		} else {
-			logger.warn("Could not get user with id " + id);
+			logger.error("User id and/or password were invalid.");
 		}
 		return user;
 	}

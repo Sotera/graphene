@@ -47,9 +47,6 @@ public class UnauthenticatedLayout {
 	@Inject
 	private Messages messages;
 
-	@Property
-	private final String themePath = "core/";
-
 	public JSONObject getJgrowlParams() {
 		final JSONObject json = new JSONObject("position", "bottom-right");
 		return json;

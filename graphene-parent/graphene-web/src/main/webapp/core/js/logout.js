@@ -14,10 +14,10 @@
                         $('#show-shortcut')
                         .text() + "</strong></span> ?",
                     content: "You can improve your security further after logging out by closing this opened browser",
-                    buttons: '[No][Yes]'
+                    buttons: '[Cancel][Logout]'
 
                 }, function (ButtonPressed) {
-                    if (ButtonPressed == "Yes") {
+                    if (ButtonPressed == "Logout") {
                         $.root_.addClass('animated fadeOutUp');
                         setTimeout(logout, 1000);
                     }

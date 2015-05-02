@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import mil.darpa.vande.generic.V_GenericNode;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,21 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 	protected List<String> supported;
 	@Inject
 	protected StopWordService stopwordService;
+
+	protected boolean parenting = false;
+
+	/**
+	 * Safely add data to a node even if you supplied a null node var.
+	 * 
+	 * @param node
+	 * @param key
+	 * @param value
+	 */
+	public void addSafeData(final V_GenericNode node, final String key, final String value) {
+		if (ValidationUtils.isValid(node)) {
+			node.addData(key, value);
+		}
+	}
 
 	protected void addSafeString(final Collection<String> datesFiled, final Object o) {
 		if (ValidationUtils.isValid(datesFiled, o)) {
@@ -104,5 +121,26 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 	@Override
 	public List<String> getSupportedObjects() {
 		return supported;
+	}
+
+	/**
+	 * @return the parenting
+	 */
+	public boolean isParenting() {
+		return parenting;
+	}
+
+	public void setParent(final V_GenericNode parent, final V_GenericNode child) {
+		if (parenting) {
+			addSafeData(child, "parent", parent.getId());
+		}
+	}
+
+	/**
+	 * @param parenting
+	 *            the parenting to set
+	 */
+	public void setParenting(final boolean parenting) {
+		this.parenting = parenting;
 	}
 }

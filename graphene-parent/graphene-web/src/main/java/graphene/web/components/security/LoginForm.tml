@@ -23,7 +23,7 @@
 				<section>
 					<t:label for="passwordfield">${message:passwordLabel}</t:label>
 					<label class="input"> <i class="icon-append fa fa-lock"></i> <t:passwordfield name="password"
-							type="password" value="userpassword" t:id="passwordfield" t:validate="required,password">
+							type="password" value="userPassword" t:id="passwordfield" t:validate="required,password">
 							<b class="tooltip tooltip-top-right"> <i class="fa fa-lock txt-color-teal"></i> Enter your password
 							</b>
 						</t:passwordfield>

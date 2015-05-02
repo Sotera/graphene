@@ -1,43 +1,10 @@
-<!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
 <html t:type="graphene/unauthenticatedlayout" title="Unavailable"
-	t:pageTitle="Register" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
-	xmlns:p="tapestry:parameter">
-	<body id="unavailable">
-
-		<!-- possible classes: minified, no-right-panel, fixed-ribbon, fixed-header, 
-			fixed-width -->
-		<header id="header">
-			<div id="logo-group">
-				<!-- PLACE YOUR LOGO HERE -->
-				<span id="logo">
-					<img src="${imgLogo}" alt="${appName}" />
-				</span>
-				<!-- END LOGO PLACEHOLDER -->
-			</div>
-		</header>
-
-		<div id="main" role="main">
-
-			<!-- MAIN CONTENT -->
-			<div id="content" class="container">
-
-				<div class="row">
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<div class="well no-padding">
-
-							<header>
-								Status
-							</header>
-							<div class="message">
-								<i class="fa fa-check"></i>
-								<p>
-									This site is currently unavailable.
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="row-fluid">
+		<div class="col-sm-12">
+			<p>Unavailable content</p>
+			
 		</div>
-	</body>
+	</div>
 </html>

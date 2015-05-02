@@ -98,14 +98,6 @@ public interface HyperGraphBuilder {
 			String relationType, String relationValue);
 
 	/**
-	 * Determine whether or not you want to traverse deeper on this node.
-	 * 
-	 * @param n
-	 * @return
-	 */
-	boolean determineTraversability(V_GenericNode n);
-
-	/**
 	 * This object will be supplied by the concrete implementation
 	 */
 	public abstract G_DataAccess getDAO();

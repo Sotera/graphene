@@ -10,7 +10,6 @@ import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
-import graphene.web.security.xss.XSSFilterModule;
 import graphene.web.services.javascript.CytoscapeStack;
 import graphene.web.validators.Password;
 
@@ -65,7 +64,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ DAOModule.class, XSSFilterModule.class })
+@SubModule({ DAOModule.class })
 public class GrapheneModule {
 
 	/**
@@ -130,6 +129,9 @@ public class GrapheneModule {
 
 		configuration.add(G_SymbolConstants.ENABLE_FREE_TEXT_EXTRACTION, true);
 		configuration.add(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH, true);
+
+		configuration.add(G_SymbolConstants.WORKSPACE_NAME_VALIDATION,
+				"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
 
 	}
 

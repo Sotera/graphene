@@ -11,20 +11,7 @@
 					role="widget">
 					<header role="heading">
 						<div class="jarviswidget-ctrls" role="menu">
-							<a href="#" class="button-icon jarviswidget-toggle-btn" rel="tooltip"
-								title="" data-placement="bottom" data-original-title="Collapse">
-								<i class="fa fa-minus "></i>
-							</a>
-							<a href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn"
-								rel="tooltip" title="" data-placement="bottom"
-								data-original-title="Fullscreen">
-								<i class="fa fa-resize-full "></i>
-							</a>
-							<a href="javascript:void(0);" class="button-icon jarviswidget-delete-btn"
-								rel="tooltip" title="" data-placement="bottom"
-								data-original-title="Delete">
-								<i class="fa fa-times"></i>
-							</a>
+							
 						</div>
 						<span class="widget-icon">
 							<i class="fa fa-eye"></i>
@@ -37,7 +24,7 @@
 					</header>
 					<div role="content">
 						<div class="widget-body">
-							<form t:type="form" t:id="augmentTextForm" class="form-horizontal"
+							<form t:type="form" t:id="augmentTextForm" class="form-horizontal" id="augmentTextForm"
 								t:zone="extractionZone">
 								<fieldset>
 									<div class="form-group">

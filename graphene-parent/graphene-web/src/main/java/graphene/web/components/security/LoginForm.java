@@ -20,7 +20,7 @@ package graphene.web.components.security;
 
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
-import graphene.web.security.AuthenticatorHelper;
+import graphene.model.idlhelper.AuthenticatorHelper;
 
 import java.io.IOException;
 
@@ -129,17 +129,19 @@ public class LoginForm {
 
 	void onValidateFromGrapheneLoginForm() {
 		// Error if the names don't contain letters only
-		if (username != null) {
-			if (!username.matches(userNamePattern)) {
-				grapheneLoginForm.recordError(grapheneLoginField, "Login does not meet requirements.");
-			}
-		}
+		// if (username != null) {
+		// if (!username.matches(userNamePattern)) {
+		// grapheneLoginForm.recordError(grapheneLoginField,
+		// "Login does not meet requirements.");
+		// }
+		// }
 
-		if (userPassword != null) {
-			if (!userPassword.matches(userPasswordPattern)) {
-				grapheneLoginForm.recordError(passwordField, "Password does not meet requirements.");
-			}
-		}
+		// if (userPassword != null) {
+		// if (!userPassword.matches(userPasswordPattern)) {
+		// grapheneLoginForm.recordError(passwordField,
+		// "Password does not meet requirements.");
+		// }
+		// }
 	}
 
 	public void setLoginMessage(final String loginMessage) {

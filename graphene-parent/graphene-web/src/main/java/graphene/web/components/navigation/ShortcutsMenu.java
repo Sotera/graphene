@@ -25,5 +25,17 @@ public class ShortcutsMenu {
 	@Property
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
-	protected String workspacesEnabled;
+	protected boolean workspacesEnabled;
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_MANAGED_SECURITY)
+	protected boolean applicationManagedSecurity;
+
+	public boolean getShortcutsAvailable() {
+		if (workspacesEnabled || applicationManagedSecurity) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

@@ -8,6 +8,7 @@
 		<artifactId>graphene-augment</artifactId>
 		<version>4.1.2-SNAPSHOT</version>
 	</parent>
+	<groupId>graphene-augment</groupId>
 	<artifactId>graphene-augment-mitie</artifactId>
 	<name>graphene-augment-mitie</name>
 	<url>http://maven.apache.org</url>

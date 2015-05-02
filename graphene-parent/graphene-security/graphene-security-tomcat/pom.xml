@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>graphene-security</groupId>
+		<artifactId>graphene-security</artifactId>
+		<version>4.1.2-SNAPSHOT</version>
+	</parent>
+	<groupId>graphene-security</groupId>
+	<artifactId>graphene-security-tomcat</artifactId>
+	<description>Module for allowing Tynamo Security/Shiro to leverage container managed security via Apache Tomcat</description>
+	<dependencies><!-- For PreAA authentication under Tomcat, we need to get 
+			the GenericPrincipal. This class is provided by tomcat, so don't let it get 
+			in your War file or you will get conflicts. -->
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>7.0.12</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-web</artifactId>
+			<classifier>classes</classifier>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-dao</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+</project>

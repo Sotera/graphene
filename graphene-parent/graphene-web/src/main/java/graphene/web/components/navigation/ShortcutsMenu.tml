@@ -6,25 +6,29 @@
 		tag) Note: These tiles are completely responsive, you can add as many as 
 		you like -->
 <t:content>
-	<div id="shortcut">
-		<ul>
-			<t:if test="workspacesEnabled">
-				<li><a t:type="pagelink" t:page="graphene/workspace/manage"
-					class="jarvismetro-tile big-cubes bg-color-blueDark"> <span class="iconbox"> <i class="fa fa-book fa-4x"></i>
-							<span> Workspaces <t:if test="workspacesExists">
-									<span class="label pull-right bg-color-darken">${workspaces?.size()}</span>
-								</t:if>
+	<t:if test="shortcutsAvailable">
+		<div id="shortcut">
+			<ul>
+				<t:if test="workspacesEnabled">
+					<li><a t:type="pagelink" t:page="graphene/workspace/manage"
+						class="jarvismetro-tile big-cubes bg-color-blueDark"> <span class="iconbox"> <i
+								class="fa fa-book fa-4x"></i> <span> Workspaces <t:if test="workspacesExists">
+										<span class="label pull-right bg-color-darken">${workspaces?.size()}</span>
+									</t:if>
+							</span>
 						</span>
-					</span>
-				</a></li>
-			</t:if>
-			<li><a t:type="pagelink" t:page="graphene/settings"
-				class="jarvismetro-tile big-cubes selected bg-color-pinkDark"> <span class="iconbox"> <i
-						class="fa fa-user fa-4x"></i> <span>Change Password </span>
-				</span>
-			</a></li>
-		</ul>
-	</div>
+					</a></li>
+				</t:if>
+				<t:if test="applicationManagedSecurity">
+					<li><a t:type="pagelink" t:page="graphene/settings"
+						class="jarvismetro-tile big-cubes selected bg-color-pinkDark"> <span class="iconbox"> <i
+								class="fa fa-user fa-4x"></i> <span>Change Password </span>
+						</span>
+					</a></li>
+				</t:if>
+			</ul>
+		</div>
+	</t:if>
 </t:content>
 <!-- END SHORTCUT AREA -->
 </html>

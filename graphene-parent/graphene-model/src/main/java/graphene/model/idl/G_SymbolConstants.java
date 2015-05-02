@@ -85,6 +85,12 @@ public class G_SymbolConstants {
 	public static final String DEFAULT_MAX_GRAPH_EDGES_PER_NODE = "graphene.default-max-graph-edges-per-node";
 
 	public static final String DEFAULT_ADMIN_GROUP_NAME = "graphene.default-admin-group-name";
+	/**
+	 * This is the role a user from an LDAP would have, which corresponds to the
+	 * admininstrator role.
+	 */
+	public static final String EXTERNAL_ADMIN_ROLE_NAME = "graphene.external-admin-role-name";
+	public static final String EXTERNAL_USER_ROLE_NAME = "graphene.external-user-role-name";
 	public static final String ENABLE_AUTO_LOGIN = "graphene.enable-auto-login";
 	public static final String AUTO_LOGIN_USERNAME = "graphene.auto-login-name";
 
@@ -102,6 +108,10 @@ public class G_SymbolConstants {
 
 	public static final String WORKSPACE_NAME_VALIDATION = "graphene.workspace-name-validation";
 	public static final String WORKSPACE_NAME_VALIDATION_MESSAGE = "graphene.workspace-name-validation-message";
+
+	public static final String APPLICATION_MANAGED_SECURITY = "graphene.application-managed-security";
+
+	public static final String INHERIT_NODE_ATTRIBUTES = "graphene.inherit-node-attributes";
 
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub

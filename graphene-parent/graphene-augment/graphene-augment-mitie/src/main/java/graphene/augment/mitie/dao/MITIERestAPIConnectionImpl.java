@@ -24,19 +24,18 @@ public class MITIERestAPIConnectionImpl implements MITIERestAPIConnection {
 	@Inject
 	private Logger logger;
 	String basicAuth;
-	private String url;
+	private final String url;
 
-	public MITIERestAPIConnectionImpl(String url, String basicAuth) {
+	public MITIERestAPIConnectionImpl(final String url, final String basicAuth) {
 		this.url = url;
 		this.basicAuth = basicAuth;
 	}
 
-	private String createCleanUrl(@Nullable String basicAuth, String baseUrl) {
+	private String createCleanUrl(@Nullable final String basicAuth, final String baseUrl) {
 		if (ValidationUtils.isValid(basicAuth)) {
 			logger.debug("Auth information provided, using auth info.");
-			String cleanAuth = basicAuth.replaceAll("@", "%40");
-			String cleanURL = baseUrl.replace("http://", "http://" + cleanAuth
-					+ "@");
+			final String cleanAuth = basicAuth.replaceAll("@", "%40");
+			final String cleanURL = baseUrl.replace("http://", "http://" + cleanAuth + "@");
 			return cleanURL;
 		}
 		logger.debug("No auth information provided, using without auth info.");
@@ -44,26 +43,26 @@ public class MITIERestAPIConnectionImpl implements MITIERestAPIConnection {
 	}
 
 	@Override
-	public String performQuery(String inputText) throws DataAccessException,
-			ClientProtocolException, IOException {
-		HttpClient client = HttpClientBuilder.create().build();
+	public String performQuery(final String inputText) throws DataAccessException, ClientProtocolException, IOException {
+		final HttpClient client = HttpClientBuilder.create().build();
 
-		HttpPost post = new HttpPost(url);
-		post.setHeader("Authorization",
-				"Basic " + HttpUtil.getAuthorizationEncoding(basicAuth));
-		JSONObject obj = new JSONObject();
+		final HttpPost post = new HttpPost(url);
+		post.setHeader("Authorization", "Basic " + HttpUtil.getAuthorizationEncoding(basicAuth));
+		final JSONObject obj = new JSONObject();
 		obj.put("text", inputText);
 
-		StringEntity entity = new StringEntity(obj.toString());
+		final StringEntity entity = new StringEntity(obj.toString());
 		post.setEntity(entity);
-		HttpResponse response = client.execute(post);
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response
-				.getEntity().getContent()));
-		StringBuffer sb = new StringBuffer();
+		final HttpResponse response = client.execute(post);
+
+		final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		final StringBuffer sb = new StringBuffer();
 		String line;
 		while ((line = rd.readLine()) != null) {
 			sb.append(line);
 		}
+		rd.close();
+
 		return sb.toString();
 	}
 }

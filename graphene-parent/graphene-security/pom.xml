@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>graphene</groupId>
+		<artifactId>graphene-parent</artifactId>
+		<version>4.1.2-SNAPSHOT</version>
+	</parent>
+	<artifactId>graphene-security</artifactId>
+	<groupId>graphene-security</groupId>
+	<name>Graphene Security</name>
+	<url>http://maven.apache.org/</url>
+	<inceptionYear>2015</inceptionYear>
+	<distributionManagement>
+		<site>
+			<id>website</id>
+			<url>scp://webhost.company.com/www/website</url>
+		</site>
+	</distributionManagement>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<locales>en</locales>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<packaging>pom</packaging>
+	<modules>
+		<module>graphene-security-tomcat</module>
+		<module>graphene-security-integrated</module>
+		<module>graphene-security-noop</module>
+		<module>graphene-security-xss</module>
+		<module>graphene-security-custom</module>
+	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.tynamo</groupId>
+				<artifactId>tapestry-security</artifactId>
+				<version>0.5.1</version>
+			</dependency>
+			<dependency>
+				<groupId>graphene</groupId>
+				<artifactId>graphene-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>graphene</groupId>
+				<artifactId>graphene-web</artifactId>
+				<version>${project.version}</version>
+				<classifier>classes</classifier>
+				<type>jar</type>
+			</dependency>
+			
+		</dependencies>
+	</dependencyManagement>
+</project>

@@ -50,7 +50,10 @@ import org.slf4j.Logger;
 
 public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuilder {
 
-	private static final boolean INHERIT_ATTRIBUTES = true;
+	@Inject
+	@Symbol(G_SymbolConstants.INHERIT_NODE_ATTRIBUTES)
+	protected boolean inheritAttributes;
+
 	@Inject
 	protected StopWordService stopwordService;
 	@Inject
@@ -256,31 +259,49 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	public void buildQueryForNextIteration(final V_GenericNode... nodes) {
 		if (ValidationUtils.isValid(nodes)) {
 			for (final V_GenericNode n : nodes) {
-				if (determineTraversability(n)) {
-					for (final G_EntityQuery eq : createQueriesFromNode(n)) {
-						final String queryToString = eq.toString();
-						// Have we done this EXACT query before? Note: a query
-						// id
-						// may be different than a node id, depending on how the
-						// query is constructed.
-						// TODO: Use a bloom filter
-						// XXX: make sure the .toString is unique since we now
-						// have
-						// time and user, etc.
-						if (!scannedQueries.contains(queryToString)) {
-							scannedQueries.add(queryToString);
-							logger.debug("Query eq is new: " + queryToString);
-							queriesToRunNextDegree.add(eq);
-						} else {
-							logger.debug("Skipping query eq! " + queryToString);
-						}
+
+				for (final G_EntityQuery eq : createQueriesFromNode(n)) {
+					final String queryToString = eq.toString();
+					// Have we done this EXACT query before? Note: a query
+					// id
+					// may be different than a node id, depending on how the
+					// query is constructed.
+					// TODO: Use a bloom filter
+					// XXX: make sure the .toString is unique since we now
+					// have
+					// time and user, etc.
+					if (!scannedQueries.contains(queryToString)) {
+						scannedQueries.add(queryToString);
+						logger.debug("Query eq is new: " + queryToString);
+						queriesToRunNextDegree.add(eq);
+					} else {
+						logger.debug("Skipping query eq! " + queryToString);
 					}
 				}
+
 			}
 		} else {
 			logger.warn("Will not build a query for the node passed in");
 		}
 		logger.debug("There are " + queriesToRunNextDegree.size() + " queries to run for the next degree. ref ");
+	}
+
+	/**
+	 * This is used for the initial query when starting a new graph or expand.
+	 * This method is here so you can override it and put in custom query
+	 * parameters to boost certain result types that were not part of the
+	 * V_GenericGraphQuery.
+	 * 
+	 * @param graphQuery
+	 * @return
+	 */
+	public G_EntityQuery convertFrom(final V_GraphQuery graphQuery) {
+		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor.newBuilder().setKey("_all")
+				.setRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
+				.setConstraint(G_Constraint.REQUIRED_EQUALS).build();
+		final QueryHelper qh = new QueryHelper(identifierList);
+		qh.setMaxResult(new Long(graphQuery.getMaxEdgesPerNode()));
+		return qh;
 	}
 
 	// TODO: We want to remove query path edges if we have other edges going to
@@ -329,16 +350,17 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					edge.setLineStyle("dotted");
 					// edge.setColor("#787878");
 				}
-				edge.addData("Local_Priority", "" + localPriority);
-				edge.addData("Min_Score_Required", "" + minimumScoreRequired);
-				edge.addData("Parent_Score", "" + inheritedScore);
+				// edge.addData("Local_Priority", "" + localPriority);
+				// edge.addData("Min_Score_Required", "" +
+				// minimumScoreRequired);
+				// edge.addData("Parent_Score", "" + inheritedScore);
 				edge.addData("Value", StringUtils.coalesc(" ", a.getLabel(), relationValue, attachTo.getLabel()));
 				edgeList.put(key, edge);
 			}
 
 			// if this flag is set, we'll add the attributes to the
 			// attached node.
-			if (/* INHERIT_ATTRIBUTES */true) {
+			if (inheritAttributes) {
 				attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
 			}
 		}
@@ -403,8 +425,7 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					// if this flag is set, we'll add the attributes to the
 					// attached
 					// node.
-					if (INHERIT_ATTRIBUTES) {
-						// attachTo.addData(a.getNodeType(), a.getIdVal());
+					if (inheritAttributes) {
 						attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
 					}
 				}
@@ -448,8 +469,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					nodeList.put(id, a);
 					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
 				}
-				// now we have a valid node. Attach it to the other node
-				// provided.
 				// now we have a valid node. Attach it to the other node
 				// provided.
 				createEdge(a, relationType, relationValue, attachTo, localPriority, inheritedScore, nodeCertainty,
@@ -609,7 +628,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	@Override
 	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery) throws Exception {
 		nodeList = new HashMap<String, V_GenericNode>();
-		// edgeMap = new HashMap<String, V_GenericEdge>();
 		edgeList = new HashMap<String, V_GenericEdge>();
 		scannedQueries = new HashSet<String>();
 
@@ -622,16 +640,10 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		} else {
 			logger.debug("Attempting a graph for query " + graphQuery.toString());
 		}
+		queriesToRun.add(convertFrom(graphQuery));
 
 		int intStatus = 0;
 		String strStatus = "Graph Loaded";
-
-		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor.newBuilder().setKey("_all")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
-				.setConstraint(G_Constraint.REQUIRED_EQUALS).build();
-		final QueryHelper qh = new QueryHelper(identifierList);
-		queriesToRun.add(qh);
-
 		int currentDegree = 0;
 		for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
 				&& (nodeList.size() < graphQuery.getMaxNodes()); currentDegree++) {

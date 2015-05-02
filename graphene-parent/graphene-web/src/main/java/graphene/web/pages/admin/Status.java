@@ -3,14 +3,12 @@ package graphene.web.pages.admin;
 import graphene.model.idl.G_VisualType;
 import graphene.web.annotations.PluginPage;
 
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 @PluginPage(visualType = G_VisualType.HIDDEN, menuName = "System Status", icon = "fa fa-lg fa-fw fa-question")
-@RequiresRoles("admin")
 public class Status {
 
 	@Inject

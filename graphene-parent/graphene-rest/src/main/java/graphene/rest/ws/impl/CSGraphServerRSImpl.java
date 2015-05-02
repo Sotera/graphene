@@ -25,9 +25,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
-import org.tynamo.security.services.SecurityService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -66,7 +66,10 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 	private G_UserDataAccess userDataAccess;
 
 	@Inject
-	private SecurityService securityService;
+	private RequestGlobals rq;
+
+	// @Inject
+	// private SecurityService securityService;
 
 	public CSGraphServerRSImpl() {
 	}
@@ -92,7 +95,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
 
 		V_CSGraph m = null;
-		if (requireAuthentication && !securityService.isAuthenticated()) {
+		if (requireAuthentication && (rq.getHTTPServletRequest().getRemoteUser() == null)) {
 			// The user needs to be authenticated.
 			m = new V_CSGraph();
 			m.setIntStatus(1);
@@ -107,9 +110,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			String userId = null;
 			String username = null;
 			if (requireAuthentication) {
-				if (ValidationUtils.isValid(securityService.getSubject())) {
+				if (ValidationUtils.isValid(rq.getHTTPServletRequest().getRemoteUser())) {
 					try {
-						username = (String) securityService.getSubject().getPrincipal();
+						username = rq.getHTTPServletRequest().getRemoteUser();
 						final G_User byUsername = userDataAccess.getByUsername(username);
 						userId = byUsername.getId();
 					} catch (final Exception e) {
@@ -209,15 +212,15 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@Override
 	public Response saveGraph(final String graphSeed, final String username, final String timeStamp, final String graph) {
-		if (requireAuthentication && !securityService.isAuthenticated()) {
+		if (requireAuthentication && (rq.getHTTPServletRequest().getRemoteUser() == null)) {
 			// The user needs to be authenticated.
 			logger.error("User must be logged in to save a graph.");
 			return Response.status(200).entity("Unable to save, you must be logged in. ").build();
 		} else {
 			String authenticatedUsername = username;
 			try {
-				if (ValidationUtils.isValid(securityService.getSubject())) {
-					authenticatedUsername = (String) securityService.getSubject().getPrincipal();
+				if (ValidationUtils.isValid(rq.getHTTPServletRequest().getRemoteUser())) {
+					authenticatedUsername = rq.getHTTPServletRequest().getRemoteUser();
 					// final G_User byUsername =
 					// userDataAccess.getByUsername(authenticatedUsername);
 					// byUsername.getId();

@@ -33,6 +33,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.tree.DefaultTreeModel;
 import org.apache.tapestry5.tree.TreeModel;
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ public class Menu {
 	private Map<MenuType, Collection<Triple<String, String, String>>> menuHierarchy;
 
 	@Property
-	@SessionState(create = false)
+	@SessionState
 	private G_User user;
 
 	private boolean userExists;
@@ -106,6 +107,18 @@ public class Menu {
 	@Persist(PersistenceConstants.FLASH)
 	private MenuItem menuItem;
 
+	@Inject
+	@Symbol(G_SymbolConstants.EXTERNAL_ADMIN_ROLE_NAME)
+	private String externalAdminRoleName;
+
+	@Inject
+	private RequestGlobals rq;
+
+	@Property
+	@Inject
+	@Symbol(G_SymbolConstants.APPLICATION_MANAGED_SECURITY)
+	protected boolean applicationManagedSecurity;
+
 	public Collection<Triple<String, String, String>> getActionPages() {
 		return menuHierarchy.get(MenuType.ACTION);
 	}
@@ -118,6 +131,7 @@ public class Menu {
 		if (userExists) {
 			return assetSource.getContextAsset("core/img/avatars/" + user.getAvatar(), locale).toClientURL();
 		} else {
+			logger.warn("User object does not exist.");
 			return assetSource.getContextAsset("core/img/avatars/default.png", locale).toClientURL();
 		}
 	}
@@ -163,9 +177,12 @@ public class Menu {
 		if (userExists) {
 			final List<G_Role> rolesForUserId = urDao.getRolesForUserId(user.getId());
 			for (final G_Role r : rolesForUserId) {
-				logger.debug("User has role " + r.getName());
+				logger.debug("User " + rolesForUserId + " has role " + r.getName());
 			}
 		}
+
+		final boolean isAdmin = rq.getHTTPServletRequest().isUserInRole(externalAdminRoleName);
+		logger.debug("User has admin in request? " + isAdmin);
 		if (menuHierarchy == null) {
 			logger.info("Constructing page links for side menu items.");
 			final List<String> pageList = componentClassResolver.getPageNames();
@@ -202,6 +219,9 @@ public class Menu {
 						if (workspacesEnabled && vtlist.contains(G_VisualType.VIEW_WORKSPACE)) {
 							menuHierarchy.get(MenuType.ACTION).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
+						} else if (workspacesEnabled && vtlist.contains(G_VisualType.MANAGE_WORKSPACES)) {
+							menuHierarchy.get(MenuType.ACTION).add(
+									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
 						} else if (vtlist.contains(G_VisualType.HELP)) {
 							menuHierarchy.get(MenuType.LASTACTION).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
@@ -209,13 +229,9 @@ public class Menu {
 						} else if (vtlist.contains(G_VisualType.META)) {
 							menuHierarchy.get(MenuType.META).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
-						} else if (vtlist.contains(G_VisualType.SETTINGS)) {
+						} else if (applicationManagedSecurity && vtlist.contains(G_VisualType.SETTINGS)) {
 							menuHierarchy.get(MenuType.SETTINGS).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
-						} else if (workspacesEnabled && vtlist.contains(G_VisualType.MANAGE_WORKSPACES)) {
-							menuHierarchy.get(MenuType.SETTINGS).add(
-									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
-
 						} else if (vtlist.contains(G_VisualType.ADMIN)) {
 							menuHierarchy.get(MenuType.ADMIN).add(
 									new Triple<String, String, String>(pageName, p.icon(), p.menuName()));
