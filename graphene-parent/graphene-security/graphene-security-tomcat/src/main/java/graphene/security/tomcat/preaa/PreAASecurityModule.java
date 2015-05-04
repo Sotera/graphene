@@ -1,11 +1,13 @@
 package graphene.security.tomcat.preaa;
 
+import graphene.dao.LoggingDAO;
 import graphene.dao.RoleDAO;
 import graphene.model.idl.G_Role;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_UserInterfaceMode;
+import graphene.model.idl.G_UserLoginEvent;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idlhelper.AuthenticatorHelper;
 import graphene.util.validator.ValidationUtils;
@@ -143,6 +145,7 @@ public class PreAASecurityModule {
 	public void addApplicationStateCreators(
 			final MappedConfiguration<Class, ApplicationStateContribution> configuration,
 			final HttpServletRequest request, final G_UserDataAccess userDataAccess, final CookieSource cookieSource,
+			@Inject final LoggingDAO loggingDao,
 			@Inject @Symbol(G_SymbolConstants.EXTERNAL_ADMIN_ROLE_NAME) final String externalAdminRoleName,
 			final RoleDAO rDao, final Logger logger) {
 
@@ -167,6 +170,12 @@ public class PreAASecurityModule {
 						logger.debug("Found user account " + user.getId() + " for username " + username);
 						// request.getSession(true).setAttribute(AUTH_TOKEN,
 						// user);
+						final G_UserLoginEvent ule = new G_UserLoginEvent();
+						ule.setTimeInitiated(DateTime.now().getMillis());
+						ule.setUserName(username);
+						ule.setUserId(user.getId());
+						// success = true;
+						loggingDao.recordUserLoginEvent(ule);
 					} else if (ValidationUtils.isValid(username)) {
 						logger.debug("Creating a new user account for " + username);
 
@@ -188,8 +197,13 @@ public class PreAASecurityModule {
 						}
 						// TODO: Update the user last login date, etc.
 						// applicationStateManager.set(G_User.class, user);
-						logger.debug("Done creating useraccount for " + username);
+						logger.debug("Done creating useraccount for " + username + ", logging user in.");
+						final G_UserLoginEvent ule = new G_UserLoginEvent();
+						ule.setTimeInitiated(DateTime.now().getMillis());
+						ule.setUserName(username);
+						ule.setUserId(user.getId());
 						// success = true;
+						loggingDao.recordUserLoginEvent(ule);
 					}
 				} catch (final AvroRemoteException e) {
 					e.printStackTrace();
