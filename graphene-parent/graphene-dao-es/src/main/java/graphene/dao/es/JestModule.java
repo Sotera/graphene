@@ -76,19 +76,19 @@ public class JestModule {
 		return c;
 	}
 
-	public void contributeApplicationDefaults(final MappedConfiguration<String, String> configuration) {
+	public void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
 		// Elastic Search defaults (if no es.properties file is provided)
 		// note that elastic search index names MUST be lower case!!!!
 		configuration.add(JestModule.ES_SERVER, "localhost:9200");
-		configuration.add(JestModule.ES_ENABLE_DISCOVERY, "false");
-		configuration.add(JestModule.ES_ENABLE_MULTITHREADED, "true");
+		configuration.add(JestModule.ES_ENABLE_DISCOVERY, false);
+		configuration.add(JestModule.ES_ENABLE_MULTITHREADED, true);
 		configuration.add(JestModule.ES_SEARCH_INDEX, "searchindex");
 		configuration.add(JestModule.ES_DEFAULT_TIMEOUT, "30s");
 		/**
 		 * The default for a ES refresh is 1 second (1000ms), which allows read
 		 * consistency.
 		 */
-		configuration.add(JestModule.ES_READ_DELAY_MS, "1000");
+		configuration.add(JestModule.ES_READ_DELAY_MS, 1000);
 
 		// Userspace defaults
 		configuration.add(JestModule.ES_USER_INDEX, "grapheneuser");
