@@ -82,8 +82,8 @@ public class GlobalSearch {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Please enter a valid search value.");
 		}
 		if (!ValidationUtils.isValid(retval)) {
-			alertManager.alert(Duration.TRANSIENT, Severity.WARN,
-					"There is no search broker configured for this instance of Graphene");
+//			alertManager.alert(Duration.TRANSIENT, Severity.WARN,
+//					"There is no search broker configured for this instance of Graphene");
 		}
 		return retval;
 	}
