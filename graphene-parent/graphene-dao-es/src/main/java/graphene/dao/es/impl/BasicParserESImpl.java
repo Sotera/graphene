@@ -68,12 +68,17 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 
 	protected G_Property addSafeStringWithTitle(final String style, final G_PropertyType nodeType, final String title,
 			final String... s) {
-		final String coalesc = graphene.util.StringUtils.coalesc(" ", s);
+		final String searchString = graphene.util.StringUtils.coalesc(" ", s);
 		G_Property gp = null;
-		if (ValidationUtils.isValid(coalesc)) {
+		if (ValidationUtils.isValid(searchString)) {
 			final List<G_PropertyTag> tags = new ArrayList<G_PropertyTag>();
-			final String titled = StringUtils.coalesc(" ", title + ":", coalesc);
-			gp = new PropertyHelper(coalesc, titled, coalesc, nodeType, tags);
+			if (ValidationUtils.isValid(title)) {
+				gp = new PropertyHelper(searchString, StringUtils.coalesc(" ", title + ":", searchString), searchString, nodeType,
+						tags);
+			} else {
+				gp = new PropertyHelper(searchString, searchString, searchString, nodeType, tags);
+			}
+
 			gp.setStyleType(style);
 		} else {
 			// logger.error("Invalid property " + title + " nodetype " +
