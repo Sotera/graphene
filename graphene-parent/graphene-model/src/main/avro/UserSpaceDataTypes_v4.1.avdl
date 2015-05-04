@@ -83,6 +83,19 @@ protocol G_UserSpaceDataTypes {
 		union {string, null}  userId = "None";
 		union {string, null}  userName = "None";
 	}
+	
+	record G_ExportEvent {
+		string id =null;
+		string reportId;
+		string reportType;
+		string exportFormat="Unknown";
+		long numberOfElements=0;
+		long timeInitiated;
+		union {string, null}  userId = "None";
+		union {string, null}  userName = "None";
+	}
+	
+	
 	record G_UserLoginEvent {
 		string id =null;
 		long timeInitiated;

@@ -2,13 +2,13 @@ package graphene.dao;
 
 import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_UserLoginEvent;
 
 import java.util.List;
 
-import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 /**
@@ -40,8 +40,7 @@ public interface LoggingDAO {
 	 * @param queryString
 	 * @return
 	 */
-	@Deprecated
-	boolean recordExport(String queryString);
+	void recordExportEvent(G_ExportEvent q);
 
 	void recordGraphViewEvent(G_GraphViewEvent q);
 
@@ -54,16 +53,6 @@ public interface LoggingDAO {
 	 *            The entity query initiated by the user
 	 */
 	void recordQuery(G_EntityQuery sq);
-
-	/**
-	 * For recording query terms (or queries that were executed, with all their
-	 * options) for auditing and analysis.
-	 * 
-	 * @param queryString
-	 * @return
-	 */
-	@Deprecated
-	void recordQuery(V_GraphQuery q);
 
 	void recordReportViewEvent(G_ReportViewEvent q);
 

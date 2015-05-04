@@ -5,6 +5,7 @@ import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SymbolConstants;
@@ -15,8 +16,9 @@ import io.searchbox.core.Search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -34,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
+	ExecutorService executor = Executors.newSingleThreadExecutor();
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_INDEX)
 	private String indexName;
@@ -265,20 +268,29 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public boolean recordExport(final String queryString) {
+	public void recordExportEvent(final G_ExportEvent q) {
 		if (enableLogging) {
-			// TODO Auto-generated method stub
-
+			executor.execute(new Runnable() {
+				@Override
+				public void run() {
+					saveObject(q, q.getId(), indexName, graphQueryType, false);
+				}
+			});
 		}
-		return false;
 	}
 
 	@Override
 	public void recordGraphViewEvent(final G_GraphViewEvent q) {
 		if (enableLogging) {
 			if (ValidationUtils.isValid(q)) {
-				// if (q.getId() == null) {
-				q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(q, q.getId(), indexName, graphQueryType, false);
+					}
+				});
+				// q.setId(saveObject(q, q.getId(), indexName, graphQueryType,
+				// false));
 				// }
 				// saveObject(q, q.getId(), indexName, graphQueryType);
 			} else {
@@ -293,7 +305,12 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	public void recordQuery(final G_EntityQuery q) {
 		if (enableLogging) {
 			if (ValidationUtils.isValid(q)) {
-				q.setId(saveObject(q, q.getId(), indexName, searchQueryType, false));
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(q, q.getId(), indexName, searchQueryType, false);
+					}
+				});
 			} else {
 				logger.error("Attempted to save a null BasicQuery!");
 			}
@@ -301,29 +318,35 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		return;
 	}
 
-	@Override
-	public void recordQuery(final V_GraphQuery q) {
-		if (enableLogging) {
-			if (ValidationUtils.isValid(q)) {
-				// if (q.getId() == null) {
-				q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
-				// }
-				// saveObject(q, q.getId(), indexName, graphQueryType);
-			} else {
-				logger.error("Attempted to save a null V_GraphQuery!");
-			}
-		}
-		return;
-	}
+	// @Override
+	// public void recordQuery(final V_GraphQuery q) {
+	// if (enableLogging) {
+	// if (ValidationUtils.isValid(q)) {
+	// executor.execute(new Runnable() {
+	// @Override
+	// public void run() {
+	// saveObject(q, q.getId(), indexName, graphQueryType, false);
+	// }
+	// });
+	//
+	// } else {
+	// logger.error("Attempted to save a null V_GraphQuery!");
+	// }
+	// }
+	// return;
+	// }
 
 	@Override
 	public void recordReportViewEvent(final G_ReportViewEvent q) {
 		if (enableLogging) {
 			if (ValidationUtils.isValid(q)) {
-				// if (q.getId() == null) {
-				q.setId(saveObject(q, q.getId(), indexName, reportViewType, false));
-				// }
-				// saveObject(q, q.getId(), indexName, reportViewType);
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(q, q.getId(), indexName, reportViewType, false);
+					}
+				});
+
 			} else {
 				logger.error("Attempted to save a null G_ReportViewEvent!");
 			}
@@ -335,10 +358,12 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	public void recordUserLoginEvent(final G_UserLoginEvent e) {
 		if (enableLogging) {
 			if (ValidationUtils.isValid(e)) {
-				// if (e.getId() == null) {
-				e.setId(saveObject(e, e.getId(), indexName, userLoginType, false));
-				// }
-				// saveObject(e, e.getId(), indexName, userLoginType);
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(e, e.getId(), indexName, userLoginType, false);
+					}
+				});
 			} else {
 				logger.error("Attempted to save a null G_UserLoginEvent!");
 			}
