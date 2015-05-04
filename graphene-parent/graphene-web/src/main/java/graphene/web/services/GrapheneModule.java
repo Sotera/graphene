@@ -126,7 +126,7 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.DEFAULT_GRAPH_TRAVERSAL_DEGREE, 1);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_NODES, 1000);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_EDGES_PER_NODE, 100);
-
+		configuration.add(G_SymbolConstants.DEFAULT_MIN_SCORE, 0.75d);
 		configuration.add(G_SymbolConstants.ENABLE_FREE_TEXT_EXTRACTION, true);
 		configuration.add(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH, true);
 
