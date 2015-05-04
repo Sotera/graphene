@@ -6,7 +6,6 @@ import graphene.services.LinkGenerator;
 import graphene.web.annotations.PluginPage;
 
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -55,6 +54,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	 */
 	@ActivationRequestParameter(value = "type")
 	@Property
+	@Persist
 	private String searchTypeFilter;
 
 	@ActivationRequestParameter(value = "maxResults")
@@ -68,7 +68,7 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	private String searchValue;
 
 	// @ActivationRequestParameter(value = "prebuiltQuery")
-	@Persist(PersistenceConstants.FLASH)
+	@Persist
 	@Property
 	private G_EntityQuery prebuiltQuery;
 
