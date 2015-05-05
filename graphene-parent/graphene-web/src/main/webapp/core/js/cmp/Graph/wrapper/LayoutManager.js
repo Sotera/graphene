@@ -196,7 +196,7 @@ function LayoutManager(graphRef) {
 	); // END BREADTHFIRST
 	
 	this.registerLayout("cose", graphRef, {
-			name: "cose", refresh: 10, fit: true, randomize: true, debug: false, nodeRepulsion: 99999999,
+			name: "cose", refresh: 10, fit: true, randomize: true, debug: false, nodeRepulsion: 999999,
 			nodeOverlap: 5000, idealEdgeLength: 10, edgeElasticity: 1, nestingFactor: 5, gravity: 250,
 			numIter: 5000, initialTemp: 500, coolingFactor: 0.95, minTemp: 8,
 			feedbackRate: 5, intervalRate: 1
