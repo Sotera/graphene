@@ -5,13 +5,13 @@ package graphene.services;
 
 import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_UserLoginEvent;
 
 import java.util.List;
 
-import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 /**
@@ -68,9 +68,9 @@ public class LoggingDAONoOpImpl implements LoggingDAO {
 	}
 
 	@Override
-	public boolean recordExport(final String queryString) {
+	public void recordExportEvent(final G_ExportEvent q) {
 		// TODO Auto-generated method stub
-		return false;
+
 	}
 
 	@Override
@@ -81,12 +81,6 @@ public class LoggingDAONoOpImpl implements LoggingDAO {
 
 	@Override
 	public void recordQuery(final G_EntityQuery sq) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void recordQuery(final V_GraphQuery q) {
 		// TODO Auto-generated method stub
 
 	}
