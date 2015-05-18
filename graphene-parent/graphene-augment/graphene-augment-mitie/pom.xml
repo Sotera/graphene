@@ -8,7 +8,7 @@
 		<artifactId>graphene-augment</artifactId>
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
-	<groupId>graphene-augment</groupId>
+
 	<artifactId>graphene-augment-mitie</artifactId>
 	<name>graphene-augment-mitie</name>
 	<url>http://maven.apache.org</url>
@@ -48,7 +48,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Tapestry-Module-Classes>graphene.augment.mitie.web.services.MITIEModule</Tapestry-Module-Classes>
+							<Tapestry-Module-Classes>graphene.augment.mitie.web.services.MITIEMod</Tapestry-Module-Classes>
 						</manifestEntries>
 					</archive>
 				</configuration>

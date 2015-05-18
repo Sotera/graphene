@@ -8,6 +8,7 @@
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>graphene-rest</artifactId>
+	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	<properties>
 		<resteasy.version>3.0.1.Final</resteasy.version>

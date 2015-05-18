@@ -13,7 +13,14 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.LibraryMapping;
 
-public class MITIEModule {
+/**
+ * Renamed to MITIEMod because of string length issues in the manifest.mf keeps
+ * the module from autoloading.
+ * 
+ * @author djue
+ * 
+ */
+public class MITIEMod {
 
 	public static final String BASIC_AUTH = "mitie.basic-auth";
 	public static final String BASE_URL = "mitie.base-url";
