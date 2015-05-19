@@ -12,41 +12,31 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
 public class UserFunnel implements Funnel<Node, G_User> {
-	private Neo4JEmbeddedService n4jService;
+	private final Neo4JEmbeddedService n4jService;
 
 	@Inject
-	public UserFunnel(@UserGraph Neo4JEmbeddedService n4jService2) {
+	public UserFunnel(@UserGraph final Neo4JEmbeddedService n4jService2) {
 		n4jService = n4jService2;
 	}
 
 	@Override
-	public G_User from(Node f) {
+	public G_User from(final Node f) {
 		G_User d = null;
 		if (f != null) {
 			try (Transaction tx = n4jService.beginTx()) {
 				d = new G_User();
-				d.setCreated(new DateTime(f.getProperty(
-						G_UserFields.created.name(), 0l)).getMillis());
-				d.setActive((boolean) f.getProperty(G_UserFields.active.name(),
-						true));
-				d.setAvatar((String) f.getProperty(G_UserFields.avatar.name(),
-						""));
-				d.setEmail((String) f.getProperty(G_UserFields.email.name(),
-						"no email"));
-				d.setFullname((String) f.getProperty(
-						G_UserFields.fullname.name(), "no name"));
+				d.setCreated(new DateTime(f.getProperty(G_UserFields.created.name(), 0l)).getMillis());
+				d.setActive((boolean) f.getProperty(G_UserFields.active.name(), true));
+				d.setAvatar((String) f.getProperty(G_UserFields.avatar.name(), "unknown.png"));
+				d.setEmail((String) f.getProperty(G_UserFields.email.name(), "no email"));
+				d.setFullname((String) f.getProperty(G_UserFields.fullname.name(), "no name"));
 
-				d.setHashedpassword((String) f.getProperty(
-						G_UserFields.hashedpassword.name(),
-						"no hashed password"));
+				d.setHashedpassword((String) f.getProperty(G_UserFields.hashedpassword.name(), "no hashed password"));
 
-				d.setLastlogin(new DateTime(f.getProperty(
-						G_UserFields.lastlogin.name(), 0l)).getMillis());
+				d.setLastlogin(new DateTime(f.getProperty(G_UserFields.lastlogin.name(), 0l)).getMillis());
 
-				d.setNumberlogins((int) f.getProperty(
-						G_UserFields.numberlogins.name(), 0));
-				d.setUsername((String) f.getProperty(
-						G_UserFields.username.name(), "username"));
+				d.setNumberlogins((int) f.getProperty(G_UserFields.numberlogins.name(), 0));
+				d.setUsername((String) f.getProperty(G_UserFields.username.name(), "username"));
 				tx.success();
 			}
 
@@ -55,7 +45,7 @@ public class UserFunnel implements Funnel<Node, G_User> {
 	}
 
 	@Override
-	public Node to(G_User f) {
+	public Node to(final G_User f) {
 		// Node d = new Node();
 		// d.setActive(f.getActive());
 		// d.setAvatar(f.getAvatar());

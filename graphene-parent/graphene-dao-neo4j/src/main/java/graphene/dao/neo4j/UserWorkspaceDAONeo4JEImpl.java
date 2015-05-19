@@ -118,6 +118,12 @@ public class UserWorkspaceDAONeo4JEImpl extends GenericUserSpaceDAONeo4jE implem
 	}
 
 	@Override
+	public List<G_Workspace> getMostRecentWorkspacesForUser(final String userId, final int quantity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public List<G_User> getUsersForWorkspace(final String workspaceId) {
 		// TODO Auto-generated method stub
 		return null;

@@ -6,9 +6,7 @@
 <t:content>
 	<!-- graph query list -->
 	<t:if test="list">
-		<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-			data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-			data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+		<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 			<header>
 				<span class="widget-icon"> <i class="fa fa-table"></i>
 				</span>
@@ -24,24 +22,17 @@
 						class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="20"
 						t:empty="block:emptyList">
 
-						<p:attributeListCell>
-							<t:loop source="current.attributeList" value="currentTuple">
-						${currentTuple.searchType}: ${currentTuple.value} <br />
+						<p:propertyMatchDescriptorsCell>
+							<t:loop source="current.propertyMatchDescriptors" value="currentPmd">
+								${currentPmd.key} <br />
+								${currentRange}<br />
+								${currentPmd.constraint}
 							</t:loop>
-						</p:attributeListCell>
+						</p:propertyMatchDescriptorsCell>
 
-						<p:filtersCell>
-							<t:if test="! current.filters.empty">
-								<t:loop source="current.filters" value="currentFilter">
-										${currentFilter} <br />
-								</t:loop>
-								<p:else>All Types</p:else>
-							</t:if>
-						</p:filtersCell>
 						<p:timeInitiatedCell>
 							<t:graphene.jodatimeoutput value="current.timeInitiated" formatter="ISODate" />
 						</p:timeInitiatedCell>
-							
 										[Grid here]
 							</t:jquery.datatable>
 					<t:block t:id="emptyList">

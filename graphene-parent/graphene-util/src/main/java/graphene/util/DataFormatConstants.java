@@ -60,8 +60,12 @@ public class DataFormatConstants {
 		return new DecimalFormat(DataFormatConstants.PERCENT_FORMAT_STRING).format(d);
 	}
 
-	public static String formatScore(final Double d) {
-		return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING).format(d);
+	public static String formatScore(final Double d, final Double defaultValue) {
+		if (d == null) {
+			return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING).format(defaultValue);
+		} else {
+			return new DecimalFormat(DataFormatConstants.SCORE_FORMAT_STRING).format(d);
+		}
 	}
 
 	public static Format getMoneyFormat() {

@@ -43,7 +43,7 @@ public class RecentWorkspaces {
 	@Property
 	private boolean currentSelectedWorkspaceExists;
 	@Property
-	private G_Workspace currentWorkspace;
+	private G_Workspace currentListItem;
 
 	@Inject
 	private G_UserDataAccess userDataAccess;
@@ -76,11 +76,17 @@ public class RecentWorkspaces {
 
 	@SetupRender
 	boolean listWorkspaces() {
+
 		if (userExists) {
-			// updateListOfWorkspaces();
-			selectMostRecentWorkspace();
+			updateListOfWorkspaces();
+			if ((!currentSelectedWorkspaceExists || !workspacesExists)) {
+				selectMostRecentWorkspace();
+			}
+		} else {
+			currentSelectedWorkspace = null;
+			workspaces = null;
 		}
-		return workspaces != null ? true : false;
+		return workspacesExists;
 	}
 
 	@OnEvent("makecurrent")
@@ -127,19 +133,19 @@ public class RecentWorkspaces {
 	}
 
 	private void selectMostRecentWorkspace() {
-		Long modified = 0l;
-		final Long mostRecent = 0l;
-		for (final G_Workspace w : workspaces) {
-			modified = w.getModified();
-			if (modified > mostRecent) {
-				currentSelectedWorkspace = w;
-			}
+		logger.debug("Selecting most recent workspace");
+		if (workspaces.size() > 1) {
+			// already sorted, just grab the top one.
+			currentSelectedWorkspace = workspaces.get(0);
+		} else {
+			currentSelectedWorkspace = null;
 		}
 	}
 
 	private void updateListOfWorkspaces() {
 		try {
-			workspaces = userDataAccess.getWorkspacesForUser(user.getId());
+			// already sorted for us
+			workspaces = userDataAccess.getLatestWorkspacesForUser(user.getId(), 10);
 		} catch (final AvroRemoteException e) {
 			workspaces = null;
 			logger.error(e.getMessage());

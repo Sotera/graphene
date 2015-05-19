@@ -2,23 +2,26 @@ package graphene.web.services;
 
 import graphene.dao.DAOModule;
 import graphene.dao.StartupProcedures;
-import graphene.dao.TransactionDAO;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ListRange;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idl.G_PropertyType;
+import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.view.events.DirectedEventRow;
 import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
-import graphene.web.model.EventEncoder;
 import graphene.web.services.javascript.CytoscapeStack;
-import graphene.web.services.javascript.NeoCytoscapeStack;
+import graphene.web.validators.Password;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
@@ -40,21 +43,18 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ValueEncoderFactory;
-import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.atmosphere.cpr.ApplicationConfig;
 import org.got5.tapestry5.jquery.JQuerySymbolConstants;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
-import org.lazan.t5.atmosphere.services.AtmosphereModule;
-import org.lazan.t5.atmosphere.services.TopicAuthorizer;
-import org.lazan.t5.atmosphere.services.TopicListener;
-import org.lazan.t5.atmosphere.services.internal.AtmosphereHttpServletRequestFilter;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
@@ -64,7 +64,7 @@ import org.slf4j.Logger;
  * Note that additional modules you want to use should be included in the @SubModules
  * annotation.
  */
-@SubModule({ DAOModule.class, AtmosphereModule.class })
+@SubModule({ DAOModule.class })
 public class GrapheneModule {
 
 	/**
@@ -79,11 +79,9 @@ public class GrapheneModule {
 	@Contribute(JavaScriptStackSource.class)
 	public static void addGrapheneJSStacks(final MappedConfiguration<String, JavaScriptStack> configuration) {
 		configuration.addInstance("CytoscapeStack", CytoscapeStack.class);
-		configuration.addInstance("NeoCytoscapeStack", NeoCytoscapeStack.class);
-	}
-
-	public static void bind(final ServiceBinder binder) {
-		binder.bind(ChatManager.class, ChatManagerImpl.class);
+		// configuration.addInstance("NeoCytoscapeStack",
+		// NeoCytoscapeStack.class);
+		// configuration.addInstance("GlobeStack", GlobeStack.class);
 	}
 
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
@@ -115,26 +113,26 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.REQUIRE_AUTHENTICATION, false);
 		configuration.add(JQuerySymbolConstants.SUPPRESS_PROTOTYPE, true);
 		configuration.add(JQuerySymbolConstants.JQUERY_ALIAS, "$");
-
+		configuration.add(JQuerySymbolConstants.USE_MINIFIED_JS, false);
 		configuration.add(G_SymbolConstants.ENABLE_EXPERIMENTAL, false);
 		configuration.add(G_SymbolConstants.ENABLE_MISC, false);
 		configuration.add(G_SymbolConstants.ENABLE_SETTINGS, true);
 		configuration.add(G_SymbolConstants.ENABLE_ADMIN, true);
 		configuration.add(G_SymbolConstants.ENABLE_TAG_CLOUDS, false);
 		configuration.add(G_SymbolConstants.ENABLE_FEDERATED_LOGIN, false);
+		configuration.add(G_SymbolConstants.ENABLE_LOGGING, true);
+
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS, 200);
 		configuration.add(G_SymbolConstants.DEFAULT_GRAPH_TRAVERSAL_DEGREE, 1);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_NODES, 1000);
 		configuration.add(G_SymbolConstants.DEFAULT_MAX_GRAPH_EDGES_PER_NODE, 100);
-
+		configuration.add(G_SymbolConstants.DEFAULT_MIN_SCORE, 0.75d);
 		configuration.add(G_SymbolConstants.ENABLE_FREE_TEXT_EXTRACTION, true);
 		configuration.add(G_SymbolConstants.ENABLE_GRAPH_QUERY_PATH, true);
 
-	}
+		configuration.add(G_SymbolConstants.WORKSPACE_NAME_VALIDATION,
+				"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
 
-	@Contribute(AtmosphereHttpServletRequestFilter.class)
-	public static void contributeAtmosphere(final MappedConfiguration<String, String> config) {
-		config.add(ApplicationConfig.PROPERTY_NATIVE_COMETSUPPORT, "true");
 	}
 
 	public static void contributeBeanBlockSource(final Configuration<BeanBlockContribution> configuration) {
@@ -178,12 +176,16 @@ public class GrapheneModule {
 		configuration.add(LocalTime.class, "localTime");
 	}
 
-	public static void contributeTopicAuthorizer(final OrderedConfiguration<TopicAuthorizer> config) {
-		config.addInstance("chat", ChatTopicAuthorizer.class);
-	}
-
-	public static void contributeTopicListener(final OrderedConfiguration<TopicListener> config) {
-		config.addInstance("chat", ChatTopicListener.class);
+	/**
+	 * Contribute custom validators for user input fields.
+	 * 
+	 * @param configuration
+	 */
+	@SuppressWarnings("rawtypes")
+	public static void contributeFieldValidatorSource(final MappedConfiguration<String, Validator> configuration,
+			@Inject @Symbol(G_SymbolConstants.USER_PASSWORD_VALIDATION) final String validation,
+			@Inject @Symbol(G_SymbolConstants.USER_PASSWORD_VALIDATION_MESSAGE) final String validationMessage) {
+		configuration.add("password", new Password(validation, validationMessage));
 	}
 
 	/**
@@ -273,6 +275,64 @@ public class GrapheneModule {
 
 		configuration.add(new CoercionTuple<>(DateTime.class, java.lang.Long.class, fromDateTimetoLong));
 		// End DateTime ///////////////////////////
+
+		// From String to G_EntityQuery
+
+		final Coercion<String, G_EntityQuery> fromStringtoGEntityQuery = new Coercion<String, G_EntityQuery>() {
+			private final ObjectMapper mapper = new ObjectMapper();
+
+			@Override
+			public G_EntityQuery coerce(final String input) {
+				new ObjectMapper();
+				G_EntityQuery value = null;
+				try {
+					// value = SerializationHelper.fromJson(input,
+					// G_EntityQuery.getClassSchema());
+					value = mapper.readValue(input, G_EntityQuery.class);
+					for (final G_PropertyMatchDescriptor f : value.getPropertyMatchDescriptors()) {
+						// f.getRange()
+						final LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) f.getRange();
+						ArrayList<Object> propValues = null;
+						Object propValue = null;
+						G_PropertyType propType = null;
+						for (final String k : lhm.keySet()) {
+							if (k.equals("values")) {
+								propValues = (ArrayList<Object>) lhm.get(k);
+							} else if (k.equals("value")) {
+								propValue = lhm.get(k);
+							} else if (k.equals("type")) {
+								propType = G_PropertyType.valueOf((String) lhm.get(k));
+
+							}
+
+							System.out.println("k =" + k + " v=" + lhm.get(k));
+						}
+						if (propValues != null) {
+							final G_ListRange l = G_ListRange.newBuilder().setType(propType).setValues(propValues)
+									.build();
+							f.setRange(l);
+						} else if (propValue != null) {
+							final G_SingletonRange l = G_SingletonRange.newBuilder().setType(propType)
+									.setValue(propValue).build();
+							f.setRange(l);
+						}
+					}
+				} catch (final JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return value;
+			}
+		};
+
+		configuration.add(new CoercionTuple<>(String.class, G_EntityQuery.class, fromStringtoGEntityQuery));
+		// End G_EntityQuery ///////////////////////////
 	}
 
 	@Contribute(SymbolSource.class)
@@ -295,18 +355,6 @@ public class GrapheneModule {
 	@Startup
 	public static void performStartupProcedures(@Inject final StartupProcedures sp) {
 		sp.initialize();
-	}
-
-	@Contribute(ValueEncoderSource.class)
-	public static void provideEncoders(final MappedConfiguration<Class, ValueEncoderFactory> configuration,
-			@InjectService("Primary") final TransactionDAO transactionService) {
-		final ValueEncoderFactory<DirectedEventRow> factory = new ValueEncoderFactory<DirectedEventRow>() {
-			@Override
-			public ValueEncoder<DirectedEventRow> create(final Class<DirectedEventRow> clazz) {
-				return new EventEncoder(transactionService);
-			}
-		};
-		configuration.add(DirectedEventRow.class, factory);
 	}
 
 	/**

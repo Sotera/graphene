@@ -6,8 +6,9 @@
 	<parent>
 		<groupId>graphene-augment</groupId>
 		<artifactId>graphene-augment</artifactId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 	</parent>
+	<groupId>graphene-augment</groupId>
 	<artifactId>graphene-augment-mitie</artifactId>
 	<name>graphene-augment-mitie</name>
 	<url>http://maven.apache.org</url>
@@ -25,5 +26,33 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.3.4</version>
 		</dependency>
+		<!-- For things like @Nullable -->
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>1.3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>graphene</groupId>
+			<artifactId>graphene-web</artifactId>
+			<version>${project.version}</version>
+			<classifier>classes</classifier>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Tapestry-Module-Classes>graphene.augment.mitie.web.services.MITIEModule</Tapestry-Module-Classes>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

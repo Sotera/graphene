@@ -1,13 +1,7 @@
 package graphene.rest.services;
 
 import graphene.dao.DAOModule;
-import graphene.rest.ws.EntitySearchRS;
-import graphene.rest.ws.EventServerRS;
-import graphene.rest.ws.GraphDemo;
 import graphene.rest.ws.MetaSearchRS;
-import graphene.rest.ws.impl.EntitySearchRSImpl;
-import graphene.rest.ws.impl.EventServerRSImpl;
-import graphene.rest.ws.impl.GraphDemoImpl;
 import graphene.rest.ws.impl.MetaSearchRSImpl;
 
 import org.apache.tapestry5.ioc.Configuration;
@@ -22,34 +16,12 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
  */
 @SubModule({ DAOModule.class })
 public class RestModule {
-	public static void bind(ServiceBinder binder) {
-		binder.bind(EntitySearchRS.class, EntitySearchRSImpl.class);
-		binder.bind(GraphDemo.class, GraphDemoImpl.class);
-		binder.bind(MetaSearchRS.class, MetaSearchRSImpl.class);
-		binder.bind(EventServerRS.class, EventServerRSImpl.class);
+	public static void bind(final ServiceBinder binder) {
+		binder.bind(MetaSearchRS.class, MetaSearchRSImpl.class).eagerLoad();
 	}
 
 	@Contribute(javax.ws.rs.core.Application.class)
-	public static void contributeApplication(Configuration<Object> singletons,
-			GraphDemo restService) {
-		singletons.add(restService);
-	}
-
-	@Contribute(javax.ws.rs.core.Application.class)
-	public static void contributeApplication(Configuration<Object> singletons,
-			EntitySearchRS restService) {
-		singletons.add(restService);
-	}
-
-	@Contribute(javax.ws.rs.core.Application.class)
-	public static void contributeApplication(Configuration<Object> singletons,
-			MetaSearchRS restService) {
-		singletons.add(restService);
-	}
-
-	@Contribute(javax.ws.rs.core.Application.class)
-	public static void contributeApplication(Configuration<Object> singletons,
-			EventServerRS restService) {
+	public static void contributeApplication(final Configuration<Object> singletons, final MetaSearchRS restService) {
 		singletons.add(restService);
 	}
 }

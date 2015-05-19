@@ -10,18 +10,15 @@
 			<t:zone t:id="listZone" id="listZone" t:update="show">
 				<t:if test="listofworkspaces">
 					<!-- Widget ID (each widget will need unique ID) -->
-					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-sortable="false"
-						data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false"
-						data-widget-collapsebutton="false" data-widget-fullscreenbutton="false">
+					<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false"
+						data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false"
+						data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
 						<header>
 							<span class="widget-icon"> <i class="fa fa-table"></i>
 							</span>
-							<h2>My Workspaces</h2>
-
+							<h2>${title}</h2>
+							
 						</header>
-
-
-
 						<!-- widget div -->
 						<div>
 

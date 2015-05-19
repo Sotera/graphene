@@ -1,9 +1,7 @@
 package graphene.dao.sql;
 
-import graphene.dao.DAOModule;
+import graphene.dao.sql.util.JDBCUtil;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.util.db.DBConnectionPoolService;
-import graphene.util.db.JDBCUtil;
 import graphene.util.db.MainDB;
 import graphene.util.jvm.JVMHelper;
 
@@ -18,7 +16,6 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.ClasspathResourceSymbolProvider;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
@@ -32,10 +29,10 @@ import org.slf4j.Logger;
  * @author djue
  * 
  */
-@SubModule({ DAOModule.class })
+
 public class DAOSQLModule {
 	public static void bind(final ServiceBinder binder) {
-
+		binder.bind(JDBCUtil.class).eagerLoad();
 	}
 
 	/**

@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 	</parent>
 	<artifactId>graphene-ingest</artifactId>
 	<name>${project.artifactId}</name>
@@ -22,13 +22,13 @@
 				</includes>
 			</resource>
 			<resource>
-            <directory>src/main/sql</directory>
-            <includes>
-                <include>**/*.sql</include>
-                <include>**/*.properties</include>
-                <include>**/*.xml</include>
-            </includes>
-        </resource>
+				<directory>src/main/sql</directory>
+				<includes>
+					<include>**/*.sql</include>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
 		</resources>
 	</build>
 
@@ -36,11 +36,11 @@
 
 		<dependency>
 			<groupId>graphene</groupId>
-			<artifactId>graphene-model</artifactId>
+			<artifactId>graphene-export</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>
-			<artifactId>graphene-util</artifactId>
+			<artifactId>graphene-extraction</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>graphene</groupId>

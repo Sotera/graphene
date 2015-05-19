@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>graphene-augment</groupId>
 		<artifactId>graphene-augment</artifactId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 	</parent>
 	<artifactId>graphene-augment-snlp</artifactId>
 	<name>graphene-augment-snlp</name>
@@ -48,4 +48,19 @@
 			<version>${tapestry-release-version}</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Tapestry-Module-Classes>graphene.augment.snlp.services.SNLPModule</Tapestry-Module-Classes>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

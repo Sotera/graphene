@@ -5,16 +5,11 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 	</parent>
 	<artifactId>graphene-web</artifactId>
 	<name>${project.artifactId}</name>
-	<repositories>
-		<repository>
-			<id>lazan-releases</id>
-			<url>https://raw.githubusercontent.com/uklance/releases/master</url>
-		</repository>
-	</repositories>
+
 
 	<dependencies>
 		<dependency>
@@ -25,18 +20,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>graphene-dao</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>graphene-search</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>graphene-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>graphene-dao-sql</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>org.tynamo</groupId>
 			<artifactId>tapestry-security</artifactId>
@@ -55,50 +39,21 @@
 			<artifactId>tapestry-upload</artifactId>
 			<version>${tapestry-release-version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-test</artifactId> 
-			<scope>test</scope> </dependency> -->
-		<!-- <dependency> <groupId>org.got5</groupId> <artifactId>tapestry5-jquery</artifactId> 
-			</dependency> -->
-		<!-- This adds automatic compression of JavaScript and CSS when in production 
-			mode. -->
-		<!-- <dependency> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-yuicompressor</artifactId> 
-			<version>${tapestry-release-version}</version> </dependency> -->
-		<!-- This gets us the @exclude annotation for css and js -->
-		<!-- <dependency> <groupId>com.trsvax</groupId> <artifactId>tapestry-bootstrap</artifactId> 
-			<version>2.1.3</version> <exclusions> <exclusion> <groupId>org.apache.tapestry</groupId> 
-			<artifactId>tapestry-yuicompressor</artifactId> </exclusion> </exclusions> 
-			</dependency> -->
-
-		<!-- We will switch to this newer version later. Note it has a more correct 
-			group id. -->
-		<!-- <dependency> <groupId>com.trsvax</groupId> <artifactId>tapestry-bootstrap</artifactId> 
-			</dependency> -->
-
 		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.lazan</groupId>
-			<artifactId>tapestry-atmosphere</artifactId>
-		</dependency>
- 		<dependency>
-			<groupId>org.atmosphere</groupId>
-			<artifactId>atmosphere-runtime-native</artifactId>
-			<version>2.1.0-RC2</version>
+		
+		<dependency><!-- Tapestry integration with JQuery. This may be removed 
+				if we switch to Tapestry 5.4, which includes JQuery support by default -->
+			<groupId>org.got5</groupId>
+			<artifactId>tapestry5-jquery</artifactId>
 		</dependency>
 		<!-- We'll eventually stop using the version with this group id, or go 
 			to T5.4, which will eliminate the need for this. -->
-		<dependency>
-			<groupId>com.trsvax.bootstrap</groupId>
-			<artifactId>tapestry-bootstrap</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>tapestry-yuicompressor</artifactId>
-					<groupId>org.apache.tapestry</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		<!-- <dependency> <groupId>com.trsvax.bootstrap</groupId> <artifactId>tapestry-bootstrap</artifactId> 
+			<exclusions> <exclusion> <artifactId>tapestry-yuicompressor</artifactId> 
+			<groupId>org.apache.tapestry</groupId> </exclusion> </exclusions> </dependency> -->
 
 		<!-- Testing -->
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire 
@@ -110,6 +65,7 @@
 			<artifactId>servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- end Testing -->
 	</dependencies>
 	<build>
@@ -179,7 +135,7 @@
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
 						<manifestEntries>
-							<Tapestry-Module-Classes>graphene.web.services.AppModule
+							<Tapestry-Module-Classes>graphene.web.services.GrapheneModule
 							</Tapestry-Module-Classes>
 						</manifestEntries>
 					</archive>

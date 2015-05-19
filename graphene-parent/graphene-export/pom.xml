@@ -4,7 +4,7 @@
   <parent>
     <artifactId>graphene-parent</artifactId>
     <groupId>graphene</groupId>
-    <version>4.1.1</version>
+    <version>4.1.2</version>
   </parent>
   <artifactId>graphene-export</artifactId>
   <name>${project.artifactId}</name>
@@ -14,7 +14,7 @@
   <dependencies>
     <dependency>
       <groupId>graphene</groupId>
-      <artifactId>graphene-model</artifactId>
+      <artifactId>graphene-dao</artifactId>
     </dependency>
     <!-- Excel export -->
     <dependency>

@@ -1,8 +1,6 @@
 package graphene.rest.ws;
 
-import graphene.model.idl.G_Link;
-
-import java.util.List;
+import graphene.model.idl.G_TransactionResults;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -11,17 +9,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.apache.tapestry5.annotations.Log;
+
 /**
- * This generalized rest service will eventually replace most other rest services that have a narrow focus.
+ * This generalized rest service will eventually replace most other rest
+ * services that have a narrow focus.
  * 
  * Two things that must be done for that to happen:
  * 
- * 1) Powerful query structure to handle the types of views we acutally want to show
+ * 1) Powerful query structure to handle the types of views we acutally want to
+ * show
  * 
- * 2) Ability to serialize the schema definition and pass it back as part of the response (probably using Avro generated types)
+ * 2) Ability to serialize the schema definition and pass it back as part of the
+ * response (probably using Avro generated types)
  * 
  * @author djue
- *
+ * 
  */
 @Path("/event")
 public interface EventSearchRS {
@@ -45,7 +47,7 @@ public interface EventSearchRS {
 	@Produces("application/json")
 	@GET
 	@Path("/any")
-	public abstract List<G_Link> getEvents(
+	public abstract G_TransactionResults getEvents(
 			@QueryParam("identifiers") @DefaultValue(value = "") String identifiers,
 			@QueryParam("offset") @DefaultValue(value = "0") int offset,
 			@QueryParam("limit") @DefaultValue(value = "1000") int limit,
@@ -58,8 +60,7 @@ public interface EventSearchRS {
 	@Produces("application/json")
 	@GET
 	@Path("/between")
-	List<G_Link> getEvents(
-			@QueryParam("from") @DefaultValue(value = "") String from,
+	G_TransactionResults getEvents(@QueryParam("from") @DefaultValue(value = "") String from,
 			@QueryParam("to") @DefaultValue(value = "") String to,
 			@QueryParam("offset") @DefaultValue(value = "0") int offset,
 			@QueryParam("limit") @DefaultValue(value = "1000") int limit,

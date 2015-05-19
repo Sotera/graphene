@@ -29,134 +29,68 @@ import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_Provenance;
+import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_Uncertainty;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class EntityHelper extends G_Entity {
 
-	public EntityHelper(String id, List<G_EntityTag> tagList,
-			G_Provenance provenance, G_Uncertainty uncertainty,
-			List<G_Property> properties) {
-		super(id, new ArrayList<G_EntityTag>(tagList), provenance, uncertainty,
-				new ArrayList<G_Property>(properties));
-	}
-
-	public EntityHelper(String id, String label, String type,
-			List<G_EntityTag> tagList, List<G_Property> properties) {
-		this(id, tagList, null, null, merge(
-				properties,
-				Arrays.asList(new G_Property[] {
-						new PropertyHelper(G_PropertyTag.LABEL, label),
-						new PropertyHelper(G_PropertyTag.TYPE, type) })));
-	}
-
-	private static List<G_Property> merge(List<G_Property> list1,
-			List<G_Property> list2) {
-		List<G_Property> merged = new ArrayList<G_Property>(list1);
-		merged.addAll(list2);
-		return merged;
-	}
-
-	public EntityHelper(String id, String label, String type, G_EntityTag tag,
-			List<G_Property> properties) {
-		this(id, label, type, Collections.singletonList(tag),
-				new ArrayList<G_Property>(properties));
-	}
-
-	public PropertyHelper getFirstProperty(String key) {
-		for (G_Property property : getProperties()) {
-			if (property.getKey().equals(key))
-				return PropertyHelper.from(property);
-		}
-		return null;
-	}
-
-	public String getId() {
-		return (String) getUid();
-	}
-
-	public String getLabel() {
-		PropertyHelper label = getFirstProperty(G_PropertyTag.LABEL.name());
-		return (String) (label != null ? label.getValue() : null);
-	}
-
-	public String toJson() throws IOException {
-		return SerializationHelper.toJson(this);
-	}
-
-	public static String toJson(G_Entity entity) throws IOException {
-		return SerializationHelper.toJson(entity);
-	}
-
-	public static String toJson(List<G_Entity> entities) throws IOException {
-		return SerializationHelper.toJson(entities, G_Entity.getClassSchema());
-	}
-
-	public static String toJson(Map<String, List<G_Entity>> entities)
-			throws IOException {
-		return SerializationHelper.toJson(entities, G_Entity.getClassSchema());
-	}
-
-	public static G_Entity fromJson(String json) throws IOException {
+	public static G_Entity fromJson(final String json) throws IOException {
 		return SerializationHelper.fromJson(json, G_Entity.getClassSchema());
 	}
 
-	public static List<G_Entity> listFromJson(String json) throws IOException {
-		return SerializationHelper
-				.listFromJson(json, G_Entity.getClassSchema());
-	}
-
-	public static Map<String, List<G_Entity>> mapFromJson(String json)
-			throws IOException {
-		return SerializationHelper.mapFromJson(json, G_Entity.getClassSchema());
-	}
-
-	public static PropertyHelper getFirstProperty(G_Entity entity, String key) {
-		if (entity != null && entity.getProperties() != null) {
-			for (G_Property property : entity.getProperties()) {
-				if (property.getKey().equals(key))
+	/**
+	 * You should not use this because the storage of the properties is not in
+	 * insertion order (i.e. the order is random). So getting the first property
+	 * is not significant.
+	 * 
+	 * @param entity
+	 * @param key
+	 * @return
+	 */
+	@Deprecated
+	public static PropertyHelper getFirstProperty(final G_Entity entity, final String key) {
+		if ((entity != null) && (entity.getProperties() != null)) {
+			for (final G_Property property : entity.getProperties().values()) {
+				if (property.getKey().equals(key)) {
 					return PropertyHelper.from(property);
-			}
-		}
-		return null;
-	}
-
-	public static PropertyHelper getFirstPropertyByTag(G_Entity entity,
-			G_PropertyTag tag) {
-		if (entity != null && entity.getProperties() != null) {
-			for (G_Property property : entity.getProperties()) {
-				if (property.getTags().contains(tag))
-					return PropertyHelper.from(property);
-			}
-		}
-		return null;
-	}
-
-	public static List<G_Property> getPropertiesByTags(G_Entity entity,
-			G_PropertyTag... tags) {
-		List<G_Property> list = new ArrayList<G_Property>(1);
-		if (entity != null && entity.getProperties() != null) {
-			for (G_Property x : entity.getProperties()) {
-				if (!Collections.disjoint(x.getTags(), Arrays.asList(tags))) {
-					list.add(x);
 				}
 			}
-			Collections.sort(list);
 		}
-		return list;
+		return null;
 	}
 
-	public static List<G_Property> getPropertiesByTag(G_Entity entity,
-			G_PropertyTag tag) {
-		List<G_Property> list = new ArrayList<G_Property>(1);
-		if (entity != null && entity.getProperties() != null) {
-			for (G_Property x : entity.getProperties()) {
+	/**
+	 * You should not use this because the storage of the properties is not in
+	 * insertion order (i.e. the order is random). So getting the first property
+	 * is not significant.
+	 * 
+	 * @param entity
+	 * @param tag
+	 * @return
+	 */
+	public static PropertyHelper getFirstPropertyByTag(final G_Entity entity, final G_PropertyTag tag) {
+		if ((entity != null) && (entity.getProperties() != null)) {
+			for (final G_Property property : entity.getProperties().values()) {
+				if (property.getTags().contains(tag)) {
+					return PropertyHelper.from(property);
+				}
+			}
+		}
+		return null;
+	}
+
+	public static List<G_Property> getPropertiesByTag(final G_Entity entity, final G_PropertyTag tag) {
+		final List<G_Property> list = new ArrayList<G_Property>(1);
+		if ((entity != null) && (entity.getProperties() != null)) {
+			for (final G_Property x : entity.getProperties().values()) {
 				if (x.getTags().contains(tag)) {
 					list.add(x);
 				}
@@ -166,17 +100,132 @@ public class EntityHelper extends G_Entity {
 		return list;
 	}
 
-	public static List<G_Property> getPropertiesByKey(G_Entity entity,
-			String key) {
-		List<G_Property> list = new ArrayList<G_Property>(1);
-		if (entity != null && entity.getProperties() != null) {
-			for (G_Property x : entity.getProperties()) {
-				if (x.getKey().equalsIgnoreCase(key)) {
+	// @Deprecated
+	// public static List<G_Property> getPropertiesByKey(final G_Entity entity,
+	// final String key) {
+	// final List<G_Property> list = new ArrayList<G_Property>(1);
+	// if ((entity != null) && (entity.getProperties() != null)) {
+	// for (final G_Property x : entity.getProperties()) {
+	// if (x.getKey().equalsIgnoreCase(key)) {
+	// list.add(x);
+	// }
+	// }
+	// Collections.sort(list);
+	// }
+	// return list;
+	// }
+
+	public static List<G_Property> getPropertiesByTags(final G_Entity entity, final G_PropertyTag... tags) {
+		final List<G_Property> list = new ArrayList<G_Property>(1);
+		if ((entity != null) && (entity.getProperties() != null)) {
+			for (final G_Property x : entity.getProperties().values()) {
+				if (!Collections.disjoint(x.getTags(), Arrays.asList(tags))) {
 					list.add(x);
 				}
 			}
 			Collections.sort(list);
 		}
 		return list;
+	}
+
+	public static Object getPropertyValue(final G_Entity entity, final String key) {
+		if ((entity != null) && (entity.getProperties() != null)) {
+			final G_Property prop = entity.getProperties().get(key);
+
+			if (prop != null) {
+				if (prop.getRange() instanceof G_SingletonRange) {
+					return SingletonRangeHelper.rangeValue(prop.getRange());
+				} else {
+					return ListRangeHelper.rangeValue(prop.getRange());
+				}
+			}
+		}
+		return null;
+	}
+
+	public static List<G_Entity> listFromJson(final String json) throws IOException {
+		return SerializationHelper.listFromJson(json, G_Entity.getClassSchema());
+	}
+
+	public static Map<String, List<G_Entity>> mapFromJson(final String json) throws IOException {
+		return SerializationHelper.mapFromJson(json, G_Entity.getClassSchema());
+	}
+
+	private static Map<String, G_Property> merge(final Map<String, G_Property> list1,
+			final Map<String, G_Property> list2) {
+		final Map<String, G_Property> merged = new HashMap<String, G_Property>(list1);
+		merged.putAll(list2);
+		return merged;
+	}
+
+	public static String toJson(final G_Entity entity) throws IOException {
+		return SerializationHelper.toJson(entity);
+	}
+
+	public static String toJson(final List<G_Entity> entities) throws IOException {
+		return SerializationHelper.toJson(entities, G_Entity.getClassSchema());
+	}
+
+	public static String toJson(final Map<String, List<G_Entity>> entities) throws IOException {
+		return SerializationHelper.toJson(entities, G_Entity.getClassSchema());
+	}
+
+	public EntityHelper(final String id, final List<G_EntityTag> tagList, final G_Provenance provenance,
+			final G_Uncertainty uncertainty, final Map<String, G_Property> properties) {
+		super(id, new ArrayList<G_EntityTag>(tagList), provenance, uncertainty, new HashMap<String, G_Property>(
+				properties));
+	}
+
+	public EntityHelper(final String id, final String label, final String type, final G_EntityTag tag,
+			final Map<String, G_Property> properties) {
+		this(id, label, type, Collections.singletonList(tag), new HashMap<String, G_Property>(properties));
+	}
+
+	public EntityHelper(final String id, final String label, final String type, final List<G_EntityTag> tagList,
+			final Map<String, G_Property> properties) {
+
+		this(id, tagList, null, null, merge(properties, new HashMap<String, G_Property>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(G_PropertyTag.LABEL.name(), new PropertyHelper(G_PropertyTag.LABEL, label));
+				put(G_PropertyTag.TYPE.name(), new PropertyHelper(G_PropertyTag.TYPE, type));
+			}
+		}));
+	}
+
+	/**
+	 * You should not use this because the storage of the properties is not in
+	 * insertion order (i.e. the order is random). So getting the first property
+	 * is not significant.
+	 * 
+	 * 
+	 * @param key
+	 * @return
+	 */
+	@Deprecated
+	public PropertyHelper getFirstProperty(final String key) {
+		for (final G_Property property : getProperties().values()) {
+			if (property.getKey().equals(key)) {
+				return PropertyHelper.from(property);
+			}
+		}
+		return null;
+	}
+
+	public String getId() {
+		return getUid();
+	}
+
+	public String getLabel() {
+		final PropertyHelper label = getFirstProperty(G_PropertyTag.LABEL.name());
+		return (String) (label != null ? label.getValue() : null);
+	}
+
+	public String toJson() throws IOException {
+		return SerializationHelper.toJson(this);
 	}
 }

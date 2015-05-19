@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 	</parent>
 	<artifactId>graphene-dao-neo4j</artifactId>
 	<name>${project.artifactId}</name>

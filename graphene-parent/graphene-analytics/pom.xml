@@ -5,13 +5,28 @@
 	<parent>
 		<artifactId>graphene-parent</artifactId>
 		<groupId>graphene</groupId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 	</parent>
 	<artifactId>graphene-analytics</artifactId>
 	<name>graphene-analytics</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Tapestry-Module-Classes>graphene.analytics.AnalyticsModule</Tapestry-Module-Classes>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>

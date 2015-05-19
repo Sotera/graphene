@@ -1,0 +1,26 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<!-- Narrative -->
+	<t:if test="sentences">
+		<li>
+		<t:graphene.ui.sectionTreeButton t:typeName="literal:Narrative"  t:color="literal:FREETEXT"/>
+			<ul>
+				<li id="narrative"><t:if test="r">
+						<p>
+							<!-- setting filter to false is not XSS safe -->
+							<t:output format="narrativeFormat" value="${r}" filter="true" />
+						</p>
+						<p:else>
+							<t:loop source="sentences" value="sentence">
+								<p>${sentence}</p>
+							</t:loop>
+						</p:else>
+					</t:if></li>
+			</ul></li>
+	</t:if>
+
+</t:container>

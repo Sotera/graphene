@@ -4,7 +4,7 @@ Ext.define("DARPA.TransactionGraphPanel", {
 	constructor: function(config) {
 		var self = this;
 		
-		this.GraphVis = new CytoGraphVis(config.id + "-TXNcygraph");
+		this.GraphVis = new CytoscapeGraphVis(config.id + "-TXNcygraph");
 		
 		var graphSettings = Ext.create("DARPA.GraphSettings", {
 			id: config.id + "-Settings"
@@ -13,32 +13,9 @@ Ext.define("DARPA.TransactionGraphPanel", {
 		graphSettings.setGraph(self);
 		
 		var filterSettings = Ext.create("DARPA.FilterSettings", {
-			id: config.id + "-Filter"
+			id: config.id + "-Filter",
+			graphRef: self
 		});
-		
-		filterSettings.setAdditionalFields([{
-			dispFieldName: "Node Color", 		dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode",	dataSourceType: "nodes", 	dataSourceField: "color"
-		}, {
-			dispFieldName: "Node Name", 		dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode", 	dataSourceType: "nodes", 	dataSourceField: "name"
-		}, {
-			dispFieldName: "Identifier Type", 	dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode", 	dataSourceType: "nodes", 	dataSourceField: "idType"
-		}, {
-			dispFieldName: "getfromkey", 	dispFieldType: "text", 		dispFieldWidth: 100,
-			dispFieldChoices: "", 			dataSourceType: "nodes", 	dataSourceField: "attrs"
-		}, {
-			dispFieldName: "Amount", 	dispFieldType: "text", 		dispFieldWidth: 100,
-			dispFieldChoices: "", 		dataSourceType: "edges", 	dataSourceField: "amount"
-		}, {
-			dispFieldName: "getfromkey", dispFieldType: "text", dispFieldWidth: 100,
-			dispFieldChoices: "", dataSourceType: "edges", dataSourceField: "attrs"
-		}]);
-		
-		filterSettings.setGraph(self);
-		filterSettings.enableTimeFilter(false); // TODO renable based on graph type or if data is temporally-based
-		filterSettings.setSearchFieldLabel("Identifiers(s)");
 		
 		var graphContainer = Ext.create("Ext.Container", {
 			width: 'auto',
@@ -52,6 +29,14 @@ Ext.define("DARPA.TransactionGraphPanel", {
 			height: 'auto',
 			collapsible: true,
 			collapseDirection: 'right',
+			listeners: {
+				collapse: function(e) {
+					self.GraphVis.resize();
+				},
+				expand: function(e) {
+					self.GraphVis.resize();
+				}
+			},
 			items: [
 				Ext.create("Ext.panel.Panel", {
 					title: "DETAILS/ACTIONS",
@@ -96,15 +81,8 @@ Ext.define("DARPA.TransactionGraphPanel", {
 	afterLayout: function() {
 		var self = this;
 		if (self.GraphVis.getGv() == null) {
-			var config = {
-				//width: self.getWidth(),
-				//height: self.getHeight(),
-				rightBorder: 320,
-				leftBorder: 5,
-				topBorder: 5,
-				botBorder: 80
-			};
-			self.GraphVis.initGraph(config, self, function() {
+			var config = {/* configs go here */};
+			self.GraphVis.init(config, self, function() {
 				self.showjson(self.prevLoadParams.value);
 			}, false);
 		}
@@ -249,13 +227,13 @@ Ext.define("DARPA.TransactionGraphPanel", {
 							'Do you want to continue displaying it?', 
 							function(ans) {
 								if (ans == 'yes') {
-									self.GraphVis.showGraph1Hop(self.json, node);
+									self.GraphVis.expand(self.json, node);
 									self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 								}
 							}
 						);
 					} else {
-						self.GraphVis.showGraph1Hop(self.json, node);
+						self.GraphVis.expand(self.json, node);
 						self.getNodeDisplay().updateLegend(self.legendJSON, "TransactionGraph");
 					}
 				}

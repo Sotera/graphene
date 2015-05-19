@@ -64,6 +64,9 @@ public class WorkspaceList {
 	@Parameter(required = true)
 	@Property
 	private String partialName;
+	@Parameter(required = false)
+	@Property
+	private String title;
 
 	@Inject
 	private Request request;
@@ -87,7 +90,7 @@ public class WorkspaceList {
 	private G_Workspace workspace;
 
 	@Property
-	@SessionState(create = false)
+	@SessionState
 	private List<G_Workspace> workspaces;
 
 	private boolean workspacesExists;
@@ -102,11 +105,15 @@ public class WorkspaceList {
 
 	public List<G_Workspace> getListOfWorkspaces() {
 		if (userExists) {
-			try {
-				logger.debug("Updating list of workspaces");
-				workspaces = userDataAccess.getWorkspacesForUser(user.getId());
-			} catch (final AvroRemoteException e) {
-				logger.error(e.getMessage());
+			if (!workspacesExists) {
+				try {
+					logger.debug("Updating list of workspaces");
+					workspaces = userDataAccess.getWorkspacesForUser(user.getId());
+				} catch (final AvroRemoteException e) {
+					logger.error(e.getMessage());
+				}
+			} else {
+				logger.debug("List of workspaces already exists.");
 			}
 		} else {
 			logger.error("No user name to get workspaces for.");

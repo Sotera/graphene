@@ -17,14 +17,14 @@ margin-top: 4px;
 		t:type="form" t:id="globalsearchform">
 
 		<input style="width: 67%; margin-right: 3px; "
-			t:id="searchValue" t:type="TextField" type="text"
+			t:id="searchValue" t:type="TextField" type="text" value="searchValue"
 			class="form-control globalsearch" placeholder="Search" id="search-fld" title="Enter Search Terms" />
 		<t:select
 			style="float: none;
 display: -webkit-inline-box;
 position: relative;
 margin-right: 6px; min-width: 60px;"
-			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Report Type"
+			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Type"
 			role="menu" model="availableTypes" />
 		<t:select
 			style="float: none;

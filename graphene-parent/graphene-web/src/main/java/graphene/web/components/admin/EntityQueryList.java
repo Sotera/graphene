@@ -1,8 +1,9 @@
 package graphene.web.components.admin;
 
 import graphene.dao.LoggingDAO;
-import graphene.model.idl.G_SearchTuple;
-import graphene.model.query.EntityQuery;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_PropertyMatchDescriptor;
+import graphene.model.idlhelper.RangeHelper;
 import graphene.web.components.BasicDataTable;
 
 import java.util.List;
@@ -17,29 +18,30 @@ public class EntityQueryList extends BasicDataTable {
 	@Inject
 	protected LoggingDAO loggingDao;
 	@Property
-	private EntityQuery current;
+	private G_EntityQuery current;
+
 	@Property
-	private String currentFilter;
-	@Property
-	private List<String> currentFilters;
-	@Property
-	private G_SearchTuple<String> currentTuple;
+	private G_PropertyMatchDescriptor currentPmd;
 
 	@Persist
-	private BeanModel<EntityQuery> model;
-	@Property
-	private List<EntityQuery> list;
+	private BeanModel<G_EntityQuery> model;
 
-	public BeanModel<EntityQuery> getModel() {
+	@Property
+	private List<G_EntityQuery> list;
+
+	public String getCurrentRange() {
+		return RangeHelper.toString(currentPmd.getRange());
+	}
+
+	public BeanModel<G_EntityQuery> getModel() {
 		if (model == null) {
-			model = beanModelSource.createDisplayModel(EntityQuery.class, resources.getMessages());
+			model = beanModelSource.createDisplayModel(G_EntityQuery.class, resources.getMessages());
 			model.exclude("caseSensitive", "searchFreeText", "initiatorId", "attributevalues", "minimumscore",
 					"minsecs", "maxsecs", "sortcolumn", "sortfield", "firstresult", "maxresult", "datasource",
 					"userId", "sortascending", "id", "schema");
 
-			model.get("AttributeList").sortable(true);
-			model.reorder("timeinitiated", "username", "AttributeList", "filters");
-			model.get("filters").sortable(true);
+			model.get("propertyMatchDescriptors").sortable(true);
+			model.reorder("timeinitiated", "username", "propertyMatchDescriptors");
 		}
 		return model;
 	}

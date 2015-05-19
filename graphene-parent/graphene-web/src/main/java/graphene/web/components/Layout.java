@@ -4,21 +4,17 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
-import graphene.web.pages.pub.Login;
-import graphene.web.security.AuthenticatorHelper;
+import graphene.model.idlhelper.AuthenticatorHelper;
 
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.Tuple;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -26,24 +22,22 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.got5.tapestry5.jquery.ImportJQueryUI;
 import org.slf4j.Logger;
 import org.tynamo.security.services.SecurityService;
-
-import com.trsvax.bootstrap.annotations.Exclude;
 
 /**
  * 
  * @author djue
  * 
  */
-@Exclude(stylesheet = { "core" })
+// @Exclude(stylesheet = { "core" })
 @Import(stylesheet = { "context:/core/css/t5default.css", "context:/core/css/bootstrap.min.css",
 		"context:/core/css/font-awesome.min.css", "context:/core/css/graphene-production.css",
 		"context:/core/css/pace-radar.css", "context:/core/css/graphene-skins.css", "context:/core/css/demo.css",
-		"context:/core/css/googlefonts.css" }, library = {
-		"classpath:/com/trsvax/bootstrap/assets/bootstrap/js/bootstrap.js", "context:/core/js/logout.js" })
+		"context:/core/css/googlefonts.css" }, library = { "context:/core/js/logout.js" })
 @ImportJQueryUI(theme = "context:/core/js/libs/jquery/jquery-ui-1.10.3.min.js")
 public class Layout {
 	@Property
@@ -85,7 +79,7 @@ public class Layout {
 	@Property
 	private SecurityService securityService;
 
-	@SessionState(create = false)
+	@SessionState
 	private G_User user;
 
 	@Inject
@@ -95,6 +89,10 @@ public class Layout {
 	@Property
 	@SessionState(create = false)
 	private List<G_Workspace> workspaces;
+
+	private boolean workspacesExists;
+	@Inject
+	private RequestGlobals rq;
 
 	void afterRender() {
 		jss.addInitializerCall("makeLogout", "logout");
@@ -116,23 +114,14 @@ public class Layout {
 		return l.toString();
 	}
 
-	@SetupRender
-	public void loginIfNeeded() {
-		if (!authenticatorHelper.isUserObjectCreated() && securityService.isAuthenticated()) {
-			authenticatorHelper.loginAuthenticatedUser((String) securityService.getSubject().getPrincipal());
-		}
-		if (userExists) {
-			try {
-				workspaces = userDataAccess.getWorkspacesForUser(user.getId());
-			} catch (final AvroRemoteException e) {
-				logger.error(e.getMessage());
-			}
-		}
-	}
+	// @SetupRender
+	// public void loginIfNeeded() {
+	// // The user should have already been created and authc/authz
+	// logger.debug("can has user? " + user.getFullname());
+	// }
 
-	@Log
 	public Object onLogout() {
 		authenticatorHelper.logout();
-		return Login.class;
+		return null;
 	}
 }

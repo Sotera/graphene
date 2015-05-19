@@ -269,6 +269,12 @@ public class Manage extends SimpleBasePage {
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////
 
+	public void setAction(final String string) {
+		if ("create".equals(string)) {
+			onToCreate();
+		}
+	}
+
 	void setupRender() {
 		listWorkspaceId = editorWorkspaceId;
 	}

@@ -23,9 +23,67 @@
 @namespace("graphene.model.idl")
 
 protocol G_GraphDataTypes {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 	import idl "CommonDataTypes_v4.1.avdl";
+	
+	record G_Node {
+		union {array<map<string>>,null} dataSet;
+	
+		boolean edited = false;
+		string id;
+		union {string,null} idType;
+		union {string,null} idVal;
+		union {string,null} label;
+		
+		union {string,null} color;
+		int degree = 0;
+		boolean isCluster = false;
+		boolean isUsed = false;
+		double minScore = 0.0d;
+		int nbrLinks = 0;
+		double priority = 0.0d;
+		boolean scanned = false; // true when we have searched on this value
+		int size = 16;
+		boolean traversed = false;
 
+		/** default, until children added */
+		boolean isLeaf = true;
+	
+		/** true if it's the one searched for */
+		boolean isOrigin = false;
+	
+		/** Used to be called family. */
+		union {string,null} nodeType;
+		union {array<G_Entity>,null} nodes;
+		
+		union {array<G_Link>,null} edges;
+	
+		union {array<G_Property>,null} properties;
+	}
+	
+	record G_Edge {
+		union {array<map<string>>,null} dataSet;
+		union {string,null} color = "#23A4FF";
+		int count = 1;
+		int day = -1;
+		int degree = 0;
+		boolean directed = false;
+		union {array<G_Edge>,null} edges;
+		boolean edited = false;
+		boolean expanded = false;
+		union {string,null} idType;
+		union {string,null} idVal;
+		union {string,null} label;
+		union {string,null} lineStyle = "solid";
+		int month = -1;
+		union {string,null} sourceId = "src";
+		union {string,null} targetId = "target";
+		double value = 0; // to be a serialized amount to hold aggregated
+		int weight = 1; // Consider allowing double or Number
+		int year = -1;
+	}
+	
+	
 	/**
 	 * a Graph object
 	 */
@@ -34,12 +92,20 @@ protocol G_GraphDataTypes {
 		 * The id of the graph
 		 */
 		string id;
-		
-		array<G_Entity> nodes;
-		
-		array<G_Link> edges;
-	
-		array<G_Property> properties;
+		/**
+		 * Usually 0 for success, 1 otherwise
+		 */
+		int intStatus = 0;
+		int numEdges;
+		int numNodes;
+		union {string,null} strStatus = "OK";
+		union {string,null} userId = "None";
+		union {string,null} username = "None";
+		union {array<G_Entity>,null} nodes;
+		union {array<G_Link>,null} edges;
+		union {array<G_Property>,null} properties;
+		union {array<G_LegendItem>,null} legend;
+		union {array<G_DocumentError>,null} errors;
 	}
 	
 

@@ -4,20 +4,21 @@ import graphene.dao.LoggingDAO;
 import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserLoginEvent;
-import graphene.model.query.BasicQuery;
-import graphene.model.query.EntityQuery;
 import graphene.util.validator.ValidationUtils;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import mil.darpa.vande.generic.V_GraphQuery;
 import mil.darpa.vande.interactions.TemporalGraphQuery;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -35,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 
+	ExecutorService executor = Executors.newSingleThreadExecutor();
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_INDEX)
 	private String indexName;
@@ -45,6 +47,9 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_DELETE_LOGS)
 	private boolean enableDelete;
+	@Inject
+	@Symbol(G_SymbolConstants.ENABLE_LOGGING)
+	private boolean enableLogging;
 
 	@Inject
 	@Symbol(JestModule.ES_LOGGING_GRAPHQUERY_TYPE)
@@ -152,7 +157,8 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public List<EntityQuery> getQueries(final String userId, final String partialTerm, final int offset, final int limit) {
+	public List<G_EntityQuery> getQueries(final String userId, final String partialTerm, final int offset,
+			final int limit) {
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		if (ValidationUtils.isValid(userId)) {
 			if (ValidationUtils.isValid(partialTerm)) {
@@ -172,23 +178,25 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 			}
 		}
 		final SortBuilder byDate = SortBuilders.fieldSort("timeInitiated").order(SortOrder.DESC).ignoreUnmapped(false);
-
-		final Search search = new Search.Builder(searchSourceBuilder.sort(byDate).from(offset).size(limit).toString())
-				.addIndex(indexName).setParameter("timeout", defaultESTimeout).addType(searchQueryType)
-				.setParameter("from", offset).setParameter("size", limit).build();
-		System.out.println(searchSourceBuilder.toString());
+		final String ssb = searchSourceBuilder.sort(byDate).from(offset).size(limit).toString();
+		final Search search = new Search.Builder(ssb).addIndex(indexName).setParameter("timeout", defaultESTimeout)
+				.addType(searchQueryType).setParameter("from", offset).setParameter("size", limit).build();
+		System.out.println("index: " + indexName + " type:" + searchQueryType);
+		System.out.println(ssb);
+		System.out.println(search.getURI());
 		JestResult result;
-		List<EntityQuery> returnValue = new ArrayList<EntityQuery>(0);
+		List<G_EntityQuery> returnValue = new ArrayList<G_EntityQuery>(0);
 		try {
 			result = c.getClient().execute(search);
 			// System.out.println(result);
-			returnValue = result.getSourceAsObjectList(EntityQuery.class);
+			returnValue = result.getSourceAsObjectList(G_EntityQuery.class);
 
-			// for (final EntityQuery u : returnValue) {
+			// for (final G_EntityQuery u : returnValue) {
 			// System.out.println(u);
 			// }
 		} catch (final Exception e) {
 			logger.error("getQueries " + e.getMessage());
+			e.printStackTrace();
 		}
 		return returnValue;
 
@@ -260,73 +268,105 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public boolean recordExport(final String queryString) {
-		// TODO Auto-generated method stub
-		return false;
+	public void recordExportEvent(final G_ExportEvent q) {
+		if (enableLogging) {
+			executor.execute(new Runnable() {
+				@Override
+				public void run() {
+					saveObject(q, q.getId(), indexName, graphQueryType, false);
+				}
+			});
+		}
 	}
 
 	@Override
 	public void recordGraphViewEvent(final G_GraphViewEvent q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, graphQueryType);
-		} else {
-			logger.error("Attempted to save a null G_GraphViewEvent!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(q, q.getId(), indexName, graphQueryType, false);
+					}
+				});
+				// q.setId(saveObject(q, q.getId(), indexName, graphQueryType,
+				// false));
+				// }
+				// saveObject(q, q.getId(), indexName, graphQueryType);
+			} else {
+				logger.error("Attempted to save a null G_GraphViewEvent!");
+			}
 		}
 		return;
 
 	}
 
 	@Override
-	public void recordQuery(final BasicQuery q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, searchQueryType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, searchQueryType);
-		} else {
-			logger.error("Attempted to save a null BasicQuery!");
+	public void recordQuery(final G_EntityQuery q) {
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(q, q.getId(), indexName, searchQueryType, false);
+					}
+				});
+			} else {
+				logger.error("Attempted to save a null BasicQuery!");
+			}
 		}
 		return;
 	}
 
-	@Override
-	public void recordQuery(final V_GraphQuery q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, graphQueryType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, graphQueryType);
-		} else {
-			logger.error("Attempted to save a null V_GraphQuery!");
-		}
-		return;
-	}
+	// @Override
+	// public void recordQuery(final V_GraphQuery q) {
+	// if (enableLogging) {
+	// if (ValidationUtils.isValid(q)) {
+	// executor.execute(new Runnable() {
+	// @Override
+	// public void run() {
+	// saveObject(q, q.getId(), indexName, graphQueryType, false);
+	// }
+	// });
+	//
+	// } else {
+	// logger.error("Attempted to save a null V_GraphQuery!");
+	// }
+	// }
+	// return;
+	// }
 
 	@Override
 	public void recordReportViewEvent(final G_ReportViewEvent q) {
-		if (ValidationUtils.isValid(q)) {
-			// if (q.getId() == null) {
-			q.setId(saveObject(q, q.getId(), indexName, reportViewType, false));
-			// }
-			// saveObject(q, q.getId(), indexName, reportViewType);
-		} else {
-			logger.error("Attempted to save a null G_ReportViewEvent!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(q)) {
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(q, q.getId(), indexName, reportViewType, false);
+					}
+				});
+
+			} else {
+				logger.error("Attempted to save a null G_ReportViewEvent!");
+			}
 		}
 		return;
 	}
 
 	@Override
 	public void recordUserLoginEvent(final G_UserLoginEvent e) {
-		if (ValidationUtils.isValid(e)) {
-			// if (e.getId() == null) {
-			e.setId(saveObject(e, e.getId(), indexName, userLoginType, false));
-			// }
-			// saveObject(e, e.getId(), indexName, userLoginType);
-		} else {
-			logger.error("Attempted to save a null G_UserLoginEvent!");
+		if (enableLogging) {
+			if (ValidationUtils.isValid(e)) {
+				executor.execute(new Runnable() {
+					@Override
+					public void run() {
+						saveObject(e, e.getId(), indexName, userLoginType, false);
+					}
+				});
+			} else {
+				logger.error("Attempted to save a null G_UserLoginEvent!");
+			}
 		}
 		return;
 	}

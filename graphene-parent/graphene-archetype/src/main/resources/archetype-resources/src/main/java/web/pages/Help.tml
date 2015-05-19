@@ -1,0 +1,62 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;">]>
+<html t:type="graphene/layout" title="About ${appName}"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+<div class="row-fluid">
+	<div class="col-sm-12">
+		<h1>How to use ${appName}</h1>
+		<p>You are using ${appName} ${appVersion}</p>
+		<div class="row">
+			<div class="col-sm-6">
+				<div>
+					<h3 class="text-primary" style="margin: 20px, 0">Tutorial</h3>
+					<table class="table eg-1">
+						<tbody>
+							<tr>
+								<td>
+									<h1>Begin with Search</h1>
+									<p>Type a name or identifier into the search fields and hit
+										return, or click the magnifier icon</p>
+								</td>
+								<td class="info">Tip: use terms you would expect in to find
+									in the data.</td>
+							</tr>
+							<tr>
+								<td>
+									<h1>View results</h1>
+									<p>The list of results are provided as a sortable table
+										which can be filtered down and sorted by certain columns.
+										Because each cell may contain multiple fields pulled from each
+										result, sorting may not always be possible. In these cases,
+										use the filter box to narrow down your results.</p>
+
+									<p>Once you find a result you would like to see, click an
+										option from the report actions cell of the result you are
+										interested in.</p>
+								</td>
+
+							</tr>
+							<tr>
+								<td>
+									<h1>View a single result in detail</h1>
+									<p>
+										An abbreviation of the word attribute is <abbr
+											title="attribute">attr</abbr>.
+									</p>
+
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="col-sm-6"></div>
+		</div>
+		<p>Create a workspace, or choose from a previous one</p>
+		<p>Make changes to your workspace. Changes are saved
+			automatically.</p>
+
+	</div>
+</div>
+</html>

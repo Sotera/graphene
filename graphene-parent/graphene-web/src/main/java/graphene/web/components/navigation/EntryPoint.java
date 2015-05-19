@@ -4,13 +4,20 @@ import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 import graphene.util.validator.ValidationUtils;
+import graphene.web.pages.workspace.Manage;
 
 import java.util.List;
 
+import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.alerts.Duration;
+import org.apache.tapestry5.alerts.Severity;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.slf4j.Logger;
 
 public class EntryPoint {
 	@Property
@@ -20,15 +27,47 @@ public class EntryPoint {
 	private G_UserDataAccess userDataAccess;
 
 	@Property
+	@Persist
+	private boolean highlightZoneUpdates;
+	@Property
+	private String listWorkspaceId;
+	@Property
 	@SessionState(create = false)
 	protected List<G_Workspace> workspaces;
 	@Property
+	@SessionState(create = false)
+	protected G_Workspace currentlySelectedWorkspace;
+	@Property
+	// If we use @ActivationRequestParameter instead of @Persist, then our
+	// handler for filter form success would have
+	// to render more than just the listZone, it would have to render all other
+	// links and forms: it would need a zone
+	// around the "Create..." link so it could render it; and it would render
+	// the editorZone, which would be destructive
+	// if the user has been typing into Create or Update. Alternatively, it
+	// could use a custom JavaScript callback to
+	// update the partialName in all other links and forms - see
+	// AjaxResponseRenderer#addCallback(JavaScriptCallback).
+	@Persist
+	private String partialName;
+	@Property
 	protected boolean workspacesExists;
-
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_WORKSPACES)
 	@Property
 	private boolean workspacesEnabled;
+
+	@Inject
+	private Logger logger;
+
+	@Inject
+	private AlertManager alertManager;
+
+	@Property
+	private boolean currentSelectedWorkspaceExists;
+
+	@InjectPage
+	private Manage detailPage;
 
 	public boolean getWorkspacesAvailable() {
 		boolean available = false;
@@ -36,5 +75,38 @@ public class EntryPoint {
 			available = true;
 		}
 		return available;
+	}
+
+	public String getZoneUpdateFunction() {
+		return highlightZoneUpdates ? "highlight" : "show";
+	}
+
+	boolean onSelected(final String workspaceId) {
+
+		boolean foundById = false;
+		for (final G_Workspace w : workspaces) {
+			if (w.getId().equals(workspaceId)) {
+				currentlySelectedWorkspace = w;
+				foundById = true;
+			}
+		}
+		if (foundById) {
+			alertManager.alert(Duration.TRANSIENT, Severity.SUCCESS, "Changed to workspace "
+					+ currentlySelectedWorkspace.getTitle());
+		} else {
+			// Note, we also let an previously selected currentWorkspace
+			// stay the way it was.
+			final String warnMessage = "Unable to load workspace id " + workspaceId
+					+ ". Try a different workspace or create a new one.";
+			logger.warn(warnMessage);
+			alertManager.alert(Duration.SINGLE, Severity.WARN, "WARN: " + warnMessage);
+		}
+		return true;
+	}
+
+	Object onToCreate() {
+		detailPage.setAction("create");
+		// detailPage.initializeFor(detail);
+		return detailPage;
 	}
 }

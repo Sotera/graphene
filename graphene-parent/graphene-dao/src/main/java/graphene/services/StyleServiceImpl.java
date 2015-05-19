@@ -5,7 +5,7 @@ package graphene.services;
 
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.view.LegendItem;
+import graphene.model.idl.G_LegendItem;
 import graphene.util.ColorUtil;
 import graphene.util.validator.ValidationUtils;
 
@@ -88,6 +88,7 @@ public class StyleServiceImpl implements StyleService {
 	public String getHexColorForNode(final String key) {
 		String color = null;
 		if (!ValidationUtils.isValid(key)) {
+			logger.error("Invalid key!");
 			color = "#808080";
 		} else {
 			// Use presets if available
@@ -116,24 +117,25 @@ public class StyleServiceImpl implements StyleService {
 	}
 
 	@Override
-	public List<LegendItem> getLegendForReports() {
-		final List<LegendItem> list = new ArrayList<LegendItem>();
-		list.add(new LegendItem("Narrative", getStyle(G_CanonicalPropertyType.FREETEXT.name(), false),
-				"The narrative of the report"));
-		list.add(new LegendItem("Activity", getStyle(G_CanonicalPropertyType.EVENT.name(), false),
-				"The event or activity associated with this report."));
-		list.add(new LegendItem("Subject", getStyle(G_CanonicalPropertyType.ENTITY.name(), false),
-				"A person or group formally mentioned in the report."));
-		list.add(new LegendItem("Filing Institution", getStyle(G_CanonicalPropertyType.FILER.name(), false),
-				"The institution that filed the report."));
-		list.add(new LegendItem("Financial Institution", getStyle(G_CanonicalPropertyType.INSTITUTION.name(), false),
-				"An institution involved in the report."));
+	public List<G_LegendItem> getLegendForReports() {
+		final List<G_LegendItem> list = new ArrayList<G_LegendItem>();
+		list.add(new G_LegendItem("The narrative of the report", getStyle(G_CanonicalPropertyType.FREETEXT.name(),
+				false), "Narrative", null));
+		list.add(new G_LegendItem("The event or activity associated with this report.", getStyle(
+				G_CanonicalPropertyType.EVENT.name(), false), "Activity", null));
+		list.add(new G_LegendItem("A person or group formally mentioned in the report.", getStyle(
+				G_CanonicalPropertyType.NAME.name(), false), "Subject", null));
+		list.add(new G_LegendItem("The institution that filed the report.", getStyle(
+				G_CanonicalPropertyType.FILER.name(), false), "Filing Institution", null));
+		list.add(new G_LegendItem("An institution involved in the report.", getStyle(
+				G_CanonicalPropertyType.INSTITUTION.name(), false), "Financial Institution", null));
 
 		return list;
 	}
 
 	@Override
 	public String getStyle(final String nodeType, final boolean highlighted) {
+		// logger.debug("Getting Style for " + nodeType);
 		if (highlighted) {
 			return getHighlightStyle();
 		} else {
@@ -141,6 +143,7 @@ public class StyleServiceImpl implements StyleService {
 			if (s == null) {
 				final String color = getHexColorForNode(nodeType);
 				styleMap.put(nodeType, buildStyle(color, getContrastingColor(color)));
+				return s;
 			}
 			return styleMap.get(nodeType);
 		}
@@ -205,6 +208,7 @@ public class StyleServiceImpl implements StyleService {
 
 		numberOfDefinedColors = colorMap.size();
 		styleMap.clear();
+		styleMap.put("ERROR", buildStyle("#ff0", BLACK));
 		styleMap.put(G_CanonicalPropertyType.NAME.name(),
 				buildStyle(colorMap.get(G_CanonicalPropertyType.NAME.name()), WHITE));
 		styleMap.put(G_CanonicalPropertyType.EMAIL_ADDRESS.name(),

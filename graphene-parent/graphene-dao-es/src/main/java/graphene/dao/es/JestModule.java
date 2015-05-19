@@ -42,6 +42,11 @@ public class JestModule {
 
 	public static final String ES_READ_DELAY_MS = "graphene.es-read-delay-ms";
 
+	public static final String ES_INGEST_INDEX = "ingest_index";
+	public static final String ES_INGEST_TYPE = "ingest_type";
+	public static final String ES_INGEST_ENCODED_FILE_TYPE = "ingest_encoded_file_type";
+	public static final String ES_CROSSREFERENCE_TYPE = "crossreference_type";
+
 	private static JestHttpClient c;
 
 	public static void bind(final ServiceBinder binder) {
@@ -71,19 +76,19 @@ public class JestModule {
 		return c;
 	}
 
-	public void contributeApplicationDefaults(final MappedConfiguration<String, String> configuration) {
+	public void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
 		// Elastic Search defaults (if no es.properties file is provided)
 		// note that elastic search index names MUST be lower case!!!!
 		configuration.add(JestModule.ES_SERVER, "localhost:9200");
-		configuration.add(JestModule.ES_ENABLE_DISCOVERY, "false");
-		configuration.add(JestModule.ES_ENABLE_MULTITHREADED, "true");
+		configuration.add(JestModule.ES_ENABLE_DISCOVERY, false);
+		configuration.add(JestModule.ES_ENABLE_MULTITHREADED, true);
 		configuration.add(JestModule.ES_SEARCH_INDEX, "searchindex");
 		configuration.add(JestModule.ES_DEFAULT_TIMEOUT, "30s");
 		/**
 		 * The default for a ES refresh is 1 second (1000ms), which allows read
 		 * consistency.
 		 */
-		configuration.add(JestModule.ES_READ_DELAY_MS, "1000");
+		configuration.add(JestModule.ES_READ_DELAY_MS, 1000);
 
 		// Userspace defaults
 		configuration.add(JestModule.ES_USER_INDEX, "grapheneuser");

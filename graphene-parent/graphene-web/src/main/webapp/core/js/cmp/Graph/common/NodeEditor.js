@@ -84,7 +84,28 @@ Ext.define("DARPA.ElementEditor", {
 					value: config.eleRef.data("color"),
 					allowBlank: false
 				}]
-			}]
+			}
+			/*, {
+				xtype: 'container',
+				width: '100%',
+				border: false,
+				padding: '1 1 1 1',
+				layout: {
+					type: 'hbox',
+					pack: 'start',
+					align: 'center'
+				},
+				items: [{
+					xtype: 'textfield',
+					fieldLabel: "Image URL",
+					labelWidth: 60,
+					width: '100%',
+					name: 'ele_url',
+					value: config.eleRef.data("imgUrl"),
+					allowBlank: true
+				}]
+			}*/
+			]
 		});
 		
 		northPanel.getName = function() {
@@ -96,6 +117,9 @@ Ext.define("DARPA.ElementEditor", {
 		northPanel.getColor = function() {
 			return this.items.items[1].items.items[1].value;
 		};
+		//northPanel.getImgUrl = function() {
+		//	return this.items.items[2].items.items[0].value;
+		//};
 		
 		var dataForm = new Ext.Panel({
 			layout: "border",
@@ -163,6 +187,11 @@ Ext.define("DARPA.ElementEditor", {
 		var panel = Ext.getCmp("ele_values");
 		return panel.getColor();
 	},
+	
+	//getImgUrl: function() {
+	//	var panel = Ext.getCmp("ele_values");
+	//	return panel.getImgUrl();
+	//},
 	
 	getAttrs: function() {
 		var retVal = [];

@@ -16,6 +16,7 @@ public class EntityTreeButton {
 	@Property
 	@Parameter(required = true, autoconnect = true)
 	private String typeName;
+
 	@Property
 	@Parameter(required = false, autoconnect = true)
 	private String color;

@@ -64,7 +64,9 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			institution: config.institution
 		});
 		
-		config.bbar = Ext.create("Ext.ProgressBar", {
+		config.tbar.setDefaultLayoutBtn(self.GraphVis.CONSTANTS("defaultLayout"));
+		
+		config.bbar = Ext.create("DARPA.ProgressBar", {
 			text: "Ready",
 			id: config.id + "-ProgressBar",
 			height: 20,
@@ -117,12 +119,12 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	getStopButton : function() {
 		return this.getNodeDisplay().items.items[1].getStopButton();
 	},
-
-	setStatus: function(msg, progress) {
-		var prog = (progress == null || typeof progress == "undefined") ? 1 : progress;
-		this.getProgressBar().updateProgress(prog, msg);
+	
+	setStatus: function(msg) {
+		this.GraphVis.utils.updateProgress(msg);
 	},
 	
+	// FIXME: legacy
 	appendTabTitle: function(text) {
 		if (typeof text == "string" && text.length > 0) {
 			if (this.originalTitle == undefined || this.originalTitle == null) {
@@ -144,22 +146,13 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	
 	showjson: function(searchValue, useSaved) {
 		if (this.json != null && this.GraphVis.getGv() != null) {
-			this.GraphVis.showGraph(this.json, searchValue, useSaved);
+			this.GraphVis.load(this.json, searchValue, useSaved);
 		}
 	},
 	
 	// why is this even here?
 	applySettings: function() {
 		this.load(this.prevLoadParams.value); 
-	},
-	
-	afterLayout: function() {
-		// TODO implement in extended class
-	},
-	
-	afterRender: function() {
-		this.showjson();
-		this.callParent(arguments); // ?
 	},
 	
 	importGraph: function() {
@@ -185,7 +178,11 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		
 		var outPNG;
 		try {
-			outPNG = self.GraphVis.gv.png();
+			outPNG = self.GraphVis.utils.toPng({
+				// bg: background-color
+				// full: false = current viewport, true = entire graph
+				scale: 2
+			});
 		} catch (e) {
 			console.error("ERROR GETTING GRAPH PNG");
 			outPNG = undefined;
@@ -198,7 +195,6 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		
 		exportWindow.setGraphJSON(outJSON);
 		exportWindow.setGraphPNG(outPNG);
-		//TODO: work some magic with scope so you can build default file name with query parameters with this.getSearch().getName()
 		exportWindow.setFileName(self.graphType + "-" + self.prevLoadParams.searchValue);
 		exportWindow.show();
 		exportWindow.center();
@@ -238,6 +234,18 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	edgeRightClick: function(edge) {
 		// TODO: override in customization
 	},
+
+	setNodeVisibility: function(nodes, isVisible, isFilter) {
+		for (var i = 0; i < nodes.length; i++) {
+			this.GraphVis.setNodeVisibility(nodes[i], isVisible, isFilter);
+		}
+	},
+	
+	setEdgeVisibility: function(edges, isVisible, isFilter) {
+		for (var i = 0; i < edges.length; i++) {
+			this.GraphVis.setEdgeVisibility(edges[i], isVisible, isFilter);
+		}
+	},
 	
 	editElement: function(ele) {
 		var self = this;
@@ -272,6 +280,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 				// edges do not have a "name" field
 				if (ele.isNode()) {
 					ele.data({
+						//"imgUrl": window.getImgUrl(),
 						"name": window.getName(false)
 					});
 				}
@@ -465,7 +474,7 @@ Ext.define("DARPA.AbstractGraphPanel", {
 		if (typeof setTabTitle == "function") {
 			setTabTitle("" + id);
 		} else {
-			console.error("the function setTabTitle() has not yet been implemented in the .html");
+			console.log("the function setTabTitle() has not yet been implemented in the .html");
 		}
 	},
 	
@@ -478,29 +487,9 @@ Ext.define("DARPA.AbstractGraphPanel", {
 			if (typeof setTabTitle == "function") {
 				setTabTitle("" + prevId);
 			} else {
-				console.error("the function setTabTitle() has not yet been implemented in the .html");
+				console.log("the function setTabTitle() has not yet been implemented in the .html");
 			}
 		}
-	},
-	
-	hideNode: function(node) {
-		this.GraphVis.hideNode(node);
-		var unhideBtn = this.getUnHideButton();
-		if (unhideBtn) {
-			unhideBtn.setDisabled(false);
-		}
-	},
-	
-	unhide: function() {
-		//var self = this;
-		//if (self, prevNode) {
-		//	self.GraphVis.showNode(prevNode);
-		//	
-		//	var unhide = self.getUnHideButton();
-		//	if (unhide) {
-		//		unhide.setDisabled(true);
-		//	}
-		//}
 	},
 	
 	expand: function(node) {
@@ -508,34 +497,19 @@ Ext.define("DARPA.AbstractGraphPanel", {
 	},
 	
 	unexpand: function(node) {
-		this.GraphVis.unexpand1Hop(node);
-	},
-	
-	showDetail: function(nodeData) {
-		showEntityDetails(nodeData.idVal);
+		this.GraphVis.unexpand(node);
 	},
 	
 	applyFilter: function(searchItems, amount, fromDate, toDate) {
-		// applyFilter(this, searchItems, amount, fromDate, toDate);
-		var self = this;
-		// applyFilter(self, searchItems, amount, null, null);
-		// MFM from and todates set to null until entity graph has temporal data
-		applyFilter(self, searchItems, amount, fromDate, toDate);
-	},
-	
-	applyAdditionalFieldsFilter: function(filterItems, compareType) {
-		var self = this;
-		applyAdditionalFieldsFilter(self, filterItems, compareType);
+		this.GraphVis.getStateManager().applyFilter(searchItems);
 	},
 
 	clearFilter : function() {
-		clearFilter(this);
+		this.GraphVis.showAll(true);
+		this.GraphVis.gv.fit(); // ugh...
 	},
 
 	clear : function() {
-		var self = this;
-		if (self.GraphVis != null) {
-			self.GraphVis.clear();
-		}
-	},
+		this.GraphVis.clear();
+	}
 });

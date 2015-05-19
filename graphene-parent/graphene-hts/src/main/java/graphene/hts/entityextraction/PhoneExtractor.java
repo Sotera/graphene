@@ -2,18 +2,10 @@ package graphene.hts.entityextraction;
 
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class PhoneExtractor extends AbstractExtractor {
-	/*
-	 * http://stackoverflow.com/questions/2113908/what-regular-expression-will-match
-	 * -valid-international-phone-numbers
-	 */
-	private final static String RE_PHONE = "((9[976]\\d|8[987530]\\d|6[987]\\d|5[90]\\d|42\\d|3[875]\\d|2[98654321]\\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\\d{1,14})";
 	/*
 	 * http://stackoverflow.com/questions/123559/a-comprehensive-regex-for-phone-
 	 * number-validation
@@ -21,7 +13,7 @@ public class PhoneExtractor extends AbstractExtractor {
 	 * Here's a regex for a 7 or 10 digit number, with extensions allowed,
 	 * delimiters are spaces, dashes, or periods:
 	 */
-	private final static String RE_PHONE2 = "(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?";
+	private final static String RE_PHONE2 = "\\s((?<!(\\d|[,.]))(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?(?=\\D))";
 
 	/*
 	 * 
@@ -33,7 +25,7 @@ public class PhoneExtractor extends AbstractExtractor {
 	 * http://stackoverflow.com/questions/2113908/what-regular-expression-will-match
 	 * -valid-international-phone-numbers
 	 */
-	private final static String RE_PHONE4 = "(9[976]\\d|8[987530]\\d|6[987]\\d|5[90]\\d|42\\d|3[875]\\d|2[98654321]\\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*(\\d{1,2})";
+	private final static String RE_PHONE4 = "((?<!(\\d|[,.]))(9[976]\\d|8[987530]\\d|6[987]\\d|5[90]\\d|42\\d|3[875]\\d|2[98654321]\\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*\\d\\W*(\\d{1,2})(?=\\D))";
 
 	/*
 	 * http://stackoverflow.com/questions/123559/a-comprehensive-regex-for-phone-
@@ -41,16 +33,11 @@ public class PhoneExtractor extends AbstractExtractor {
 	 */
 	private final static String RE_PHONE5 = "(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[\\-\\.\\ \\\\\\/]?)?((?:\\(?\\d{1,}\\)?[\\-\\.\\ \\\\\\/]?){0,})(?:[\\-\\.\\ \\\\\\/]?(?:#|ext\\.?|extension|x)[\\-\\.\\ \\\\\\/]?(\\d+))?";
 
-	private final static String RE_PHONE6 = "((\\d{1,5}[\\s-.]*){2,5}})";
+	private final static String RE_PHONE6 = "((\\(?[1-9]\\d{2}\\)?[ -.])?\\D(([1-9]\\d{2}(?:-|\\s*)){1,2}[1-9]\\d{3}))\\b";
 
 	public PhoneExtractor() {
-		p = Pattern.compile(RE_PHONE6);
-	}
-
-	@Override
-	public List<G_EntityTag> getEntityTags() {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println(this.getClass().getCanonicalName() + " is Creating pattern " + RE_PHONE2);
+		p = Pattern.compile(RE_PHONE2);
 	}
 
 	@Override
@@ -64,12 +51,6 @@ public class PhoneExtractor extends AbstractExtractor {
 	}
 
 	@Override
-	public List<G_Property> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getRelationType() {
 		return G_CanonicalRelationshipType.COMMUNICATION_ID_OF.name();
 	}
@@ -77,5 +58,11 @@ public class PhoneExtractor extends AbstractExtractor {
 	@Override
 	public String getRelationValue() {
 		return "Potential Phone Number";
+	}
+
+	@Override
+	public String postProcessMatch(final String match) {
+		// TODO Auto-generated method stub
+		return super.postProcessMatch(match.replaceAll("[\\n\\s ,\\(\\)-.]", ""));
 	}
 }

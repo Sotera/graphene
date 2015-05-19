@@ -1,39 +1,30 @@
 
 
 
-<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-	xmlns:p="tapestry:parameter" id="grapheneLoginFormContainer">
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter"
+	id="grapheneLoginFormContainer">
 
 	<div class="well no-padding">
 		<t:form class="full-form smart-form client-form" t:id="grapheneLoginForm">
-			<header>
-				Sign In
-			</header>
+			<header> Sign In </header>
 			<div id="grapheneLoginMessage">${loginMessage}</div>
 			<fieldset>
 
 				<section>
-					<t:label for="grapheneLogin">${message:loginLabel}</t:label>
-					<label class="input">
-						<i class="icon-append fa fa-user"></i>
-						<t:textfield t:id="grapheneLogin" validate="required,minlength=3,maxlength=50">
-							<b class="tooltip tooltip-top-right">
-								<i class="fa fa-user txt-color-teal"></i>
-								Please enter username
+					<t:label for="usernamefield">${message:loginLabel}</t:label>
+					<label class="input"> <i class="icon-append fa fa-user"></i> <t:textfield t:id="usernamefield"
+							value="username" validate="required,minlength=3,maxlength=50">
+							<b class="tooltip tooltip-top-right"> <i class="fa fa-user txt-color-teal"></i> Please enter username.
 							</b>
 						</t:textfield>
 					</label>
 				</section>
 
 				<section>
-					<t:label for="graphenePassword">${message:passwordLabel}</t:label>
-					<label class="input">
-						<i class="icon-append fa fa-lock"></i>
-						<t:passwordfield  name="password" 
-							t:id="graphenePassword" t:validate="required,password">
-							<b class="tooltip tooltip-top-right">
-								<i class="fa fa-lock txt-color-teal"></i>
-								Enter your password
+					<t:label for="passwordfield">${message:passwordLabel}</t:label>
+					<label class="input"> <i class="icon-append fa fa-lock"></i> <t:passwordfield name="password"
+							type="password" value="userPassword" t:id="passwordfield" t:validate="required,password">
+							<b class="tooltip tooltip-top-right"> <i class="fa fa-lock txt-color-teal"></i> Enter your password
 							</b>
 						</t:passwordfield>
 					</label>
@@ -54,10 +45,7 @@
 				-->
 			</fieldset>
 			<footer>
-<!-- 				<input type="submit" id="grapheneEnter" value="${message:loginSubmit}"
-					class="btn btn-primary" /> -->
-				 <button type="submit" id="grapheneEnter" class="btn btn-primary" value="${message:loginSubmit}"> 
-					Sign in </button> 
+				<button type="submit" id="grapheneEnter" class="btn btn-primary" value="${message:loginSubmit}">Sign in</button>
 			</footer>
 		</t:form>
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="row">
+		<div class="col-sm-12">
+			<div style="float:left;">
+				<strong class="font-xl">${eventTypeName}</strong>
+				<strong>REPORT NO :</strong> 
+				<span>
+					${eventId} 
+				</span>
+			</div>
+			<div style="float:right">
+				<t:if test="datesOfEvents">
+					<div class="font-md">
+						<strong>DATE OF EVENT:</strong> 
+						<span> 
+							<t:loop source="datesOfEvents" value="currentDate">
+								<i class="fa fa-calendar"></i> ${currentDate}
+							</t:loop>
+						</span>
+					</div>
+				</t:if>
+				<t:if test="datesFiled">
+					<div class="font-md">
+						<strong>DATE FILED:</strong> 
+						<span> 
+							<t:loop source="datesFiled" value="currentDate">
+								<i class="fa fa-calendar"></i> ${currentDate}
+							</t:loop>
+						</span>
+					</div>
+				</t:if>
+				<t:if test="datesReceived">
+					<div class="font-md">
+						<strong>DATE RECEIVED:</strong> 
+						<span> 
+							<t:loop source="datesReceived" value="currentDate">
+								<i class="fa fa-calendar"></i> ${currentDate}
+							</t:loop>
+						</span>
+					</div>
+				</t:if>
+			</div>
+		</div>
+	</div>
+	<div class="well well-sm  bg-color-darken txt-color-white no-border">
+		<div class="fa-lg">
+			Total Involved : <span> ${totalAmount} USD** </span>
+		</div>
+	</div>
+</t:container>

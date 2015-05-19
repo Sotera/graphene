@@ -2,7 +2,7 @@ package graphene.web.components.ui;
 
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.StyleService;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.pages.CombinedEntitySearchPage;
@@ -140,7 +140,7 @@ public class MeaningfulBeanDisplay {
 
 	public Link getPivotLink() {
 		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, null, G_SearchType.COMPARE_EQUALS.name(), getPropertyValue().toString(),
+		final Link l = searchPage.set(null, null, G_Constraint.REQUIRED_EQUALS.name(), getPropertyValue().toString(),
 				defaultMaxResults);
 		return l;
 	}
@@ -196,27 +196,25 @@ public class MeaningfulBeanDisplay {
 		return model.get(propertyName).getConduit().get(object);
 	}
 
-	public boolean isPivotableType() {
-		
-		// match a value that looks like <numbers...>.X or <numbers...>.XX
-		boolean matchesMoney = getPropertyValue().toString().matches(
-			"^\\d+\\.[0-9]{1,2}$"
-		);
-
-		// match a value that resembles a date YYYY-MM-DD or YYYY/MM/DD or YYYY MM DD or YYYY.MM.DD
-		boolean matchesDate = getPropertyValue().toString().matches(
-			"^(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"
-		);
-		
-		return !(matchesMoney || matchesDate);
-	}
-	
 	public boolean isMeaningful(final Object obj) {
 
 		if ((obj == null) || (!ValidationUtils.isValid(obj.toString()) && !foundOneProperty)) {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean isPivotableType() {
+
+		// match a value that looks like <numbers...>.X or <numbers...>.XX
+		final boolean matchesMoney = getPropertyValue().toString().matches("^\\d+\\.[0-9]{1,2}$");
+
+		// match a value that resembles a date YYYY-MM-DD or YYYY/MM/DD or YYYY
+		// MM DD or YYYY.MM.DD
+		final boolean matchesDate = getPropertyValue().toString().matches(
+				"^(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$");
+
+		return !(matchesMoney || matchesDate);
 	}
 
 	void setupRender() {

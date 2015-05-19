@@ -1,10 +1,10 @@
 package graphene.dao;
 
 import graphene.model.idl.G_Entity;
-import graphene.model.query.EntityQuery;
+import graphene.model.idl.G_EntityQuery;
 
 import java.util.List;
 
 public interface EntityService {
-	public List<G_Entity> search(EntityQuery q);
+	public List<G_Entity> search(G_EntityQuery q);
 }

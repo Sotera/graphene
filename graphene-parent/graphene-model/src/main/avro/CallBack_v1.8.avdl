@@ -1,0 +1,10 @@
+/**
+*  @author djue@phy6.net
+*/
+@namespace("graphene.model.idl")
+protocol G_CallBack {
+	import idl "DataTypes_v1.8.avdl";
+	import idl "Search_v1.8.avdl";
+	boolean execute(G_SearchResult sr, G_EntityQuery q);
+}
+

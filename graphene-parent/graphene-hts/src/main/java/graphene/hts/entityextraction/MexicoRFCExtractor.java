@@ -2,10 +2,7 @@ package graphene.hts.entityextraction;
 
 import graphene.model.idl.G_CanonicalPropertyType;
 import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EntityTag;
-import graphene.model.idl.G_Property;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -20,10 +17,11 @@ public class MexicoRFCExtractor extends AbstractExtractor {
 	/*
 	 * http://www.regxlib.com/DisplayPatterns.aspx?cattabindex=3&categoryId=4
 	 */
-	private final static String RE_MEXICO_RFC = "(([A-Z|a-z|&amp;]{3}\\d{2}((0[1-9]|1[012])(0[1-9]|1\\d|2[0-8])|(0[13456789]|1[012])(29|30)|(0[13578]|1[02])31)|([02468][048]|[13579][26])0229)(\\w{2})([A|a|0-9]{1})$|^([A-Z|a-z]{4}\\d{2}((0[1-9]|1[012])(0[1-9]|1\\d|2[0-8])|(0[13456789]|1[012])(29|30)|(0[13578]|1[02])31)|([02468][048]|[13579][26])0229)((\\w{2})([A|a|0-9]{1})){0,3})";
+	private final static String RE = "(([A-Z|a-z|&amp;]{3}\\d{2}((0[1-9]|1[012])(0[1-9]|1\\d|2[0-8])|(0[13456789]|1[012])(29|30)|(0[13578]|1[02])31)|([02468][048]|[13579][26])0229)(\\w{2})([A|a|0-9]{1})$|^([A-Z|a-z]{4}\\d{2}((0[1-9]|1[012])(0[1-9]|1\\d|2[0-8])|(0[13456789]|1[012])(29|30)|(0[13578]|1[02])31)|([02468][048]|[13579][26])0229)((\\w{2})([A|a|0-9]{1})){0,3})";
 
 	public MexicoRFCExtractor() {
-		p = Pattern.compile(RE_MEXICO_RFC);
+		System.out.println(this.getClass().getCanonicalName() + " is Creating pattern " + RE);
+		p = Pattern.compile(RE);
 	}
 
 	@Override
@@ -33,7 +31,7 @@ public class MexicoRFCExtractor extends AbstractExtractor {
 
 	@Override
 	public String getNodetype() {
-		return "Extracted"+ G_CanonicalPropertyType.GOVERNMENTID.name();
+		return "Extracted" + G_CanonicalPropertyType.GOVERNMENTID.name();
 	}
 
 	@Override
@@ -44,17 +42,5 @@ public class MexicoRFCExtractor extends AbstractExtractor {
 	@Override
 	public String getRelationValue() {
 		return "Potential Mexican RFC";
-	}
-
-	@Override
-	public List<G_EntityTag> getEntityTags() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<G_Property> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

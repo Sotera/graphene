@@ -23,7 +23,7 @@
 @namespace("graphene.model.idl")
 
 protocol G_CommonDataTypes {
-	import idl "DataTypes_v1.7.avdl";
+	import idl "DataTypes_v1.8.avdl";
 
 	enum G_CanonicalPropertyType {
 	
@@ -68,6 +68,7 @@ protocol G_CommonDataTypes {
 	METRIC_IMPUTEDFROM,		//(413, "Imputed From", "imputedFrom"),
 	METRIC_PROVENANCE,		//(420, "Provenance", "provenance"),
 	METRIC_SCORE,			//(423, "Score", "score"),
+	MEDIA,
 	NAME,					//(6, "Name", "name"),
 	NODETYPE,				//(417, "Node Type", "nodeType"),
 	OCCUPATION,				//(418, "Occupation", "occupation"),
@@ -229,6 +230,8 @@ protocol G_CommonDataTypes {
 		CREATOR_OF,			// ENTITY to n
 		FRIEND_OF,			// ENTITY to ENTITY
 		ENEMY_OF,			// ENTITY to ENTITY
+		LIKES,
+		DISLIKES,
 		LOVES, 				// ENTITY to ENTITY
 		HATES, 				// ENTITY to ENTITY
 		KNOWS, 				// ENTITY to ENTITY
@@ -423,7 +426,23 @@ protocol G_CommonDataTypes {
 		long serverTime;
 
 	}
-	
-	
+	record G_LegendItem {
+		/** usually a longer explanation */
+		union {string, null} description;
+		/** the css style or hex color */
+		union {string, null} style;
+		/** the text that will be visible,REQUIRED */
+		string label;
+		/** the icon that will be visible */
+		union {string, null} icon;
+	}
+	record G_DocumentError {
+		/** title of the error */
+		string title;
+		/** description of the error */
+		union {string, null} description;
+		/** severity of the error */
+		union {string, null} severity;
+	}
 	
 }

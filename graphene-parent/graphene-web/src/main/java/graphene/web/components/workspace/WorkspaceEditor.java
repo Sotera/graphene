@@ -1,12 +1,12 @@
 package graphene.web.components.workspace;
 
+import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_ReportViewEvent;
-import graphene.model.idl.G_SearchTuple;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
-import graphene.model.query.EntityQuery;
 import graphene.util.ExceptionUtil;
 import graphene.util.time.JodaTimeUtil;
 import graphene.util.validator.ValidationUtils;
@@ -134,7 +134,9 @@ public class WorkspaceEditor {
 	@Property
 	private G_ReportViewEvent currentReport;
 	@Property
-	private EntityQuery currentQuery;
+	private G_EntityQuery currentQuery;
+	@Property
+	private G_PropertyMatchDescriptor currentPmd;
 	@Parameter(required = true)
 	@Property
 	private String workspaceId;
@@ -171,7 +173,7 @@ public class WorkspaceEditor {
 	// Handle event "cancelUpdate"
 
 	@Property
-	private G_SearchTuple<String> currentTuple;
+	private G_PropertyMatchDescriptor currentTuple;
 
 	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
 	// form render

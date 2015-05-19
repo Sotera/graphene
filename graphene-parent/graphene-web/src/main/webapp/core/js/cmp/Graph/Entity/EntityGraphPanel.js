@@ -4,7 +4,7 @@ Ext.define("DARPA.EntityGraphPanel", {
 	constructor: function(config) {
 		var self = this;
 		
-		this.GraphVis = new CytoGraphVis(config.id + "-ENTcygraph");
+		this.GraphVis = new CytoscapeGraphVis(config.id + "-ENTcygraph");
 		
 		var graphSettings = Ext.create("DARPA.GraphSettings", {
 			id: config.id + "-Settings"
@@ -13,32 +13,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 		graphSettings.setGraph(self);
 		
 		var filterSettings = Ext.create("DARPA.FilterSettings", {
-			id: config.id + "-Filter"
+			id: config.id + "-Filter",
+			graphRef: self
 		});
-		
-		filterSettings.setAdditionalFields([{
-			dispFieldName: "Node Color", 		dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode",	dataSourceType: "nodes", 	dataSourceField: "color"
-		}, {
-			dispFieldName: "Node Name", 		dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode", 	dataSourceType: "nodes", 	dataSourceField: "name"
-		}, {
-			dispFieldName: "Identifier Type", 	dispFieldType: "dropdown", 	dispFieldWidth: 100,
-			dispFieldChoices: "getfromnode", 	dataSourceType: "nodes", 	dataSourceField: "idType"
-		}, {
-			dispFieldName: "getfromkey", 	dispFieldType: "text", 		dispFieldWidth: 100,
-			dispFieldChoices: "", 			dataSourceType: "nodes", 	dataSourceField: "attrs"
-		}, {
-			dispFieldName: "Amount", 	dispFieldType: "text", 		dispFieldWidth: 100,
-			dispFieldChoices: "", 		dataSourceType: "edges", 	dataSourceField: "amount"
-		}, {
-			dispFieldName: "getfromkey", dispFieldType: "text", dispFieldWidth: 100,
-			dispFieldChoices: "", dataSourceType: "edges", dataSourceField: "attrs"
-		}]);
-		
-		filterSettings.setGraph(self);
-		filterSettings.enableTimeFilter(false); // TODO renable based on graph type or if data is temporally-based
-		filterSettings.setSearchFieldLabel("Identifiers(s)");
 		
 		var graphContainer = Ext.create("Ext.Container", {
 			width: 'auto',
@@ -52,6 +29,14 @@ Ext.define("DARPA.EntityGraphPanel", {
 			height: 'auto',
 			collapsible: true,
 			collapseDirection: 'right',
+			listeners: {
+				collapse: function(e) {
+					self.GraphVis.resize();
+				},
+				expand: function(e) {
+					self.GraphVis.resize();
+				}
+			},
 			items: [
 				Ext.create("Ext.panel.Panel", {
 					title: "DETAILS/ACTIONS",
@@ -73,7 +58,14 @@ Ext.define("DARPA.EntityGraphPanel", {
 							items: filterSettings
 						})
 					] // END settings/filter items
+				}),
+				/* Hide until it is complete *//*
+				Ext.create("DARPA.AdvancedQueryPanel", {
+					title: "ADV. QUERY",
+					id: config.id + "-AdvQuery",
+					graphRef: self.GraphVis
 				})
+				*/
 			] // END settings panel items
 		});
 		
@@ -96,16 +88,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 	afterLayout: function() {
 		var self = this;
 		if (self.GraphVis.getGv() == null) {
-			var config = {
-				//width: self.getWidth(),
-				//height: self.getHeight(),
-				rightBorder: 320,
-				leftBorder: 5,
-				topBorder: 5,
-				botBorder: 80
-			};
-			self.GraphVis.initGraph(config, self, function() {
-				self.showjson(self.prevLoadParams.value);
+			var config = {/* configs go here */};
+			self.GraphVis.init(config, self, function() {
+				//self.showjson(self.prevLoadParams.value);
 			}, true);
 		}
 		this.callParent(arguments); // ?
@@ -115,11 +100,13 @@ Ext.define("DARPA.EntityGraphPanel", {
 		var self = this;
 
 		// TODO write catch to make sure variable useSaved is a boolean
+		// useSaved = useSaved === true;
 		
 		var graphStore = self.graphStore;
 		var hops = self.getSettings().getMaxHops();
 		var degree = parseInt(hops);// + 1; //djue
-
+		var s = self.getSettings();
+		
 		self.json = null;
 		self.prevLoadParams.searchValue = self.prevLoadParams.value = self.prevLoadParams.prevValue = custno;
 		
@@ -132,6 +119,9 @@ Ext.define("DARPA.EntityGraphPanel", {
 
 		graphStore.proxy.extraParams.degree = degree;
 		graphStore.proxy.extraParams.useSaved = useSaved;
+		graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
+		graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
+		
 		graphStore.proxy.url = Config.entityGraphCSUrl + 'customer/' + custno;
 		
 		graphStore.load({
@@ -141,53 +131,56 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.getProgressBar().reset();
 
 				if (success == false || records == null || records.length == 0) {
-					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH");
-					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
-					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
+					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH", 0);
+					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH", 0);
+					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH", 0);
 					self.clear();
 					return;
 				}
 
-				self.setStatus("LOADED DATA", 1);
-				self.json = records[0].raw;
+				var retJSON = records[0].raw;
 				
-				self.legendJSON = records[0].raw.legend;
+				self.json = retJSON;
+				self.GraphVis.setUserName(retJSON.userName);
+				self.setStatus(retJSON.strStatus, 1);
+				
+				self.legendJSON = retJSON.legend;
 				if (typeof self.legendJSON == "string") {
 					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
 				var loadGraph = function(scope, useSaved) {
 					if (scope.GraphVis.getGv() != null) {
-						scope.clear();
+						//scope.clear();
 						scope.showjson(scope.prevLoadParams.value, useSaved);
+						scope.getNodeDisplay().updateLegend(scope.legendJSON, "EntityGraph");
 					}
 				};
 				
-				if (self.json != undefined) {
-					var THRESHOLD = 300;
-					var useSaved = false;
-					if (self.json.nodes.length == 0) {
-						self.setStatus("NO DATA FOUND TO PLOT");
-					} else if (self.json.nodes.length < THRESHOLD) {
-						useSaved = self.json.nodes[0].position != null;
-						loadGraph(self, useSaved);
-					} else {
-						useSaved = self.json.nodes[0].position != null;
-						Ext.Msg.confirm(
-							"Loading a Large Graph",
-							"The expected graph contains over " + THRESHOLD + " nodes.  This may take a moment to render.  Do you wish to wait?\n" +
-							"If not, the graph will not render.",
-							function(ans) {
-								if (ans == 'yes') {
-									loadGraph(self, useSaved);
-								}
+				if (typeof self.json == "undefined" || self.json.nodes.length <= 0) {
+					//TODO error notice
+					console.log("Problem with Entity graph - No nodes to load");
+					return;
+				}
+				
+				var THRESHOLD = 300;
+				var useSaved = false;
+				
+				if (self.json.nodes.length < THRESHOLD) {
+					useSaved = self.json.nodes[0].position != null;
+					loadGraph(self, useSaved);
+				} else {
+					useSaved = self.json.nodes[0].position != null;
+					Ext.Msg.confirm(
+						"Loading a Large Graph",
+						"The expected graph contains over " + THRESHOLD + " nodes.  This may take a moment to render.  Do you wish to wait?\n" +
+						"If not, the graph will not render.",
+						function(ans) {
+							if (ans == 'yes') {
+								loadGraph(self, useSaved);
 							}
-						);
-					}
-					
-					var nodeCount = self.json.nodes.length;
-					self.appendTabTitle("(" + nodeCount.toString() + ")");
-					self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
+						}
+					);
 				}
 			}
 		});
@@ -199,20 +192,19 @@ Ext.define("DARPA.EntityGraphPanel", {
 		var s = self.getSettings();
 		var maxNewCallsAlertThresh = 30; // Adjust as needed
 		
-		graphStore.proxy.extraParams.degree = 1; // labelled hops. only 1 hop out from this node
+		graphStore.proxy.extraParams.degree = 1; // labeled hops. only 1 hop out from this node
 		graphStore.proxy.extraParams.maxEdgesPerNode = s.getMaxEdgesPerNode();
 		graphStore.proxy.extraParams.maxNodes = s.getMaxNodes();
-		if (graphStore.proxy.extraParams.maxNodes > 200) {
-			graphStore.proxy.extraParams.maxNodes = 200; // hard limit for this case
-		}
+		graphStore.proxy.extraParams.minWeight = s.getMinWeight();
+		
 		if (maxNewCallsAlertThresh > graphStore.proxy.extraParams.maxEdgesPerNode) {
 			maxNewCallsAlertThresh = graphStore.proxy.extraParams.maxEdgesPerNode;
 		}
-		graphStore.proxy.extraParams.minWeight = s.getMinWeight();
-
+		
 		if (intype == null || intype.length == 0) {
 			intype = "customer";
 		}
+		
 		graphStore.proxy.extraParams.Type = intype;
 
 		// FIXME: REST services don't seem to like properly encoded symbols. Re-address when time permits
@@ -237,50 +229,39 @@ Ext.define("DARPA.EntityGraphPanel", {
 				self.getProgressBar().reset();
 				
 				if (success == false || records == null || records.length == 0) {
-					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH");
-					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH");
-					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH");
+					if (success == false) self.setStatus("SERVER ERROR REQUESTING GRAPH", 0);
+					else if (records == null) self.setStatus("SERVER RETURNED NULL GRAPH", 0);
+					else if (records.length == 0) self.setStatus("SERVER RETURNED EMPTY GRAPH", 0);
 					self.clear();
 					return;
 				}
 
-				self.setStatus("LOADED DATA", 1);
-				self.json = records[0].raw;;
+				var retJSON = records[0].raw;
+				
+				self.json = retJSON;
+				self.setStatus(retJSON.strStatus, 1);
 
-				self.legendJSON = records[0].raw.legend;
+				self.legendJSON = retJSON.legend;
 				if (typeof self.legendJSON == "string") {
 					self.legendJSON = Ext.decode(self.legendJSON);
 				} // else assume JSON
 				
-				// results could be empty, check for this here
-				if (self.json && self.json.nodes.length <= 2) { 
-					self.setStatus("No additional items were found for this id.");
-					self.json1HopNode = null;
-					// don't alter the existing graph
-				} else {
-					// should be self.json.nodes.length
-					if (self.json.length > maxNewCallsAlertThresh) {
-						Ext.Msg.confirm(
-							'Confirm',
-							'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
-							function(ans) {
-								if (ans == 'yes') {
-									self.GraphVis.showGraph1Hop(self.json, node);
-									self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
-								}
+				// should be self.json.nodes.length
+				if (self.json.length > maxNewCallsAlertThresh) {
+					Ext.Msg.confirm(
+						'Confirm',
+						'This value has more than ' + maxNewCallsAlertThresh + ' items and may clutter the display. Do you want to continue displaying it?',
+						function(ans) {
+							if (ans == 'yes') {
+								self.GraphVis.expand(self.json, node);
+								self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 							}
-						);
-					} else {
-						self.GraphVis.showGraph1Hop(self.json, node);
-						self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
-					}
+						}
+					);
+				} else {
+					self.GraphVis.expand(self.json, node);
+					self.getNodeDisplay().updateLegend(self.legendJSON, "EntityGraph");
 				}
-
-				var nodeCount = self.json.nodes.length;
-				self.appendTabTitle("(" + nodeCount.toString() + ")");
-				
-				// Update title to display the communicationId value and value of nodes found
-				// self.updateTitle(graph.nodes.length, self.prevLoadParams.value );
 			}
 		});
 	},
@@ -298,7 +279,12 @@ Ext.define("DARPA.EntityGraphPanel", {
 		} else {
 			isEntity = (type == 'customer' || type == 'LENDER' || type == 'BORROWER');
 		}
-		nodeDisp.enablePivot(isEntity);
+		
+		var len = this.GraphVis.getSelectedNodes().length;
+		var msg = "" + len + " selected node" + ((len > 1) ? "s" : "");
+		this.setStatus(msg, 1);
+		
+		nodeDisp.enablePivot(isEntity && len == 1);
 		nodeDisp.enableShow(type == 'account' || isEntity);
 		nodeDisp.enableHide(true);
 	},

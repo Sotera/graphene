@@ -1,7 +1,7 @@
 package graphene.introspect;
 
+import graphene.dao.sql.DBConnectionPoolService;
 import graphene.util.ExceptionUtil;
-import graphene.util.db.DBConnectionPoolService;
 
 import java.io.File;
 import java.io.IOException;

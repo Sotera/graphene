@@ -40,6 +40,8 @@ public interface UserWorkspaceDAO {
 
 	List<G_UserWorkspace> getByWorkspaceId(String id);
 
+	List<G_Workspace> getMostRecentWorkspacesForUser(String userId, int quantity);
+
 	List<G_User> getUsersForWorkspace(String workspaceId);
 
 	List<G_Workspace> getWorkspacesForUser(String userId);

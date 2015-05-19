@@ -2,6 +2,7 @@ package graphene.rest.ws.impl;
 
 import graphene.rest.ws.UDSessionRS;
 import graphene.util.FastNumberUtils;
+import graphene.util.validator.ValidationUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.services.ApplicationGlobals;
 //import org.apache.tapestry5.ioc.annotations.Inject;
 //import org.apache.tapestry5.services.ApplicationGlobals;
@@ -38,11 +40,11 @@ public class UDSessionRSImpl implements UDSessionRS {
 
 	@Inject
 	private ApplicationGlobals globals; // For the ServletContext
+
 	private ServletContext servletContext = null;
 	private final String ROOTNAME = "UDS"; // The root namespace of the File
 											// Store or the DB store for user
 											// defined sessions
-
 	boolean useFileStore = true; // set to True when using File storage for the
 									// sessions
 									// set to False when using DB/no-sql storage
@@ -259,10 +261,18 @@ public class UDSessionRSImpl implements UDSessionRS {
 		try {
 			inStream = new FileInputStream(fullFileName);
 			sessionData = IOUtils.toString(inStream);
-			inStream.close();
 
 		} catch (final Exception gfe) {
 			logger.error("getSessionFromFile: Failed to read file. Details: " + gfe.getLocalizedMessage());
+		} finally {
+			if (ValidationUtils.isValid(inStream)) {
+				try {
+					inStream.close();
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 
 		// TODO get the data for the sessionId
@@ -482,8 +492,6 @@ public class UDSessionRSImpl implements UDSessionRS {
 		return sessions;
 	}
 
-	// =============== Public Methods ================
-
 	// getSessionsByuserId - Get the list of user-defined sessions for the
 	// specified userId
 	// @GET
@@ -540,6 +548,8 @@ public class UDSessionRSImpl implements UDSessionRS {
 		final Response responseOut = response.build();
 		return responseOut;
 	}
+
+	// =============== Public Methods ================
 
 	private List<String> getSessionsForuserId(final String rootName, final String userId) {
 		final List<String> sessions = new ArrayList<String>();
@@ -662,6 +672,11 @@ public class UDSessionRSImpl implements UDSessionRS {
 		responsesb.append("]");
 		response = responsesb.toString();
 		return response;
+	}
+
+	@PostInjection
+	public void initialize() {
+		logger.debug("UD Session Server now available");
 	}
 
 	// save - Save a user-defined session or graph layout

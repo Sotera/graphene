@@ -83,12 +83,35 @@ public class G_SymbolConstants {
 	public static final String DEFAULT_MAX_GRAPH_NODES = "graphene.default-max-graph-nodes";
 
 	public static final String DEFAULT_MAX_GRAPH_EDGES_PER_NODE = "graphene.default-max-graph-edges-per-node";
-
+	public static final String DEFAULT_MIN_SCORE = "0.75";
 	public static final String DEFAULT_ADMIN_GROUP_NAME = "graphene.default-admin-group-name";
+	/**
+	 * This is the role a user from an LDAP would have, which corresponds to the
+	 * admininstrator role.
+	 */
+	public static final String EXTERNAL_ADMIN_ROLE_NAME = "graphene.external-admin-role-name";
+	public static final String EXTERNAL_USER_ROLE_NAME = "graphene.external-user-role-name";
 	public static final String ENABLE_AUTO_LOGIN = "graphene.enable-auto-login";
 	public static final String AUTO_LOGIN_USERNAME = "graphene.auto-login-name";
 
+	public static final String ENABLE_LOGGING = "graphene.enable-logging";
 	public static final String REQUIRE_AUTHENTICATION = "graphene.require-authentication";
+
+	/**
+	 * Input validation symbols
+	 */
+	public static final String USER_PASSWORD_VALIDATION = "graphene.user-password-validation";
+	public static final String USER_PASSWORD_VALIDATION_MESSAGE = "graphene.user-password-validation-message";
+
+	public static final String USER_NAME_VALIDATION = "graphene.user-name-validation";
+	public static final String USER_NAME_VALIDATION_MESSAGE = "graphene.user-name-validation-message";
+
+	public static final String WORKSPACE_NAME_VALIDATION = "graphene.workspace-name-validation";
+	public static final String WORKSPACE_NAME_VALIDATION_MESSAGE = "graphene.workspace-name-validation-message";
+
+	public static final String APPLICATION_MANAGED_SECURITY = "graphene.application-managed-security";
+
+	public static final String INHERIT_NODE_ATTRIBUTES = "graphene.inherit-node-attributes";
 
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub

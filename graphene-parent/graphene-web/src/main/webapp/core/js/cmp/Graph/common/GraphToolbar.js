@@ -30,22 +30,18 @@ Ext.define("DARPA.GraphToolbar", {
 					},
 					params : {
 						"seed" : gr.prevLoadParams.value,
-						"username" : "unknownClient",
+						"username" : gr.GraphVis.getUserName(),
 						"timestamp" : new Date().getTime()
 					},
 					jsonData: Ext.encode(json),
 					scope : gr,
 					success : function(resp) {
 						console.log("Persist POST success. " + resp.responseText);
-						
-						var pb = scope.up().getProgressBar();
-						if (pb) pb.updateProgress(1, "Graph state persisted");
+						gr.GraphVis.utils.updateProgress("Graph state persisted", 1);
 					},
 					failure : function(resp) {
 						console.log("Persist POST failure.");
-						
-						var pb = scope.up().getProgressBar();
-						if (pb) pb.updateProgress(0, "Error in persisting graph state");
+						gr.GraphVis.utils.updateProgress("Error in persisting graph state", 0);
 					}
 				});
 			}
@@ -192,7 +188,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("grid", {
 					// layout config options go here
 				});
-			}
+			},
+			nickname: "grid",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var hierarch_default = {
@@ -209,7 +207,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("breadthfirst", {
 					// layout config options go here
 				});
-			}
+			},
+			nickname: "breadthfirst",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var hierarch_circle = {
@@ -226,7 +226,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("breadthfirst", {
 					circle : true
 				});
-			}
+			},
+			nickname: "breadthfirst",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var cose_anim = {
@@ -243,7 +245,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("cose", {
 					// layout config options go here
 				});
-			}
+			},
+			nickname: "cose",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var cose_unanim = {
@@ -260,7 +264,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("cose", {
 					refresh : 0
 				});
-			}
+			},
+			nickname: "cose",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var arbor_anim = {
@@ -277,7 +283,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("arbor-snow", {
 					liveUpdate : true
 				});
-			}
+			},
+			nickname: "arbor-snow",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var arbor_unanim = {
@@ -294,7 +302,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("arbor-snow", {
 					liveUpdate : false
 				});
-			}
+			},
+			nickname: "arbor-snow",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var arbor_wheel_anim = {
@@ -311,7 +321,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("arbor-wheel", {
 					liveUpdate : true
 				});
-			}
+			},
+			nickname: "arbor-wheel",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var arbor_wheel_unanim = {
@@ -328,7 +340,9 @@ Ext.define("DARPA.GraphToolbar", {
 				gr.GraphVis.changeLayout("arbor-wheel", {
 					liveUpdate : false
 				});
-			}
+			},
+			nickname: "arbor-wheel",
+			isDefault: false // determined by GUI initialization
 		};
 		
 		var inst_label = {
@@ -379,7 +393,6 @@ Ext.define("DARPA.GraphToolbar", {
 					"</ul>" +
 					"<b>Import</b> - Import a graph in JSON format to replace the graph currently displayed." + "<br>" + 
 					"<b>Export</b> - Export your current graph as a .PNG image or a .JSON file for use elsewhere." + "<br>" + 
-					//"<b>Snap To Graph</b> - Automatically pans back to the graph, setting it to fit the display without adjusting the existing layout." + "<br>" +
 					"<hr>" +
 					/* Grid layout help */
 					"<img src='" + Config.coreImagesUrl + "grid_icon.png'></img>" + "<b>Grid Layout</b> - Place the nodes in an evenly spaced grid to fill the display bounds." + "<br>" +
@@ -492,12 +505,16 @@ Ext.define("DARPA.GraphToolbar", {
 		return Ext.getCmp(this.id + "-HELP");
 	},
 	
-	getEnabledLayoutBtn: function() {
-		var btns = [
+	getLayoutButtons: function() {
+		return [
 			this.getGridBtn(), this.getHierarchyBtn(), this.getHierarchyCircleBtn(), 
 			this.getCoseAnimBtn(), this.getCoseBtn(), this.getArborAnimBtn(), 
 			this.getArborBtn(), this.getArborWheelAnimBtn(), this.getArborWheelBtn()
 		];
+	},
+	
+	getEnabledLayoutBtn: function() {
+		var btns = this.getLayoutButtons();
 		
 		for (var i = 0; i < btns.length; i++) {
 			var btn = btns[i];
@@ -506,5 +523,32 @@ Ext.define("DARPA.GraphToolbar", {
 			}
 		}
 		return null;
+	},
+	
+	getDefaultLayoutBtn: function() {
+		var btns = this.getLayoutButtons();
+		
+		for (var i = 0; i < btns.length; i++) {
+			var btn = btns[i];
+			if (btn.isDefault == true) {
+				return btn;
+			}
+		}
+		return null;
+	},
+	
+	setDefaultLayoutBtn: function(nickname) {
+		var btns = this.getLayoutButtons();
+
+		// FIXME
+		// given how the layout manager names are constrained, this iterator will prefer
+		// the animated version of a layout over its unanimated counterpart
+		for (var i = 0; i < btns.length; i++) {
+			var btn = btns[i];
+			if (btn.nickname.toLowerCase() == nickname.toLowerCase()) {
+				btn.isDefault = true;
+				break;
+			}
+		}
 	}
 });

@@ -1,7 +1,6 @@
 <!DOCTYPE html [<!ENTITY amp "&#38;"> <!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> <!ENTITY times "&#215;"> ]>
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
 	xmlns:p="tapestry:parameter">
 
 <t:content>
@@ -9,19 +8,18 @@
 		<div id="logo-group">
 
 			<!-- PLACE YOUR LOGO HERE -->
-			<span id="logo"> <img src="${imgLogoWideDark}"
-				alt="${appName} ${appVersion}" title="${appName} ${appVersion}" />
+			<span id="logo"> <img src="${imgLogoWideDark}" alt="${appName} ${appVersion}" title="${appName} ${appVersion}" />
 			</span>
 			<!-- END LOGO PLACEHOLDER -->
 
 			<!-- <t:graphene.navigation.useractivity /> -->
 
 		</div>
-<t:if test="workspacesEnabled">
-		<!-- projects dropdown -->
-		<div t:type="graphene/navigation/recentworkspaces" t:user="user"></div>
-		<!-- end projects dropdown -->
-</t:if>
+		<t:if test="workspacesEnabled">
+			<!-- projects dropdown -->
+			<div t:type="graphene/navigation/recentworkspaces" t:user="user"></div>
+			<!-- end projects dropdown -->
+		</t:if>
 
 
 
@@ -30,20 +28,14 @@
 
 			<!-- collapse menu button -->
 			<div id="hide-menu" class="btn-header pull-right">
-				<span> <a href="javascript:void(0);" title="Collapse Menu">
-						<i class="fa fa-reorder"></i>
+				<span> <a href="javascript:void(0);" title="Collapse Menu"> <i class="fa fa-reorder"></i>
 				</a>
 				</span>
 			</div>
 			<!-- end collapse menu -->
 
 			<!-- logout button -->
-			<div id="logout" class="btn-header transparent pull-right">
-				<span> <a href="login.html" title="Sign Out"> <i
-						class="fa fa-sign-out"></i>
-				</a>
-				</span>
-			</div>
+			<t:graphene.security.logout />
 			<!-- end logout button -->
 
 
@@ -52,7 +44,7 @@
 
 		</div>
 		<!-- end pulled right: nav area -->
-		
+
 	</header>
 </t:content>
 </html>

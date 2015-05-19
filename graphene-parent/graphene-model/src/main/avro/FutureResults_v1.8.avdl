@@ -1,0 +1,122 @@
+/**
+ * Copyright (c) 2013 Oculus Info Inc. 
+ * http://www.oculusinfo.com/
+ * 
+ * Released under the MIT License.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@namespace("graphene.model.idl")
+
+/**
+ This defines an API for 
+ */
+protocol G_FutureResults {
+	import idl "DataTypes_v1.8.avdl";
+	
+	/**
+	 Set a timeout for the task.
+	 
+	 Service URL: /future/timeout
+	 HTTP Method: POST and GET
+	 
+	 @param future 		the future returned from the original call
+	 @param timeout		once set, task will terminate after specified time (in seconds)
+	 */
+	void setTimeout(
+		G_Future future,
+		long timeout
+	);
+
+	/**
+	 Execution state of task.
+	 
+	 Service URL: /future/completed
+	 HTTP Method: POST and GET
+	 
+	 @param future 		the future returned from the original call
+	 @return 			false while still processing, true if completed (successfully or not)	
+	 */
+	boolean getCompleted(
+		G_Future future
+	);
+
+	/**
+	 Error occured during task.
+	 
+	 Service URL: /future/error
+	 HTTP Method: POST and GET
+	 
+	 @param future 		the future returned from the original call
+	 @return 			if the task completed due to an error, a description of the error
+	 */
+	union{string,null} getError(
+		G_Future future
+	);
+	
+	/**
+	 Estimated progress of task.
+	 
+	 Service URL: /future/progress
+	 HTTP Method: POST and GET
+	 
+	 @param future 		the future returned from the original call
+	 @return 			estimated progress of the task (in seconds), negative if unknown
+	 */
+	double getProgress(
+		G_Future future
+	);
+	
+	/**
+	 Estimated duration of task, or time remaining (if in progress).
+	 Must be a valid time. Use an estimated order of magnitude if exact times aren't known.
+	 
+	 Service URL: /future/duration
+	 HTTP Method: POST and GET
+	 
+	 @param future 		the future returned from the original call
+	 @return 			estimated duration (or time remaining) of the task (in seconds)
+	 */
+	long getExpectedDuration(
+		G_Future future
+	);
+	
+	/**
+	 Stop/cancel a running task. No effect if task is completed.
+	 
+	 Service URL: /future/stop
+	 HTTP Method: POST and GET
+	 
+	 @param future 		the future returned from the original call
+	 */
+	void stop(
+		G_Future future
+	);
+
+	/**
+	 List the running (or recently completed but not garbage collected) tasks.
+	 
+	 Service URL: /future/list
+	 HTTP Method: POST and GET
+	 
+	 @return			list of running (or recently completed) futures
+	 */
+	array<G_Future> getFutures(
+	);
+}

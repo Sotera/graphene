@@ -1,22 +1,9 @@
 package graphene.dao;
 
 import graphene.model.idl.G_CanonicalPropertyType;
-import graphene.model.idl.G_CanonicalRelationshipType;
-import graphene.model.idl.G_EdgeType;
-import graphene.model.idl.G_EdgeTypeAccess;
-import graphene.model.idl.G_IdType;
-import graphene.model.idl.G_NodeTypeAccess;
 import graphene.model.idl.G_PropertyKey;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_SymbolConstants;
-import graphene.model.idl.G_UserDataAccess;
-import graphene.services.EventServerImpl;
-import graphene.services.FederatedEventGraphImpl;
-import graphene.services.FederatedPropertyGraphImpl;
-import graphene.services.G_EdgeTypeAccessImpl;
-import graphene.services.G_NodeTypeAccessImpl;
-import graphene.services.G_PropertyKeyTypeAccessImpl;
-import graphene.services.UserServiceImpl;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -34,13 +21,6 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 public class DAOModule {
 
 	public static void bind(final ServiceBinder binder) {
-		binder.bind(G_UserDataAccess.class, UserServiceImpl.class).eagerLoad();
-		binder.bind(EventServer.class, EventServerImpl.class);
-		binder.bind(FederatedPropertyGraphServer.class, FederatedPropertyGraphImpl.class);
-		binder.bind(FederatedEventGraphServer.class, FederatedEventGraphImpl.class);
-		binder.bind(G_NodeTypeAccess.class, G_NodeTypeAccessImpl.class);
-		binder.bind(G_EdgeTypeAccess.class, G_EdgeTypeAccessImpl.class);
-		binder.bind(G_PropertyKeyTypeAccess.class, G_PropertyKeyTypeAccessImpl.class);
 
 	}
 
@@ -63,26 +43,7 @@ public class DAOModule {
 		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_ACCOUNT, "admin");
 		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_EMAIL, "admin@mycompany.com");
 		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_PASSWORD, "password123");
-	}
 
-	@Contribute(G_EdgeTypeAccess.class)
-	public static void contributeEdgeTypes(final MappedConfiguration<String, G_EdgeType> configuration) {
-		for (final G_CanonicalRelationshipType e : G_CanonicalRelationshipType.values()) {
-			final G_EdgeType n = new G_EdgeType(e.name(), e.name(), e.toString(), (long) e.ordinal());
-			configuration.add(e.name(), n);
-		}
-	}
-
-	@Contribute(G_NodeTypeAccess.class)
-	public static void contributeNodeTypes(final MappedConfiguration<String, G_IdType> configuration) {
-		long i = 0;
-		for (final G_CanonicalPropertyType e : G_CanonicalPropertyType.values()) {
-			// XXX:Fix me
-			final G_IdType n = G_IdType.newBuilder().setName(e.name()).setIndex(i).setShortName(e.name())
-					.setFriendlyName(e.name()).setTableSource("MyTable").build();
-			i++;
-			configuration.add(e.name(), n);
-		}
 	}
 
 	@Contribute(G_PropertyKeyTypeAccess.class)

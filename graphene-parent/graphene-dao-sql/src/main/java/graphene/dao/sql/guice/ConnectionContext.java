@@ -1,6 +1,6 @@
 package graphene.dao.sql.guice;
 
-import graphene.util.db.DBConnectionPoolService;
+import graphene.dao.sql.DBConnectionPoolService;
 
 import java.sql.Connection;
 import java.sql.SQLException;

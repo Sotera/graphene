@@ -504,6 +504,27 @@ public class StringUtils {
 	}
 
 	/**
+	 * Similar to the other method, but allows a variable list of objects.
+	 * 
+	 * @param delimiter
+	 * @param array
+	 * @return
+	 */
+	public static String toDelimitedString(final String delimiter, final Object... array) {
+		if ((array == null) || (array.length == 0)) {
+			return EMPTY_STRING;
+		}
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < array.length; i++) {
+			if (i > 0) {
+				sb.append(delimiter);
+			}
+			sb.append(array[i]);
+		}
+		return sb.toString();
+	}
+
+	/**
 	 * Tokenize the given String into a String array via a StringTokenizer.
 	 * Trims tokens and omits empty tokens.
 	 * <p>

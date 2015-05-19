@@ -1,6 +1,6 @@
 package graphene.dao;
 
-import graphene.model.view.LegendItem;
+import graphene.model.idl.G_LegendItem;
 
 import java.awt.Color;
 import java.util.List;
@@ -55,7 +55,7 @@ public interface StyleService {
 	 */
 	public abstract String getHighlightStyle();
 
-	public abstract List<LegendItem> getLegendForReports();
+	public abstract List<G_LegendItem> getLegendForReports();
 
 	/**
 	 * This is a combination of get HighlightStyle (if the bool is true) and get

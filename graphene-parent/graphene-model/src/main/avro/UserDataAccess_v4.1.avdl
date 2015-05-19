@@ -89,8 +89,28 @@ protocol G_UserDataAccess {
 	G_Workspace getWorkspace(string userId, string workspaceId)
 			throws UnauthorizedActionException;
 
+			
+	/**
+	 * Retrieves the workspaces for the user.
+	 */
 	array<G_Workspace> getWorkspacesForUser(string userId);
 
+	/**
+	 * Retrieves the latest (by date) n workspaces for the user.
+	 * 
+	 * @param username
+	 * @param quantity the number of workspaces to get.
+	 * @return a list of workspaces for the user, latest first.
+	 * @throws UnauthorizedActionException
+	 *             if the user is not a creator, editor or reviewer of the
+	 *             workspace. (also if the workspace or user ids supplied were
+	 *             not valid)
+	 */
+	array<G_Workspace> getLatestWorkspacesForUser(string userId, int quantity);
+
+	
+	
+	
 	/**
 	 * Finds the user and checks to see if the password hashes match. If the
 	 * user is not found or the hashes don't match, then an exception is thrown
@@ -167,13 +187,6 @@ protocol G_UserDataAccess {
 	 */
 	G_Workspace saveWorkspace(string userId, G_Workspace workspace) throws UnauthorizedActionException;
 	
-	/**
-	 * Returns the most recently modified workspace for this user, or null if there are no workspaces for the user.
-	 * 
-	 * @param username
-	 */
-	G_Workspace getMostRecentWorkspaceForUserId(string userId);
-
 	/**
 	 * Return true if the password was able to be set.
 	 */

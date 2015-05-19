@@ -1,7 +1,7 @@
 package graphene.web.components.navigation;
 
 import graphene.dao.DataSourceListDAO;
-import graphene.model.idl.G_SearchType;
+import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.pages.CombinedEntitySearchPage;
@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
@@ -47,7 +48,7 @@ public class GlobalSearch {
 	@Inject
 	private AlertManager alertManager;
 
-	@Persist
+	@Persist(PersistenceConstants.CLIENT)
 	@Property
 	private String searchValue;
 
@@ -69,9 +70,10 @@ public class GlobalSearch {
 			selectedMaxResults = defaultMaxResults;
 		}
 		if (ValidationUtils.isValid(searchValue)) {
-			G_SearchType searchtype = G_SearchType.COMPARE_CONTAINS;
+			G_Constraint searchtype = G_Constraint.COMPARE_CONTAINS;
+
 			if (searchValue.startsWith("\"") && searchValue.endsWith("\"")) {
-				searchtype = G_SearchType.COMPARE_EQUALS;
+				searchtype = G_Constraint.REQUIRED_EQUALS;
 			}
 			final Link link = searchPage.set(dao.getDefaultSchema(), selectedType, searchtype.name(), searchValue,
 					selectedMaxResults);
@@ -80,10 +82,16 @@ public class GlobalSearch {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Please enter a valid search value.");
 		}
 		if (!ValidationUtils.isValid(retval)) {
-			alertManager.alert(Duration.TRANSIENT, Severity.WARN,
-					"There is no search broker configured for this instance of Graphene");
+//			alertManager.alert(Duration.TRANSIENT, Severity.WARN,
+//					"There is no search broker configured for this instance of Graphene");
 		}
 		return retval;
+	}
+
+	void onValidateFromGlobalSearchForm() {
+		// The searchValue must be valid -- no script tags, etc.
+		// The search type must be a valid type from the list
+		// The search number must be a valid number from the list.
 	}
 
 	@SetupRender
@@ -94,9 +102,6 @@ public class GlobalSearch {
 		maxResultsList.add(new Integer(1000));
 		if (!ValidationUtils.isValid(selectedMaxResults)) {
 			selectedMaxResults = defaultMaxResults;
-		}
-		if (!ValidationUtils.isValid(selectedType)) {
-			selectedType = DataSourceListDAO.ALL_REPORTS;
 		}
 		if (!ValidationUtils.isValid(availableTypes)) {
 			availableTypes = dao.getAvailableTypes();
