@@ -36,7 +36,7 @@ public class RangeHelper {
 				return p.getKey() + " " + p.getConstraint() + "Other value";
 			}
 		} else {
-			logger.error("Bad key for " + p.toString());
+			logger.error("Bad key or constraint for " + p.toString());
 			return null;
 		}
 	}

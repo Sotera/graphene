@@ -1,5 +1,7 @@
 package graphene.dao;
 
+import graphene.model.idl.G_Constraint;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,8 @@ import java.util.Map;
  */
 public interface DataSourceListDAO {
 	public static final String ALL_REPORTS = "All Reports";
+
+	public List<G_Constraint> getAvailableConstraints();
 
 	public List<String> getAvailableTypes();
 

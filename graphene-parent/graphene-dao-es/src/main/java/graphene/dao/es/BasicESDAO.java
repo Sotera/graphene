@@ -2,6 +2,7 @@ package graphene.dao.es;
 
 import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentBuilder;
+import graphene.model.idl.G_BoundedRange;
 import graphene.model.idl.G_CallBack;
 import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_DataAccess;
@@ -78,6 +79,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  * 
  */
 public class BasicESDAO implements G_DataAccess {
+
 	/**
 	 * Use this flag if you want to supply an es string query that will go
 	 * directly into a SearchSourceBuilder.
@@ -126,6 +128,8 @@ public class BasicESDAO implements G_DataAccess {
 	private DocumentBuilder db;
 	private final String minimumShouldMatchRule = "1<30%";
 
+	static final String DATE_FORMAT = "yyyy-MM-dd";
+
 	protected BoolQueryBuilder buildBooleanConstraints(final PropertyMatchDescriptorHelper pmdh, BoolQueryBuilder bool) {
 		final String key = pmdh.getKey();
 		final G_Constraint constraint = pmdh.getConstraint();
@@ -155,13 +159,13 @@ public class BasicESDAO implements G_DataAccess {
 				break;
 			case CONTAINS:
 				for (final String sf : fieldArray) {
-					bool = bool.should(QueryBuilders.wildcardQuery(text, sf));
+					bool = bool.should(QueryBuilders.wildcardQuery(sf, text));
 					constraintUsed = true;
 				}
 				break;
 			case STARTS_WITH:
 				for (final String sf : fieldArray) {
-					bool = bool.should(QueryBuilders.prefixQuery(text, sf));
+					bool = bool.should(QueryBuilders.prefixQuery(sf, text));
 					constraintUsed = true;
 				}
 				break;
@@ -202,19 +206,55 @@ public class BasicESDAO implements G_DataAccess {
 				}
 			}
 		} else if (ValidationUtils.isValid(pmdh.getBoundedRange())) {
-			// Enumerate any speficic fields that this range can apply to.
-			String[] rangeArray = new String[1];
-			rangeArray[0] = key;
+			final G_BoundedRange br = pmdh.getBoundedRange();
+			// Enumerate any specific fields that this range can apply to.
+			String[] rangeFieldArray = new String[1];
+			rangeFieldArray[0] = key;
 			final ArrayList<String> specificRangeFields = dao.getRangeMappings().get(pmdh.getKey());
 			if (specificRangeFields != null) {
-				rangeArray = specificRangeFields.toArray(new String[specificRangeFields.size()]);
+				rangeFieldArray = specificRangeFields.toArray(new String[specificRangeFields.size()]);
 			} else {
 				logger.warn("Could not find specific fields for the key " + pmdh.getKey());
 			}
-			for (final String sf : rangeArray) {
-				bool = bool.should(QueryBuilders.rangeQuery(sf).from(pmdh.getBoundedRange().getStart())
-						.to(pmdh.getBoundedRange().getEnd()));
-				constraintUsed = true;
+			String start = null;
+			String end = null;
+			if (br.getStart() != null) {
+				switch (pmdh.getType()) {
+				case STRING:
+					start = br.getStart().toString();
+					break;
+				case DATE:
+					final DateTime dt = (DateTime) br.getStart();
+					start = dt.toString(DATE_FORMAT);
+					break;
+				default:
+					break;
+				}
+			}
+			if (br.getEnd() != null) {
+				switch (pmdh.getType()) {
+				case STRING:
+					end = br.getEnd().toString();
+					break;
+				case DATE:
+					final DateTime dt = (DateTime) br.getEnd();
+					end = dt.toString(DATE_FORMAT);
+					break;
+				default:
+					break;
+				}
+			}
+			for (final String sf : rangeFieldArray) {
+				if (ValidationUtils.isValid(start, end)) {
+					bool = bool.should(QueryBuilders.rangeQuery(sf).from(start).to(end));
+					constraintUsed = true;
+				} else if (ValidationUtils.isValid(start)) {
+					bool = bool.should(QueryBuilders.rangeQuery(sf).gt(start));
+					constraintUsed = true;
+				} else if (ValidationUtils.isValid(end)) {
+					bool = bool.should(QueryBuilders.rangeQuery(sf).lt(end));
+					constraintUsed = true;
+				}
 			}
 		} else {
 			logger.error("Unknown range type for " + pmdh);
