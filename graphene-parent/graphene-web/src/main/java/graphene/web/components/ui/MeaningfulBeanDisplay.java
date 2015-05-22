@@ -140,7 +140,7 @@ public class MeaningfulBeanDisplay {
 
 	public Link getPivotLink() {
 		// XXX: pick the right search type based on the link value
-		final Link l = searchPage.set(null, null, G_Constraint.REQUIRED_EQUALS.name(), getPropertyValue().toString(),
+		final Link l = searchPage.set(null, null, G_Constraint.EQUALS.name(), getPropertyValue().toString(),
 				defaultMaxResults);
 		return l;
 	}

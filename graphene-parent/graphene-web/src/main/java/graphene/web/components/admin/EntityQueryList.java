@@ -30,7 +30,7 @@ public class EntityQueryList extends BasicDataTable {
 	private List<G_EntityQuery> list;
 
 	public String getCurrentRange() {
-		return RangeHelper.toString(currentPmd.getRange());
+		return RangeHelper.toString(currentPmd);
 	}
 
 	public BeanModel<G_EntityQuery> getModel() {

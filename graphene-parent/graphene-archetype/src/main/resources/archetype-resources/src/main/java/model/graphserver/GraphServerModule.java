@@ -47,10 +47,10 @@ public class GraphServerModule {
 
 	@Contribute(GraphTraversalRuleService.class)
 	public static void contributeTraversalRules(final MappedConfiguration<String, G_Constraint> rules) {
-		rules.add("default", G_Constraint.COMPARE_CONTAINS);
+		rules.add("default", G_Constraint.CONTAINS);
 
 		// Lose rules that will use common terms
-		rules.add(G_CanonicalPropertyType.ACCOUNT.name(), G_Constraint.COMPARE_CONTAINS);
+		rules.add(G_CanonicalPropertyType.ACCOUNT.name(), G_Constraint.CONTAINS);
 
 		// More strict rules that will use match
 		rules.add(G_CanonicalPropertyType.ADDRESS.name(), G_Constraint.COMPARE_EQUALS);

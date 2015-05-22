@@ -28,6 +28,7 @@ import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_ListRange;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_SingletonRange;
+import graphene.util.validator.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,16 +78,12 @@ public class SolrUtils {
 
 		final String k = descriptor.getKey();
 
-		Collection<Object> values;
+		Collection<Object> values = null;
 
-		final Object r = descriptor.getRange();
-
-		if (r instanceof G_SingletonRange) {
-			values = Collections.singleton(((G_SingletonRange) r).getValue());
-		} else if (r instanceof G_ListRange) {
-			values = ((G_ListRange) r).getValues();
-
-			// TODO: account for bounded ranges
+		if (ValidationUtils.isValid(descriptor.getSingletonRange())) {
+			values = Collections.singleton(descriptor.getSingletonRange().getValue());
+		} else if (ValidationUtils.isValid(descriptor.getListRange())) {
+			values = descriptor.getListRange().getValues();
 		} else {
 			values = null;
 		}
@@ -186,8 +183,14 @@ public class SolrUtils {
 
 			if (values != null) {
 				for (final String key : basicQueryFieldWeights.keySet()) {
-					orsAnds.add(G_PropertyMatchDescriptor.newBuilder().setConstraint(G_Constraint.OPTIONAL_EQUALS)
-							.setKey(key).setRange(values).build());
+					if (values instanceof G_SingletonRange) {
+						orsAnds.add(G_PropertyMatchDescriptor.newBuilder().setConstraint(G_Constraint.OPTIONAL_EQUALS)
+								.setKey(key).setSingletonRange((G_SingletonRange) values).build());
+					}
+					if (values instanceof G_ListRange) {
+						orsAnds.add(G_PropertyMatchDescriptor.newBuilder().setConstraint(G_Constraint.OPTIONAL_EQUALS)
+								.setKey(key).setListRange((G_ListRange) values).build());
+					}
 				}
 			}
 		}

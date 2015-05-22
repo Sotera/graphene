@@ -119,7 +119,7 @@ public class EntityDAOESImpl implements EntityDAO {
 			// TODO: Fix this by hooking up the actual search time with the one
 			// that will be performed.
 			eq.addAttribute(new G_PropertyMatchDescriptor(f.getValue(),
-					G_Constraint.COMPARE_CONTAINS));
+					G_Constraint.CONTAINS));
 		}
 		eq.setFirstResult(srch.getStart());
 

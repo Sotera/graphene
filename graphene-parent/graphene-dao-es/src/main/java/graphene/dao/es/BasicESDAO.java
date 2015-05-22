@@ -1,5 +1,6 @@
 package graphene.dao.es;
 
+import graphene.dao.DataSourceListDAO;
 import graphene.dao.DocumentBuilder;
 import graphene.model.idl.G_CallBack;
 import graphene.model.idl.G_Constraint;
@@ -12,16 +13,13 @@ import graphene.model.idl.G_LevelOfDetail;
 import graphene.model.idl.G_Link;
 import graphene.model.idl.G_LinkEntityTypeFilter;
 import graphene.model.idl.G_LinkTag;
-import graphene.model.idl.G_ListRange;
 import graphene.model.idl.G_PropertyDescriptors;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_SearchResult;
 import graphene.model.idl.G_SearchResults;
-import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_TransactionResults;
-import graphene.model.idlhelper.ListRangeHelper;
 import graphene.model.idlhelper.PropertyMatchDescriptorHelper;
 import graphene.model.idlhelper.QueryHelper;
 import graphene.model.idlhelper.SingletonRangeHelper;
@@ -42,6 +40,7 @@ import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -121,42 +120,80 @@ public class BasicESDAO implements G_DataAccess {
 	@Inject
 	@Symbol(JestModule.ES_SERVER)
 	private String host;
-
+	@Inject
+	private DataSourceListDAO dao;
 	@Inject
 	private DocumentBuilder db;
+	private final String minimumShouldMatchRule = "1<30%";
 
 	protected BoolQueryBuilder buildBooleanConstraints(final PropertyMatchDescriptorHelper pmdh, BoolQueryBuilder bool) {
-
 		final String key = pmdh.getKey();
-		final Object r = pmdh.getRange();
-		final List<Object> values = ListRangeHelper.rangeValue(r);
+		final G_Constraint constraint = pmdh.getConstraint();
 
+		boolean constraintUsed = false;
 		boolean createdNew = false;
+
 		if (bool == null) {
 			bool = QueryBuilders.boolQuery();
 			createdNew = true;
 		}
-		boolean constraintUsed = false;
-		if (ValidationUtils.isValid(values)) {
-			for (final Object text : values) {
+		String[] fieldArray = new String[1];
+		fieldArray[0] = key;
+		final ArrayList<String> specificFields = dao.getFieldMappings().get(pmdh.getKey());
+		if (specificFields != null) {
+			fieldArray = specificFields.toArray(new String[specificFields.size()]);
+		} else {
+			logger.warn("Could not find specific fields for the key " + pmdh.getKey());
+		}
+		if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
+			final String text = (String) pmdh.getSingletonRange().getValue();
 
-				final G_Constraint constraint = pmdh.getConstraint();
-				logger.debug("Using constraint " + constraint + " with key " + key + " on value " + text);
+			switch (constraint) {
+			case EQUALS:
+				bool = bool.must(QueryBuilders.multiMatchQuery(text, fieldArray));
+				constraintUsed = true;
+				break;
+			case CONTAINS:
+				for (final String sf : fieldArray) {
+					bool = bool.should(QueryBuilders.wildcardQuery(text, sf));
+					constraintUsed = true;
+				}
+				break;
+			case STARTS_WITH:
+				for (final String sf : fieldArray) {
+					bool = bool.should(QueryBuilders.prefixQuery(text, sf));
+					constraintUsed = true;
+				}
+				break;
+			case NOT:
+				for (final String sf : fieldArray) {
+					bool = bool.mustNot(QueryBuilders.matchPhraseQuery(sf, text));
+					constraintUsed = true;
+				}
+				break;
+			case FUZZY_REQUIRED:
+				bool = bool.must(QueryBuilders.fuzzyLikeThisQuery(fieldArray).likeText(text));
+				constraintUsed = true;
+				break;
+			default:
+				break;
+			}
+		} else if (ValidationUtils.isValid(pmdh.getListRange())) {
+			for (final Object text : pmdh.getListRange().getValues()) {
 				switch (constraint) {
-				case REQUIRED_EQUALS:
+				case EQUALS:
 					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
 					constraintUsed = true;
 					break;
-				case COMPARE_CONTAINS:
+				case CONTAINS:
 					bool = bool.should(QueryBuilders.matchPhraseQuery(key, text));
 					constraintUsed = true;
 					break;
-
-				case COMPARE_STARTSWITH:
+				case STARTS_WITH:
 					bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
 					constraintUsed = true;
 					break;
-				case COMPARE_NOTINCLUDE:
+				case NOT:
 					bool = bool.mustNot(QueryBuilders.matchPhraseQuery(key, text));
 					constraintUsed = true;
 					break;
@@ -164,13 +201,28 @@ public class BasicESDAO implements G_DataAccess {
 					break;
 				}
 			}
+		} else if (ValidationUtils.isValid(pmdh.getBoundedRange())) {
+			// Enumerate any speficic fields that this range can apply to.
+			String[] rangeArray = new String[1];
+			rangeArray[0] = key;
+			final ArrayList<String> specificRangeFields = dao.getRangeMappings().get(pmdh.getKey());
+			if (specificRangeFields != null) {
+				rangeArray = specificRangeFields.toArray(new String[specificRangeFields.size()]);
+			} else {
+				logger.warn("Could not find specific fields for the key " + pmdh.getKey());
+			}
+			for (final String sf : rangeArray) {
+				bool = bool.should(QueryBuilders.rangeQuery(sf).from(pmdh.getBoundedRange().getStart())
+						.to(pmdh.getBoundedRange().getEnd()));
+				constraintUsed = true;
+			}
 		} else {
-			logger.error("Values were not valid.");
+			logger.error("Unknown range type for " + pmdh);
 		}
 		if ((constraintUsed == false) && (createdNew == true)) {
+			// boolean was created but not used.
 			bool = null;
 		}
-
 		return bool;
 	}
 
@@ -189,38 +241,36 @@ public class BasicESDAO implements G_DataAccess {
 
 			for (final G_PropertyMatchDescriptor d : pq.getPropertyMatchDescriptors()) {
 				final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
-				final String key = pmdh.getKey();
-				final Object r = pmdh.getRange();
 
-				if (ValidationUtils.isValid(r)) {
+				if (ValidationUtils.isValid(pmdh)) {
+					final String key = pmdh.getKey();
 					if (key.equals(ESTYPE)) {
-						if (r instanceof G_SingletonRange) {
-							final String t = (String) ((G_SingletonRange) r).getValue();
-							if (ValidationUtils.isValid(t)) {
-								logger.debug("Adding type " + t);
-								esTypes.add(t);
+						if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
+							if (ValidationUtils.isValid(pmdh.getSingletonRange().getValue())
+									&& pmdh.getSingletonRange().getType().equals(G_PropertyType.STRING)) {
+								esTypes.add((String) pmdh.getSingletonRange().getValue());
 							}
-						} else if (r instanceof G_ListRange) {
-							final List<Object> values = ((G_ListRange) r).getValues();
-							for (final Object t : values) {
-								final String ts = (String) t;
-								logger.debug("Adding type " + ts);
-								esTypes.add(ts);
+						} else if (ValidationUtils.isValid(pmdh.getListRange())
+								&& ValidationUtils.isValid(pmdh.getListRange().getValues())
+								&& pmdh.getListRange().getType().equals(G_PropertyType.STRING)) {
+							for (final Object t : pmdh.getListRange().getValues()) {
+
+								esTypes.add((String) t);
 							}
 						}
-
 						logger.debug("Types are now " + StringUtils.coalesc(", ", esTypes.toArray()));
-
 					} else if (key.equals(ESID)) {
-						if (r instanceof G_SingletonRange) {
-							final String t = (String) ((G_SingletonRange) r).getValue();
-							if (ValidationUtils.isValid(t)) {
-								logger.debug("Adding id " + t);
-								esIds.add(t);
+						if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
+							if (ValidationUtils.isValid(pmdh.getSingletonRange().getValue())
+									&& pmdh.getSingletonRange().getType().equals(G_PropertyType.STRING)) {
+
+								esIds.add((String) pmdh.getSingletonRange().getValue());
 							}
-						} else if (r instanceof G_ListRange) {
-							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
-								logger.debug("Adding ids " + t);
+						} else if (ValidationUtils.isValid(pmdh.getListRange())
+								&& ValidationUtils.isValid(pmdh.getListRange().getValues())
+								&& pmdh.getListRange().getType().equals(G_PropertyType.STRING)) {
+							for (final Object t : pmdh.getListRange().getValues()) {
+
 								esIds.add((String) t);
 							}
 						}
@@ -229,21 +279,20 @@ public class BasicESDAO implements G_DataAccess {
 						// TODO: Finish up the logic here, because ES has a
 						// different meaning of searching by field, versus
 						// excluding it in the return value
-						if (r instanceof G_SingletonRange) {
-							final String t = (String) ((G_SingletonRange) r).getValue();
-							if (ValidationUtils.isValid(t)) {
+						if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
+							if (ValidationUtils.isValid(pmdh.getSingletonRange().getValue())
+									&& pmdh.getSingletonRange().getType().equals(G_PropertyType.STRING)) {
 
 								if (d.getInclude()) {
-									logger.debug("Adding field " + t);
-									esFields.add(t);
+									esFields.add((String) pmdh.getSingletonRange().getValue());
 								} else {
-									logger.debug("Do not include field " + t);
-									esNotFields.add(t);
+									esNotFields.add((String) pmdh.getSingletonRange().getValue());
 								}
 							}
-						} else if (r instanceof G_ListRange) {
-							for (final Object t : (Collection) ((G_ListRange) r).getValues()) {
-
+						} else if (ValidationUtils.isValid(pmdh.getListRange())
+								&& ValidationUtils.isValid(pmdh.getListRange().getValues())
+								&& pmdh.getListRange().getType().equals(G_PropertyType.STRING)) {
+							for (final Object t : pmdh.getListRange().getValues()) {
 								if (d.getInclude()) {
 									logger.debug("Adding field " + t);
 									esFields.add((String) t);
@@ -254,33 +303,33 @@ public class BasicESDAO implements G_DataAccess {
 							}
 						}
 					} else if (key.equals(ESQUERY)) {
-						if (r instanceof G_SingletonRange) {
-							final String t = (String) ((G_SingletonRange) r).getValue();
-							if (ValidationUtils.isValid(t)) {
-								logger.debug("Setting custom query " + t);
-								queryString = t;
-							}
-						}
+						if (ValidationUtils.isValid(pmdh.getSingletonRange())
+								&& ValidationUtils.isValid(pmdh.getSingletonRange().getValue())
+								&& pmdh.getSingletonRange().getType().equals(G_PropertyType.STRING)) {
+							logger.debug("Setting custom query " + pmdh.getSingletonRange().getValue());
+							queryString = (String) pmdh.getSingletonRange().getValue();
 
+						}
 					} else if (key.equals(ESBOOST)) {
-						if (r instanceof G_SingletonRange) {
-							final String t = (String) ((G_SingletonRange) r).getValue();
-							if (ValidationUtils.isValid(t)) {
-								logger.debug("Setting boost custom query " + t);
-								// not working yet
-							}
+						if (ValidationUtils.isValid(pmdh.getSingletonRange())
+								&& ValidationUtils.isValid(pmdh.getSingletonRange().getValue())
+								&& pmdh.getSingletonRange().getType().equals(G_PropertyType.STRING)) {
+							logger.debug("WIP: Setting boost custom query " + pmdh.getSingletonRange().getValue());
+							// not working yet
 						}
-
 					} else {
 						bool = buildBooleanConstraints(pmdh, bool);
 					}
+				} else {
+					logger.error("Key or Value was not valid for " + pmdh.toString());
 				}
-			}
-
+			}// end looping over pmdhs
 			if (queryString != null) {
 				logger.debug("We encountered a custom query so we will use that");
 			} else if (bool != null) {
-				logger.debug("Using a boolean query");
+
+				logger.debug("Using a boolean query with rule " + minimumShouldMatchRule);
+				bool.minimumShouldMatch(minimumShouldMatchRule);
 				queryString = bool.toString();
 			} else if (esIds.size() > 0) {
 				logger.debug("Using an id filter query instead");
@@ -323,8 +372,8 @@ public class BasicESDAO implements G_DataAccess {
 
 	public long count() {
 		final G_PropertyMatchDescriptor pmdh = G_PropertyMatchDescriptor.newBuilder()
-				.setConstraint(G_Constraint.COMPARE_CONTAINS).setKey(ESTYPE)
-				.setRange(new SingletonRangeHelper(type, G_PropertyType.STRING)).build();
+				.setConstraint(G_Constraint.CONTAINS).setKey(ESTYPE)
+				.setSingletonRange(new SingletonRangeHelper(type, G_PropertyType.STRING)).build();
 		final G_EntityQuery q = new QueryHelper(pmdh);
 		return count(q);
 	}
@@ -341,23 +390,24 @@ public class BasicESDAO implements G_DataAccess {
 
 				BoolQueryBuilder bool = null;
 				for (final G_PropertyMatchDescriptor d : pq.getPropertyMatchDescriptors()) {
-					final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
-					final String key = pmdh.getKey();
-					final Object r = pmdh.getRange();
-					pmdh.getVariable();
-					if (key.equals(ESTYPE)) {
-						if (ValidationUtils.isValid(r)) {
-							if (r instanceof G_SingletonRange) {
-								final String type = (String) ((G_SingletonRange) r).getValue();
+					if (ValidationUtils.isValid(d)) {
+						final PropertyMatchDescriptorHelper pmdh = PropertyMatchDescriptorHelper.from(d);
+						final String key = pmdh.getKey();
+
+						if (key.equals(ESTYPE)) {
+
+							if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
+								final String type = (String) pmdh.getSingletonRange().getValue();
 								action.addType(type);
 								logger.debug("added type: " + type);
 
-							} else if (r instanceof G_ListRange) {
-								action.addType((Collection<? extends String>) r);
+							} else if (ValidationUtils.isValid(pmdh.getListRange())) {
+								action.addType((Collection<? extends String>) pmdh.getListRange());
 							}
+
+						} else {
+							bool = buildBooleanConstraints(pmdh, bool);
 						}
-					} else {
-						bool = buildBooleanConstraints(pmdh, bool);
 					}
 				}
 

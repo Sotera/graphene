@@ -46,22 +46,16 @@ protocol G_Search {
 
 	 */
 	enum G_Constraint {
-		REQUIRED_EQUALS, 		// used for cases of REQUIRED or EQUALS
-		FUZZY_PARTIAL_OPTIONAL, // used for cases of FUZZY or PARTIAL or OPTIONAL match
+		EQUALS, 		// used for cases of REQUIRED or EQUALS
 		NOT 		,			// used for MUST NOT match, or logical NOT
 		OPTIONAL_EQUALS,		// equals OR
 		FUZZY_REQUIRED,			// fuzzy AND
-		COMPARE_CONTAINS, 
-		COMPARE_ENDSWITH, 
-		COMPARE_EQUALS, 
-		COMPARE_GREATER, 
-		COMPARE_INCLUDE, 
-		COMPARE_LESS, 
-		COMPARE_NOTINCLUDE, 
-		COMPARE_REGEX, 
-		COMPARE_SIMPLE,
-		COMPARE_SOUNDSLIKE, 
-		COMPARE_STARTSWITH 
+		CONTAINS, 
+		ENDS_WITH,  
+		REGEX, 
+		STARTS_WITH,
+		BETWEEN,
+		FUZZY_PARTIAL_OPTIONAL
 	}
 
 	/**
@@ -116,7 +110,7 @@ protocol G_Search {
 		G_PropertyType propertyType;
 
 		/** range of the Property to search on */
-		union{G_RangeType, null} range;                                                            // ADDED IN 1.5
+		union{G_RangeType, null} rangeType;                                                            // ADDED IN 1.5
 
 		/** REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED*/
 		union {G_Constraint, null} constraint;                                                     // CHANGED IN 1.5
@@ -144,7 +138,10 @@ protocol G_Search {
 		string key;
 		
 		/** value of the Property to search on */
-		union {G_SingletonRange, G_ListRange, G_BoundedRange} range = null;  // CHANGED IN 1.5
+		G_SingletonRange singletonRange =null; //ADDED IN 1.9
+		G_ListRange listRange =null; //ADDED IN 1.9
+		G_BoundedRange boundedRange =null; //ADDED IN 1.9
+		
 		
 		/** If not null/empty, the value is relative to a logical variable specified here (e.g. "X")
 		 *  Other parameters using the same logical variable name are relative to this value.

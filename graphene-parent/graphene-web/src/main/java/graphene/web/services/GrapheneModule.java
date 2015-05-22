@@ -3,10 +3,6 @@ package graphene.web.services;
 import graphene.dao.DAOModule;
 import graphene.dao.StartupProcedures;
 import graphene.model.idl.G_EntityQuery;
-import graphene.model.idl.G_ListRange;
-import graphene.model.idl.G_PropertyMatchDescriptor;
-import graphene.model.idl.G_PropertyType;
-import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.util.PropertiesFileSymbolProvider;
 import graphene.util.time.JodaTimeUtil;
@@ -14,8 +10,6 @@ import graphene.web.services.javascript.CytoscapeStack;
 import graphene.web.validators.Password;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.Validator;
@@ -289,34 +283,38 @@ public class GrapheneModule {
 					// value = SerializationHelper.fromJson(input,
 					// G_EntityQuery.getClassSchema());
 					value = mapper.readValue(input, G_EntityQuery.class);
-					for (final G_PropertyMatchDescriptor f : value.getPropertyMatchDescriptors()) {
-						// f.getRange()
-						final LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) f.getRange();
-						ArrayList<Object> propValues = null;
-						Object propValue = null;
-						G_PropertyType propType = null;
-						for (final String k : lhm.keySet()) {
-							if (k.equals("values")) {
-								propValues = (ArrayList<Object>) lhm.get(k);
-							} else if (k.equals("value")) {
-								propValue = lhm.get(k);
-							} else if (k.equals("type")) {
-								propType = G_PropertyType.valueOf((String) lhm.get(k));
-
-							}
-
-							System.out.println("k =" + k + " v=" + lhm.get(k));
-						}
-						if (propValues != null) {
-							final G_ListRange l = G_ListRange.newBuilder().setType(propType).setValues(propValues)
-									.build();
-							f.setRange(l);
-						} else if (propValue != null) {
-							final G_SingletonRange l = G_SingletonRange.newBuilder().setType(propType)
-									.setValue(propValue).build();
-							f.setRange(l);
-						}
-					}
+					// for (final G_PropertyMatchDescriptor f :
+					// value.getPropertyMatchDescriptors()) {
+					// // f.getRange()
+					// final LinkedHashMap<String, Object> lhm =
+					// (LinkedHashMap<String, Object>) f.getRange();
+					// ArrayList<Object> propValues = null;
+					// Object propValue = null;
+					// G_PropertyType propType = null;
+					// for (final String k : lhm.keySet()) {
+					// if (k.equals("values")) {
+					// propValues = (ArrayList<Object>) lhm.get(k);
+					// } else if (k.equals("value")) {
+					// propValue = lhm.get(k);
+					// } else if (k.equals("type")) {
+					// propType = G_PropertyType.valueOf((String) lhm.get(k));
+					//
+					// }
+					//
+					// System.out.println("k =" + k + " v=" + lhm.get(k));
+					// }
+					// if (propValues != null) {
+					// final G_ListRange l =
+					// G_ListRange.newBuilder().setType(propType).setValues(propValues)
+					// .build();
+					// f.setListRange(l);
+					// } else if (propValue != null) {
+					// final G_SingletonRange l =
+					// G_SingletonRange.newBuilder().setType(propType)
+					// .setValue(propValue).build();
+					// f.setSingletonRange(l);
+					// }
+					// }
 				} catch (final JsonParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

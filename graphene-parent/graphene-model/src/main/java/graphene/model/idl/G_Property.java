@@ -12,7 +12,7 @@ package graphene.model.idl;
 	 CHANGED IN 1.6 */
 @org.apache.avro.specific.AvroGenerated
 public class G_Property extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Property\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Each property on an Entity or Link is a name-value pair, with data type information, as well as optional\\r\\n\\t provenance. Tags provide a way for the data provider to associate semantic annotations to each property\\r\\n\\t in terms of the semantics of the application.  \\r\\n\\t \\r\\n\\t CHANGED IN 1.6\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"styleType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"range\",\"type\":[{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"Describes a distribution of values. \\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"A frequency or probability element of a distribution.\\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]}}},{\"name\":\"rangeType\",\"type\":{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"doc\":\"Describes how the values in the distribution are summarised\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"The type of value that the distribution describes. One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]}],\"doc\":\"range of values\",\"default\":null},{\"name\":\"provenance\",\"type\":[{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"This is a placeholder for future modeling of provenance. It is not a required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1},{\"name\":\"currency\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.\",\"default\":1}]},\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"Tags are defined by the application layer as a taxonomy of user and application concepts,\\r\\n\\t independent of the data sources. This allows application semantics to be re-used with new\\r\\n\\t data, with a minimum of new software design and development. Data layer entity types, link\\r\\n\\t types and properties should be mapped into the list of tags. The application layer must be\\r\\n\\t able to search by native field name or by tag interchangeably, and properties returned must\\r\\n\\t contain both native field names as well as tags.\\r\\n\\t \\r\\n\\t The list of tags may change as application features evolve, though that will require\\r\\n\\t collaboration with the data layer providers. Evolving the tag list should not change the\\r\\n\\t Data Access or Search APIs.\\r\\n\\r\\n\\t This is the current list of tags for Properties:\\r\\n\\t \\r\\n\\t CHANGED in 1.5:\\r\\n\\t   - CREDIT/DEBIT changed to INFLOWING/OUTFLOWING\\r\\n\\t   - added USD\\r\\n\\t   - added DURATION\\r\\n\\t   \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ENTITY_TYPE\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY, COUNTRY_CODE\\r\\n\\t   \\r\\n\\t CHANGED in 1.7:\\r\\n\\t   - added CLUSTER\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"CLUSTER\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\"]}},\"doc\":\"one or more tags from the Tag list, used to map this source-specific field into the semantics of applications\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_Property\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Each property on an Entity or Link is a name-value pair, with data type information, as well as optional\\r\\n\\t provenance. Tags provide a way for the data provider to associate semantic annotations to each property\\r\\n\\t in terms of the semantics of the application.  \\r\\n\\t \\r\\n\\t CHANGED IN 1.6\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"the field name in the underlying data source\"},{\"name\":\"friendlyText\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"user-friendly short-text for key (displayable)\",\"default\":null},{\"name\":\"styleType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"singletonRange\",\"type\":{\"type\":\"record\",\"name\":\"G_SingletonRange\",\"doc\":\"Single value\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",{\"type\":\"record\",\"name\":\"G_GeoData\",\"doc\":\"Structured representation of geo-spatial data.\",\"fields\":[{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"an address or other place reference; unstructured text field\",\"default\":null},{\"name\":\"lat\",\"type\":[\"double\",\"null\"],\"doc\":\"latitude\",\"default\":null},{\"name\":\"lon\",\"type\":[\"double\",\"null\"],\"doc\":\"longitude\",\"default\":null},{\"name\":\"cc\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"ISO 3 digit country code\",\"default\":null}]}]},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"G_PropertyType\",\"doc\":\"Allowed types for Property values.\\r\\n\\r\\n\\t CHANGED in 1.5\",\"symbols\":[\"DOUBLE\",\"LONG\",\"BOOLEAN\",\"STRING\",\"DATE\",\"GEO\",\"OTHER\"]},\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},\"doc\":\"range of values\",\"default\":null},{\"name\":\"listRange\",\"type\":{\"type\":\"record\",\"name\":\"G_ListRange\",\"doc\":\"List of values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"values\",\"type\":{\"type\":\"array\",\"items\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\"]}},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},\"default\":null},{\"name\":\"boundedRange\",\"type\":{\"type\":\"record\",\"name\":\"G_BoundedRange\",\"doc\":\"Bounded or unbounded range values\\r\\n\\t\\r\\n\\tADDED IN 1.5\",\"fields\":[{\"name\":\"start\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"start of range, or null if unbounded start\"},{\"name\":\"end\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"null\"],\"doc\":\"end of range, or null if unbounded start\"},{\"name\":\"inclusive\",\"type\":\"boolean\",\"doc\":\"If true, range includes specified endpoint. If false, range is exclusive.\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"}]},\"default\":null},{\"name\":\"distributionRange\",\"type\":{\"type\":\"record\",\"name\":\"G_DistributionRange\",\"doc\":\"Describes a distribution of values. \\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"distribution\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"G_Frequency\",\"doc\":\"A frequency or probability element of a distribution.\\r\\n\\t \\r\\n\\tADDED IN 1.6\",\"fields\":[{\"name\":\"range\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"int\",\"float\",\"double\",\"long\",\"boolean\",\"G_GeoData\",\"G_ListRange\",\"G_BoundedRange\"],\"doc\":\"the value range which occurs with some specified frequency\"},{\"name\":\"frequency\",\"type\":\"double\",\"doc\":\"frequency as a count, or probability as a value from 0-1.\"}]}}},{\"name\":\"rangeType\",\"type\":{\"type\":\"enum\",\"name\":\"G_RangeType\",\"doc\":\"Allowed types for Ranges of values.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"symbols\":[\"SINGLETON\",\"LIST\",\"BOUNDED\",\"DISTRIBUTION\"]},\"doc\":\"Describes how the values in the distribution are summarised\"},{\"name\":\"type\",\"type\":\"G_PropertyType\",\"doc\":\"The type of value that the distribution describes. One of DOUBLE, LONG, BOOLEAN, STRING, DATE, GEO, OTHER\"},{\"name\":\"isProbability\",\"type\":\"boolean\",\"doc\":\"True if a probability distribution, false if a frequency distribution\",\"default\":false}]},\"default\":null},{\"name\":\"provenance\",\"type\":[{\"type\":\"record\",\"name\":\"G_Provenance\",\"doc\":\"This is a placeholder for future modeling of provenance. It is not a required field in any service calls.\",\"fields\":[{\"name\":\"uri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"Placeholder for now. Express provenance as a single URI.\"}]},\"null\"],\"default\":null},{\"name\":\"uncertainty\",\"type\":[{\"type\":\"record\",\"name\":\"G_Uncertainty\",\"doc\":\"This is a placeholder for future modeling of uncertainty. It is not a required field in any service calls.\\r\\n\\t\\r\\n\\tCHANGED IN 1.6\",\"fields\":[{\"name\":\"confidence\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express original source confidence as a single number from 0 to 1.\",\"default\":1},{\"name\":\"currency\",\"type\":\"double\",\"doc\":\"Placeholder for now. Express confidence in currency of data as a single number from 0 to 1.\",\"default\":1}]},\"null\"],\"default\":null},{\"name\":\"tags\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"enum\",\"name\":\"G_PropertyTag\",\"doc\":\"Tags are defined by the application layer as a taxonomy of user and application concepts,\\r\\n\\t independent of the data sources. This allows application semantics to be re-used with new\\r\\n\\t data, with a minimum of new software design and development. Data layer entity types, link\\r\\n\\t types and properties should be mapped into the list of tags. The application layer must be\\r\\n\\t able to search by native field name or by tag interchangeably, and properties returned must\\r\\n\\t contain both native field names as well as tags.\\r\\n\\t \\r\\n\\t The list of tags may change as application features evolve, though that will require\\r\\n\\t collaboration with the data layer providers. Evolving the tag list should not change the\\r\\n\\t Data Access or Search APIs.\\r\\n\\r\\n\\t This is the current list of tags for Properties:\\r\\n\\t \\r\\n\\t CHANGED in 1.5:\\r\\n\\t   - CREDIT/DEBIT changed to INFLOWING/OUTFLOWING\\r\\n\\t   - added USD\\r\\n\\t   - added DURATION\\r\\n\\t   \\r\\n\\t CHANGED in 1.6:\\r\\n\\t   - added ENTITY_TYPE\\r\\n\\t   - added ACCOUNT_OWNER, CLUSTER_SUMMARY, COUNTRY_CODE\\r\\n\\t   \\r\\n\\t CHANGED in 1.7:\\r\\n\\t   - added CLUSTER\",\"symbols\":[\"ID\",\"TYPE\",\"ENTITY_TYPE\",\"ACCOUNT_OWNER\",\"CLUSTER_SUMMARY\",\"CLUSTER\",\"NAME\",\"LABEL\",\"STAT\",\"TEXT\",\"STATUS\",\"ANNOTATION\",\"WARNING\",\"LINKED_DATA\",\"IMAGE\",\"GEO\",\"COUNTRY_CODE\",\"DATE\",\"AMOUNT\",\"INFLOWING\",\"OUTFLOWING\",\"COUNT\",\"SERIES\",\"CONSTRUCTED\",\"RAW\",\"USD\",\"DURATION\"]}},\"doc\":\"one or more tags from the Tag list, used to map this source-specific field into the semantics of applications\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** the field name in the underlying data source */
    private java.lang.String key;
@@ -20,7 +20,10 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
    private java.lang.String friendlyText;
    private java.lang.String styleType;
   /** range of values */
-   private java.lang.Object range;
+   private graphene.model.idl.G_SingletonRange singletonRange;
+   private graphene.model.idl.G_ListRange listRange;
+   private graphene.model.idl.G_BoundedRange boundedRange;
+   private graphene.model.idl.G_DistributionRange distributionRange;
    private graphene.model.idl.G_Provenance provenance;
    private graphene.model.idl.G_Uncertainty uncertainty;
   /** one or more tags from the Tag list, used to map this source-specific field into the semantics of applications */
@@ -36,11 +39,14 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
   /**
    * All-args constructor.
    */
-  public G_Property(java.lang.String key, java.lang.String friendlyText, java.lang.String styleType, java.lang.Object range, graphene.model.idl.G_Provenance provenance, graphene.model.idl.G_Uncertainty uncertainty, java.util.List<graphene.model.idl.G_PropertyTag> tags) {
+  public G_Property(java.lang.String key, java.lang.String friendlyText, java.lang.String styleType, graphene.model.idl.G_SingletonRange singletonRange, graphene.model.idl.G_ListRange listRange, graphene.model.idl.G_BoundedRange boundedRange, graphene.model.idl.G_DistributionRange distributionRange, graphene.model.idl.G_Provenance provenance, graphene.model.idl.G_Uncertainty uncertainty, java.util.List<graphene.model.idl.G_PropertyTag> tags) {
     this.key = key;
     this.friendlyText = friendlyText;
     this.styleType = styleType;
-    this.range = range;
+    this.singletonRange = singletonRange;
+    this.listRange = listRange;
+    this.boundedRange = boundedRange;
+    this.distributionRange = distributionRange;
     this.provenance = provenance;
     this.uncertainty = uncertainty;
     this.tags = tags;
@@ -53,10 +59,13 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
     case 0: return key;
     case 1: return friendlyText;
     case 2: return styleType;
-    case 3: return range;
-    case 4: return provenance;
-    case 5: return uncertainty;
-    case 6: return tags;
+    case 3: return singletonRange;
+    case 4: return listRange;
+    case 5: return boundedRange;
+    case 6: return distributionRange;
+    case 7: return provenance;
+    case 8: return uncertainty;
+    case 9: return tags;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -67,10 +76,13 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
     case 0: key = (java.lang.String)value$; break;
     case 1: friendlyText = (java.lang.String)value$; break;
     case 2: styleType = (java.lang.String)value$; break;
-    case 3: range = (java.lang.Object)value$; break;
-    case 4: provenance = (graphene.model.idl.G_Provenance)value$; break;
-    case 5: uncertainty = (graphene.model.idl.G_Uncertainty)value$; break;
-    case 6: tags = (java.util.List<graphene.model.idl.G_PropertyTag>)value$; break;
+    case 3: singletonRange = (graphene.model.idl.G_SingletonRange)value$; break;
+    case 4: listRange = (graphene.model.idl.G_ListRange)value$; break;
+    case 5: boundedRange = (graphene.model.idl.G_BoundedRange)value$; break;
+    case 6: distributionRange = (graphene.model.idl.G_DistributionRange)value$; break;
+    case 7: provenance = (graphene.model.idl.G_Provenance)value$; break;
+    case 8: uncertainty = (graphene.model.idl.G_Uncertainty)value$; break;
+    case 9: tags = (java.util.List<graphene.model.idl.G_PropertyTag>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -121,18 +133,63 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
   }
 
   /**
-   * Gets the value of the 'range' field.
+   * Gets the value of the 'singletonRange' field.
    * range of values   */
-  public java.lang.Object getRange() {
-    return range;
+  public graphene.model.idl.G_SingletonRange getSingletonRange() {
+    return singletonRange;
   }
 
   /**
-   * Sets the value of the 'range' field.
+   * Sets the value of the 'singletonRange' field.
    * range of values   * @param value the value to set.
    */
-  public void setRange(java.lang.Object value) {
-    this.range = value;
+  public void setSingletonRange(graphene.model.idl.G_SingletonRange value) {
+    this.singletonRange = value;
+  }
+
+  /**
+   * Gets the value of the 'listRange' field.
+   */
+  public graphene.model.idl.G_ListRange getListRange() {
+    return listRange;
+  }
+
+  /**
+   * Sets the value of the 'listRange' field.
+   * @param value the value to set.
+   */
+  public void setListRange(graphene.model.idl.G_ListRange value) {
+    this.listRange = value;
+  }
+
+  /**
+   * Gets the value of the 'boundedRange' field.
+   */
+  public graphene.model.idl.G_BoundedRange getBoundedRange() {
+    return boundedRange;
+  }
+
+  /**
+   * Sets the value of the 'boundedRange' field.
+   * @param value the value to set.
+   */
+  public void setBoundedRange(graphene.model.idl.G_BoundedRange value) {
+    this.boundedRange = value;
+  }
+
+  /**
+   * Gets the value of the 'distributionRange' field.
+   */
+  public graphene.model.idl.G_DistributionRange getDistributionRange() {
+    return distributionRange;
+  }
+
+  /**
+   * Sets the value of the 'distributionRange' field.
+   * @param value the value to set.
+   */
+  public void setDistributionRange(graphene.model.idl.G_DistributionRange value) {
+    this.distributionRange = value;
   }
 
   /**
@@ -204,7 +261,10 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
     private java.lang.String key;
     private java.lang.String friendlyText;
     private java.lang.String styleType;
-    private java.lang.Object range;
+    private graphene.model.idl.G_SingletonRange singletonRange;
+    private graphene.model.idl.G_ListRange listRange;
+    private graphene.model.idl.G_BoundedRange boundedRange;
+    private graphene.model.idl.G_DistributionRange distributionRange;
     private graphene.model.idl.G_Provenance provenance;
     private graphene.model.idl.G_Uncertainty uncertainty;
     private java.util.List<graphene.model.idl.G_PropertyTag> tags;
@@ -229,21 +289,33 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
         this.styleType = data().deepCopy(fields()[2].schema(), other.styleType);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.range)) {
-        this.range = data().deepCopy(fields()[3].schema(), other.range);
+      if (isValidValue(fields()[3], other.singletonRange)) {
+        this.singletonRange = data().deepCopy(fields()[3].schema(), other.singletonRange);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.provenance)) {
-        this.provenance = data().deepCopy(fields()[4].schema(), other.provenance);
+      if (isValidValue(fields()[4], other.listRange)) {
+        this.listRange = data().deepCopy(fields()[4].schema(), other.listRange);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.uncertainty)) {
-        this.uncertainty = data().deepCopy(fields()[5].schema(), other.uncertainty);
+      if (isValidValue(fields()[5], other.boundedRange)) {
+        this.boundedRange = data().deepCopy(fields()[5].schema(), other.boundedRange);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.tags)) {
-        this.tags = data().deepCopy(fields()[6].schema(), other.tags);
+      if (isValidValue(fields()[6], other.distributionRange)) {
+        this.distributionRange = data().deepCopy(fields()[6].schema(), other.distributionRange);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.provenance)) {
+        this.provenance = data().deepCopy(fields()[7].schema(), other.provenance);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.uncertainty)) {
+        this.uncertainty = data().deepCopy(fields()[8].schema(), other.uncertainty);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.tags)) {
+        this.tags = data().deepCopy(fields()[9].schema(), other.tags);
+        fieldSetFlags()[9] = true;
       }
     }
     
@@ -262,21 +334,33 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
         this.styleType = data().deepCopy(fields()[2].schema(), other.styleType);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.range)) {
-        this.range = data().deepCopy(fields()[3].schema(), other.range);
+      if (isValidValue(fields()[3], other.singletonRange)) {
+        this.singletonRange = data().deepCopy(fields()[3].schema(), other.singletonRange);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.provenance)) {
-        this.provenance = data().deepCopy(fields()[4].schema(), other.provenance);
+      if (isValidValue(fields()[4], other.listRange)) {
+        this.listRange = data().deepCopy(fields()[4].schema(), other.listRange);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.uncertainty)) {
-        this.uncertainty = data().deepCopy(fields()[5].schema(), other.uncertainty);
+      if (isValidValue(fields()[5], other.boundedRange)) {
+        this.boundedRange = data().deepCopy(fields()[5].schema(), other.boundedRange);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.tags)) {
-        this.tags = data().deepCopy(fields()[6].schema(), other.tags);
+      if (isValidValue(fields()[6], other.distributionRange)) {
+        this.distributionRange = data().deepCopy(fields()[6].schema(), other.distributionRange);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.provenance)) {
+        this.provenance = data().deepCopy(fields()[7].schema(), other.provenance);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.uncertainty)) {
+        this.uncertainty = data().deepCopy(fields()[8].schema(), other.uncertainty);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.tags)) {
+        this.tags = data().deepCopy(fields()[9].schema(), other.tags);
+        fieldSetFlags()[9] = true;
       }
     }
 
@@ -355,28 +439,103 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Gets the value of the 'range' field */
-    public java.lang.Object getRange() {
-      return range;
+    /** Gets the value of the 'singletonRange' field */
+    public graphene.model.idl.G_SingletonRange getSingletonRange() {
+      return singletonRange;
     }
     
-    /** Sets the value of the 'range' field */
-    public graphene.model.idl.G_Property.Builder setRange(java.lang.Object value) {
+    /** Sets the value of the 'singletonRange' field */
+    public graphene.model.idl.G_Property.Builder setSingletonRange(graphene.model.idl.G_SingletonRange value) {
       validate(fields()[3], value);
-      this.range = value;
+      this.singletonRange = value;
       fieldSetFlags()[3] = true;
       return this; 
     }
     
-    /** Checks whether the 'range' field has been set */
-    public boolean hasRange() {
+    /** Checks whether the 'singletonRange' field has been set */
+    public boolean hasSingletonRange() {
       return fieldSetFlags()[3];
     }
     
-    /** Clears the value of the 'range' field */
-    public graphene.model.idl.G_Property.Builder clearRange() {
-      range = null;
+    /** Clears the value of the 'singletonRange' field */
+    public graphene.model.idl.G_Property.Builder clearSingletonRange() {
+      singletonRange = null;
       fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'listRange' field */
+    public graphene.model.idl.G_ListRange getListRange() {
+      return listRange;
+    }
+    
+    /** Sets the value of the 'listRange' field */
+    public graphene.model.idl.G_Property.Builder setListRange(graphene.model.idl.G_ListRange value) {
+      validate(fields()[4], value);
+      this.listRange = value;
+      fieldSetFlags()[4] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'listRange' field has been set */
+    public boolean hasListRange() {
+      return fieldSetFlags()[4];
+    }
+    
+    /** Clears the value of the 'listRange' field */
+    public graphene.model.idl.G_Property.Builder clearListRange() {
+      listRange = null;
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'boundedRange' field */
+    public graphene.model.idl.G_BoundedRange getBoundedRange() {
+      return boundedRange;
+    }
+    
+    /** Sets the value of the 'boundedRange' field */
+    public graphene.model.idl.G_Property.Builder setBoundedRange(graphene.model.idl.G_BoundedRange value) {
+      validate(fields()[5], value);
+      this.boundedRange = value;
+      fieldSetFlags()[5] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'boundedRange' field has been set */
+    public boolean hasBoundedRange() {
+      return fieldSetFlags()[5];
+    }
+    
+    /** Clears the value of the 'boundedRange' field */
+    public graphene.model.idl.G_Property.Builder clearBoundedRange() {
+      boundedRange = null;
+      fieldSetFlags()[5] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'distributionRange' field */
+    public graphene.model.idl.G_DistributionRange getDistributionRange() {
+      return distributionRange;
+    }
+    
+    /** Sets the value of the 'distributionRange' field */
+    public graphene.model.idl.G_Property.Builder setDistributionRange(graphene.model.idl.G_DistributionRange value) {
+      validate(fields()[6], value);
+      this.distributionRange = value;
+      fieldSetFlags()[6] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'distributionRange' field has been set */
+    public boolean hasDistributionRange() {
+      return fieldSetFlags()[6];
+    }
+    
+    /** Clears the value of the 'distributionRange' field */
+    public graphene.model.idl.G_Property.Builder clearDistributionRange() {
+      distributionRange = null;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
@@ -387,21 +546,21 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
     
     /** Sets the value of the 'provenance' field */
     public graphene.model.idl.G_Property.Builder setProvenance(graphene.model.idl.G_Provenance value) {
-      validate(fields()[4], value);
+      validate(fields()[7], value);
       this.provenance = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'provenance' field has been set */
     public boolean hasProvenance() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'provenance' field */
     public graphene.model.idl.G_Property.Builder clearProvenance() {
       provenance = null;
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -412,21 +571,21 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
     
     /** Sets the value of the 'uncertainty' field */
     public graphene.model.idl.G_Property.Builder setUncertainty(graphene.model.idl.G_Uncertainty value) {
-      validate(fields()[5], value);
+      validate(fields()[8], value);
       this.uncertainty = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[8] = true;
       return this; 
     }
     
     /** Checks whether the 'uncertainty' field has been set */
     public boolean hasUncertainty() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[8];
     }
     
     /** Clears the value of the 'uncertainty' field */
     public graphene.model.idl.G_Property.Builder clearUncertainty() {
       uncertainty = null;
-      fieldSetFlags()[5] = false;
+      fieldSetFlags()[8] = false;
       return this;
     }
 
@@ -437,21 +596,21 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
     
     /** Sets the value of the 'tags' field */
     public graphene.model.idl.G_Property.Builder setTags(java.util.List<graphene.model.idl.G_PropertyTag> value) {
-      validate(fields()[6], value);
+      validate(fields()[9], value);
       this.tags = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[9] = true;
       return this; 
     }
     
     /** Checks whether the 'tags' field has been set */
     public boolean hasTags() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[9];
     }
     
     /** Clears the value of the 'tags' field */
     public graphene.model.idl.G_Property.Builder clearTags() {
       tags = null;
-      fieldSetFlags()[6] = false;
+      fieldSetFlags()[9] = false;
       return this;
     }
 
@@ -462,10 +621,13 @@ public class G_Property extends org.apache.avro.specific.SpecificRecordBase impl
         record.key = fieldSetFlags()[0] ? this.key : (java.lang.String) defaultValue(fields()[0]);
         record.friendlyText = fieldSetFlags()[1] ? this.friendlyText : (java.lang.String) defaultValue(fields()[1]);
         record.styleType = fieldSetFlags()[2] ? this.styleType : (java.lang.String) defaultValue(fields()[2]);
-        record.range = fieldSetFlags()[3] ? this.range : (java.lang.Object) defaultValue(fields()[3]);
-        record.provenance = fieldSetFlags()[4] ? this.provenance : (graphene.model.idl.G_Provenance) defaultValue(fields()[4]);
-        record.uncertainty = fieldSetFlags()[5] ? this.uncertainty : (graphene.model.idl.G_Uncertainty) defaultValue(fields()[5]);
-        record.tags = fieldSetFlags()[6] ? this.tags : (java.util.List<graphene.model.idl.G_PropertyTag>) defaultValue(fields()[6]);
+        record.singletonRange = fieldSetFlags()[3] ? this.singletonRange : (graphene.model.idl.G_SingletonRange) defaultValue(fields()[3]);
+        record.listRange = fieldSetFlags()[4] ? this.listRange : (graphene.model.idl.G_ListRange) defaultValue(fields()[4]);
+        record.boundedRange = fieldSetFlags()[5] ? this.boundedRange : (graphene.model.idl.G_BoundedRange) defaultValue(fields()[5]);
+        record.distributionRange = fieldSetFlags()[6] ? this.distributionRange : (graphene.model.idl.G_DistributionRange) defaultValue(fields()[6]);
+        record.provenance = fieldSetFlags()[7] ? this.provenance : (graphene.model.idl.G_Provenance) defaultValue(fields()[7]);
+        record.uncertainty = fieldSetFlags()[8] ? this.uncertainty : (graphene.model.idl.G_Uncertainty) defaultValue(fields()[8]);
+        record.tags = fieldSetFlags()[9] ? this.tags : (java.util.List<graphene.model.idl.G_PropertyTag>) defaultValue(fields()[9]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

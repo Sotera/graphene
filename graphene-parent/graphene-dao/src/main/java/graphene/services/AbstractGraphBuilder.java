@@ -146,8 +146,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		String strStatus = "Graph Loaded";
 
 		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor.newBuilder().setKey("identifiers")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
-				.setConstraint(G_Constraint.REQUIRED_EQUALS).build();
+				.setListRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
+				.setConstraint(G_Constraint.EQUALS).build();
 		final QueryHelper qh = new QueryHelper(identifierList);
 		queriesToRun.add(qh);
 
@@ -297,8 +297,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	 */
 	public G_EntityQuery convertFrom(final V_GraphQuery graphQuery) {
 		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor.newBuilder().setKey("_all")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
-				.setConstraint(G_Constraint.REQUIRED_EQUALS).build();
+				.setListRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
+				.setConstraint(G_Constraint.EQUALS).build();
 		final QueryHelper qh = new QueryHelper(identifierList);
 		qh.setMaxResult(new Long(graphQuery.getMaxEdgesPerNode()));
 		return qh;

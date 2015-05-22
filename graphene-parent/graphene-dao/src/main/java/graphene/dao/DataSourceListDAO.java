@@ -1,6 +1,8 @@
 package graphene.dao;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * While this is a very simple DAO, if we intend to always pre-load this it may
@@ -22,5 +24,9 @@ public interface DataSourceListDAO {
 	public abstract List<String> getAvailableTypes(final String schema);
 
 	public String getDefaultSchema();
+
+	public Map<String, ArrayList<String>> getFieldMappings();
+
+	public abstract Map<String, ArrayList<String>> getRangeMappings();
 
 }

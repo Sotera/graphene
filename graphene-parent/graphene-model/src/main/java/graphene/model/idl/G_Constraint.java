@@ -10,7 +10,7 @@ package graphene.model.idl;
 	 ADDED IN 1.8 */
 @org.apache.avro.specific.AvroGenerated
 public enum G_Constraint { 
-  REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED, COMPARE_CONTAINS, COMPARE_ENDSWITH, COMPARE_EQUALS, COMPARE_GREATER, COMPARE_INCLUDE, COMPARE_LESS, COMPARE_NOTINCLUDE, COMPARE_REGEX, COMPARE_SIMPLE, COMPARE_SOUNDSLIKE, COMPARE_STARTSWITH  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_Constraint\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Property value matching constraints\\r\\n\\r\\n\\t ADDED IN 1.8\",\"symbols\":[\"REQUIRED_EQUALS\",\"FUZZY_PARTIAL_OPTIONAL\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\",\"COMPARE_CONTAINS\",\"COMPARE_ENDSWITH\",\"COMPARE_EQUALS\",\"COMPARE_GREATER\",\"COMPARE_INCLUDE\",\"COMPARE_LESS\",\"COMPARE_NOTINCLUDE\",\"COMPARE_REGEX\",\"COMPARE_SIMPLE\",\"COMPARE_SOUNDSLIKE\",\"COMPARE_STARTSWITH\"]}");
+  EQUALS, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED, CONTAINS, ENDS_WITH, REGEX, STARTS_WITH, BETWEEN, FUZZY_PARTIAL_OPTIONAL  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_Constraint\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Property value matching constraints\\r\\n\\r\\n\\t ADDED IN 1.8\",\"symbols\":[\"EQUALS\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY_REQUIRED\",\"CONTAINS\",\"ENDS_WITH\",\"REGEX\",\"STARTS_WITH\",\"BETWEEN\",\"FUZZY_PARTIAL_OPTIONAL\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }
