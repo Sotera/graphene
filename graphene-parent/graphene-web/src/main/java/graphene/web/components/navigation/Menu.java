@@ -84,7 +84,7 @@ public class Menu {
 	private Map<MenuType, Collection<Triple<String, String, String>>> menuHierarchy;
 
 	@Property
-	@SessionState
+	@SessionState(create = false)
 	private G_User user;
 
 	private boolean userExists;
