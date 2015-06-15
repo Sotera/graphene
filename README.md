@@ -1,6 +1,8 @@
 Graphene: Search and Graph your data 
 ======
- Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.
+ Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  By Graphing, we mean nodes and edges that describe either shared attributes or events/relations between actors.  (i.e. two people share the same address (a shared attribute), or a email between people (an event)) It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.  Graphene requires some coding to be done to adapt to your specific needs and data.
+ 
+ A popular use of Graphene is for discovering shared attribute in forensic analysis, for instance using a corpus of financial or case data.  It has been applied to such domains as Anti-Money Laundering, Counter Threat Finance, social media, communications and more.  Leveraging [Apache Tika](https://tika.apache.org/), it has even been applied to collections of files.  Graphene lets you visualize the connections between entities that you wouldn't otherwise see.  Graphene also allows you to modifiy the network graph in your browser, and save those modifications back to the server.  Graphene has export functionality of graphs built in.
 
 For configurations, building, and deployment instructions, view the [Graphene Wiki](https://github.com/Sotera/graphene/wiki).
 Please see the road maps in the wiki for new features and their slated order.
