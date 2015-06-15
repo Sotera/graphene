@@ -20,7 +20,7 @@ Building Graphene
  * A BuildAll.bat is supplied for windows users.  This will perform a few cleans to overcome some windows issues, and then compile and install to your local maven repo.
  * BuildAllOffline.bat will also grab the source code and javadocs for the dependencies, so you can take your .m2 directory into an offline enclave (or airgapped network) to develop.
  
-Quickstart
+Quickstart (4.2.0-SNAPSHOT and later)
 ------
  Once you've built the core modules (from graphene parent) you should be able to create a new project via a maven archetype.  If you've never used an archetype, basically it sets up the scaffolding for your new project based on a small amount of user input.  From there you can import it into your favorite IDE and modify it to your requirements.  In our case, we provide an archetype that is based on [Graphene-Instagram](https://github.com/Sotera/graphene-instagram).  This may mean you'll have to delete some of the classes we give you, but you'll have a better idea on how the project is intended to be structured.
 
