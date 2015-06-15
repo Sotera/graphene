@@ -1,40 +1,37 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Graphene : Search and Graph your data">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-    <title>Graphene</title>
+    <title>Graphene by Sotera</title>
   </head>
 
   <body>
+    <header>
+      <div class="inner">
+        <h1>Graphene</h1>
+        <h2>Search and Graph your data</h2>
+        <a href="https://github.com/Sotera/graphene" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Sotera/graphene">View on GitHub</a>
-
-          <h1 id="project_title">Graphene</h1>
-          <h2 id="project_tagline">Search and Graph your data</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Sotera/graphene/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Sotera/graphene/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a id="graphene-search-and-graph-your-data-" class="anchor" href="#graphene-search-and-graph-your-data-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphene: Search and Graph your data </h1>
 
-<p>Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for generating a graph database using Neo4J or Titan (and to that extent, Tinkerpop Blueprints), from your non-graph datastore (RDBMS, Solr, etc).</p>
+<p>Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.</p>
 
 <p>For configurations, building, and deployment instructions, view the <a href="https://github.com/Sotera/graphene/wiki">Graphene Wiki</a>.
 Please see the road maps in the wiki for new features and their slated order.</p>
@@ -42,19 +39,37 @@ Please see the road maps in the wiki for new features and their slated order.</p
 <h2>
 <a id="using-graphene-" class="anchor" href="#using-graphene-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Graphene </h2>
 
-<p>The core of the Graphene project is to be used as a WAR overlay for your Java based web application.  We provide two examples using the limited Enron and Scott Walker datasets (graphene-enron and graphene-walker, respectively).  We also have a Kiva micro-loan based demo available on request.</p>
+<p>The core of the Graphene project contains multiple modules, some of which are optional.  The main module that you'll need it the graphene-web module, since it acts as a WAR overlay for your Java based web application.  The current example that will be released soon is based on Instagram data, and will be shown as a separate github project.  Previous demos included Enron, Scott Walker email data, and Kiva Microloan data.</p>
 
-<p>It is our goal that you should not have to modify this project in order to suit your individual needs (although we welcome ideas and suggestions).  The intent is that this project be used as an underlying framework, and that your individual implementations can be wired within your code using IOC.</p>
+<p>It's our goal that you use the available modules if they make sense for your needs, but we allow you to wire in your own code in most places.  In addition, Graphene leverages Apache Tapestry's auto discovery of modules, so we will be expanding the number of 'plugin' modules available.  Currently we offer the graphene-augment-mitie as an example of such a module.  It's abilities are made available in your app simply by including the jar file in your POM, no code changes necessary!</p>
 
 <h2>
 <a id="building-graphene-" class="anchor" href="#building-graphene-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building Graphene </h2>
 
-<p>Graphene is built using <a href="http://maven.apache.org">Apache Maven</a> version 3.0.4 or later and a recent version of <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java 7</a>. </p>
+<p>Graphene is built using <a href="http://maven.apache.org">Apache Maven</a> version 3.0.4 or later and a recent version of <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">currenly Java 7</a>. </p>
 
 <ul>
-<li>A plain 'mvn clean install' will build all the jar files and a single war file (to be overlaid on your project)</li>
+<li>A plain 'mvn clean install' on graphene-parent will build all the jar files and a single war file (to be overlaid on your project)</li>
 <li>Test execution is part of the build, but you can add -DskipTests=true to cut down on the build time.</li>
 <li>A BuildAll.bat is supplied for windows users.  This will perform a few cleans to overcome some windows issues, and then compile and install to your local maven repo.</li>
+<li>BuildAllOffline.bat will also grab the source code and javadocs for the dependencies, so you can take your .m2 directory into an offline enclave (or airgapped network) to develop.</li>
+</ul>
+
+<h2>
+<a id="quickstart-420-snapshot-and-later" class="anchor" href="#quickstart-420-snapshot-and-later" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quickstart (4.2.0-SNAPSHOT and later)</h2>
+
+<p>Once you've built the core modules (from graphene parent) you should be able to create a new project via a maven archetype.  If you've never used an archetype, basically it sets up the scaffolding for your new project based on a small amount of user input.  From there you can import it into your favorite IDE and modify it to your requirements.  In our case, we provide an archetype that is based on <a href="https://github.com/Sotera/graphene-instagram">Graphene-Instagram</a>.  This may mean you'll have to delete some of the classes we give you, but you'll have a better idea on how the project is intended to be structured.</p>
+
+<ul>
+<li>Step 1: navigate to a directory you want to create the project in.<br>
+</li>
+<li>
+<p>Step 2: Assuming your project name is "Omni", enter a command like this: </p>
+
+<pre><code>mvn archetype:generate -DarchetypeGroupId=graphene -DarchetypeArtifactId=graphene-archetype -DarchetypeVersion=4.2.0-SNAPSHOT -DgroupId=graphene-omni -DartifactId=graphene-omni -Dpackage=graphene.omni -DprojectName=Omni
+</code></pre>
+</li>
+<li>Step 3: If you answer No to the confirmation prompt that follows, you'll have a chance to enter in extra information, such as the ElasticSearch settings, etc.</li>
 </ul>
 
 <h2>
@@ -118,9 +133,16 @@ Please see the road maps in the wiki for new features and their slated order.</p
      </li>
       <li>
 <h4>
+<a id="graphene-dao-es" class="anchor" href="#graphene-dao-es" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-dao-es</h4>
+        <ul> 
+          <li>Defines some DAO implementations for working with Elastic Search with JEST.  Using JEST allows us to be compatible through the REST layer, instead of binding to a particular version of ElasticSearch.  These are not used unless you wire them in IOC</li>
+        </ul>
+     </li>
+      <li>
+<h4>
 <a id="graphene-export" class="anchor" href="#graphene-export" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-export</h4>
         <ul> 
-          <li>Defines utilities for converting internal lists into CSV and native Excel XLS files</li>
+          <li>Defines utilities for converting internal lists into CSV and native Excel XLSX files</li>
         </ul>
       </li>
     <li>
@@ -146,19 +168,9 @@ Please see the road maps in the wiki for new features and their slated order.</p
       </li>
       <li>
 <h4>
-<a id="graphene-memorydb" class="anchor" href="#graphene-memorydb" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-memorydb</h4>
-        <ul> 
-          <li>An in house memory database for property graphs, for small datasets and when a graph database is not available.  An implementation of this is preloaded into memory when the application is started (which may take several minutes depending on how much you tell it to load)</li>
-        </ul>
-      </li>
-      <li>
-<h4>
 <a id="graphene-model" class="anchor" href="#graphene-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-model</h4>
         <ul> 
-          <li>This module contains generic model and view classes which are used by graphene's services.  </li>
-<li>Your DAO implementations translate your domain specific (and database specific) objects into the more generic objects defined in this module.</li>
-<li>Your DAO implementations receive query objects (POJOs) defined in this module.</li>
-<li>Many of the objects are generated use <a href="http://avro.apache.org/">Apache Avro</a>.</li>
+          <li>This module contains IDL classes generated by  <a href="http://avro.apache.org/">Apache Avro</a>.  These classes are the lingua franca between modules in Graphene. </li>
         </ul>
       </li>
       <li>
@@ -191,7 +203,7 @@ Please see the road maps in the wiki for new features and their slated order.</p
 <a id="graphene-web" class="anchor" href="#graphene-web" aria-hidden="true"><span class="octicon octicon-link"></span></a>graphene-web</h4>
         <ul> 
           <li>This module defines some basic wiring and imports many other of the *Module.java classes from other graphene maven modules.</li>
-<li>The web module also contains shared html, css and js resources used by ExtJs, Cytoscape and many other libraries.</li>
+<li>The web module also contains shared html, css and js resources used by ExtJs, <a href="http://js.cytoscape.org/">Cytoscape.js</a> and many other js libraries.</li>
 <li>It also contains Apache Tapestry based UI components and pages (currently limited)</li>
         </ul>
       </li>
@@ -253,19 +265,36 @@ Please see the road maps in the wiki for new features and their slated order.</p
 <h2>
 <a id="licensing" class="anchor" href="#licensing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
 
-<p>Graphene is an open source project, containing dependencies on other open source projects.  This project was funded by DARPA under part of the XDATA program.</p>
-      </section>
+<p>Graphene is licensed with Apache License Version 2.0 (APLv2).  This project was funded by DARPA under part of the XDATA program.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Sotera/graphene/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Sotera/graphene/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Sotera/graphene"></a> is maintained by <a href="https://github.com/Sotera">Sotera</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Graphene maintained by <a href="https://github.com/Sotera">Sotera</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-64148214-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
 
   </body>
 </html>
