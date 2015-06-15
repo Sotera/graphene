@@ -1,4 +1,7 @@
-Graphene: Search and Graph your data 
+Screenshots from an Instagram example:
+
+![Searching through a scrape of Instagram data](https://cloud.githubusercontent.com/assets/1234595/8172362/ca1b3e0e-138d-11e5-812c-6142089f765d.png)
+![A graph of Instagram events](https://cloud.githubusercontent.com/assets/1234595/8172308/660742f0-138d-11e5-8dce-ddaa37c1c107.png)
 ======
  Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  By Graphing, we mean nodes and edges that describe either shared attributes or events/relations between actors.  (i.e. two people share the same address (a shared attribute), or a email between people (an event)) It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.  Graphene requires some coding to be done to adapt to your specific needs and data.
  
