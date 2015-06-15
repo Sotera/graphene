@@ -9,7 +9,7 @@ Please see the road maps in the wiki for new features and their slated order.
  
 Using Graphene 
 ------
- The core of the Graphene project contains multiple modules, some of which are optional.  The main module that you'll need it the graphene-web module, since it acts as a WAR overlay for your Java based web application.  The current example that will be released soon is based on Instagram data, and will be shown as a separate github project.  Previous demos included Enron, Scott Walker email data, and Kiva Microloan data.
+ The core of the Graphene project contains multiple modules, some of which are optional.  The main module that you'll need it the graphene-web module, since it acts as a WAR overlay for your Java based web application.  The current example is [Graphene-Instagram](https://github.com/Sotera/graphene-instagram).  Previous demos included Enron, Scott Walker email data, and Kiva Microloan data.
 
  It's our goal that you use the available modules if they make sense for your needs, but we allow you to wire in your own code in most places.  In addition, Graphene leverages Apache Tapestry's auto discovery of modules, so we will be expanding the number of 'plugin' modules available.  Currently we offer the graphene-augment-mitie as an example of such a module.  It's abilities are made available in your app simply by including the jar file in your POM, no code changes necessary!
  
