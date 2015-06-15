@@ -1,4 +1,5 @@
-#Graphene: Search and Discover connections in your data
+![GRAPHENE](https://github.com/Sotera/graphene/blob/master/graphene-parent/graphene-web/src/main/webapp/core/img/logo_graphene_large.png?raw=true)
+#Search and Discover connections in your data
 
 Screenshots from an Instagram example:
 
