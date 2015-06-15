@@ -3,7 +3,7 @@
 #set( $symbol_escape = '\' )
 package ${package}.web.services;
 
-import ${package}.dao.${artifactId}DAOModule;
+import ${package}.dao.${projectName}DAOModule;
 import ${package}.model.graphserver.GraphServerModule;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.rest.services.RestModule;
@@ -25,7 +25,7 @@ import org.slf4j.Logger;
  * This module is automatically included as part of the Tapestry IoC Registry if
  * <em>tapestry.execution-mode</em> includes <code>development</code>.
  */
-@SubModule({ ${artifactId}DAOModule.class, AppRestModule.class, GraphServerModule.class, GrapheneModule.class,
+@SubModule({ ${projectName}DAOModule.class, AppRestModule.class, GraphServerModule.class, GrapheneModule.class,
 		RestModule.class, UtilModule.class, NoSecurityModule.class })
 public class DevelopmentModule {
 
@@ -40,8 +40,8 @@ public class DevelopmentModule {
 	}
 
 	public static void contributeApplicationDefaults(final MappedConfiguration<String, Object> configuration) {
-		configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene-${artifactId} Mock");
-		configuration.add(G_SymbolConstants.APPLICATION_CONTACT, "${artifactId}");
+		configuration.add(G_SymbolConstants.APPLICATION_NAME, "Graphene-${projectName} Mock");
+		configuration.add(G_SymbolConstants.APPLICATION_CONTACT, "${projectName}");
 		configuration.add(SymbolConstants.APPLICATION_VERSION, "${symbol_dollar}{graphene.application-version}-DEV");
 	}
 

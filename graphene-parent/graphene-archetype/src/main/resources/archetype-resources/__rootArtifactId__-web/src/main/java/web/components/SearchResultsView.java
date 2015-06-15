@@ -7,7 +7,7 @@ import graphene.dao.G_Parser;
 import graphene.dao.LoggingDAO;
 import graphene.dao.StyleService;
 import graphene.dao.es.JestModule;
-import ${package}.model.graphserver.${artifactId}Parser;
+import ${package}.model.graphserver.${projectName}Parser;
 import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_Entity;
@@ -250,12 +250,12 @@ public class SearchResultsView {
 
 	public List<Tuple<String, String>> getAllAts() {
 		return (List<Tuple<String, String>>) PropertyHelper.getListValue(getEntity().getProperties().get(
-				${artifactId}Parser.ALL_ATS));
+				${projectName}Parser.ALL_ATS));
 	}
 
 	public List<Tuple<String, String>> getAllHashTags() {
 		return (List<Tuple<String, String>>) PropertyHelper.getListValue(getEntity().getProperties().get(
-				${artifactId}Parser.ALL_HASHTAGS));
+				${projectName}Parser.ALL_HASHTAGS));
 	}
 
 	public Double getAmount() {
@@ -271,12 +271,12 @@ public class SearchResultsView {
 
 	public Collection<Tuple<String, String>> getAtsInCaption() {
 		return (Collection<Tuple<String, String>>) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.ATS_IN_CAPTION));
+				${projectName}Parser.ATS_IN_CAPTION));
 	}
 
 	public Collection<Tuple<String, String>> getAtsInComments() {
 		return (Collection<Tuple<String, String>>) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.ATS_IN_COMMENTS));
+				${projectName}Parser.ATS_IN_COMMENTS));
 	}
 
 	public Collection<G_Property> getCIdentifierList() {
@@ -305,7 +305,7 @@ public class SearchResultsView {
 	 */
 	private G_SearchResults getEntities(final String schema, final String subType, final String matchType,
 			final String value, final int maxResults) {
-		logger.debug("=========================================================In ${artifactId} doing ${artifactId} STUFF");
+		logger.debug("=========================================================In ${projectName} doing ${projectName} STUFF");
 		G_SearchResults metaresults = null;
 		if (ValidationUtils.isValid(value)) {
 			if (ValidationUtils.isValid(matchType)) {
@@ -391,12 +391,12 @@ public class SearchResultsView {
 
 	public Collection<Tuple<String, String>> getHashTagsInCaption() {
 		return (Collection<Tuple<String, String>>) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.HASHTAGS_IN_CAPTION));
+				${projectName}Parser.HASHTAGS_IN_CAPTION));
 	}
 
 	public Collection<Tuple<String, String>> getHashTagsInComments() {
 		return (Collection<Tuple<String, String>>) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.HASHTAGS_IN_COMMENTS));
+				${projectName}Parser.HASHTAGS_IN_COMMENTS));
 	}
 
 	/**
@@ -418,48 +418,48 @@ public class SearchResultsView {
 
 	public String getMediaCaption() {
 		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.MEDIA_CAPTION_TEXT));
+				${projectName}Parser.MEDIA_CAPTION_TEXT));
 	}
 
 	public String getMediaCommentCount() {
 		return String.valueOf(PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.MEDIA_COMMENT_COUNT)));
+				${projectName}Parser.MEDIA_COMMENT_COUNT)));
 	}
 
 	public Object getMediaCreatedTime() {
-		return PropertyHelper.getSingletonValue(getEntity().getProperties().get(${artifactId}Parser.MEDIA_CREATED_TIME));
+		return PropertyHelper.getSingletonValue(getEntity().getProperties().get(${projectName}Parser.MEDIA_CREATED_TIME));
 	}
 
 	public String getMediaId() {
-		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(${artifactId}Parser.MEDIA_ID));
+		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(${projectName}Parser.MEDIA_ID));
 	}
 
 	public String getMediaLikeCount() {
 		return String.valueOf(PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.MEDIA_LIKE_COUNT)));
+				${projectName}Parser.MEDIA_LIKE_COUNT)));
 	}
 
 	public String getMediaLocationLatLon() {
 		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.MEDIA_LOCATION_LATLON));
+				${projectName}Parser.MEDIA_LOCATION_LATLON));
 	}
 
 	public String getMediaLocationName() {
 		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.MEDIA_LOCATION_NAME));
+				${projectName}Parser.MEDIA_LOCATION_NAME));
 	}
 
 	public String getMediaOwner() {
-		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(${artifactId}Parser.MEDIA_OWNER));
+		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(${projectName}Parser.MEDIA_OWNER));
 	}
 
 	public String getMediaPageLink() {
-		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(${artifactId}Parser.MEDIA_LINK));
+		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(${projectName}Parser.MEDIA_LINK));
 	}
 
 	public String getMediaThumbnail() {
 		return (String) PropertyHelper.getSingletonValue(getEntity().getProperties().get(
-				${artifactId}Parser.MEDIA_THUMBNAIL));
+				${projectName}Parser.MEDIA_THUMBNAIL));
 	}
 
 	protected Messages getMessages() {

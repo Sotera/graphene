@@ -77,6 +77,11 @@
 				<version>${base.project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>${base.project.groupId}</groupId>
+				<artifactId>graphene-dao-titan</artifactId>
+				<version>${base.project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>graphene-augment</groupId>
 				<artifactId>graphene-augment-mitie</artifactId>
 				<version>${base.project.version}</version>

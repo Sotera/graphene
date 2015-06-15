@@ -37,7 +37,7 @@ import graphene.hts.sentences.SentenceExtractorImpl;
 import ${package}.dao.impl.GraphTraversalRuleServiceImpl;
 import ${package}.dao.impl.IconServiceImpl;
 import ${package}.dao.impl.es.DataSourceListDAOESImpl;
-import ${package}.web.services.${artifactId}StartupProceduresImpl;
+import ${package}.web.services.${projectName}StartupProceduresImpl;
 import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_UserDataAccess;
@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  */
 @SubModule({ JestModule.class, DefaultESUserSpaceModule.class, DAOModule.class, MITIEMod.class })
 public class ${projectName}DAOModule {
-	private static Logger logger = LoggerFactory.getLogger(${artifactId}DAOModule.class);
+	private static Logger logger = LoggerFactory.getLogger(${projectName}DAOModule.class);
 
 	public static void bind(final ServiceBinder binder) {
 		binder.bind(G_UserDataAccess.class, UserServiceImpl.class);
@@ -76,7 +76,7 @@ public class ${projectName}DAOModule {
 
 		binder.bind(GraphTraversalRuleService.class, GraphTraversalRuleServiceImpl.class);
 
-		// binder.bind(G_DataAccess.class, ${artifactId}DataAccess.class);
+		// binder.bind(G_DataAccess.class, ${projectName}DataAccess.class);
 		binder.bind(StyleService.class, StyleServiceImpl.class);
 
 		binder.bind(DataSourceListDAO.class, DataSourceListDAOESImpl.class).eagerLoad();
@@ -92,7 +92,7 @@ public class ${projectName}DAOModule {
 		binder.bind(IconService.class, IconServiceImpl.class);
 		binder.bind(StopWordService.class, StopWordServiceDefaultImpl.class);
 
-		binder.bind(StartupProcedures.class, ${artifactId}StartupProceduresImpl.class);
+		binder.bind(StartupProcedures.class, ${projectName}StartupProceduresImpl.class);
 		binder.bind(SentimentAnalyzer.class, SentimentAnalyzerImpl.class);
 
 		binder.bind(LoggingDAO.class, LoggingDAODefaultESImpl.class).eagerLoad();

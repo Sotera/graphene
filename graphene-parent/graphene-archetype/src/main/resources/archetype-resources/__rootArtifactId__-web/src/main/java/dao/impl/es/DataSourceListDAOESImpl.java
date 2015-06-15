@@ -7,7 +7,6 @@ import graphene.dao.DataSourceListDAO;
 import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
-import graphene.model.datasourcedescriptors.DataSourceList;
 import graphene.model.idl.G_Constraint;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -35,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class DataSourceListDAOESImpl extends BasicESDAO implements DataSourceListDAO {
 
-	private static DataSourceList dataSourceList = null;
 
 	@Inject
 	@Symbol(JestModule.ES_SEARCH_INDEX)

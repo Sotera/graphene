@@ -11,18 +11,20 @@
 				<include>**/*.prefs</include>
 			</includes>
 		</fileSet>
-		<fileSet filtered="true" packaged="true" encoding="UTF-8"><!--packaged="true" 
-				tells maven to copy the core package in to root package while creating a 
-				project. if you set -Dpackage=com.alibaba.china after execute mvn archetype:generate, 
-				it will create java source package as com/alibaba/china/dal/dao/sample.java -->
+		<fileSet filtered="true" encoding="UTF-8">
 			<directory></directory>
 			<includes>
 				<include>.project</include>
-				<include>graphene_changes.txt</include>
-				<include>README.md</include>
+
+			</includes>
+		</fileSet>
+		<fileSet encoding="UTF-8">
+			<directory></directory>
+			<includes>
+				<include>.gitignore</include>
 				<include>BuildAll.bat</include>
-				<include>**/*.bat</include>
-				<include>**/*.xml</include>
+				<include>README.md</include>
+				<include>graphene_changes.txt</include>
 			</includes>
 		</fileSet>
 	</fileSets>
@@ -53,6 +55,12 @@
 					<includes>
 						<include>**/*.java</include>
 						<include>**/*.properties</include>
+					</includes>
+				</fileSet>
+				<fileSet packaged="true" encoding="UTF-8">
+					<directory>src/main/java</directory>
+					<includes>
+						<include>**/*.tml</include>
 					</includes>
 				</fileSet>
 				<fileSet filtered="true" encoding="UTF-8">
@@ -99,16 +107,17 @@
 						<include>**/*.tml</include>
 					</includes>
 				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/test/resources</directory>
+					<includes>
+						<include>**/*.properties</include>
+						<include>**/*.txt</include>
+					</includes>
+				</fileSet>
 				<fileSet encoding="UTF-8">
 					<directory>src/test/java</directory>
 					<includes>
 						<include>**/*.</include>
-					</includes>
-				</fileSet>
-				<fileSet filtered="true" encoding="UTF-8">
-					<directory>src/test/resources</directory>
-					<includes>
-						<include>**/*.txt</include>
 					</includes>
 				</fileSet>
 				<fileSet filtered="true" encoding="UTF-8">
@@ -127,12 +136,12 @@
 					<directory>src/site</directory>
 					<includes>
 						<include>**/*.xml</include>
-						<include>**/*.txt</include>
 					</includes>
 				</fileSet>
 				<fileSet encoding="UTF-8">
 					<directory>src/site</directory>
 					<includes>
+						<include>**/*.txt</include>
 						<include>**/*.png</include>
 						<include>**/*.apt</include>
 						<include>**/*.PNG</include>
@@ -143,6 +152,11 @@
 					<directory>.settings</directory>
 					<includes>
 						<include>**/*.xml</include>
+						<include>**/*.prefs</include>
+						<include>**/*.component</include>
+						<include>**/*.container</include>
+						<include>**/*.name</include>
+						<include>**/*.jsdtscope</include>
 					</includes>
 				</fileSet>
 				<fileSet encoding="UTF-8">
@@ -152,16 +166,7 @@
 						<include>**/*.gitignore</include>
 					</includes>
 				</fileSet>
-				<fileSet encoding="UTF-8">
-					<directory>.settings</directory>
-					<includes>
-						<include>**/*.prefs</include>
-						<include>**/*.component</include>
-						<include>**/*.container</include>
-						<include>**/*.name</include>
-						<include>**/*.jsdtscope</include>
-					</includes>
-				</fileSet>
+				
 				<fileSet filtered="true" encoding="UTF-8">
 					<directory></directory>
 					<includes>

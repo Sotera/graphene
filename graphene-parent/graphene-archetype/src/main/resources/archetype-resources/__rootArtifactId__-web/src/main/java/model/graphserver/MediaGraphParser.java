@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * This is a parser for a particular document type in this application.
  */
-public class MediaGraphParser extends ${artifactId}Parser<Media> {
+public class MediaGraphParser extends ${projectName}Parser<Media> {
 
 	public MediaGraphParser() {
 		supported = new ArrayList<String>(1);
@@ -126,7 +126,7 @@ public class MediaGraphParser extends ${artifactId}Parser<Media> {
 		return null;
 	}
 
-	// This method creates a sub graph of the nodes inside a ${artifactId} media
+	// This method creates a sub graph of the nodes inside a ${projectName} media
 	// page, and a list
 	// of new identifiers to search on.
 	@Override

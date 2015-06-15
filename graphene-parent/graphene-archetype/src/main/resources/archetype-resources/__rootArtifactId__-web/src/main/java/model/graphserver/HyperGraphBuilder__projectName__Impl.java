@@ -52,7 +52,7 @@ import org.slf4j.Logger;
  * @author djue
  * 
  */
-public class PropertyHyperGraphBuilder${artifactId}Impl extends AbstractGraphBuilder {
+public class HyperGraphBuilder${projectName}Impl extends AbstractGraphBuilder {
 
 	public static final int MAX_RESULTS = 20;
 	public static final double MIN_SCORE = 0.75d;
@@ -81,7 +81,7 @@ public class PropertyHyperGraphBuilder${artifactId}Impl extends AbstractGraphBui
 	@Inject
 	private DocumentBuilder db;
 
-	public PropertyHyperGraphBuilder${artifactId}Impl() {
+	public HyperGraphBuilder${projectName}Impl() {
 
 		// constant legend items regardless of what other node types are present
 		// in graph

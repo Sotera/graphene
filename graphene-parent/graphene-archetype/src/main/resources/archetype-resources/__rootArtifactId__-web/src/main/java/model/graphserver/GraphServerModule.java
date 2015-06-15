@@ -22,11 +22,13 @@ public class GraphServerModule {
 
 	public static void bind(final ServiceBinder binder) {
 
-		binder.bind(HyperGraphBuilder.class, PropertyHyperGraphBuilder${artifactId}Impl.class).withId("HyperProperty")
+	
+		binder.bind(HyperGraphBuilder.class, HyperGraphBuilder${projectName}Impl.class).withId("HyperProperty")
 				.eagerLoad().scope(ScopeConstants.PERTHREAD);
-
+		/**
+		 * Here is where you would add in different parsers for different document types.  For this example we supply one MediaGraphParser that was designed to work on scraped Instagram data.  You can change this one or swap in your own.  In most cases you'll have a different parser for each document type, and they will have different ways of adding nodes to a graph.
+		 */
 		binder.bind(G_Parser.class, MediaGraphParser.class).withId(MEDIA);
-
 	}
 
 	/**

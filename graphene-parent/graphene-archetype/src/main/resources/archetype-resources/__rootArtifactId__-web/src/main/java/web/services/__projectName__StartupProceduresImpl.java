@@ -5,7 +5,7 @@ package ${package}.web.services;
 
 import graphene.dao.StartupProcedures;
 
-public class ${artifactId}StartupProceduresImpl implements StartupProcedures {
+public class ${projectName}StartupProceduresImpl implements StartupProcedures {
 
 	@Override
 	public boolean initialize() {

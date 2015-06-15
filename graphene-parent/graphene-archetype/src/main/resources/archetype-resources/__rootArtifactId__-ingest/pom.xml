@@ -82,10 +82,10 @@
 			<classifier>classes</classifier>
 			<type>jar</type>
 		</dependency>
-		<!-- This may not be the best way to do this. See build notes in this module. -->
+		<!-- This includes the class files from the web application so it can be leveraged in ingest. -->
 		<dependency>
 			<groupId>${groupId}</groupId>
-			<artifactId>${artifactId}</artifactId>
+			<artifactId>${groupId}-web</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
 			<classifier>classes</classifier>

@@ -28,12 +28,12 @@ import org.apache.tapestry5.services.URLEncoder;
 import org.slf4j.Logger;
 
 /**
- * This is the parent class for any type of ${artifactId} documents to parse. If you
+ * This is the parent class for any type of ${projectName} documents to parse. If you
  * have more than one type of document, this class can act as a repository for
  * common constants, fields and utilities for all the document parsers you may
  * create.
  * 
- * Currently ${artifactId} has one document type, {@link Media}.
+ * Currently ${projectName} has one document type, {@link Media}.
  * 
  * @author djue
  * @param <T>
@@ -123,7 +123,7 @@ public abstract class ${projectName}Parser<T> extends BasicParserESImpl<T> {
 
 	Set<String> datesFiled;
 
-	public ${artifactId}Parser() {
+	public ${projectName}Parser() {
 		// extractors = new ArrayList<Extractor>();
 		// extractors.add(new EmailExtractor());
 		// extractors.add(new PhoneExtractor());

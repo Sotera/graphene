@@ -6,7 +6,7 @@ package ${package}.web.services;
 import graphene.augment.mitie.web.services.MITIEMod;
 import graphene.augment.snlp.web.services.AugmentSNLPModule;
 import graphene.dao.es.JestModule;
-import ${package}.dao.${artifactId}DAOModule;
+import ${package}.dao.${projectName}DAOModule;
 import ${package}.model.graphserver.GraphServerModule;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.rest.services.RestModule;
@@ -36,7 +36,7 @@ import org.slf4j.Logger;
  * it's a good place to configure and extend Tapestry, or to place your own
  * service definitions.
  */
-@SubModule({ ${artifactId}DAOModule.class, AppRestModule.class, NoSecurityModule.class, GraphServerModule.class,
+@SubModule({ ${projectName}DAOModule.class, AppRestModule.class, NoSecurityModule.class, GraphServerModule.class,
 		GrapheneModule.class, RestModule.class, UtilModule.class, AugmentSNLPModule.class })
 public class AppModule {
 
