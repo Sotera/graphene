@@ -1,7 +1,0 @@
-<html t:type="graphene/layout" title="Contact"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
-      xmlns:p="tapestry:parameter">
-
-    <p>Contact</p>
-
-</html>

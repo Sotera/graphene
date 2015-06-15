@@ -1,0 +1,7 @@
+<html t:type="graphene/layout" title="Contact graphene-fincen-web"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+      xmlns:p="tapestry:parameter">
+
+    <p>Contact</p>
+
+</html>

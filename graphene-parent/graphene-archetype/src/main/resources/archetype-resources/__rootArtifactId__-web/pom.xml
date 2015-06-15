@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>${groupId}</groupId>
+		<artifactId>${rootArtifactId}</artifactId>
+		<version>${version}</version>
+	</parent>
+	<artifactId>${artifactId}</artifactId>
+	<packaging>war</packaging>
+	<description>Web module (war) for ${artifactId}</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Provided by the servlet container, but sometimes referenced in the 
+			application code. -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Provide dependency to the Tapestry javadoc taglet which replaces the 
+			Maven component report -->
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-javadoc</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-rest</artifactId>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-export</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-dao-es</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-hts</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene-augment</groupId>
+			<artifactId>graphene-augment-mitie</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene-augment</groupId>
+			<artifactId>graphene-augment-snlp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene-security</groupId>
+			<artifactId>graphene-security-noop</artifactId>
+		</dependency>
+		<!-- Here's the war overlay -->
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-web</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- Here's just the classes, needed for compilation -->
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-web</artifactId>
+			<classifier>classes</classifier>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${artifactId}</finalName>
+		<resources>
+			<resource><!-- This is for picking up any Tapestry .tml templates, .properties 
+					or other resources which are in the src directory. Optionally these could 
+					be in the corresponding resources directory but we don't enforce that on 
+					developers. -->
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+					<exclude>**/*.class</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/filtered-resources</directory>
+				<targetPath>filtered</targetPath>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<workDirectory>target\overlay-war-folder</workDirectory>
+					<webXml>src\main\webapp\WEB-INF\web.xml</webXml>
+					<overlays>
+						<overlay>
+							<groupId>${base.project.groupId}</groupId>
+							<artifactId>graphene-web</artifactId>
+							<excludes>
+								<exclude>**/log4j.properties</exclude>
+								<exclude>WEB-INF/lib/*.jar</exclude>
+							</excludes>
+						</overlay>
+					</overlays>
+					<!-- If true, this will package the classes as their own jar, INSIDE 
+						the war's web-inf/lib. At the moment this seems incompatible with the attachClasses 
+						flag, which we absolutely need for building. -->
+					<archiveClasses>false</archiveClasses>
+					<attachClasses>true</attachClasses>
+					<!-- Just to be explicit. 'classes' is the default. This makes a second 
+						target as a jar with just the classes and no html/js -->
+					<classesClassifier>classes</classesClassifier>
+				</configuration>
+			</plugin>
+			<!-- Run the application using "mvn jetty:run" -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<reporting />
+
+
+</project>
