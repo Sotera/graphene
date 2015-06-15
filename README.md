@@ -15,10 +15,23 @@ Building Graphene
 ------ 
  Graphene is built using [Apache Maven](http://maven.apache.org) version 3.0.4 or later and a recent version of [currenly Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html). 
  
- * A plain 'mvn clean install' will build all the jar files and a single war file (to be overlaid on your project)
+ * A plain 'mvn clean install' on graphene-parent will build all the jar files and a single war file (to be overlaid on your project)
  * Test execution is part of the build, but you can add -DskipTests=true to cut down on the build time.
  * A BuildAll.bat is supplied for windows users.  This will perform a few cleans to overcome some windows issues, and then compile and install to your local maven repo.
+ * BuildAllOffline.bat will also grab the source code and javadocs for the dependencies, so you can take your .m2 directory into an offline enclave (or airgapped network) to develop.
  
+Quickstart
+------
+ Once you've built the core modules (from graphene parent) you should be able to create a new project via a maven archetype.  If you've never used an archetype, basically it sets up the scaffolding for your new project based on a small amount of user input.  From there you can import it into your favorite IDE and modify it to your requirements.  In our case, we provide an archetype that is based on [Graphene-Instagram](https://github.com/Sotera/graphene-instagram).  This may mean you'll have to delete some of the classes we give you, but you'll have a better idea on how the project is intended to be structured.
+
+ * Step 1: navigate to a directory you want to create the project in.  
+ * Step 2: Assuming your project name is "Omni", enter a command like this: 
+
+    ```
+    mvn archetype:generate -DarchetypeGroupId=graphene -DarchetypeArtifactId=graphene-archetype -DarchetypeVersion=4.2.0-SNAPSHOT -DgroupId=graphene-omni -DartifactId=graphene-omni -Dpackage=graphene.omni -DprojectName=Omni
+```
+ * Step 3: If you answer No to the confirmation prompt that follows, you'll have a chance to enter in extra information, such as the ElasticSearch settings, etc.
+
 Graphene overview
 ------
 Graphene expects that you are familiar with some modern Java concepts:
@@ -162,5 +175,5 @@ Running a Graphene application
  
 Licensing
 ------
-   Graphene is an open source project, containing dependencies on other open source projects.  This project was funded by DARPA under part of the XDATA program.
+   Graphene is licensed with Apache License Version 2.0 (APLv2).  This project was funded by DARPA under part of the XDATA program.
  
