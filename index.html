@@ -1,28 +1,50 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
+
   <head>
-    <meta charset="UTF-8">
-    <title>Graphene by Sotera</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Graphene : Search and Graph your data">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Graphene</title>
   </head>
+
   <body>
-    <section class="page-header">
-      <h1 class="project-name">Graphene</h1>
-      <h2 class="project-tagline">Search and Graph your data</h2>
-      <a href="https://github.com/Sotera/graphene" class="btn">View on GitHub</a>
-      <a href="https://github.com/Sotera/graphene/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/Sotera/graphene/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
 
-    <section class="main-content">
-      <h1>
-<a id="graphene-search-and-graph-your-data-" class="anchor" href="#graphene-search-and-graph-your-data-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphene: Search and Graph your data </h1>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Sotera/graphene">View on GitHub</a>
 
-<p>Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.</p>
+          <h1 id="project_title">Graphene</h1>
+          <h2 id="project_tagline">Search and Graph your data</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Sotera/graphene/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Sotera/graphene/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="graphene-search-and-discover-connections-in-your-data" class="anchor" href="#graphene-search-and-discover-connections-in-your-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphene: Search and Discover connections in your data</h1>
+
+<p>Screenshots from an Instagram example:</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/1234595/8172362/ca1b3e0e-138d-11e5-812c-6142089f765d.png" alt="Searching through a scrape of Instagram data"></p>
+
+<h1>
+<a id="" class="anchor" href="#" aria-hidden="true"><span class="octicon octicon-link"></span></a><img src="https://cloud.githubusercontent.com/assets/1234595/8172308/660742f0-138d-11e5-8dce-ddaa37c1c107.png" alt="A graph of Instagram events">
+</h1>
+
+<p>Graphene is a high performance Java based web framework you can use to build a searching and graphing application on top of your data.  By Graphing, we mean nodes and edges that describe either shared attributes or events/relations between actors.  (i.e. two people share the same address (a shared attribute), or a email between people (an event)) It is datastore agnostic, but has some built in support for Elastic Search, SQL Databases, and Titan.  <strong>Graphene requires some coding to be done to adapt to your specific needs and data.  You get to decide what constitutes a node and edge in your data.</strong></p>
+
+<p>A popular use of Graphene is for discovering shared attribute in forensic analysis, for instance using a corpus of financial or case data.  It has been applied to such domains as Anti-Money Laundering, Counter Threat Finance, social media, communications and more.  Leveraging <a href="https://tika.apache.org/">Apache Tika</a>, it has even been applied to collections of files.  Graphene lets you visualize the connections between entities that you wouldn't otherwise see.  Graphene also allows you to modifiy the network graph in your browser, and save those modifications back to the server.  Graphene has export functionality of graphs built in.</p>
 
 <p>For configurations, building, and deployment instructions, view the <a href="https://github.com/Sotera/graphene/wiki">Graphene Wiki</a>.
 Please see the road maps in the wiki for new features and their slated order.</p>
@@ -30,7 +52,7 @@ Please see the road maps in the wiki for new features and their slated order.</p
 <h2>
 <a id="using-graphene-" class="anchor" href="#using-graphene-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Graphene </h2>
 
-<p>The core of the Graphene project contains multiple modules, some of which are optional.  The main module that you'll need it the graphene-web module, since it acts as a WAR overlay for your Java based web application.  The current example that will be released soon is based on Instagram data, and will be shown as a separate github project.  Previous demos included Enron, Scott Walker email data, and Kiva Microloan data.</p>
+<p>The core of the Graphene project contains multiple modules, some of which are optional.  The main module that you'll need it the graphene-web module, since it acts as a WAR overlay for your Java based web application.  The current example is <a href="https://github.com/Sotera/graphene-instagram">Graphene-Instagram</a>.  Previous demos included Enron, Scott Walker email data, and Kiva Microloan data.</p>
 
 <p>It's our goal that you use the available modules if they make sense for your needs, but we allow you to wire in your own code in most places.  In addition, Graphene leverages Apache Tapestry's auto discovery of modules, so we will be expanding the number of 'plugin' modules available.  Currently we offer the graphene-augment-mitie as an example of such a module.  It's abilities are made available in your app simply by including the jar file in your POM, no code changes necessary!</p>
 
@@ -257,16 +279,18 @@ Please see the road maps in the wiki for new features and their slated order.</p
 <a id="licensing" class="anchor" href="#licensing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
 
 <p>Graphene is licensed with Apache License Version 2.0 (APLv2).  This project was funded by DARPA under part of the XDATA program.</p>
+      </section>
+    </div>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/Sotera/graphene">Graphene</a> is maintained by <a href="https://github.com/Sotera">Sotera</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Graphene maintained by <a href="https://github.com/Sotera">Sotera</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
+    </div>
 
-    </section>
-
-            <script type="text/javascript">
+              <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -277,6 +301,6 @@ Please see the road maps in the wiki for new features and their slated order.</p
             } catch(err) {}
           </script>
 
+
   </body>
 </html>
-
