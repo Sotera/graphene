@@ -132,6 +132,13 @@ public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 
 	public PropertyMatchDescriptorHelper() {
 		// TODO Auto-generated constructor stub
+		setBoundedRange(null);
+		setSingletonRange(null);
+		setListRange(null);
+		setTypeMappings(null);
+		setKey(null);
+		setConstraint(null);
+
 	}
 
 	public PropertyMatchDescriptorHelper(final String key, final String singletonString) {

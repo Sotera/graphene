@@ -115,15 +115,6 @@ public interface G_Parser<T> {
 
 	// public abstract T populateExtraFields(T theEvent, G_EntityQuery q);
 
-	/**
-	 * This is the method for creating graphs for 4.1.2 and above.
-	 * 
-	 * @param sr
-	 * @param q
-	 * @return
-	 */
-	public V_GenericGraph getSubGraph(G_SearchResult sr, G_EntityQuery q);
-
 	public List<String> getSupportedObjects();
 
 	/**
@@ -145,7 +136,7 @@ public interface G_Parser<T> {
 	 *            associated node id.
 	 * @return
 	 */
-	public boolean parse(G_SearchResult t, G_EntityQuery q);
+	public V_GenericGraph parse(G_SearchResult t, G_EntityQuery q);
 
 	/**
 	 * @param phgb

@@ -173,8 +173,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 						gve.setQueryObject(q);
 						gve.setReportType("New");
 						loggingDao.recordGraphViewEvent(gve);
-						// g = propertyGraphBuilder.buildFromSubGraphs(q);
-						g = propertyGraphBuilder.makeGraphResponse(q);
+						g = propertyGraphBuilder.buildFromSubGraphs(q);
+						// g = propertyGraphBuilder.makeGraphResponse(q);
 						g.setUserId(userId);
 						g.setUsername(username);
 						m = new V_CSGraph(g, true);

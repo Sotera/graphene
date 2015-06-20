@@ -159,7 +159,7 @@ public class BasicESDAO implements G_DataAccess {
 				break;
 			case CONTAINS:
 				for (final String sf : fieldArray) {
-					bool = bool.should(QueryBuilders.wildcardQuery(sf, text));
+					bool = bool.should(QueryBuilders.matchPhraseQuery(sf, text));
 					constraintUsed = true;
 				}
 				break;

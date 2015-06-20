@@ -78,7 +78,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	@Inject
 	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 
-	protected Map<String, V_GenericEdge> edgeList;
+	// protected Map<String, V_GenericEdge> edgeList = new HashMap<String,
+	// V_GenericEdge>();
 
 	protected List<G_DocumentError> errors = new ArrayList<G_DocumentError>();
 
@@ -88,9 +89,10 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 	protected Stack<G_EntityQuery> queriesToRunNextDegree = new Stack<G_EntityQuery>();
 
-	protected Map<String, V_GenericNode> nodeList = new HashMap<String, V_GenericNode>();
+	// protected Map<String, V_GenericNode> nodeList = new HashMap<String,
+	// V_GenericNode>();
 
-	protected Set<V_LegendItem> legendItems = new HashSet<V_LegendItem>();
+	// protected Set<V_LegendItem> legendItems = new HashSet<V_LegendItem>();
 
 	@Inject
 	private Logger logger;
@@ -113,10 +115,10 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	}
 
 	@Override
-	public void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q) {
+	public void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q, final V_GenericGraph vg) {
 		if (enableGraphQueryPath && ValidationUtils.isValid(reportNode, q)) {
 			createEdge(q.getInitiatorId(), G_CanonicalRelationshipType.CONTAINED_IN.name(), reportNode.getId(),
-					G_CanonicalRelationshipType.CONTAINED_IN.name());
+					G_CanonicalRelationshipType.CONTAINED_IN.name(), vg);
 		}
 	}
 
@@ -145,10 +147,12 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		int intStatus = 0;
 		String strStatus = "Graph Loaded";
 
-		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor.newBuilder().setKey("identifiers")
+		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor.newBuilder().setKey("_all")
 				.setListRange(new ListRangeHelper(G_PropertyType.STRING, graphQuery.getSearchIds()))
-				.setConstraint(G_Constraint.EQUALS).build();
+				.setSingletonRange(null).setBoundedRange(null).setConstraint(G_Constraint.EQUALS).build();
 		final QueryHelper qh = new QueryHelper(identifierList);
+		qh.setMaxResult((long) graphQuery.getMaxEdgesPerNode());
+		// Add initial query
 		queriesToRun.add(qh);
 
 		int currentDegree = 0;
@@ -161,33 +165,23 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 				if (ValidationUtils.isValid(eq.getPropertyMatchDescriptors())) {
 					nodesFromPreviousDegree = new HashMap<String, V_GenericNode>(g.getNodes());
-					edgesFromPreviousDegree = new HashMap<String, V_GenericEdge>(edgeList);
+					edgesFromPreviousDegree = new HashMap<String, V_GenericEdge>(g.getEdges());
 					logger.debug("Processing degree " + currentDegree);
-
-					/**
-					 * This will end up building nodes and edges, and creating
-					 * new queries for the queue
-					 */
-					logger.debug("1111=====Running query " + eq.toString());
-
-					// getDAO().performCallback(0, 0, this, eq);
 					G_SearchResults searchResults;
 					try {
+						// Get a bunch of records
 						searchResults = getDAO().search(eq);
-
 						for (final G_SearchResult t : searchResults.getResults()) {
-							V_GenericGraph subGraph = null;
 							if (ValidationUtils.isValid(t.getResult())) {
 								final G_Entity entity = (G_Entity) t.getResult();
 								final String type = (String) PropertyHelper.getSingletonValue(entity.getProperties()
 										.get(G_Parser.REPORT_TYPE));
-
+								// Find a parser for the document type
 								final G_Parser parser = db.getParserForObject(type);
 								if (parser != null) {
-
-									subGraph = parser.getSubGraph(t, eq);
+									final V_GenericGraph subGraph = parser.parse(t, eq);
 									if (ValidationUtils.isValid(subGraph)) {
-										logger.debug("Merging nodes");
+										logger.debug("Merging nodes from subgraph");
 										g.getEdges().putAll(subGraph.getEdges());
 										g.getNodes().putAll(subGraph.getNodes());
 										// FIXME: Switch legend items to a map
@@ -208,8 +202,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					logger.debug("3333====After running " + eq.toString() + ", there are "
-							+ queriesToRunNextDegree.size() + " queries to run in the next degree.");
+					logger.debug("3333====After running " + eq.getId() + ", there are " + queriesToRunNextDegree.size()
+							+ " queries to run in the next degree.");
 				}
 			}// end while loop
 
@@ -217,7 +211,7 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			// unscannedNodeList.clear();
 			// ////////////////////////////////////////////////
 			logger.debug("4444==== At the end of degree " + currentDegree + ", there are " + g.getNodes().size()
-					+ " nodes and " + edgeList.size() + " edges");
+					+ " nodes and " + g.getEdges().size() + " edges");
 
 			logger.debug("5555====There are " + queriesToRunNextDegree.size() + " queries to run in the next degree.");
 			queriesToRun.addAll(queriesToRunNextDegree);
@@ -233,7 +227,7 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			strStatus = "Returning only " + currentDegree + " hops, as maximum nodes you requested would be exceeded";
 		} else {
 			intStatus = 1; // will trigger the message.
-			strStatus = "Returning " + g.getNodes().size() + " nodes and " + edgeList.size() + " edges.";
+			strStatus = "Returning " + g.getNodes().size() + " nodes and " + g.getEdges().size() + " edges.";
 		}
 
 		// NOW finally add in all those unique edges.
@@ -244,9 +238,9 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		g.setIntStatus(intStatus);
 		g.setStrStatus(strStatus);
 		logger.debug("Graph status: " + g.getStrStatus());
-		for (final V_LegendItem li : legendItems) {
-			g.addLegendItem(li);
-		}
+		// for (final V_LegendItem li : g.getLegend()) {
+		// g.addLegendItem(li);
+		// }
 
 		return g;
 	}
@@ -259,7 +253,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	public void buildQueryForNextIteration(final V_GenericNode... nodes) {
 		if (ValidationUtils.isValid(nodes)) {
 			for (final V_GenericNode n : nodes) {
-
 				for (final G_EntityQuery eq : createQueriesFromNode(n)) {
 					final String queryToString = eq.toString();
 					// Have we done this EXACT query before? Note: a query
@@ -281,7 +274,7 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 			}
 		} else {
-			logger.warn("Will not build a query for the node passed in");
+			logger.warn("Will not build a query for the node(s) passed in");
 		}
 		logger.debug("There are " + queriesToRunNextDegree.size() + " queries to run for the next degree. ref ");
 	}
@@ -307,19 +300,21 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	// TODO: We want to remove query path edges if we have other edges going to
 	// it.
 	public boolean createEdge(final String fromId, final String relationType, final String toId,
-			final String relationValue) {
+			final String relationValue, final V_GenericGraph vg) {
 		if (ValidationUtils.isValid(fromId, toId)) {
 			final String key = generateEdgeId(fromId, relationType, toId);
-			final V_GenericNode a = nodeList.get(fromId);
-			final V_GenericNode b = nodeList.get(toId);
-			if (ValidationUtils.isValid(key, a, b) && !edgeList.containsKey(key)) {
-
-				final V_GenericEdge v = new V_GenericEdge(key, a, b);
+			// final V_GenericNode a = nodeList.get(fromId);
+			// final V_GenericNode b = nodeList.get(toId);
+			// if (ValidationUtils.isValid(key, a, b) &&
+			// !edgeList.containsKey(key)) {
+			if (!vg.getEdges().containsKey(key)) {
+				final V_GenericEdge v = new V_GenericEdge(key, fromId, toId);
 				v.setIdType(relationType);
 				v.setLabel(null);
 				v.setIdVal(relationType);
-				v.addData("Value", StringUtils.coalesc(" ", a.getLabel(), relationValue, b.getLabel()));
-				edgeList.put(key, v);
+				// v.addData("Value", StringUtils.coalesc(" ", a.getLabel(),
+				// relationValue, b.getLabel()));
+				vg.getEdges().put(key, v);
 				return true;
 			}
 		}
@@ -335,8 +330,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	 */
 	@Override
 	public V_GenericEdge createEdge(final V_GenericNode a, final String relationType, final String relationValue,
-			final V_GenericNode attachTo, final double localPriority, final double inheritedScore,
-			final double nodeCertainty, final double minimumScoreRequired) {
+			final V_GenericNode attachTo, final double nodeCertainty, final double minimumScoreRequired,
+			final Map<String, V_GenericEdge> edgeList) {
 		V_GenericEdge edge = null;
 		if (ValidationUtils.isValid(attachTo)) {
 			final String key = generateEdgeId(attachTo.getId(), relationType, a.getId());
@@ -367,82 +362,103 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		return edge;
 	}
 
-	@Override
-	public V_GenericNode createNodeInSubgraph(final double minimumScoreRequired, final double inheritedScore,
-			final double localPriority, final String originalId, final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType, final String relationValue,
-			final double nodeCertainty, final V_GenericGraph subgraph) {
-		V_GenericNode a = null;
-		final Map<String, V_GenericNode> nodeList = subgraph.getNodes();
-		final Map<String, V_GenericEdge> edgeList = subgraph.getEdges();
-		if (ValidationUtils.isValid(originalId)) {
-			if (!stopwordService.isValid(originalId)) {
-				addError(new G_DocumentError("Bad Identifier", "The " + nodeType + " (" + originalId
-						+ ") contains a stopword", Severity.WARN.toString()));
-			} else {
-				final String id = generateNodeId(originalId);
-				a = subgraph.getNodes().get(id);
-				final double calculatedPriority = inheritedScore * localPriority;
-				if (a == null) {
-					a = new V_GenericNode(id);
-					a.setIdType(idType);
-					// This is important because we use it to search on the next
-					// traversal.
-					a.setIdVal(originalId);
-					a.setNodeType(nodeType);
-					a.setColor(style.getHexColorForNode(a.getNodeType()));
-					a.setMinScore(minimumScoreRequired);
-					a.setPriority(calculatedPriority);
-					// Remove leading zeros from the label
-					a.setLabel(StringUtils.removeLeadingZeros(originalId));
-					// XXX: need a way of getting the link to the page with TYPE
-					a.addData(nodeType, getCombinedSearchLink(nodeType, originalId));
-					nodeList.put(id, a);
-					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
-				}
-				// now we have a valid node. Attach it to the other node
-				// provided.
-				if (ValidationUtils.isValid(a, attachTo)) {
-					final String key = generateEdgeId(attachTo.getId(), relationType, a.getId());
-					if ((key != null) && (edgeList.get(key) == null)) {
-						final V_GenericEdge edge = new V_GenericEdge(key, a, attachTo);
-						edge.setIdType(relationType);
-						edge.setLabel(null);
-						edge.setIdVal(relationType);
-						if (nodeCertainty < 100.0) {
-							edge.addData("Certainty", DataFormatConstants.formatPercent(nodeCertainty));
-							edge.setLineStyle("dotted");
-							// edge.setColor("#787878");
-						}
-						edge.addData("Local_Priority", "" + localPriority);
-						edge.addData("Min_Score_Required", "" + minimumScoreRequired);
-						edge.addData("Parent_Score", "" + inheritedScore);
-						edge.addData("Value",
-								StringUtils.coalesc(" ", a.getLabel(), relationValue, attachTo.getLabel()));
-						edgeList.put(key, edge);
-					}
+	// @Override
+	// public V_GenericNode createNodeInSubgraph(final double
+	// minimumScoreRequired, final double inheritedScore,
+	// final double localPriority, final String originalId, final String idType,
+	// final String nodeType,
+	// final V_GenericNode attachTo, final String relationType, final String
+	// relationValue,
+	// final double nodeCertainty, final V_GenericGraph subgraph) {
+	// V_GenericNode a = null;
+	// Map<String, V_GenericNode> nodeList;
+	// Map<String, V_GenericEdge> edgeList;
+	// if (subgraph != null) {
+	// nodeList = subgraph.getNodes();
+	// edgeList = subgraph.getEdges();
+	// } else {
+	// nodeList = this.nodeList;
+	// edgeList = this.edgeList;
+	// }
+	// if (ValidationUtils.isValid(originalId)) {
+	// if (!stopwordService.isValid(originalId)) {
+	// addError(new G_DocumentError("Bad Identifier", "The " + nodeType + " (" +
+	// originalId
+	// + ") contains a stopword", Severity.WARN.toString()));
+	// } else {
+	// final String id = generateNodeId(originalId);
+	// a = nodeList.get(id);
+	// final double calculatedPriority = inheritedScore * localPriority;
+	// if (a == null) {
+	// a = new V_GenericNode(id);
+	// a.setIdType(idType);
+	// // This is important because we use it to search on the next
+	// // traversal.
+	// a.setIdVal(originalId);
+	// a.setNodeType(nodeType);
+	// a.setColor(style.getHexColorForNode(a.getNodeType()));
+	// a.setMinScore(minimumScoreRequired);
+	// a.setPriority(calculatedPriority);
+	// // Remove leading zeros from the label
+	// a.setLabel(StringUtils.removeLeadingZeros(originalId));
+	// // XXX: need a way of getting the link to the page with TYPE
+	// a.addData(nodeType, getCombinedSearchLink(nodeType, originalId));
+	// nodeList.put(id, a);
+	// legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
+	// }
+	// // now we have a valid node. Attach it to the other node
+	// // provided.
+	// if (ValidationUtils.isValid(a, attachTo)) {
+	// final String key = generateEdgeId(attachTo.getId(), relationType,
+	// a.getId());
+	// if ((key != null) && (edgeList.get(key) == null)) {
+	// final V_GenericEdge edge = new V_GenericEdge(key, a, attachTo);
+	// edge.setIdType(relationType);
+	// edge.setLabel(null);
+	// edge.setIdVal(relationType);
+	// if (nodeCertainty < 100.0) {
+	// edge.addData("Certainty",
+	// DataFormatConstants.formatPercent(nodeCertainty));
+	// edge.setLineStyle("dotted");
+	// // edge.setColor("#787878");
+	// }
+	// edge.addData("Local_Priority", "" + localPriority);
+	// edge.addData("Min_Score_Required", "" + minimumScoreRequired);
+	// edge.addData("Parent_Score", "" + inheritedScore);
+	// edge.addData("Value",
+	// StringUtils.coalesc(" ", a.getLabel(), relationValue,
+	// attachTo.getLabel()));
+	// edgeList.put(key, edge);
+	// }
+	//
+	// // if this flag is set, we'll add the attributes to the
+	// // attached
+	// // node.
+	// if (inheritAttributes) {
+	// attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
+	// }
+	// }
+	// }
+	// } else {
+	// logger.error("Invalid id for " + nodeType + " of node " + attachTo);
+	// }
+	// return a;
+	// }
 
-					// if this flag is set, we'll add the attributes to the
-					// attached
-					// node.
-					if (inheritAttributes) {
-						attachTo.inheritPropertiesOfExcept(a, skipInheritanceTypes);
-					}
-				}
-			}
+	@Override
+	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired, final String originalId,
+			final String idType, final String nodeType, final V_GenericNode attachTo, final String relationType,
+			final String relationValue, final double nodeCertainty, final V_GenericGraph subgraph) {
+		V_GenericNode a = null;
+		Map<String, V_GenericNode> nodeList;
+		Map<String, V_GenericEdge> edgeList;
+		if (subgraph != null) {
+			nodeList = subgraph.getNodes();
+			edgeList = subgraph.getEdges();
 		} else {
-			logger.error("Invalid id for " + nodeType + " of node " + attachTo);
+			logger.error("BAD Subgraph provided.");
+			return null;
 		}
-		return a;
-	}
-
-	@Override
-	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired, final double inheritedScore,
-			final double localPriority, final String originalId, final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType, final String relationValue,
-			final double nodeCertainty) {
-		V_GenericNode a = null;
-
 		if (ValidationUtils.isValid(originalId)) {
 			if (!stopwordService.isValid(originalId)) {
 				logger.error("ID contained a stopword, not creating this node.");
@@ -451,7 +467,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			} else {
 				final String id = generateNodeId(originalId);
 				a = nodeList.get(id);
-				final double calculatedPriority = inheritedScore * localPriority;
+				// final double calculatedPriority = inheritedScore *
+				// localPriority;
 				if (a == null) {
 					a = new V_GenericNode(id);
 					a.setIdType(idType);
@@ -461,35 +478,22 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					a.setNodeType(nodeType);
 					a.setColor(style.getHexColorForNode(a.getNodeType()));
 					a.setMinScore(minimumScoreRequired);
-					a.setPriority(calculatedPriority);
+					// a.setPriority(calculatedPriority);
 					// Remove leading zeros from the label
 					a.setLabel(StringUtils.removeLeadingZeros(originalId));
 					// XXX: need a way of getting the link to the page with TYPE
 					a.addData(nodeType, getCombinedSearchLink(nodeType, originalId));
 					nodeList.put(id, a);
-					legendItems.add(new V_LegendItem(a.getColor(), a.getNodeType()));
+					subgraph.addLegendItem(new V_LegendItem(a.getColor(), a.getNodeType()));
 				}
 				// now we have a valid node. Attach it to the other node
 				// provided.
-				createEdge(a, relationType, relationValue, attachTo, localPriority, inheritedScore, nodeCertainty,
-						minimumScoreRequired);
+				createEdge(a, relationType, relationValue, attachTo, nodeCertainty, minimumScoreRequired, edgeList);
 			}
 		} else {
-			logger.error("Invalid id for " + nodeType + " of node " + attachTo);
+			logger.error("Invalid id for nodetype " + nodeType + " of idtype " + idType);
 		}
 		return a;
-	}
-
-	@Override
-	public V_GenericNode createOrUpdateNode(final String originalId, final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType, final String relationValue) {
-		return createOrUpdateNode(originalId, idType, nodeType, attachTo, relationType, relationValue, 100.0d);
-	}
-
-	public V_GenericNode createOrUpdateNode(final String originalId, final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType, final String relationValue, final double certainty) {
-		return createOrUpdateNode(0.5d, 1.0d, 0.7d, originalId, idType, nodeType, attachTo, relationType,
-				relationValue, 100.0d);
 	}
 
 	public abstract List<G_EntityQuery> createQueriesFromNode(V_GenericNode n);
@@ -627,82 +631,97 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	 */
 	@Override
 	public V_GenericGraph makeGraphResponse(final V_GraphQuery graphQuery) throws Exception {
-		nodeList = new HashMap<String, V_GenericNode>();
-		edgeList = new HashMap<String, V_GenericEdge>();
-		scannedQueries = new HashSet<String>();
-
-		final PriorityQueue<G_EntityQuery> queriesToRun = new PriorityQueue<G_EntityQuery>(10, new ScoreComparator());
-		Map<String, V_GenericNode> nodesFromPreviousDegree = new HashMap<String, V_GenericNode>();
-		Map<String, V_GenericEdge> edgesFromPreviousDegree = new HashMap<String, V_GenericEdge>();
-
-		if (graphQuery.getMaxHops() <= 0) {
-			return new V_GenericGraph();
-		} else {
-			logger.debug("Attempting a graph for query " + graphQuery.toString());
-		}
-		queriesToRun.add(convertFrom(graphQuery));
-
-		int intStatus = 0;
-		String strStatus = "Graph Loaded";
-		int currentDegree = 0;
-		for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
-				&& (nodeList.size() < graphQuery.getMaxNodes()); currentDegree++) {
-			G_EntityQuery eq = null;
-			logger.debug("$$$$There are " + queriesToRun.size() + " queries to run in the current degree.");
-			while ((queriesToRun.size() > 0) && ((eq = queriesToRun.poll()) != null)
-					&& (nodeList.size() < graphQuery.getMaxNodes())) {
-
-				if (ValidationUtils.isValid(eq.getPropertyMatchDescriptors())) {
-					nodesFromPreviousDegree = new HashMap<String, V_GenericNode>(nodeList);
-					edgesFromPreviousDegree = new HashMap<String, V_GenericEdge>(edgeList);
-					logger.debug("Processing degree " + currentDegree);
-
-					/**
-					 * This will end up building nodes and edges, and creating
-					 * new queries for the queue
-					 */
-					logger.debug("1111=====Running query " + eq.toString());
-					getDAO().performCallback(0, eq.getMaxResult(), this, eq);
-					logger.debug("3333====After running " + eq.toString() + ", there are "
-							+ queriesToRunNextDegree.size() + " queries to run in the next degree.");
-				}
-			}// end while loop
-
-			// very important!!
-			// unscannedNodeList.clear();
-			// ////////////////////////////////////////////////
-			logger.debug("4444==== At the end of degree " + currentDegree + ", there are " + nodeList.size()
-					+ " nodes and " + edgeList.size() + " edges");
-
-			logger.debug("5555====There are " + queriesToRunNextDegree.size() + " queries to run in the next degree.");
-			queriesToRun.addAll(queriesToRunNextDegree);
-			queriesToRunNextDegree.clear();
-		}
-
-		// All hops have been done
-		// Check to see if we have too many nodes.
-		if (nodeList.size() > graphQuery.getMaxNodes()) {
-			nodeList = nodesFromPreviousDegree;
-			edgeList = edgesFromPreviousDegree;
-			intStatus = 1; // will trigger the message.
-			strStatus = "Returning only " + currentDegree + " hops, as maximum nodes you requested would be exceeded";
-		} else {
-			intStatus = 1; // will trigger the message.
-			strStatus = "Returning " + nodeList.size() + " nodes and " + edgeList.size() + " edges.";
-		}
-
-		// NOW finally add in all those unique edges.
-
-		performPostProcess(graphQuery);
-		final V_GenericGraph g = new V_GenericGraph(nodeList, edgeList);
-		g.setIntStatus(intStatus);
-		g.setStrStatus(strStatus);
-		logger.debug("Graph status: " + g.getStrStatus());
-		for (final V_LegendItem li : legendItems) {
-			g.addLegendItem(li);
-		}
-
-		return g;
+		return null;
+		// nodeList = new HashMap<String, V_GenericNode>();
+		// edgeList = new HashMap<String, V_GenericEdge>();
+		// scannedQueries = new HashSet<String>();
+		//
+		// final PriorityQueue<G_EntityQuery> queriesToRun = new
+		// PriorityQueue<G_EntityQuery>(10, new ScoreComparator());
+		// Map<String, V_GenericNode> nodesFromPreviousDegree = new
+		// HashMap<String, V_GenericNode>();
+		// Map<String, V_GenericEdge> edgesFromPreviousDegree = new
+		// HashMap<String, V_GenericEdge>();
+		//
+		// if (graphQuery.getMaxHops() <= 0) {
+		// return new V_GenericGraph();
+		// } else {
+		// logger.debug("Attempting a graph for query " +
+		// graphQuery.toString());
+		// }
+		// queriesToRun.add(convertFrom(graphQuery));
+		//
+		// int intStatus = 0;
+		// String strStatus = "Graph Loaded";
+		// int currentDegree = 0;
+		// for (currentDegree = 0; (currentDegree < graphQuery.getMaxHops())
+		// && (nodeList.size() < graphQuery.getMaxNodes()); currentDegree++) {
+		// G_EntityQuery eq = null;
+		// logger.debug("$$$$There are " + queriesToRun.size() +
+		// " queries to run in the current degree.");
+		// while ((queriesToRun.size() > 0) && ((eq = queriesToRun.poll()) !=
+		// null)
+		// && (nodeList.size() < graphQuery.getMaxNodes())) {
+		//
+		// if (ValidationUtils.isValid(eq.getPropertyMatchDescriptors())) {
+		// nodesFromPreviousDegree = new HashMap<String,
+		// V_GenericNode>(nodeList);
+		// edgesFromPreviousDegree = new HashMap<String,
+		// V_GenericEdge>(edgeList);
+		// logger.debug("Processing degree " + currentDegree);
+		//
+		// /**
+		// * This will end up building nodes and edges, and creating
+		// * new queries for the queue
+		// */
+		// logger.debug("1111=====Running query " + eq.toString());
+		// getDAO().performCallback(0, eq.getMaxResult(), this, eq);
+		// logger.debug("3333====After running " + eq.toString() +
+		// ", there are "
+		// + queriesToRunNextDegree.size() +
+		// " queries to run in the next degree.");
+		// }
+		// }// end while loop
+		//
+		// // very important!!
+		// // unscannedNodeList.clear();
+		// // ////////////////////////////////////////////////
+		// logger.debug("4444==== At the end of degree " + currentDegree +
+		// ", there are " + nodeList.size()
+		// + " nodes and " + edgeList.size() + " edges");
+		//
+		// logger.debug("5555====There are " + queriesToRunNextDegree.size() +
+		// " queries to run in the next degree.");
+		// queriesToRun.addAll(queriesToRunNextDegree);
+		// queriesToRunNextDegree.clear();
+		// }
+		//
+		// // All hops have been done
+		// // Check to see if we have too many nodes.
+		// if (nodeList.size() > graphQuery.getMaxNodes()) {
+		// nodeList = nodesFromPreviousDegree;
+		// edgeList = edgesFromPreviousDegree;
+		// intStatus = 1; // will trigger the message.
+		// strStatus = "Returning only " + currentDegree +
+		// " hops, as maximum nodes you requested would be exceeded";
+		// } else {
+		// intStatus = 1; // will trigger the message.
+		// strStatus = "Returning " + nodeList.size() + " nodes and " +
+		// edgeList.size() + " edges.";
+		// }
+		//
+		// // NOW finally add in all those unique edges.
+		//
+		// performPostProcess(graphQuery);
+		// final V_GenericGraph g = new V_GenericGraph(nodeList, edgeList);
+		// g.setIntStatus(intStatus);
+		// g.setStrStatus(strStatus);
+		// logger.debug("Graph status: " + g.getStrStatus());
+		// for (final V_LegendItem li : legendItems) {
+		// g.addLegendItem(li);
+		// }
+		//
+		// return g;
 	}
 
 	/*
