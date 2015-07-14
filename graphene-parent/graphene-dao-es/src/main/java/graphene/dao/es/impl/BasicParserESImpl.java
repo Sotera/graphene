@@ -73,8 +73,8 @@ public abstract class BasicParserESImpl<T> implements G_Parser<T> {
 		if (ValidationUtils.isValid(searchString)) {
 			final List<G_PropertyTag> tags = new ArrayList<G_PropertyTag>();
 			if (ValidationUtils.isValid(title)) {
-				gp = new PropertyHelper(searchString, StringUtils.coalesc(" ", title + ":", searchString), searchString, nodeType,
-						tags);
+				gp = new PropertyHelper(searchString, StringUtils.coalesc(" ", title + ":", searchString),
+						searchString, nodeType, tags);
 			} else {
 				gp = new PropertyHelper(searchString, searchString, searchString, nodeType, tags);
 			}

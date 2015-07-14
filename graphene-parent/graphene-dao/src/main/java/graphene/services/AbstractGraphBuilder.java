@@ -56,9 +56,9 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 	@Inject
 	protected StopWordService stopwordService;
+
 	@Inject
 	protected StyleService style;
-
 	protected ArrayList<String> skipInheritanceTypes;
 
 	@Inject
@@ -78,10 +78,10 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	@Inject
 	protected G_PropertyKeyTypeAccess propertyKeyTypeAccess;
 
+	protected List<G_DocumentError> errors = new ArrayList<G_DocumentError>();
+
 	// protected Map<String, V_GenericEdge> edgeList = new HashMap<String,
 	// V_GenericEdge>();
-
-	protected List<G_DocumentError> errors = new ArrayList<G_DocumentError>();
 
 	protected Set<String> scannedQueries = new HashSet<String>();
 
@@ -89,13 +89,13 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 
 	protected Stack<G_EntityQuery> queriesToRunNextDegree = new Stack<G_EntityQuery>();
 
+	@Inject
+	private Logger logger;
+
 	// protected Map<String, V_GenericNode> nodeList = new HashMap<String,
 	// V_GenericNode>();
 
 	// protected Set<V_LegendItem> legendItems = new HashSet<V_LegendItem>();
-
-	@Inject
-	private Logger logger;
 
 	protected LinkGenerator linkGenerator;
 
@@ -343,7 +343,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 				if (nodeCertainty < 100.0) {
 					edge.addData("Certainty", DataFormatConstants.formatPercent(nodeCertainty));
 					edge.setLineStyle("dotted");
-					// edge.setColor("#787878");
 				}
 				// edge.addData("Local_Priority", "" + localPriority);
 				// edge.addData("Min_Score_Required", "" +
@@ -360,6 +359,57 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			}
 		}
 		return edge;
+	}
+
+	@Override
+	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired, final String originalId,
+			final String idType, final String nodeType, final V_GenericNode attachTo, final String relationType,
+			final String relationValue, final double nodeCertainty, final V_GenericGraph subgraph) {
+		V_GenericNode a = null;
+		Map<String, V_GenericNode> nodeList;
+		Map<String, V_GenericEdge> edgeList;
+		if (subgraph != null) {
+			nodeList = subgraph.getNodes();
+			edgeList = subgraph.getEdges();
+		} else {
+			logger.error("BAD Subgraph provided.");
+			return null;
+		}
+		if (ValidationUtils.isValid(originalId)) {
+			if (!stopwordService.isValid(originalId)) {
+				logger.error("ID contained a stopword, not creating this node.");
+				addError(new G_DocumentError("Bad Identifier", "The " + nodeType + " (" + originalId
+						+ ") contains a stopword", Severity.WARN.toString()));
+			} else {
+				final String id = generateNodeId(originalId);
+				a = nodeList.get(id);
+				// final double calculatedPriority = inheritedScore *
+				// localPriority;
+				if (a == null) {
+					a = new V_GenericNode(id);
+					a.setIdType(idType);
+					// This is important because we use it to search on the next
+					// traversal.
+					a.setIdVal(originalId);
+					a.setNodeType(nodeType);
+					a.setColor(style.getHexColorForNode(a.getNodeType()));
+					a.setMinScore(minimumScoreRequired);
+					// a.setPriority(calculatedPriority);
+					// Remove leading zeros from the label
+					a.setLabel(StringUtils.removeLeadingZeros(originalId));
+					// XXX: need a way of getting the link to the page with TYPE
+					a.addData(nodeType, getCombinedSearchLink(nodeType, originalId));
+					nodeList.put(id, a);
+					subgraph.addLegendItem(new V_LegendItem(a.getColor(), a.getNodeType()));
+				}
+				// now we have a valid node. Attach it to the other node
+				// provided.
+				createEdge(a, relationType, relationValue, attachTo, nodeCertainty, minimumScoreRequired, edgeList);
+			}
+		} else {
+			logger.error("Invalid id for nodetype " + nodeType + " of idtype " + idType);
+		}
+		return a;
 	}
 
 	// @Override
@@ -445,58 +495,12 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	// return a;
 	// }
 
-	@Override
-	public V_GenericNode createOrUpdateNode(final double minimumScoreRequired, final String originalId,
-			final String idType, final String nodeType, final V_GenericNode attachTo, final String relationType,
-			final String relationValue, final double nodeCertainty, final V_GenericGraph subgraph) {
-		V_GenericNode a = null;
-		Map<String, V_GenericNode> nodeList;
-		Map<String, V_GenericEdge> edgeList;
-		if (subgraph != null) {
-			nodeList = subgraph.getNodes();
-			edgeList = subgraph.getEdges();
-		} else {
-			logger.error("BAD Subgraph provided.");
-			return null;
-		}
-		if (ValidationUtils.isValid(originalId)) {
-			if (!stopwordService.isValid(originalId)) {
-				logger.error("ID contained a stopword, not creating this node.");
-				addError(new G_DocumentError("Bad Identifier", "The " + nodeType + " (" + originalId
-						+ ") contains a stopword", Severity.WARN.toString()));
-			} else {
-				final String id = generateNodeId(originalId);
-				a = nodeList.get(id);
-				// final double calculatedPriority = inheritedScore *
-				// localPriority;
-				if (a == null) {
-					a = new V_GenericNode(id);
-					a.setIdType(idType);
-					// This is important because we use it to search on the next
-					// traversal.
-					a.setIdVal(originalId);
-					a.setNodeType(nodeType);
-					a.setColor(style.getHexColorForNode(a.getNodeType()));
-					a.setMinScore(minimumScoreRequired);
-					// a.setPriority(calculatedPriority);
-					// Remove leading zeros from the label
-					a.setLabel(StringUtils.removeLeadingZeros(originalId));
-					// XXX: need a way of getting the link to the page with TYPE
-					a.addData(nodeType, getCombinedSearchLink(nodeType, originalId));
-					nodeList.put(id, a);
-					subgraph.addLegendItem(new V_LegendItem(a.getColor(), a.getNodeType()));
-				}
-				// now we have a valid node. Attach it to the other node
-				// provided.
-				createEdge(a, relationType, relationValue, attachTo, nodeCertainty, minimumScoreRequired, edgeList);
-			}
-		} else {
-			logger.error("Invalid id for nodetype " + nodeType + " of idtype " + idType);
-		}
-		return a;
-	}
-
 	public abstract List<G_EntityQuery> createQueriesFromNode(V_GenericNode n);
+
+	@Override
+	public boolean execute(final G_SearchResult sr, final G_EntityQuery q) {
+		return false;
+	}
 
 	/**
 	 * Doesn't matter what this does, as long as it is unique.

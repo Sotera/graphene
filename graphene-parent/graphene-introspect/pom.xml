@@ -24,6 +24,11 @@
       <groupId>graphene</groupId>
       <artifactId>graphene-dao-sql</artifactId>
     </dependency>
+    <dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-sql</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
   </dependencies>
   <description>An experimental module for automatically discovering data types, structures and relations in existing database.</description>
 </project>

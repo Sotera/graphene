@@ -37,10 +37,6 @@ import com.mysema.query.sql.codegen.MetaDataExporter;
  * 
  */
 public class DTOGeneration {
-	private DTOGeneration() {
-		// TODO Auto-generated constructor stub
-	}
-
 	private static Registry registry;
 
 	// private static DBConnectionPoolService cp;
@@ -50,25 +46,12 @@ public class DTOGeneration {
 
 	private static DBConnectionPoolService mainDB;
 
-	public static void setup() {
-
-		RegistryBuilder builder = new RegistryBuilder();
-		builder.add(DTOGenerationModule.class);
-		registry = builder.build();
-		registry.performRegistryStartup();
-		mainDB = registry.getService(DBConnectionPoolService.class,
-				MainDB.class);
-		secondaryDB = registry.getService(DBConnectionPoolService.class,
-				SecondaryDB.class);
-	}
-
-	public static void generateDTO(DBConnectionPoolService cp,
-			String tablePrefix, String packageName) {
+	public static void generateDTO(final DBConnectionPoolService cp, final String tablePrefix, final String packageName) {
 		java.sql.Connection conn = null;
 		try {
 			conn = cp.getConnection();
 
-			MetaDataExporter exporter = new MetaDataExporter();
+			final MetaDataExporter exporter = new MetaDataExporter();
 			exporter.setPackageName(packageName);
 			// exporter.setSchemaPattern("");
 
@@ -76,7 +59,7 @@ public class DTOGeneration {
 
 			// here we set up this object that will be applied to all beans
 			// (DTOs)
-			BeanSerializer bs = new BeanSerializer();
+			final BeanSerializer bs = new BeanSerializer();
 			// Here we are telling it to add the toString() method to each bean
 			bs.setAddToString(true);
 			// Here we are telling it to add 'implements Serializable' to each
@@ -95,31 +78,39 @@ public class DTOGeneration {
 			// code for you.
 			exporter.export(conn.getMetaData());
 			conn.close();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			logger.error(e.getMessage());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error(e.getMessage());
 		} finally {
 			try {
-				if (conn != null && !conn.isClosed()) {
+				if ((conn != null) && !conn.isClosed()) {
 					conn.close();
 				}
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				logger.error(e.getMessage());
 			}
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(final String[] args) throws Exception {
 		setup();
-
-		// generateDTO(mainDB, "G_UNIFIED%", "graphene.model.sql");
-		generateDTO(mainDB, "FIN_ENTITY%", "graphene.model.sql");
-		generateDTO(mainDB, "FIN_FLOW%", "graphene.model.sql");
-		generateDTO(mainDB, "%CLUSTER%", "graphene.model.sql");
-		generateDTO(mainDB, "MoneyConversion", "graphene.model.sql");
-
+		generateDTO(mainDB, "%", "graphene.model.sql");
 		generateDTO(secondaryDB, "G_%", "graphene.model.sql");
+	}
+
+	public static void setup() {
+
+		final RegistryBuilder builder = new RegistryBuilder();
+		builder.add(DTOGenerationModule.class);
+		registry = builder.build();
+		registry.performRegistryStartup();
+		mainDB = registry.getService(DBConnectionPoolService.class, MainDB.class);
+		secondaryDB = registry.getService(DBConnectionPoolService.class, SecondaryDB.class);
+	}
+
+	private DTOGeneration() {
+		// TODO Auto-generated constructor stub
 	}
 
 }

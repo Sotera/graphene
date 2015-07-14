@@ -477,6 +477,22 @@ public class StringUtils {
 		return lcStr.equals(lcPrefix);
 	}
 
+	public static Collection<? extends String> toCollection(final char[] charArray) {
+		final Collection<String> c = new ArrayList<String>();
+		for (final Object obj : charArray) {
+			c.add(obj.toString());
+		}
+		return c;
+	}
+
+	public static Collection<? extends String> toCollection(final Object[] charArray) {
+		final Collection<String> c = new ArrayList<String>();
+		for (final Object obj : charArray) {
+			c.add(obj.toString());
+		}
+		return c;
+	}
+
 	/**
 	 * Returns the array's contents as a string, with each element delimited by
 	 * the specified {@code delimiter} argument. Useful for {@code toString()}
