@@ -127,6 +127,16 @@ public class GrapheneModule {
 		configuration.add(G_SymbolConstants.WORKSPACE_NAME_VALIDATION,
 				"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
 
+		/* XXX: NOTE: You should override this in your implementation. */
+		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_ACCOUNT, "admin");
+		/* XXX: NOTE: You should override this in your implementation. */
+		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_EMAIL, "djue@soteradefense.com");
+		/* XXX: NOTE: You should override this in your implementation. */
+		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_PASSWORD, "password");
+		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME, "Admins");
+		configuration.add(G_SymbolConstants.EXTERNAL_ADMIN_ROLE_NAME, "grapheneadmin");
+		configuration.add(G_SymbolConstants.EXTERNAL_USER_ROLE_NAME, "grapheneuser");
+
 	}
 
 	public static void contributeBeanBlockSource(final Configuration<BeanBlockContribution> configuration) {

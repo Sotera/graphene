@@ -143,121 +143,127 @@ public class BasicESDAO implements G_DataAccess {
 		}
 		String[] fieldArray = new String[1];
 		fieldArray[0] = key;
-		final ArrayList<String> specificFields = dao.getFieldMappings().get(pmdh.getKey());
-		if (specificFields != null) {
-			fieldArray = specificFields.toArray(new String[specificFields.size()]);
-		} else {
-			logger.warn("Could not find specific fields for the key " + pmdh.getKey());
-		}
-		if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
-			final String text = (String) pmdh.getSingletonRange().getValue();
-
-			switch (constraint) {
-			case EQUALS:
-				bool = bool.must(QueryBuilders.multiMatchQuery(text, fieldArray));
-				constraintUsed = true;
-				break;
-			case CONTAINS:
-				for (final String sf : fieldArray) {
-					bool = bool.should(QueryBuilders.matchPhraseQuery(sf, text));
-					constraintUsed = true;
-				}
-				break;
-			case STARTS_WITH:
-				for (final String sf : fieldArray) {
-					bool = bool.should(QueryBuilders.prefixQuery(sf, text));
-					constraintUsed = true;
-				}
-				break;
-			case NOT:
-				for (final String sf : fieldArray) {
-					bool = bool.mustNot(QueryBuilders.matchPhraseQuery(sf, text));
-					constraintUsed = true;
-				}
-				break;
-			case FUZZY_REQUIRED:
-				bool = bool.must(QueryBuilders.fuzzyLikeThisQuery(fieldArray).likeText(text));
-				constraintUsed = true;
-				break;
-			default:
-				break;
-			}
-		} else if (ValidationUtils.isValid(pmdh.getListRange())) {
-			for (final Object text : pmdh.getListRange().getValues()) {
-				switch (constraint) {
-				case EQUALS:
-					bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
-					constraintUsed = true;
-					break;
-				case CONTAINS:
-					bool = bool.should(QueryBuilders.matchPhraseQuery(key, text));
-					constraintUsed = true;
-					break;
-				case STARTS_WITH:
-					bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
-					constraintUsed = true;
-					break;
-				case NOT:
-					bool = bool.mustNot(QueryBuilders.matchPhraseQuery(key, text));
-					constraintUsed = true;
-					break;
-				default:
-					break;
-				}
-			}
-		} else if (ValidationUtils.isValid(pmdh.getBoundedRange())) {
-			final G_BoundedRange br = pmdh.getBoundedRange();
-			// Enumerate any specific fields that this range can apply to.
-			String[] rangeFieldArray = new String[1];
-			rangeFieldArray[0] = key;
-			final ArrayList<String> specificRangeFields = dao.getRangeMappings().get(pmdh.getKey());
-			if (specificRangeFields != null) {
-				rangeFieldArray = specificRangeFields.toArray(new String[specificRangeFields.size()]);
+		final Map<String, ArrayList<String>> fieldMappings = dao.getFieldMappings();
+		if (ValidationUtils.isValid(fieldMappings)) {
+			final ArrayList<String> specificFields = fieldMappings.get(key);
+			if (specificFields != null) {
+				fieldArray = specificFields.toArray(new String[specificFields.size()]);
 			} else {
 				logger.warn("Could not find specific fields for the key " + pmdh.getKey());
 			}
-			String start = null;
-			String end = null;
-			if (br.getStart() != null) {
-				switch (pmdh.getType()) {
-				case STRING:
-					start = br.getStart().toString();
+			// Try the singleton range first
+			if (ValidationUtils.isValid(pmdh.getSingletonRange())) {
+				final String text = (String) pmdh.getSingletonRange().getValue();
+
+				switch (constraint) {
+				case EQUALS:
+					bool = bool.must(QueryBuilders.multiMatchQuery(text, fieldArray));
+					constraintUsed = true;
 					break;
-				case DATE:
-					final DateTime dt = (DateTime) br.getStart();
-					start = dt.toString(DATE_FORMAT);
+				case CONTAINS:
+					for (final String sf : fieldArray) {
+						bool = bool.should(QueryBuilders.matchPhraseQuery(sf, text));
+						constraintUsed = true;
+					}
+					break;
+				case STARTS_WITH:
+					for (final String sf : fieldArray) {
+						bool = bool.should(QueryBuilders.prefixQuery(sf, text));
+						constraintUsed = true;
+					}
+					break;
+				case NOT:
+					for (final String sf : fieldArray) {
+						bool = bool.mustNot(QueryBuilders.matchPhraseQuery(sf, text));
+						constraintUsed = true;
+					}
+					break;
+				case FUZZY_REQUIRED:
+					bool = bool.must(QueryBuilders.fuzzyLikeThisQuery(fieldArray).likeText(text));
+					constraintUsed = true;
 					break;
 				default:
 					break;
 				}
-			}
-			if (br.getEnd() != null) {
-				switch (pmdh.getType()) {
-				case STRING:
-					end = br.getEnd().toString();
-					break;
-				case DATE:
-					final DateTime dt = (DateTime) br.getEnd();
-					end = dt.toString(DATE_FORMAT);
-					break;
-				default:
-					break;
+			} else if (ValidationUtils.isValid(pmdh.getListRange())) {
+				for (final Object text : pmdh.getListRange().getValues()) {
+					switch (constraint) {
+					case EQUALS:
+						bool = bool.must(QueryBuilders.matchPhraseQuery(key, text));
+						constraintUsed = true;
+						break;
+					case CONTAINS:
+						bool = bool.should(QueryBuilders.matchPhraseQuery(key, text));
+						constraintUsed = true;
+						break;
+					case STARTS_WITH:
+						bool = bool.must(QueryBuilders.matchPhrasePrefixQuery(key, text));
+						constraintUsed = true;
+						break;
+					case NOT:
+						bool = bool.mustNot(QueryBuilders.matchPhraseQuery(key, text));
+						constraintUsed = true;
+						break;
+					default:
+						break;
+					}
 				}
-			}
-			for (final String sf : rangeFieldArray) {
-				if (ValidationUtils.isValid(start, end)) {
-					bool = bool.should(QueryBuilders.rangeQuery(sf).from(start).to(end));
-					constraintUsed = true;
-				} else if (ValidationUtils.isValid(start)) {
-					bool = bool.should(QueryBuilders.rangeQuery(sf).gt(start));
-					constraintUsed = true;
-				} else if (ValidationUtils.isValid(end)) {
-					bool = bool.should(QueryBuilders.rangeQuery(sf).lt(end));
-					constraintUsed = true;
+			} else if (ValidationUtils.isValid(pmdh.getBoundedRange())) {
+				final G_BoundedRange br = pmdh.getBoundedRange();
+				// Enumerate any specific fields that this range can apply to.
+				String[] rangeFieldArray = new String[1];
+				rangeFieldArray[0] = key;
+				final ArrayList<String> specificRangeFields = dao.getRangeMappings().get(pmdh.getKey());
+				if (specificRangeFields != null) {
+					rangeFieldArray = specificRangeFields.toArray(new String[specificRangeFields.size()]);
+				} else {
+					logger.warn("Could not find specific fields for the key " + pmdh.getKey());
 				}
+				String start = null;
+				String end = null;
+				if (br.getStart() != null) {
+					switch (pmdh.getType()) {
+					case STRING:
+						start = br.getStart().toString();
+						break;
+					case DATE:
+						final DateTime dt = (DateTime) br.getStart();
+						start = dt.toString(DATE_FORMAT);
+						break;
+					default:
+						break;
+					}
+				}
+				if (br.getEnd() != null) {
+					switch (pmdh.getType()) {
+					case STRING:
+						end = br.getEnd().toString();
+						break;
+					case DATE:
+						final DateTime dt = (DateTime) br.getEnd();
+						end = dt.toString(DATE_FORMAT);
+						break;
+					default:
+						break;
+					}
+				}
+				for (final String sf : rangeFieldArray) {
+					if (ValidationUtils.isValid(start, end)) {
+						bool = bool.should(QueryBuilders.rangeQuery(sf).from(start).to(end));
+						constraintUsed = true;
+					} else if (ValidationUtils.isValid(start)) {
+						bool = bool.should(QueryBuilders.rangeQuery(sf).gt(start));
+						constraintUsed = true;
+					} else if (ValidationUtils.isValid(end)) {
+						bool = bool.should(QueryBuilders.rangeQuery(sf).lt(end));
+						constraintUsed = true;
+					}
+				}
+			} else {
+				logger.error("Unknown range type for " + pmdh);
 			}
 		} else {
-			logger.error("Unknown range type for " + pmdh);
+			logger.error("No field mappings available");
 		}
 		if ((constraintUsed == false) && (createdNew == true)) {
 			// boolean was created but not used.

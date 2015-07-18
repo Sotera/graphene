@@ -82,8 +82,6 @@ public class PreAASecurityModule {
 		configuration.add(SecuritySymbols.UNAUTHORIZED_URL, "/graphene/pub/pagedenied");
 		configuration.add(SecuritySymbols.SUCCESS_URL, "/graphene/index");
 		configuration.add(SecuritySymbols.REDIRECT_TO_SAVED_URL, "true");
-		configuration.add(G_SymbolConstants.EXTERNAL_ADMIN_ROLE_NAME, "grapheneadmin");
-		configuration.add(G_SymbolConstants.EXTERNAL_USER_ROLE_NAME, "grapheneuser");
 		configuration.add(G_SymbolConstants.APPLICATION_MANAGED_SECURITY, false);
 
 		/*
