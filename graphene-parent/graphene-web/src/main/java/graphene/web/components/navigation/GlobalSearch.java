@@ -60,6 +60,7 @@ public class GlobalSearch {
 	private Integer defaultMaxResults;
 	@Inject
 	private Logger logger;
+
 	@InjectPage
 	private CombinedEntitySearchPage searchPage;
 
