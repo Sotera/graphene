@@ -50,6 +50,7 @@ protocol G_Search {
 		NOT 		,			// used for MUST NOT match, or logical NOT
 		OPTIONAL_EQUALS,		// equals OR
 		FUZZY_REQUIRED,			// fuzzy AND
+		LIKE,                   // same as FUZZY_REQUIRED used for user ease of understanding
 		CONTAINS, 
 		ENDS_WITH,  
 		REGEX, 

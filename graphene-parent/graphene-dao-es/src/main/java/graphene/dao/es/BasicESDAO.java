@@ -182,6 +182,10 @@ public class BasicESDAO implements G_DataAccess {
 					bool = bool.must(QueryBuilders.fuzzyLikeThisQuery(fieldArray).likeText(text));
 					constraintUsed = true;
 					break;
+                case LIKE:
+                    bool = bool.must(QueryBuilders.fuzzyLikeThisQuery(fieldArray).likeText(text));
+                    constraintUsed = true;
+                    break;
 				default:
 					break;
 				}
