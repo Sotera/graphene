@@ -223,16 +223,13 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		if (g.getNodes().size() > graphQuery.getMaxNodes()) {
 			g.setNodes(nodesFromPreviousDegree);
 			g.setEdges(edgesFromPreviousDegree);
-			intStatus = 1; // will trigger the message.
-			strStatus = "Returning only " + currentDegree + " hops, as maximum nodes you requested would be exceeded";
-		} else {
-			intStatus = 1; // will trigger the message.
-			strStatus = "Returning " + g.getNodes().size() + " nodes and " + g.getEdges().size() + " edges.";
 		}
 
 		// NOW finally add in all those unique edges.
 
 		g = performPostProcess(graphQuery, g);
+        intStatus = 1; // will trigger the message.
+        strStatus = "Returning " + g.getNodes().size() + " nodes and " + g.getEdges().size() + " edges.";
 
 		// final V_GenericGraph g = new V_GenericGraph(g.getNodes(), edgeList);
 		g.setIntStatus(intStatus);
