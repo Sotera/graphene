@@ -34,6 +34,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>graphene-security-tomcat</module>
+		<module>graphene-security-oam</module>
 		<module>graphene-security-integrated</module>
 		<module>graphene-security-noop</module>
 		<module>graphene-security-xss</module>
