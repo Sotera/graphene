@@ -13,7 +13,7 @@ margin-top: 4px;
 </style></head>
 	<!-- input: search field -->
 	<form class="form-horizontal "
-		style="width: 50%; float: none; display: -webkit-inline-box;"
+		style="width: 50%; float: none; display: -webkit-inline-box; display: -moz-inline-box"
 		t:type="form" t:id="globalsearchform">
 
 		<input style="width: 67%; margin-right: 3px; "
@@ -21,14 +21,14 @@ margin-top: 4px;
 			class="form-control globalsearch" placeholder="Search" id="search-fld" title="Enter Search Terms" />
 		<t:select
 			style="float: none;
-display: -webkit-inline-box;
+display: inline-block;
 position: relative;
 margin-right: 6px; min-width: 60px;"
 			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Type"
 			role="menu" model="availableTypes" />
 		<t:select
 			style="float: none;
-display: -webkit-inline-box;
+display: inline-block;
 position: relative;margin-right: 6px;
  min-width: 60px;" 
 			t:id="maxresultsmenu" value="selectedMaxResults" class="dropdown-menu globalsearch" title="Max Results to Return"
