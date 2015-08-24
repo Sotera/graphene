@@ -9,9 +9,9 @@
 
 		<!-- Insert refreshlocalstorage widget here. -->
 	
-		<t:graphene.navigation.breadcrumb />
+		<!-- <t:graphene.navigation.breadcrumb />   -->
 		
-<t:graphene.navigation.globalsearch />
+		<t:graphene.navigation.globalsearch />
 		<!-- You can also add more buttons to the ribbon for further usability 
 				Example below:
 		<span class="ribbon-button-alignment pull-right"> <span
