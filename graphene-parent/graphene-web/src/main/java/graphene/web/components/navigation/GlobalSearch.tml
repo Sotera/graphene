@@ -5,37 +5,31 @@
 	xmlns:p="tapestry:parameter">
 
 <t:content>
-<head><style type="text/css">
-.globalsearch{
-margin-top: 4px;
-}
-
-</style></head>
 	<!-- input: search field -->
-	<form class="form-horizontal "
-		style="width: 50%; float: none; display: -webkit-inline-box;"
-		t:type="form" t:id="globalsearchform">
-
-		<input style="width: 67%; margin-right: 3px; "
-			t:id="searchValue" t:type="TextField" type="text" value="searchValue"
-			class="form-control globalsearch" placeholder="Search" id="search-fld" title="Enter Search Terms" />
-		<t:select
-			style="float: none;
-display: -webkit-inline-box;
-position: relative;
-margin-right: 6px; min-width: 60px;"
-			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Type"
-			role="menu" model="availableTypes" />
-		<t:select
-			style="float: none;
-display: -webkit-inline-box;
-position: relative;margin-right: 6px;
- min-width: 60px;" 
-			t:id="maxresultsmenu" value="selectedMaxResults" class="dropdown-menu globalsearch" title="Max Results to Return"
-			role="menu" model="maxResultsList" />
-		<button type="submit" style="margin-top: -1px;" class="btn btn-default" title="Perform Search">
-			<i class="fa fa-search"></i>
-		</button>
+	<form class="form-inline" t:type="form" t:id="globalsearchform">
+		<div class="form-group">
+			<label class="sr-only" for="searchValue">Search Terms</label>
+			<input 
+				t:id="searchValue" t:type="TextField" type="text" value="searchValue"
+				class="form-control" placeholder="Search" id="search-fld" title="Enter Search Terms" />
+		</div>
+		<div class="form-group">
+			<label class="sr-only" for="typemenu">Report Type</label>
+			<t:select
+				t:id="typemenu" value="selectedType" class="form-control" title="Filter by Type"
+				blankOption="NEVER" role="menu" model="availableTypes" />
+		</div>
+		<div class="form-group">
+			<label class="sr-only" for="maxresultsmenu">Max Results</label>
+			<t:select
+				t:id="maxresultsmenu" value="selectedMaxResults" class="form-control" title="Max Results to Return"
+				role="menu" model="maxResultsList" />
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-default" title="Perform Search">
+				<i class="fa fa-search"></i>
+			</button>
+		</div>
 	</form>
 	<!-- end input: search field -->
 </t:content>
