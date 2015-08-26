@@ -563,9 +563,9 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 			// logger.warn("No linkGenerator search page defined when making a link for "
 			// + identifier);
 			final String encodedIdentifier = encoder.encode(identifier);
-			String matchType = "COMPARE_CONTAINS";
+			String matchType = "CONTAINS";
 			if (nodeType.contains("ADDRESS")) {
-				matchType = "COMPARE_EQUALS";
+				matchType = "EQUALS";
 			}
 			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentifier + "&match=" + matchType
 					+ "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
