@@ -223,10 +223,13 @@ public class BasicESDAO implements G_DataAccess {
 				} else {
 					logger.warn("Could not find specific fields for the key " + pmdh.getKey());
 				}
-				String start = null;
-				String end = null;
+				Object start = null;
+				Object end = null;
 				if (br.getStart() != null) {
 					switch (pmdh.getType()) {
+					case LONG:
+						start = br.getStart();
+						break;
 					case STRING:
 						start = br.getStart().toString();
 						break;
@@ -240,6 +243,9 @@ public class BasicESDAO implements G_DataAccess {
 				}
 				if (br.getEnd() != null) {
 					switch (pmdh.getType()) {
+					case LONG:
+						end = br.getEnd();
+						break;
 					case STRING:
 						end = br.getEnd().toString();
 						break;

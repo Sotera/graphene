@@ -55,7 +55,8 @@ function StateManager(graphRef) {
 	this.deleteNodes = function(nodes, bypass) {
 		var errorMsg = null;
 		var edgesToDelete = [];
-		
+		console.log("deleting nodes: " + nodes);
+        console.log("bypass: " + bypass);
 		for (var i = 0; i < nodes.length; i++) {
 			var id = nodes[i].data("id");
 			

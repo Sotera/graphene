@@ -233,6 +233,7 @@ Ext.define("DARPA.Node_Actions", {
 					if (nodes.length > 0 || edges.length > 0) {
 						Ext.Msg.confirm("Warning", "Deleting selected elements will remove them from the graph entirely.  Are you sure?", function(btn) {
 							if (btn == "yes") {
+                                console.log("Yes selected.")
 								graph.GraphVis.deleteNodes(nodes);
 								graph.GraphVis.deleteEdges(edges);
 							}

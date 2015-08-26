@@ -21,14 +21,14 @@ margin-top: 4px;
 			class="form-control globalsearch" placeholder="Search" id="search-fld" title="Enter Search Terms" />
 		<t:select
 			style="float: none;
-display: inline-block;
+display: -webkit-inline-box;
 position: relative;
 margin-right: 6px; min-width: 60px;"
 			t:id="typemenu" value="selectedType" class="dropdown-menu globalsearch" title="Filter by Type"
 			role="menu" model="availableTypes" />
 		<t:select
 			style="float: none;
-display: inline-block;
+display: -webkit-inline-box;
 position: relative;margin-right: 6px;
  min-width: 60px;" 
 			t:id="maxresultsmenu" value="selectedMaxResults" class="dropdown-menu globalsearch" title="Max Results to Return"
