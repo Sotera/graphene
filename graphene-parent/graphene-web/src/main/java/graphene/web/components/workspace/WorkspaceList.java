@@ -40,6 +40,7 @@ public class WorkspaceList {
 	// Parameters
 	@Property
 	private final DateTimeFormatter ISODate = ISODateTimeFormat.date();
+
 	@Inject
 	private BeanModelSource beanModelSource;
 
