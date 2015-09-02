@@ -11,6 +11,6 @@ package graphene.model.idl;
 @org.apache.avro.specific.AvroGenerated
 public enum G_ContinentCode { 
   AF, AS, EU, NA, SA, OC, AN  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_ContinentCode\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Standard two letter continent code\\r\\n\\t  \\r\\n\\t ADDED IN 1.6\",\"symbols\":[\"AF\",\"AS\",\"EU\",\"NA\",\"SA\",\"OC\",\"AN\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_ContinentCode\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Standard two letter continent code\\n\\t  \\n\\t ADDED IN 1.6\",\"symbols\":[\"AF\",\"AS\",\"EU\",\"NA\",\"SA\",\"OC\",\"AN\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

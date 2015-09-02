@@ -49,7 +49,7 @@ protocol G_Search {
 		EQUALS, 		// used for cases of REQUIRED or EQUALS
 		NOT 		,			// used for MUST NOT match, or logical NOT
 		OPTIONAL_EQUALS,		// equals OR
-		FUZZY_REQUIRED,			// fuzzy AND
+		FUZZY,			// fuzzy AND
 		CONTAINS, 
 		ENDS_WITH,  
 		REGEX, 
@@ -112,7 +112,7 @@ protocol G_Search {
 		/** range of the Property to search on */
 		union{G_RangeType, null} rangeType;                                                            // ADDED IN 1.5
 
-		/** REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY_REQUIRED*/
+		/** REQUIRED_EQUALS, FUZZY_PARTIAL_OPTIONAL, NOT, OPTIONAL_EQUALS, FUZZY*/
 		union {G_Constraint, null} constraint;                                                     // CHANGED IN 1.5
 
 	    /** indicates whether this property is indexed for free text queries **/
