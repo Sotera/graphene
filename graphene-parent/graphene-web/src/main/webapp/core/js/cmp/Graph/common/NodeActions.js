@@ -105,7 +105,11 @@ Ext.define("DARPA.Node_Actions", {
 				var graphId = path[0] + '-' + path[1];
 				var graph = Ext.getCmp(graphId);
 				if (graph) {
-					graph.GraphVis.showAll(false);
+                    Ext.Msg.confirm("Warning", "Unhiding will reveal ALL hidden elements from the graph.  Are you sure?", function (btn) {
+                        if (btn == "yes") {
+                            graph.GraphVis.showAll(false);
+                        }
+                    });
 				} // if graph
 			} // handler
 		}); // unhide
