@@ -98,15 +98,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
 
-		if (authenticatorHelper.isUserObjectCreated()) {
-			System.out.println("user object created!");
-		}
-		else {
-			System.out.println("user object NOT created.");
-		}
-		
 		V_CSGraph m = null;
-		if (requireAuthentication && (user == null)) {
+		if (requireAuthentication && (authenticatorHelper.getUsername() == null)) {
 			// The user needs to be authenticated.
 			m = new V_CSGraph();
 			m.setIntStatus(1);
@@ -119,11 +112,10 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			// authenticated.
 
 			String userId = null;
-			String username = null;
+			String username = authenticatorHelper.getUsername();
 			if (requireAuthentication) {
-				if (ValidationUtils.isValid(user.getUsername())) {
+				if (ValidationUtils.isValid(username)) {
 					try {
-						username = user.getUsername();
 						final G_User byUsername = userDataAccess.getByUsername(username);
 						userId = byUsername.getId();
 					} catch (final Exception e) {
@@ -230,8 +222,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		} else {
 			String authenticatedUsername = username;
 			try {
-				if (ValidationUtils.isValid(user.getUsername())) {
-					authenticatedUsername = user.getUsername();
+				if (ValidationUtils.isValid(authenticatorHelper.getUsername())) {
+					authenticatedUsername = authenticatorHelper.getUsername();
 					// final G_User byUsername =
 					// userDataAccess.getByUsername(authenticatedUsername);
 					// byUsername.getId();

@@ -11,6 +11,8 @@ import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.avro.AvroRemoteException;
@@ -256,5 +258,16 @@ public class PreAAHelper implements AuthenticatorHelper {
 		securityService.getSubject().logout();
 		return null;
 	}
-
+	
+	@Override
+	public String getUsername() {
+		
+		String username = null;
+		HttpServletRequest request = rq.getHTTPServletRequest();
+		if (request != null) {
+			username = request.getRemoteUser();
+		}
+		
+		return username;
+	}
 }

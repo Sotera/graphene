@@ -235,5 +235,10 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 		
 		return null;
 	}
+	
+	@Override
+	public String getUsername() {
+		return null;
+	}
 
 }

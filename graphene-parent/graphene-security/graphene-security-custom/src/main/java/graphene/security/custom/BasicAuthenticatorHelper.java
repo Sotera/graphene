@@ -91,5 +91,10 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 		
 		return null;
 	}
+	
+	@Override
+	public String getUsername() {
+		return null;
+	}
 
 }
