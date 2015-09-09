@@ -8,6 +8,7 @@ import graphene.model.idlhelper.AuthenticatorHelper;
 
 import java.util.List;
 import java.util.Locale;
+import java.net.URL;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -101,7 +102,6 @@ public class Layout {
 	public JSONObject getJgrowlParams() {
 		final JSONObject json = new JSONObject("position", "bottom-right");
 		return json;
-
 	}
 
 	/**
@@ -120,8 +120,7 @@ public class Layout {
 	// logger.debug("can has user? " + user.getFullname());
 	// }
 
-	public Object onLogout() {
-		authenticatorHelper.logout();
-		return null;
+	public Object onLogout() throws Exception {
+		return authenticatorHelper.logout();
 	}
 }

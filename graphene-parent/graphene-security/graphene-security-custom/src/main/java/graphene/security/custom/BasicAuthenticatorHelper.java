@@ -78,7 +78,7 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 	}
 
 	@Override
-	public void logout() {
+	public Object logout() {
 		// this removes the session state object.
 		applicationStateManager.set(G_User.class, null);
 
@@ -88,6 +88,8 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 			session.setAttribute(AUTH_TOKEN, null);
 			session.invalidate();
 		}
+		
+		return null;
 	}
 
 }

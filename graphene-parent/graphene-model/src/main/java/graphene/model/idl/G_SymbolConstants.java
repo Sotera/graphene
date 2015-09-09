@@ -50,6 +50,8 @@ public class G_SymbolConstants {
 	public static final String EXT_PATH = "graphene.ext-path";
 
 	public static final String DEFAULT_MAX_SEARCH_RESULTS = "graphene.default-max-search-results";
+	
+	public static final String LOGOUT_REDIRECT_URL = "graphene.logout-redirect-url";
 
 	public static final String ENABLE_FEDERATED_LOGIN = "graphene.enable-federated-login";
 

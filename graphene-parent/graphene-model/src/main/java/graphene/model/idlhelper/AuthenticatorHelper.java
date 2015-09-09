@@ -58,5 +58,5 @@ public interface AuthenticatorHelper {
 	 * Logs out the user
 	 */
 	@Log
-	void logout();
+	Object logout();
 }

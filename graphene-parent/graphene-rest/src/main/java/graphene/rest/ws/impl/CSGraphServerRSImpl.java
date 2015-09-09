@@ -8,6 +8,7 @@ import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idlhelper.AuthenticatorHelper;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.util.DataFormatConstants;
 import graphene.util.FastNumberUtils;
@@ -35,6 +36,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject
+	private AuthenticatorHelper authenticatorHelper;
 
 	@InjectService("HyperProperty")
 	private HyperGraphBuilder propertyGraphBuilder;
@@ -94,8 +98,15 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		final int maxNodesInt = FastNumberUtils.parseIntWithCheck(maxNodes, 1000);
 		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
 
+		if (authenticatorHelper.isUserObjectCreated()) {
+			System.out.println("user object created!");
+		}
+		else {
+			System.out.println("user object NOT created.");
+		}
+		
 		V_CSGraph m = null;
-		if (requireAuthentication && (rq.getHTTPServletRequest().getRemoteUser() == null)) {
+		if (requireAuthentication && (user == null)) {
 			// The user needs to be authenticated.
 			m = new V_CSGraph();
 			m.setIntStatus(1);
@@ -110,9 +121,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			String userId = null;
 			String username = null;
 			if (requireAuthentication) {
-				if (ValidationUtils.isValid(rq.getHTTPServletRequest().getRemoteUser())) {
+				if (ValidationUtils.isValid(user.getUsername())) {
 					try {
-						username = rq.getHTTPServletRequest().getRemoteUser();
+						username = user.getUsername();
 						final G_User byUsername = userDataAccess.getByUsername(username);
 						userId = byUsername.getId();
 					} catch (final Exception e) {
@@ -212,15 +223,15 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@Override
 	public Response saveGraph(final String graphSeed, final String username, final String timeStamp, final String graph) {
-		if (requireAuthentication && (rq.getHTTPServletRequest().getRemoteUser() == null)) {
+		if (requireAuthentication && (user == null)) {
 			// The user needs to be authenticated.
 			logger.error("User must be logged in to save a graph.");
 			return Response.status(200).entity("Unable to save, you must be logged in. ").build();
 		} else {
 			String authenticatedUsername = username;
 			try {
-				if (ValidationUtils.isValid(rq.getHTTPServletRequest().getRemoteUser())) {
-					authenticatedUsername = rq.getHTTPServletRequest().getRemoteUser();
+				if (ValidationUtils.isValid(user.getUsername())) {
+					authenticatedUsername = user.getUsername();
 					// final G_User byUsername =
 					// userDataAccess.getByUsername(authenticatedUsername);
 					// byUsername.getId();
