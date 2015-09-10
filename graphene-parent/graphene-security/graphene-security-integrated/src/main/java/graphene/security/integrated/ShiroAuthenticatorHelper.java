@@ -10,6 +10,7 @@ import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.avro.AvroRemoteException;
@@ -238,7 +239,13 @@ public class ShiroAuthenticatorHelper implements AuthenticatorHelper {
 	
 	@Override
 	public String getUsername() {
-		return null;
+		String username = null;
+		HttpServletRequest request = rq.getHTTPServletRequest();
+		if (request != null) {
+			username = request.getRemoteUser();
+		}
+		
+		return username;
 	}
 
 }
