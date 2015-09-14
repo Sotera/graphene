@@ -114,6 +114,8 @@ public class G_SymbolConstants {
 	public static final String APPLICATION_MANAGED_SECURITY = "graphene.application-managed-security";
 
 	public static final String INHERIT_NODE_ATTRIBUTES = "graphene.inherit-node-attributes";
+	
+	public static final String FORM_AUTOCOMPLETE = "graphene.form-autocomplete";
 
 	private G_SymbolConstants() {
 		// TODO Auto-generated constructor stub

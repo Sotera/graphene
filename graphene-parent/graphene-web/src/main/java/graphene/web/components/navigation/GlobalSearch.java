@@ -57,15 +57,29 @@ public class GlobalSearch {
 	@Persist
 	@Property
 	private Integer selectedMaxResults;
+	
 	@Inject
 	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
 	private Integer defaultMaxResults;
+	
+	@Inject
+	@Symbol(G_SymbolConstants.FORM_AUTOCOMPLETE)
+	private Boolean formAutoComplete;
+	
 	@Inject
 	private Logger logger;
 
 	@InjectPage
 	private CombinedEntitySearchPage searchPage;
-
+	
+	public String getFormAutoComplete() {
+		String retval = "on";
+		if (this.formAutoComplete != null) {
+			retval = formAutoComplete?"on":"off";
+		}
+		return retval;
+	}
+	
 	@OnEvent(value = EventConstants.SUCCESS, component = "globalSearchForm")
 	Object onSuccessFromForm() {
 		logger.debug("Searching with " + searchValue + " type: " + selectedType);
