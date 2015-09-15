@@ -168,7 +168,7 @@ public class BasicESDAO implements G_DataAccess {
 					break;
 				case STARTS_WITH:
 					for (final String sf : fieldArray) {
-						bool = bool.should(QueryBuilders.prefixQuery(sf, text));
+						bool = bool.should(QueryBuilders.prefixQuery(sf, text.toLowerCase()));
 						constraintUsed = true;
 					}
 					break;
