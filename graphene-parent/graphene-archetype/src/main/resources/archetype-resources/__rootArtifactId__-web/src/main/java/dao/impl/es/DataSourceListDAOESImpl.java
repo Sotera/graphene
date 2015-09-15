@@ -54,7 +54,7 @@ public class DataSourceListDAOESImpl extends BasicESDAO implements DataSourceLis
 	public List<G_Constraint> getAvailableConstraints() {
 		final List<G_Constraint> list = new ArrayList<G_Constraint>();
 		list.add(G_Constraint.CONTAINS);
-		list.add(G_Constraint.FUZZY);
+		list.add(G_Constraint.LIKE);
 		list.add(G_Constraint.EQUALS);
 		list.add(G_Constraint.STARTS_WITH);
 		list.add(G_Constraint.NOT);

@@ -10,7 +10,7 @@ package graphene.model.idl;
 	 ADDED IN 1.8 */
 @org.apache.avro.specific.AvroGenerated
 public enum G_Constraint { 
-  EQUALS, NOT, OPTIONAL_EQUALS, FUZZY, CONTAINS, ENDS_WITH, REGEX, STARTS_WITH, BETWEEN, FUZZY_PARTIAL_OPTIONAL  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_Constraint\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Property value matching constraints\\n\\n\\t ADDED IN 1.8\",\"symbols\":[\"EQUALS\",\"NOT\",\"OPTIONAL_EQUALS\",\"FUZZY\",\"CONTAINS\",\"ENDS_WITH\",\"REGEX\",\"STARTS_WITH\",\"BETWEEN\",\"FUZZY_PARTIAL_OPTIONAL\"]}");
+  EQUALS, NOT, OPTIONAL_EQUALS, LIKE, CONTAINS, ENDS_WITH, REGEX, STARTS_WITH, BETWEEN, FUZZY_PARTIAL_OPTIONAL  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_Constraint\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Property value matching constraints\\n\\n\\t ADDED IN 1.8\",\"symbols\":[\"EQUALS\",\"NOT\",\"OPTIONAL_EQUALS\",\"LIKE\",\"CONTAINS\",\"ENDS_WITH\",\"REGEX\",\"STARTS_WITH\",\"BETWEEN\",\"FUZZY_PARTIAL_OPTIONAL\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

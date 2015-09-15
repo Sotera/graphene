@@ -49,7 +49,7 @@ protocol G_Search {
 		EQUALS, 		// used for cases of REQUIRED or EQUALS
 		NOT 		,			// used for MUST NOT match, or logical NOT
 		OPTIONAL_EQUALS,		// equals OR
-		FUZZY,			// fuzzy AND
+		LIKE,			// fuzzy AND
 		CONTAINS, 
 		ENDS_WITH,  
 		REGEX, 

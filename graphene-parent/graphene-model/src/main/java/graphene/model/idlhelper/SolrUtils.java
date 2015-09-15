@@ -98,7 +98,7 @@ public class SolrUtils {
 		s.append(k);
 
 		if (((values != null) && G_Constraint.FUZZY_PARTIAL_OPTIONAL.equals(descriptor.getConstraint()))
-				|| G_Constraint.FUZZY.equals(descriptor.getConstraint())) {
+				|| G_Constraint.LIKE.equals(descriptor.getConstraint())) {
 			s.append(":(");
 
 			for (final Object v : values) {
