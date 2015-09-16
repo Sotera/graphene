@@ -157,15 +157,15 @@ public class BasicESDAO implements G_DataAccess {
 
 				switch (constraint) {
 				case EQUALS:
-					bool = bool.must(QueryBuilders.multiMatchQuery(text, fieldArray));
-					constraintUsed = true;
-					break;
+                    for (final String sf : fieldArray) {
+                        bool = bool.must(QueryBuilders.matchPhraseQuery(sf, text));
+                        constraintUsed = true;
+                    }
+                    break;
 				case CONTAINS:
-					for (final String sf : fieldArray) {
-						bool = bool.should(QueryBuilders.matchPhraseQuery(sf, text));
-						constraintUsed = true;
-					}
-					break;
+                    bool = bool.should(QueryBuilders.multiMatchQuery(text, fieldArray));
+                    constraintUsed = true;
+                    break;
 				case STARTS_WITH:
 					for (final String sf : fieldArray) {
 						bool = bool.should(QueryBuilders.prefixQuery(sf, text.toLowerCase()));
@@ -193,7 +193,8 @@ public class BasicESDAO implements G_DataAccess {
 						constraintUsed = true;
 						break;
 					case CONTAINS:
-						bool = bool.should(QueryBuilders.matchPhraseQuery(key, text));
+	                    bool = bool.should(QueryBuilders.multiMatchQuery(text, fieldArray));
+//						bool = bool.should(QueryBuilders.matchPhraseQuery(key, text));
 						constraintUsed = true;
 						break;
 					case STARTS_WITH:
