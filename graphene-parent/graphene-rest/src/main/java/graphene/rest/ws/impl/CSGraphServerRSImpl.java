@@ -215,7 +215,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@Override
 	public Response saveGraph(final String graphSeed, final String username, final String timeStamp, final String graph) {
-		if (requireAuthentication && (user == null)) {
+		if (requireAuthentication && (authenticatorHelper.getUsername() == null)) {
 			// The user needs to be authenticated.
 			logger.error("User must be logged in to save a graph.");
 			return Response.status(200).entity("Unable to save, you must be logged in. ").build();
