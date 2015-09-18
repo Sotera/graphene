@@ -562,13 +562,16 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 		} else {
 			// logger.warn("No linkGenerator search page defined when making a link for "
 			// + identifier);
-			final String encodedIdentifier = encoder.encode(identifier);
+			final String encodedIdentifier = encoder.encode(nodeType.equals("ENTITY")? identifier.substring(0, identifier.indexOf("-subject")) : identifier);
 			String matchType = "CONTAINS";
 			if (nodeType.contains("ADDRESS")) {
 				matchType = "EQUALS";
 			}
-			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentifier + "&match=" + matchType
-					+ "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+//			return "<a href=\"graphene\\CombinedEntitySearchPage/?term=" + encodedIdentifier + "&match=" + matchType
+//					+ "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
+			
+	         return "<a href=\"graphene/CombinedEntitySearchPage/?term=" + encodedIdentifier + "&match=" + matchType
+                 + "\" target=\"" + identifier + "\" class=\"btn btn-primary\" >" + identifier + "</a>";
 		}
 	}
 
