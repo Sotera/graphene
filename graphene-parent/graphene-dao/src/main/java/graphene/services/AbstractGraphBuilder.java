@@ -248,8 +248,9 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	 */
 	@Override
 	public void buildQueryForNextIteration(final V_GenericNode... nodes) {
-		if (ValidationUtils.isValid(nodes)) {
-			for (final V_GenericNode n : nodes) {
+
+		for (final V_GenericNode n : nodes) {
+		    if (ValidationUtils.isValid(n)) {
 				for (final G_EntityQuery eq : createQueriesFromNode(n)) {
 					final String queryToString = eq.toString();
 					// Have we done this EXACT query before? Note: a query
@@ -268,11 +269,11 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 						logger.debug("Skipping query eq! " + queryToString);
 					}
 				}
-
-			}
-		} else {
-			logger.warn("Will not build a query for the node(s) passed in");
+	        } else {
+	            logger.warn("Will not build a query for node " + ((n == null)? "null" : n.getLabel()));
+	        }
 		}
+
 		logger.debug("There are " + queriesToRunNextDegree.size() + " queries to run for the next degree. ref ");
 	}
 
