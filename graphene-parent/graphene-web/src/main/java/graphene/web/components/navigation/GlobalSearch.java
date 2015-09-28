@@ -63,22 +63,10 @@ public class GlobalSearch {
 	private Integer defaultMaxResults;
 	
 	@Inject
-	@Symbol(G_SymbolConstants.FORM_AUTOCOMPLETE)
-	private Boolean formAutoComplete;
-	
-	@Inject
 	private Logger logger;
 
 	@InjectPage
 	private CombinedEntitySearchPage searchPage;
-	
-	public String getFormAutoComplete() {
-		String retval = "on";
-		if (this.formAutoComplete != null) {
-			retval = formAutoComplete?"on":"off";
-		}
-		return retval;
-	}
 	
 	@OnEvent(value = EventConstants.SUCCESS, component = "globalSearchForm")
 	Object onSuccessFromForm() {

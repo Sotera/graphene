@@ -6,7 +6,7 @@
 
 <t:content>
 	<!-- input: search field -->
-	<form class="form-inline" t:type="form" t:id="globalsearchform" autocomplete="${formAutoComplete}">
+	<form class="form-inline" t:type="form" t:id="globalsearchform">
 		<div class="form-group">
 			<label class="sr-only" for="searchValue">Search Terms</label>
 			<input 
