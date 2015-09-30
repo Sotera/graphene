@@ -5,6 +5,7 @@ import graphene.dao.es.BasicESDAO;
 import graphene.dao.es.ESRestAPIConnection;
 import graphene.dao.es.JestModule;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_EntityQueryEvent;
 import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
@@ -302,13 +303,13 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 	}
 
 	@Override
-	public void recordQuery(final G_EntityQuery q) {
+	public void recordQueryEvent(final G_EntityQueryEvent q) {
 		if (enableLogging) {
 			if (ValidationUtils.isValid(q)) {
 				executor.execute(new Runnable() {
 					@Override
 					public void run() {
-						saveObject(q, q.getId(), indexName, searchQueryType, false);
+						saveObject(q, q.getQ().getId(), indexName, searchQueryType, false);
 					}
 				});
 			} else {
@@ -317,24 +318,6 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		}
 		return;
 	}
-
-	// @Override
-	// public void recordQuery(final V_GraphQuery q) {
-	// if (enableLogging) {
-	// if (ValidationUtils.isValid(q)) {
-	// executor.execute(new Runnable() {
-	// @Override
-	// public void run() {
-	// saveObject(q, q.getId(), indexName, graphQueryType, false);
-	// }
-	// });
-	//
-	// } else {
-	// logger.error("Attempted to save a null V_GraphQuery!");
-	// }
-	// }
-	// return;
-	// }
 
 	@Override
 	public void recordReportViewEvent(final G_ReportViewEvent q) {

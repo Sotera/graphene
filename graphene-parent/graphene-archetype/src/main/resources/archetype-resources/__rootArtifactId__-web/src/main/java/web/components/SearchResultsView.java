@@ -341,7 +341,7 @@ public class SearchResultsView {
 				// .setConstraint(graphene.model.idl.G_Constraint.EQUALS).build();
 				// sq.getPropertyMatchDescriptors().add(filters);
 				// }
-				loggingDao.recordQuery(sq);
+				loggingDao.recordQueryEvent(sq);
 				// if (currentSelectedWorkspaceExists) {
 				// List<G_EntityQuery> qo =
 				// currentSelectedWorkspace.getQueryObjects();

@@ -3,6 +3,7 @@ package graphene.services;
 import graphene.dao.DocumentBuilder;
 import graphene.dao.G_Parser;
 import graphene.dao.HyperGraphBuilder;
+import graphene.dao.LoggingDAO;
 import graphene.dao.StopWordService;
 import graphene.dao.StyleService;
 import graphene.model.idl.G_CallBack;
@@ -12,6 +13,7 @@ import graphene.model.idl.G_DataAccess;
 import graphene.model.idl.G_DocumentError;
 import graphene.model.idl.G_Entity;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_EntityQueryEvent;
 import graphene.model.idl.G_PropertyKeyTypeAccess;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
@@ -53,7 +55,8 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 	@Inject
 	@Symbol(G_SymbolConstants.INHERIT_NODE_ATTRIBUTES)
 	protected boolean inheritAttributes;
-
+    @Inject
+    protected LoggingDAO loggingDao;
 	@Inject
 	protected StopWordService stopwordService;
 
@@ -171,6 +174,13 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					try {
 						// Get a bunch of records
 						searchResults = getDAO().search(eq);
+                        
+                        //TODO: this is where the QAL needs to be done.
+                        //Questions: what about graph retrieved from the server, how do we find all the queries
+                        // it took to reach that point?						
+						G_EntityQueryEvent qe = new G_EntityQueryEvent(eq, (long)searchResults.getResults().size());
+						loggingDao.recordQueryEvent(qe);
+						
 						for (final G_SearchResult t : searchResults.getResults()) {
 							if (ValidationUtils.isValid(t.getResult())) {
 								final G_Entity entity = (G_Entity) t.getResult();
