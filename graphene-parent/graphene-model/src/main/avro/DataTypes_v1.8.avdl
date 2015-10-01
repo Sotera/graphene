@@ -405,7 +405,10 @@ protocol G_DataTypes {
 		
 		union {null, string} styleType = null;  //added in Graphene 4.1.2
 		/** range of values */
-		union {G_SingletonRange, G_ListRange, G_BoundedRange, G_DistributionRange} range = null; // CHANGED IN 1.6
+		G_SingletonRange singletonRange = null;  //ADDED IN 1.9
+		G_ListRange listRange = null;  //ADDED IN 1.9
+		G_BoundedRange boundedRange = null;  //ADDED IN 1.9
+		G_DistributionRange distributionRange = null;  //ADDED IN 1.9
 		
 		union {G_Provenance, null} provenance = null;
 		

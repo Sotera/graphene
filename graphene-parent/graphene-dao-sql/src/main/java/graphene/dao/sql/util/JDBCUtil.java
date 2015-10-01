@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory;
 @UsesOrderedConfiguration(String.class)
 public class JDBCUtil {
 
-	private Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
-	private Collection<String> driverStrings;
+	private final Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
+	private final Collection<String> driverStrings;
 
-	public JDBCUtil(Collection<String> drivers) {
-		this.driverStrings = drivers;
+	public JDBCUtil(final Collection<String> drivers) {
+		driverStrings = drivers;
 		findJDBCDrivers();
 	}
 
@@ -34,16 +34,15 @@ public class JDBCUtil {
 	 */
 	public void findJDBCDrivers() {
 		if (driverStrings != null) {
-			for (String driver : driverStrings) {
+			for (final String driver : driverStrings) {
 				try {
-					Class<?> c = Class.forName(driver);
+					final Class<?> c = Class.forName(driver);
 					if (c != null) {
 						logger.info("+++++++++ SUCCESS finding " + driver);
 					}
-				} catch (ClassNotFoundException e1) {
-					logger.warn("======== Could not find " + driver
-							+ " on classpath");
-					e1.printStackTrace();
+				} catch (final ClassNotFoundException e1) {
+					logger.warn("======== Could not find " + driver + " on classpath");
+					// e1.printStackTrace();
 				}
 			}
 		}

@@ -53,8 +53,6 @@ public abstract class GenericDAOJDBCImpl<T> implements G_DataAccess {
 	 * large datasets
 	 * 
 	 * <BR>
-	 * PWG: does not currently work if you have a query: it keeps running the
-	 * same query forever
 	 * 
 	 * @param initialOffset
 	 * @param maxResults

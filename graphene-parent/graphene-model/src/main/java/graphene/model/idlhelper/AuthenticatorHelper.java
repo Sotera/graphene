@@ -29,6 +29,11 @@ public interface AuthenticatorHelper {
 	// G_User getLoggedUser();
 
 	/**
+	 * Gets username of current user
+	 */
+	String getUsername();
+	
+	/**
 	 * Checks if the current user is logged in
 	 * 
 	 * @return true if the user is logged in
@@ -58,5 +63,5 @@ public interface AuthenticatorHelper {
 	 * Logs out the user
 	 */
 	@Log
-	void logout();
+	Object logout();
 }

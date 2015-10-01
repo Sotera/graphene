@@ -5,6 +5,7 @@ import graphene.model.idl.G_DocumentError;
 import graphene.model.idl.G_EntityQuery;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import mil.darpa.vande.generic.V_GenericEdge;
@@ -16,7 +17,7 @@ public interface HyperGraphBuilder {
 
 	public abstract void addError(final G_DocumentError e);
 
-	public abstract void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q);
+	public abstract void addGraphQueryPath(final V_GenericNode reportNode, final G_EntityQuery q, V_GenericGraph vg);
 
 	/**
 	 * Create a node or update an existing one. Also, force the color to the one
@@ -45,30 +46,24 @@ public interface HyperGraphBuilder {
 	public abstract void buildQueryForNextIteration(V_GenericNode... nodes);
 
 	V_GenericEdge createEdge(V_GenericNode a, String relationType, String relationValue, V_GenericNode attachTo,
-			double localPriority, double inheritedScore, double nodeCertainty, double minimumScoreRequired);
-
-	public abstract V_GenericNode createNodeInSubgraph(final double minimumScoreRequired, final double inheritedScore,
-			final double localPriority, final String originalId, final String idType, final String nodeType,
-			final V_GenericNode attachTo, final String relationType, final String relationValue,
-			final double nodeCertainty, final V_GenericGraph subgraph);
+			double nodeCertainty, double minimumScoreRequired, Map<String, V_GenericEdge> edgeList);
 
 	/**
 	 * 
 	 * @param minimumScoreRequired
-	 * @param inheritedScore
-	 * @param localPriority
-	 * @param id
+	 * @param originalId
 	 * @param idType
 	 * @param nodeType
 	 * @param attachTo
 	 * @param relationType
 	 * @param relationValue
 	 * @param nodeCertainty
+	 * @param subgraph
 	 * @return
 	 */
-	public abstract V_GenericNode createOrUpdateNode(double minimumScoreRequired, double inheritedScore,
-			double localPriority, String id, String idType, String nodeType, V_GenericNode attachTo,
-			String relationType, String relationValue, double nodeCertainty);
+	public abstract V_GenericNode createOrUpdateNode(final double minimumScoreRequired, final String originalId,
+			final String idType, final String nodeType, final V_GenericNode attachTo, final String relationType,
+			final String relationValue, final double nodeCertainty, final V_GenericGraph subgraph);
 
 	/**
 	 * Create a node or update an existing one. Also, use the color based on the
@@ -94,8 +89,9 @@ public interface HyperGraphBuilder {
 	 *            types, and more.
 	 * @return
 	 */
-	public abstract V_GenericNode createOrUpdateNode(String id, String idType, String nodeType, V_GenericNode attachTo,
-			String relationType, String relationValue);
+	// public abstract V_GenericNode createOrUpdateNode(String id, String
+	// idType, String nodeType, V_GenericNode attachTo,
+	// String relationType, String relationValue);
 
 	/**
 	 * This object will be supplied by the concrete implementation

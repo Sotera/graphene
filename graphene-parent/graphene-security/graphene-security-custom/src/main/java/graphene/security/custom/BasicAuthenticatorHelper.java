@@ -1,5 +1,7 @@
 package graphene.security.custom;
 
+import javax.servlet.http.HttpServletRequest;
+
 import graphene.business.commons.exception.BusinessException;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
@@ -35,6 +37,9 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 
 	@Inject
 	private Request request;
+	
+	@Inject
+	private RequestGlobals rq;
 
 	@Inject
 	public BasicAuthenticatorHelper(final G_UserDataAccess userDataAccess,
@@ -78,7 +83,7 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 	}
 
 	@Override
-	public void logout() {
+	public Object logout() {
 		// this removes the session state object.
 		applicationStateManager.set(G_User.class, null);
 
@@ -88,6 +93,19 @@ public class BasicAuthenticatorHelper implements AuthenticatorHelper {
 			session.setAttribute(AUTH_TOKEN, null);
 			session.invalidate();
 		}
+		
+		return null;
+	}
+	
+	@Override
+	public String getUsername() {
+		String username = null;
+		HttpServletRequest request = rq.getHTTPServletRequest();
+		if (request != null) {
+			username = request.getRemoteUser();
+		}
+		
+		return username;
 	}
 
 }

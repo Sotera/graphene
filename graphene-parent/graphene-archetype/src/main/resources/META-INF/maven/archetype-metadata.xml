@@ -1,201 +1,234 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archetype-descriptor xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd" name="graphene"
-    xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <fileSets>
-    <fileSet encoding="UTF-8">
-      <directory>.settings</directory>
-      <includes>
-        <include>**/*.prefs</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" packaged="true" encoding="UTF-8"><!--packaged="true" tells maven to copy the core package in to root package while creating a project.  if you set -Dpackage=com.alibaba.china after execute mvn archetype:generate, it will create java source package as com/alibaba/china/dal/dao/sample.java-->
-      <directory></directory>
-      <includes>
-        <include>.project</include>
-        <include>graphene_changes.txt</include>
-        <include>README.txt</include>
-      </includes>
-    </fileSet>
-  </fileSets>
-  <modules>
-    <module id="${rootArtifactId}-web" dir="__rootArtifactId__-web" name="${rootArtifactId}-web">
-      <fileSets>
-        <fileSet filtered="true" packaged="true" encoding="UTF-8">
-          <directory>src/main/java</directory>
-          <includes>
-            <include>**/*.java</include>
-            <include>**/*.properties</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/main/filteredresources</directory>
-          <includes>
-            <include>**/*.properties</include>
-            <include>**/*.txt</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/main/webapp</directory>
-          <includes>
-            <include>**/*.html</include>
-            <include>**/*.xml</include>
-            <include>**/*.properties</include>
-            <include>**/*.txt</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/main/resources</directory>
-          <includes>
-            <include>**/*.properties</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/main/webapp</directory>
-          <includes>
-            <include>**/*.jpg</include>
-            <include>**/*.MF</include>
-            <include>**/*.png</include>
-            <include>**/*.scss</include>
-            <include>**/*.js</include>
-            <include>**/*.ico</include>
-            <include>**/*.jsbad</include>
-            <include>**/*.gitignore</include>
-            <include>**/*.gif</include>
-            <include>**/*.css</include>
-            <include>**/*.rb</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/main/resources</directory>
-          <includes>
-            <include>**/*.tml</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/test/java</directory>
-          <includes>
-            <include>**/*.</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/test/resources</directory>
-          <includes>
-            <include>**/*.txt</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/test/conf</directory>
-          <includes>
-            <include>**/*.xml</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/test/resources</directory>
-          <includes>
-            <include>**/*.</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/site</directory>
-          <includes>
-            <include>**/*.xml</include>
-            <include>**/*.txt</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/site</directory>
-          <includes>
-            <include>**/*.png</include>
-            <include>**/*.apt</include>
-            <include>**/*.PNG</include>
-            <include>**/*.graphml</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>.settings</directory>
-          <includes>
-            <include>**/*.xml</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>.externalToolBuilders</directory>
-          <includes>
-            <include>**/*.launch</include>
-            <include>**/*.gitignore</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>.settings</directory>
-          <includes>
-            <include>**/*.prefs</include>
-            <include>**/*.component</include>
-            <include>**/*.container</include>
-            <include>**/*.name</include>
-            <include>**/*.jsdtscope</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory></directory>
-          <includes>
-            <include>.classpath</include>
-            <include>.project</include>
-          </includes>
-        </fileSet>
-      </fileSets>
-    </module>
-    <module id="${rootArtifactId}-ingest" dir="__rootArtifactId__-ingest" name="${rootArtifactId}-ingest">
-      <fileSets>
-        <fileSet filtered="true" packaged="true" encoding="UTF-8">
-          <directory>src/main/java</directory>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/main/sql</directory>
-          <includes>
-            <include>**/*.sql</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" packaged="true" encoding="UTF-8">
-          <directory>src/test/java</directory>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/test/resources</directory>
-          <includes>
-            <include>**/*.properties</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/site</directory>
-          <includes>
-            <include>**/*.txt</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>src/site</directory>
-          <includes>
-            <include>**/*.graphml</include>
-          </includes>
-        </fileSet>
-        <fileSet encoding="UTF-8">
-          <directory>.settings</directory>
-          <includes>
-            <include>**/*.prefs</include>
-          </includes>
-        </fileSet>
-        <fileSet filtered="true" encoding="UTF-8">
-          <directory></directory>
-          <includes>
-            <include>.classpath</include>
-            <include>.project</include>
-          </includes>
-        </fileSet>
-      </fileSets>
-    </module>
-  </modules>
+<archetype-descriptor
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+	name="graphene"
+	xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<fileSets>
+		<fileSet encoding="UTF-8">
+			<directory>.settings</directory>
+			<includes>
+				<include>**/*.prefs</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="true" encoding="UTF-8">
+			<directory></directory>
+			<includes>
+				<include>.project</include>
+
+			</includes>
+		</fileSet>
+		<fileSet encoding="UTF-8">
+			<directory></directory>
+			<includes>
+				<include>.gitignore</include>
+				<include>BuildAll.bat</include>
+				<include>README.md</include>
+				<include>graphene_changes.txt</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+	<requiredProperties>
+		<requiredProperty key="projectName">
+			<defaultValue>MyProject</defaultValue>
+		</requiredProperty>
+
+		<requiredProperty key="elasticsearchServer">
+			<defaultValue>http://127.0.0.1:9200/</defaultValue>
+		</requiredProperty>
+		<requiredProperty key="mainESSearchIndex">
+			<defaultValue>graphene_search</defaultValue>
+		</requiredProperty>
+		<requiredProperty key="userspaceESPrefix">
+			<defaultValue>graphene</defaultValue>
+		</requiredProperty>
+		<requiredProperty key="adminEmail">
+			<defaultValue>admin@mycompany.com</defaultValue>
+		</requiredProperty>
+	</requiredProperties>
+	<modules>
+		<module id="${rootArtifactId}-web" dir="__rootArtifactId__-web"
+			name="${rootArtifactId}-web">
+			<fileSets>
+				<fileSet filtered="true" packaged="true" encoding="UTF-8">
+					<directory>src/main/java</directory>
+					<includes>
+						<include>**/*.java</include>
+						<include>**/*.properties</include>
+					</includes>
+				</fileSet>
+				<fileSet packaged="true" encoding="UTF-8">
+					<directory>src/main/java</directory>
+					<includes>
+						<include>**/*.tml</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/main/filteredresources</directory>
+					<includes>
+						<include>**/*.properties</include>
+						<include>**/*.txt</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/main/webapp</directory>
+					<includes>
+						<include>**/*.html</include>
+						<include>**/*.xml</include>
+						<include>**/*.properties</include>
+						<include>**/*.txt</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/main/resources</directory>
+					<includes>
+						<include>**/*.properties</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/main/webapp</directory>
+					<includes>
+						<include>**/*.jpg</include>
+						<include>**/*.MF</include>
+						<include>**/*.png</include>
+						<include>**/*.scss</include>
+						<include>**/*.js</include>
+						<include>**/*.ico</include>
+						<include>**/*.jsbad</include>
+						<include>**/*.gitignore</include>
+						<include>**/*.gif</include>
+						<include>**/*.css</include>
+						<include>**/*.rb</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/main/resources</directory>
+					<includes>
+						<include>**/*.tml</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/test/resources</directory>
+					<includes>
+						<include>**/*.properties</include>
+						<include>**/*.txt</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/test/java</directory>
+					<includes>
+						<include>**/*.</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/test/conf</directory>
+					<includes>
+						<include>**/*.xml</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/test/resources</directory>
+					<includes>
+						<include>**/*.</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/site</directory>
+					<includes>
+						<include>**/*.xml</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/site</directory>
+					<includes>
+						<include>**/*.txt</include>
+						<include>**/*.png</include>
+						<include>**/*.apt</include>
+						<include>**/*.PNG</include>
+						<include>**/*.graphml</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>.settings</directory>
+					<includes>
+						<include>**/*.xml</include>
+						<include>**/*.prefs</include>
+						<include>**/*.component</include>
+						<include>**/*.container</include>
+						<include>**/*.name</include>
+						<include>**/*.jsdtscope</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>.externalToolBuilders</directory>
+					<includes>
+						<include>**/*.launch</include>
+						<include>**/*.gitignore</include>
+					</includes>
+				</fileSet>
+				
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory></directory>
+					<includes>
+						<include>.classpath</include>
+						<include>.project</include>
+					</includes>
+				</fileSet>
+			</fileSets>
+		</module>
+		<module id="${rootArtifactId}-ingest" dir="__rootArtifactId__-ingest"
+			name="${rootArtifactId}-ingest">
+			<fileSets>
+				<fileSet filtered="true" packaged="true" encoding="UTF-8">
+					<directory>src/main/java</directory>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/main/sql</directory>
+					<includes>
+						<include>**/*.sql</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" packaged="true" encoding="UTF-8">
+					<directory>src/test/java</directory>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/test/resources</directory>
+					<includes>
+						<include>**/*.properties</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory>src/site</directory>
+					<includes>
+						<include>**/*.txt</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>src/site</directory>
+					<includes>
+						<include>**/*.graphml</include>
+					</includes>
+				</fileSet>
+				<fileSet encoding="UTF-8">
+					<directory>.settings</directory>
+					<includes>
+						<include>**/*.prefs</include>
+					</includes>
+				</fileSet>
+				<fileSet filtered="true" encoding="UTF-8">
+					<directory></directory>
+					<includes>
+						<include>.classpath</include>
+						<include>.project</include>
+					</includes>
+				</fileSet>
+			</fileSets>
+		</module>
+	</modules>
 </archetype-descriptor>

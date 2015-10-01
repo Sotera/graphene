@@ -50,6 +50,8 @@ public class G_SymbolConstants {
 	public static final String EXT_PATH = "graphene.ext-path";
 
 	public static final String DEFAULT_MAX_SEARCH_RESULTS = "graphene.default-max-search-results";
+	
+	public static final String LOGOUT_REDIRECT_URL = "graphene.logout-redirect-url";
 
 	public static final String ENABLE_FEDERATED_LOGIN = "graphene.enable-federated-login";
 
@@ -83,7 +85,7 @@ public class G_SymbolConstants {
 	public static final String DEFAULT_MAX_GRAPH_NODES = "graphene.default-max-graph-nodes";
 
 	public static final String DEFAULT_MAX_GRAPH_EDGES_PER_NODE = "graphene.default-max-graph-edges-per-node";
-	public static final String DEFAULT_MIN_SCORE = "0.75";
+	public static final String DEFAULT_MIN_SCORE = "graphene.default-min-score";
 	public static final String DEFAULT_ADMIN_GROUP_NAME = "graphene.default-admin-group-name";
 	/**
 	 * This is the role a user from an LDAP would have, which corresponds to the

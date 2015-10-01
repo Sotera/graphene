@@ -24,7 +24,7 @@
 					</header>
 					<div role="content">
 						<div class="widget-body">
-							<form t:type="form" t:id="augmentTextForm" class="form-horizontal" id="augmentTextForm"
+							<form t:type="form" t:id="augmentTextForm" class="form-horizontal"
 								t:zone="extractionZone">
 								<fieldset>
 									<div class="form-group">

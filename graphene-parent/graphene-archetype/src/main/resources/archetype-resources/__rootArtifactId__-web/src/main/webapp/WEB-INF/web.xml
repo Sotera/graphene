@@ -1,0 +1,40 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+          http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+	<display-name>${groupId}-web Tapestry 5 Application</display-name>
+	<context-param>
+		<!-- The only significant configuration for Tapestry 5, this informs Tapestry 
+			of where to look for pages, components and mixins. -->
+		<param-name>tapestry.app-package</param-name>
+		<param-value>${package}.web</param-value>
+	</context-param>
+	<!-- Specify some additional Modules for two different execution modes: 
+		development and qa. Remember that the default execution mode is production -->
+	<context-param>
+		<param-name>tapestry.development-modules</param-name>
+		<param-value>
+			${package}.web.services.DevelopmentModule
+		</param-value>
+	</context-param>
+	<context-param>
+		<param-name>tapestry.qa-modules</param-name>
+		<param-value>
+			${package}.web.services.QaModule
+		</param-value>
+	</context-param>
+	<filter>
+		<filter-name>app</filter-name>
+		<filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+	<filter-mapping>
+		<filter-name>app</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+</web-app>
+      

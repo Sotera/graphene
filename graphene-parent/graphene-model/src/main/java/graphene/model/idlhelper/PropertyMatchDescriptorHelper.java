@@ -24,12 +24,12 @@
  */
 package graphene.model.idlhelper;
 
-import graphene.model.idl.G_BoundedRange;
 import graphene.model.idl.G_Constraint;
 import graphene.model.idl.G_ListRange;
 import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_PropertyType;
 import graphene.model.idl.G_SingletonRange;
+import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,7 +48,10 @@ public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 		helper.setConstraint(descriptor.getConstraint());
 		helper.setVariable(descriptor.getVariable());
 		helper.setInclude(descriptor.getInclude());
-		helper.setRange(descriptor.getRange());
+		helper.setSingletonRange(descriptor.getSingletonRange());
+		helper.setListRange(descriptor.getListRange());
+		helper.setBoundedRange(descriptor.getBoundedRange());
+
 		return helper;
 	}
 
@@ -129,42 +132,47 @@ public class PropertyMatchDescriptorHelper extends G_PropertyMatchDescriptor {
 
 	public PropertyMatchDescriptorHelper() {
 		// TODO Auto-generated constructor stub
+		setBoundedRange(null);
+		setSingletonRange(null);
+		setListRange(null);
+		setTypeMappings(null);
+		setKey(null);
+		setConstraint(null);
+
 	}
 
 	public PropertyMatchDescriptorHelper(final String key, final String singletonString) {
 		setKey(key);
-		setRange(new SingletonRangeHelper(singletonString, G_PropertyType.STRING));
-		setConstraint(G_Constraint.REQUIRED_EQUALS);
+		setSingletonRange(new SingletonRangeHelper(singletonString, G_PropertyType.STRING));
+		setConstraint(G_Constraint.EQUALS);
 	}
 
 	public PropertyMatchDescriptorHelper(final String key, final String... singletonString) {
 		setKey(key);
-		setRange(new ListRangeHelper(singletonString, G_PropertyType.STRING));
-		setConstraint(G_Constraint.REQUIRED_EQUALS);
+		setListRange(new ListRangeHelper(singletonString, G_PropertyType.STRING));
+		setConstraint(G_Constraint.EQUALS);
 	}
 
 	public G_PropertyType getType() {
-		final Object range = getRange();
-		if (range instanceof G_SingletonRange) {
-			return ((G_SingletonRange) range).getType();
-		} else if (range instanceof G_ListRange) {
-			return ((G_ListRange) range).getType();
-		} else if (range instanceof G_BoundedRange) {
-			return ((G_BoundedRange) range).getType();
+		if (ValidationUtils.isValid(getSingletonRange())) {
+			return getSingletonRange().getType();
+		} else if (ValidationUtils.isValid(getListRange())) {
+			return getListRange().getType();
+		} else if (ValidationUtils.isValid(getBoundedRange())) {
+			return getBoundedRange().getType();
 		}
 		return null;
 	}
 
 	public Object getValue() {
-		final Object range = getRange();
-		if (range instanceof G_SingletonRange) {
-			return ((G_SingletonRange) range).getValue();
-		} else if (range instanceof G_ListRange) {
-			return ((G_ListRange) range).getValues().iterator().next();
-		} else if (range instanceof G_BoundedRange) {
-			final G_BoundedRange bounded = (G_BoundedRange) range;
-			return bounded.getStart() != null ? bounded.getStart() : bounded.getEnd();
+		if (ValidationUtils.isValid(getSingletonRange())) {
+			return getSingletonRange().getValue();
+		} else if (ValidationUtils.isValid(getListRange())) {
+			return getListRange().getValues();
+		} else if (ValidationUtils.isValid(getBoundedRange())) {
+			return getBoundedRange().getStart() != null ? getBoundedRange().getStart() : getBoundedRange().getEnd();
 		}
+
 		return null;
 	}
 

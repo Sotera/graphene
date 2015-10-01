@@ -48,8 +48,9 @@ public class EntityExtraction extends SimpleBasePage {
 	@Inject
 	private AlertManager alertManager;
 
+	@Property
 	@Component(id = "AugmentTextForm")
-	private Form form;
+	private Form augmentTextForm;
 
 	@Inject
 	private Request request;
@@ -126,7 +127,7 @@ public class EntityExtraction extends SimpleBasePage {
 		r = null;
 		currentEntity = null;
 		if (!ValidationUtils.isValid(textAreaValue)) {
-			form.recordError("Please enter text to extract entities from.");
+			augmentTextForm.recordError("Please enter text to extract entities from.");
 		}
 	}
 

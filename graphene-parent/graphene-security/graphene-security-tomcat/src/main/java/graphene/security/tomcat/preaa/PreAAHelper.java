@@ -11,6 +11,8 @@ import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.avro.AvroRemoteException;
@@ -245,7 +247,7 @@ public class PreAAHelper implements AuthenticatorHelper {
 	}
 
 	@Override
-	public void logout() {
+	public Object logout() {
 		logger.debug(securityService.isAuthenticated() ? "During Logout: User is authenticated"
 				: "During Logout: User is not authenticated");
 		logger.debug(userExists ? "During Logout: User SSO exists" : "During Logout: User SSO does not exist");
@@ -254,6 +256,18 @@ public class PreAAHelper implements AuthenticatorHelper {
 		applicationStateManager.set(G_User.class, null);
 
 		securityService.getSubject().logout();
+		return null;
 	}
-
+	
+	@Override
+	public String getUsername() {
+		
+		String username = null;
+		HttpServletRequest request = rq.getHTTPServletRequest();
+		if (request != null) {
+			username = request.getRemoteUser();
+		}
+		
+		return username;
+	}
 }

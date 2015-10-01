@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
@@ -17,6 +18,7 @@ import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -55,25 +57,29 @@ public class GlobalSearch {
 	@Persist
 	@Property
 	private Integer selectedMaxResults;
+	
 	@Inject
 	@Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
 	private Integer defaultMaxResults;
+	
 	@Inject
 	private Logger logger;
+
 	@InjectPage
 	private CombinedEntitySearchPage searchPage;
-
-	Object onSuccessFromGlobalSearchForm() {
+	
+	@OnEvent(value = EventConstants.SUCCESS, component = "globalSearchForm")
+	Object onSuccessFromForm() {
 		logger.debug("Searching with " + searchValue + " type: " + selectedType);
 		Object retval = null;
 		if (!ValidationUtils.isValid(selectedMaxResults)) {
 			selectedMaxResults = defaultMaxResults;
 		}
 		if (ValidationUtils.isValid(searchValue)) {
-			G_Constraint searchtype = G_Constraint.COMPARE_CONTAINS;
+			G_Constraint searchtype = G_Constraint.CONTAINS;
 
 			if (searchValue.startsWith("\"") && searchValue.endsWith("\"")) {
-				searchtype = G_Constraint.REQUIRED_EQUALS;
+				searchtype = G_Constraint.EQUALS;
 			}
 			final Link link = searchPage.set(dao.getDefaultSchema(), selectedType, searchtype.name(), searchValue,
 					selectedMaxResults);
@@ -82,13 +88,15 @@ public class GlobalSearch {
 			alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Please enter a valid search value.");
 		}
 		if (!ValidationUtils.isValid(retval)) {
-//			alertManager.alert(Duration.TRANSIENT, Severity.WARN,
-//					"There is no search broker configured for this instance of Graphene");
+			// alertManager.alert(Duration.TRANSIENT, Severity.WARN,
+			// "There is no search broker configured for this instance of Graphene");
 		}
 		return retval;
 	}
 
-	void onValidateFromGlobalSearchForm() {
+	@OnEvent(value = EventConstants.VALIDATE, component = "globalSearchForm")
+	void onValidateFromForm() {
+	    logger.debug("Validating");
 		// The searchValue must be valid -- no script tags, etc.
 		// The search type must be a valid type from the list
 		// The search number must be a valid number from the list.

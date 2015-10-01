@@ -8,6 +8,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO: Move this to graphene model so we can validate avro idl classes.
+ * 
+ * @author djue
+ * 
+ */
 public class ValidationUtils {
 	private static final Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
 

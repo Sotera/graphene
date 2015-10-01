@@ -11,7 +11,10 @@ import graphene.dao.WorkspaceDAO;
 import graphene.model.idl.AuthenticationException;
 import graphene.model.idl.G_Group;
 import graphene.model.idl.G_Permission;
+import graphene.model.idl.G_PropertyDescriptors;
+import graphene.model.idl.G_PropertyMatchDescriptor;
 import graphene.model.idl.G_Role;
+import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
@@ -436,5 +439,16 @@ public class UserServiceImpl implements G_UserDataAccess {
 		}
 		return exists;
 	}
-
+	
+	@Override
+	public G_PropertyDescriptors getDescriptors() {
+	    logger.debug("getDescriptors() invoked");
+	    return null;
+	}
+	
+	@Override
+	public G_SearchResults search(java.util.List<graphene.model.idl.G_PropertyMatchDescriptor> terms, long start, long max) {
+	    logger.debug("search() invoked");
+	    return null;
+	}
 }

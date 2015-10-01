@@ -3,7 +3,6 @@ package graphene.web.components.navigation;
 import graphene.dao.GroupDAO;
 import graphene.dao.UserGroupDAO;
 import graphene.dao.UserRoleDAO;
-import graphene.model.idl.G_Role;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
@@ -85,7 +84,7 @@ public class Menu {
 	private Map<MenuType, Collection<Triple<String, String, String>>> menuHierarchy;
 
 	@Property
-	@SessionState
+	@SessionState(create = false)
 	private G_User user;
 
 	private boolean userExists;
@@ -174,15 +173,7 @@ public class Menu {
 
 	@SetupRender
 	void initializeValue() {
-		if (userExists) {
-			final List<G_Role> rolesForUserId = urDao.getRolesForUserId(user.getId());
-			for (final G_Role r : rolesForUserId) {
-				logger.debug("User " + rolesForUserId + " has role " + r.getName());
-			}
-		}
 
-		final boolean isAdmin = rq.getHTTPServletRequest().isUserInRole(externalAdminRoleName);
-		logger.debug("User has admin in request? " + isAdmin);
 		if (menuHierarchy == null) {
 			logger.info("Constructing page links for side menu items.");
 			final List<String> pageList = componentClassResolver.getPageNames();
@@ -259,24 +250,4 @@ public class Menu {
 		}
 	}
 
-	// public boolean isAdmin() {
-	// boolean userIsAnAdmin = false;
-	// if (userExists) {
-	// try {
-	// userIsAnAdmin = userDataAccess.isAdmin(user.getId());
-	// } catch (final AvroRemoteException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	// return userIsAnAdmin;
-	// }
-
-	// public boolean isShowAdmin() {
-	// return enableAdmin && isAdmin();
-	// }
-	// Save this until we get the new tree code
-	// void onActionFromClear() {
-	// tree.clearExpansions();
-	// }
 }

@@ -11,7 +11,7 @@ package graphene.model.idl;
 	 * */
 @org.apache.avro.specific.AvroGenerated
 public class G_TypeMapping extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\r\\n\\r\\n\\t\\tADDED IN 1.8\\r\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"G_TypeMapping\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Used to describe how an G_PropertyDescriptor maps to given a type.\\n\\n\\t\\tADDED IN 1.8\\n\\t *\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The type that the mapping applies to *\"},{\"name\":\"memberKey\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"field that the G_Property maps to in the type *\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   /** The type that the mapping applies to * */
    private java.lang.String type;

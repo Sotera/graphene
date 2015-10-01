@@ -39,11 +39,6 @@ public class DAOModule {
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_LOGS, false);
 		configuration.add(G_SymbolConstants.ENABLE_DELETE_DATASOURCES, false);
 
-		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_GROUP_NAME, "Admins");
-		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_ACCOUNT, "admin");
-		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_EMAIL, "admin@mycompany.com");
-		configuration.add(G_SymbolConstants.DEFAULT_ADMIN_PASSWORD, "password123");
-
 	}
 
 	@Contribute(G_PropertyKeyTypeAccess.class)

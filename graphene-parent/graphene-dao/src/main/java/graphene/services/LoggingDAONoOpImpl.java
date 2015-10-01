@@ -5,6 +5,7 @@ package graphene.services;
 
 import graphene.dao.LoggingDAO;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_EntityQueryEvent;
 import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
@@ -80,7 +81,7 @@ public class LoggingDAONoOpImpl implements LoggingDAO {
 	}
 
 	@Override
-	public void recordQuery(final G_EntityQuery sq) {
+	public void recordQueryEvent(final G_EntityQueryEvent q) {
 		// TODO Auto-generated method stub
 
 	}

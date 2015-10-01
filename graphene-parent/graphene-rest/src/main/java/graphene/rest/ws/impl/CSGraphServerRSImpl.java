@@ -8,6 +8,7 @@ import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
+import graphene.model.idlhelper.AuthenticatorHelper;
 import graphene.rest.ws.CSGraphServerRS;
 import graphene.util.DataFormatConstants;
 import graphene.util.FastNumberUtils;
@@ -35,6 +36,9 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject
+	private AuthenticatorHelper authenticatorHelper;
 
 	@InjectService("HyperProperty")
 	private HyperGraphBuilder propertyGraphBuilder;
@@ -95,7 +99,7 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 		final int maxEdgesPerNodeInt = FastNumberUtils.parseIntWithCheck(maxEdgesPerNode, 100);
 
 		V_CSGraph m = null;
-		if (requireAuthentication && (rq.getHTTPServletRequest().getRemoteUser() == null)) {
+		if (requireAuthentication && (authenticatorHelper.getUsername() == null)) {
 			// The user needs to be authenticated.
 			m = new V_CSGraph();
 			m.setIntStatus(1);
@@ -108,11 +112,10 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 			// authenticated.
 
 			String userId = null;
-			String username = null;
+			String username = authenticatorHelper.getUsername();
 			if (requireAuthentication) {
-				if (ValidationUtils.isValid(rq.getHTTPServletRequest().getRemoteUser())) {
+				if (ValidationUtils.isValid(username)) {
 					try {
-						username = rq.getHTTPServletRequest().getRemoteUser();
 						final G_User byUsername = userDataAccess.getByUsername(username);
 						userId = byUsername.getId();
 					} catch (final Exception e) {
@@ -173,8 +176,8 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 						gve.setQueryObject(q);
 						gve.setReportType("New");
 						loggingDao.recordGraphViewEvent(gve);
-						// g = propertyGraphBuilder.buildFromSubGraphs(q);
-						g = propertyGraphBuilder.makeGraphResponse(q);
+						g = propertyGraphBuilder.buildFromSubGraphs(q);
+						// g = propertyGraphBuilder.makeGraphResponse(q);
 						g.setUserId(userId);
 						g.setUsername(username);
 						m = new V_CSGraph(g, true);
@@ -212,15 +215,15 @@ public class CSGraphServerRSImpl implements CSGraphServerRS {
 
 	@Override
 	public Response saveGraph(final String graphSeed, final String username, final String timeStamp, final String graph) {
-		if (requireAuthentication && (rq.getHTTPServletRequest().getRemoteUser() == null)) {
+		if (requireAuthentication && (authenticatorHelper.getUsername() == null)) {
 			// The user needs to be authenticated.
 			logger.error("User must be logged in to save a graph.");
 			return Response.status(200).entity("Unable to save, you must be logged in. ").build();
 		} else {
 			String authenticatedUsername = username;
 			try {
-				if (ValidationUtils.isValid(rq.getHTTPServletRequest().getRemoteUser())) {
-					authenticatedUsername = rq.getHTTPServletRequest().getRemoteUser();
+				if (ValidationUtils.isValid(authenticatorHelper.getUsername())) {
+					authenticatedUsername = authenticatorHelper.getUsername();
 					// final G_User byUsername =
 					// userDataAccess.getByUsername(authenticatedUsername);
 					// byUsername.getId();

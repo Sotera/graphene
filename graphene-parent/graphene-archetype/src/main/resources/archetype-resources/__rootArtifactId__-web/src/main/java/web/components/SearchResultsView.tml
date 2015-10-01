@@ -1,0 +1,111 @@
+<!DOCTYPE html [<!ENTITY nbsp "&#160;"> <!ENTITY copy "&#169;">  <!ENTITY bull "&#8226;"> <!ENTITY lt "&#60;"><!ENTITY gt "&#62;"> ]>
+
+<t:container xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="row">
+		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<!-- Start results area -->
+			<t:if test="searchresults">
+				<div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-colorbutton="false"
+					data-widget-editbutton="false" data-widget-togglebutton="false" data-widget-deletebutton="false"
+					data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i>
+						</span>
+						<h2>Results</h2>
+						<h2>[ Showing ${searchresults.results.size()} hits out of ${searchresults.total} ] for
+							${searchValue} in ${searchTypeFilter}</h2>
+						<!-- <t:graphene.ui.searchlegend /> -->
+					</header>
+					<!-- widget div-->
+					<div>
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<div class="widget-body-toolbar"></div>
+							<t:jquery.datatable t:id="resultsdt" t:source="searchresults.results" t:model="model" t:row="currentSearchResult"
+								t:options="options" class="table table-striped table-bordered table-hover table-responsive" t:rowsPerPage="20"
+								t:empty="block:emptyResults">
+
+								<p:rankCell>
+									 ${rank}
+								</p:rankCell>
+								
+								<p:actionsCell>
+									<t:if test="mediaPageLink">
+										<a href="${mediaPageLink}" page="prop:mediaPageLink"
+											context="mediaId" target="mediaId"  title="${score}">
+											<img height="100" width="100" src="${mediaThumbnail}">
+											</img>
+											<!-- <i class="fa fa-folder-open-o"/> ${mediaId} -->
+										</a>
+										<br />
+										<p:else>Report View Unavailable</p:else>
+									</t:if>
+
+									<a class="btn btn-action" href="${extLink}" target="graph-${mediaId}">
+										<i class="fa fa-code-fork"> </i> Graph
+									</a>
+								</p:actionsCell>
+								
+								<p:usernameCell>
+ 									<a href="${getNamePivotLink(mediaOwner)}" class="btn btn-xs pivotlink">
+										${mediaOwner}
+									</a>
+								</p:usernameCell>
+								
+								<p:createdTimeCell>
+									${mediaCreatedTime}
+								</p:createdTimeCell>
+								
+ 								<p:captionTextCell>
+ 									${mediaCaption}
+								</p:captionTextCell>
+								
+								<p:likeCountCell>
+									${mediaLikeCount}
+								</p:likeCountCell>
+								
+								<p:commentCountCell>
+									${mediaCommentCount}
+								</p:commentCountCell>
+								
+								<p:hashtagsCell>
+ 									<t:loop source="allHashTags" value="currentHashTag">
+										<a href="${getNamePivotLink(currentHashTag.first)}" class="btn btn-xs pivotlink">
+											${currentHashTag.first}
+										</a>
+									</t:loop>
+								</p:hashtagsCell>
+								
+								<p:atsCell>
+ 									<t:loop source="allAts" value="currentAt">
+										<a href="${getNamePivotLink(currentAt.first)}" class="btn btn-xs pivotlink">
+											${currentAt.first}
+										</a>
+									</t:loop>
+								</p:atsCell>
+								
+								<p:locationCell>
+									${mediaLocationName}
+									<t:if test="mediaLocationLatLon">
+									<br/>${mediaLocationLatLon}
+									</t:if>
+								</p:locationCell>
+							</t:jquery.datatable>
+
+							<t:block t:id="emptyResults">
+								<div id="noentitys">(No results found)</div>
+							</t:block>
+
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget div -->
+				</div>
+			</t:if>
+			<!-- end results area -->
+		</article>
+	</div>
+
+</t:container>

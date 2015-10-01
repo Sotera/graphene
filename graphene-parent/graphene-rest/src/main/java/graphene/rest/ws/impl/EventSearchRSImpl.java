@@ -38,7 +38,7 @@ public class EventSearchRSImpl implements EventSearchRS {
 		final G_PropertyMatchDescriptor timeRange = G_PropertyMatchDescriptor
 				.newBuilder()
 				.setKey("time")
-				.setRange(
+				.setBoundedRange(
 						G_BoundedRange.newBuilder().setType(G_PropertyType.DATE)
 								.setStart(FastNumberUtils.parseLongWithCheck(minSecs, 0))
 								.setEnd(FastNumberUtils.parseLongWithCheck(maxSecs, 0)).setInclusive(true).build())
@@ -46,18 +46,21 @@ public class EventSearchRSImpl implements EventSearchRS {
 		final G_PropertyMatchDescriptor identifierList = G_PropertyMatchDescriptor
 				.newBuilder()
 				.setKey("identifiers")
-				.setRange(
+				.setListRange(
 						new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(identifiers, ",")))
 				.build();
 
-		final G_PropertyMatchDescriptor commentsList = G_PropertyMatchDescriptor.newBuilder().setKey("comments")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(comments, ",")))
+		final G_PropertyMatchDescriptor commentsList = G_PropertyMatchDescriptor
+				.newBuilder()
+				.setKey("comments")
+				.setListRange(
+						new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(comments, ",")))
 				.build();
 
 		final QueryHelper qh = new QueryHelper(timeRange, identifierList, commentsList);
 		// final List<G_PropertyMatchDescriptor<String>> tupleList =
 		// SearchTypeHelper.processSearchList(identifiers,
-		// G_Constraint.COMPARE_CONTAINS);
+		// G_Constraint.CONTAINS);
 
 		/*
 		 * Note that we are purposefully using the same list for either side of
@@ -94,7 +97,7 @@ public class EventSearchRSImpl implements EventSearchRS {
 		final G_PropertyMatchDescriptor timeRange = G_PropertyMatchDescriptor
 				.newBuilder()
 				.setKey("time")
-				.setRange(
+				.setBoundedRange(
 						G_BoundedRange.newBuilder().setType(G_PropertyType.DATE)
 								.setStart(FastNumberUtils.parseLongWithCheck(minSecs, 0))
 								.setEnd(FastNumberUtils.parseLongWithCheck(maxSecs, 0)).setInclusive(true).build())
@@ -106,19 +109,22 @@ public class EventSearchRSImpl implements EventSearchRS {
 		 */
 		// q.setIntersectionOnly(intersectionOnly);
 		final G_PropertyMatchDescriptor fromList = G_PropertyMatchDescriptor.newBuilder().setKey("from")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(from, ",")))
+				.setListRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(from, ",")))
 				.build();
 		final G_PropertyMatchDescriptor toList = G_PropertyMatchDescriptor.newBuilder().setKey("to")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(to, ",")))
+				.setListRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(to, ",")))
 				.build();
 		// q.setSources(SearchTypeHelper.processSearchList(from,
-		// G_Constraint.COMPARE_CONTAINS));
+		// G_Constraint.CONTAINS));
 		// q.setDestinations(SearchTypeHelper.processSearchList(to,
-		// G_Constraint.COMPARE_CONTAINS));
+		// G_Constraint.CONTAINS));
 		// q.setPayloadKeywords(SearchTypeHelper.processSearchList(comments,
-		// G_Constraint.COMPARE_CONTAINS));
-		final G_PropertyMatchDescriptor commentsList = G_PropertyMatchDescriptor.newBuilder().setKey("comments")
-				.setRange(new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(comments, ",")))
+		// G_Constraint.CONTAINS));
+		final G_PropertyMatchDescriptor commentsList = G_PropertyMatchDescriptor
+				.newBuilder()
+				.setKey("comments")
+				.setListRange(
+						new ListRangeHelper(G_PropertyType.STRING, StringUtils.tokenizeToStringArray(comments, ",")))
 				.build();
 		final QueryHelper qh = new QueryHelper(timeRange, fromList, toList, commentsList);
 		G_TransactionResults s = null;

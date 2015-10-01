@@ -6,6 +6,7 @@ import graphene.services.LinkGenerator;
 import graphene.web.annotations.PluginPage;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -67,8 +68,11 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 	@Property
 	private String searchValue;
 
-	// @ActivationRequestParameter(value = "prebuiltQuery")
-	@Persist
+	/**
+	 * Using a default persist caused the value to not be overwritten when
+	 * performing a new search.
+	 */
+	@Persist(PersistenceConstants.FLASH)
 	@Property
 	private G_EntityQuery prebuiltQuery;
 
@@ -93,10 +97,16 @@ public class CombinedEntitySearchPage extends SimpleBasePage implements LinkGene
 		searchValue = value;
 		searchMatch = match;
 		this.maxResults = maxResults;
+		// Try resetting any persisted value of this type.
+		prebuiltQuery = null;
 		return pageRenderLinkSource.createPageRenderLink(this.getClass());
 	}
 
 	public void setPrebuilt(final G_EntityQuery q) {
+		searchSchema = null;
+		searchTypeFilter = null;
+		searchValue = null;
+		searchMatch = null;
 		prebuiltQuery = q;
 	}
 

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>graphene-parent</artifactId>
     <groupId>graphene</groupId>
-   <version>4.1.2</version>
+   <version>4.2.0-SNAPSHOT</version>
   </parent>
   <artifactId>graphene-introspect</artifactId>
   <name>${project.artifactId}</name>
@@ -24,6 +24,11 @@
       <groupId>graphene</groupId>
       <artifactId>graphene-dao-sql</artifactId>
     </dependency>
+    <dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-sql</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
   </dependencies>
   <description>An experimental module for automatically discovering data types, structures and relations in existing database.</description>
 </project>

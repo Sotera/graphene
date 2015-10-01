@@ -2,6 +2,7 @@ package graphene.dao;
 
 import graphene.business.commons.exception.DataAccessException;
 import graphene.model.idl.G_EntityQuery;
+import graphene.model.idl.G_EntityQueryEvent;
 import graphene.model.idl.G_ExportEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_ReportViewEvent;
@@ -52,7 +53,7 @@ public interface LoggingDAO {
 	 * @param sq
 	 *            The entity query initiated by the user
 	 */
-	void recordQuery(G_EntityQuery sq);
+	void recordQueryEvent(G_EntityQueryEvent q);
 
 	void recordReportViewEvent(G_ReportViewEvent q);
 

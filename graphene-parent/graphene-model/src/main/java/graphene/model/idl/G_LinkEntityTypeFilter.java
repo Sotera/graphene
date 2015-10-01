@@ -11,6 +11,6 @@ package graphene.model.idl;
 @org.apache.avro.specific.AvroGenerated
 public enum G_LinkEntityTypeFilter { 
   ACCOUNT_OWNER, ACCOUNT, CLUSTER_SUMMARY, ANY  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_LinkEntityTypeFilter\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Type of entity associated with desired links\\r\\n\\t \\r\\n\\t ADDED IN 1.6\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"CLUSTER_SUMMARY\",\"ANY\"]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"G_LinkEntityTypeFilter\",\"namespace\":\"graphene.model.idl\",\"doc\":\"Type of entity associated with desired links\\n\\t \\n\\t ADDED IN 1.6\",\"symbols\":[\"ACCOUNT_OWNER\",\"ACCOUNT\",\"CLUSTER_SUMMARY\",\"ANY\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

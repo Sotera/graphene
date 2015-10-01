@@ -1,0 +1,112 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>${groupId}</groupId>
+		<artifactId>${rootArtifactId}</artifactId>
+		<version>${version}</version>
+	</parent>
+	<artifactId>${artifactId}</artifactId>
+	<description>Ingest scripts and utilities that should not be deployed on a web server.</description>
+	<dependencies>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Provided by the servlet container, but sometimes referenced in the 
+			application code. -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Provide dependency to the Tapestry javadoc taglet which replaces the 
+			Maven component report -->
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-javadoc</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-dao-titan</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-introspect</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-export</artifactId>
+		</dependency>
+		<dependency>
+			<artifactId>graphene-model</artifactId>
+			<groupId>${base.project.groupId}</groupId>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-dao-es</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-hts</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>graphene-augment</groupId>
+			<artifactId>graphene-augment-mitie</artifactId>
+		</dependency>
+		<!-- <dependency> <groupId>graphene-augment</groupId> <artifactId>graphene-augment-snlp</artifactId> 
+			</dependency> -->
+		<!-- Here's the war overlay -->
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-web</artifactId>
+			<type>war</type>
+		</dependency>
+		<!-- Here's just the classes, needed for compilation -->
+		<dependency>
+			<groupId>${base.project.groupId}</groupId>
+			<artifactId>graphene-web</artifactId>
+			<classifier>classes</classifier>
+			<type>jar</type>
+		</dependency>
+		<!-- This includes the class files from the web application so it can be leveraged in ingest. -->
+		<dependency>
+			<groupId>${groupId}</groupId>
+			<artifactId>${groupId}-web</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<classifier>classes</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>snakeyaml</artifactId>
+					<groupId>org.yaml</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

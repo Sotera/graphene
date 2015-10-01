@@ -55,15 +55,9 @@ public class ExtractedDataParser extends BasicParserESImpl<ExtractedData> {
 	}
 
 	@Override
-	public V_GenericGraph getSubGraph(final G_SearchResult sr, final G_EntityQuery q) {
+	public V_GenericGraph parse(final G_SearchResult t, final G_EntityQuery q) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean parse(final G_SearchResult t, final G_EntityQuery q) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

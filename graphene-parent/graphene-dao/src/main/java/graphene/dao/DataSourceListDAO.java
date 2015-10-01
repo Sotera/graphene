@@ -1,6 +1,10 @@
 package graphene.dao;
 
+import graphene.model.idl.G_Constraint;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * While this is a very simple DAO, if we intend to always pre-load this it may
@@ -17,10 +21,16 @@ import java.util.List;
 public interface DataSourceListDAO {
 	public static final String ALL_REPORTS = "All Reports";
 
+	public List<G_Constraint> getAvailableConstraints();
+
 	public List<String> getAvailableTypes();
 
 	public abstract List<String> getAvailableTypes(final String schema);
 
 	public String getDefaultSchema();
+
+	public Map<String, ArrayList<String>> getFieldMappings();
+
+	public abstract Map<String, ArrayList<String>> getRangeMappings();
 
 }

@@ -29,8 +29,8 @@ import graphene.model.idl.G_EntityTag;
 import graphene.model.idl.G_Property;
 import graphene.model.idl.G_PropertyTag;
 import graphene.model.idl.G_Provenance;
-import graphene.model.idl.G_SingletonRange;
 import graphene.model.idl.G_Uncertainty;
+import graphene.util.validator.ValidationUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,47 +46,6 @@ public class EntityHelper extends G_Entity {
 		return SerializationHelper.fromJson(json, G_Entity.getClassSchema());
 	}
 
-	/**
-	 * You should not use this because the storage of the properties is not in
-	 * insertion order (i.e. the order is random). So getting the first property
-	 * is not significant.
-	 * 
-	 * @param entity
-	 * @param key
-	 * @return
-	 */
-	@Deprecated
-	public static PropertyHelper getFirstProperty(final G_Entity entity, final String key) {
-		if ((entity != null) && (entity.getProperties() != null)) {
-			for (final G_Property property : entity.getProperties().values()) {
-				if (property.getKey().equals(key)) {
-					return PropertyHelper.from(property);
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * You should not use this because the storage of the properties is not in
-	 * insertion order (i.e. the order is random). So getting the first property
-	 * is not significant.
-	 * 
-	 * @param entity
-	 * @param tag
-	 * @return
-	 */
-	public static PropertyHelper getFirstPropertyByTag(final G_Entity entity, final G_PropertyTag tag) {
-		if ((entity != null) && (entity.getProperties() != null)) {
-			for (final G_Property property : entity.getProperties().values()) {
-				if (property.getTags().contains(tag)) {
-					return PropertyHelper.from(property);
-				}
-			}
-		}
-		return null;
-	}
-
 	public static List<G_Property> getPropertiesByTag(final G_Entity entity, final G_PropertyTag tag) {
 		final List<G_Property> list = new ArrayList<G_Property>(1);
 		if ((entity != null) && (entity.getProperties() != null)) {
@@ -99,21 +58,6 @@ public class EntityHelper extends G_Entity {
 		}
 		return list;
 	}
-
-	// @Deprecated
-	// public static List<G_Property> getPropertiesByKey(final G_Entity entity,
-	// final String key) {
-	// final List<G_Property> list = new ArrayList<G_Property>(1);
-	// if ((entity != null) && (entity.getProperties() != null)) {
-	// for (final G_Property x : entity.getProperties()) {
-	// if (x.getKey().equalsIgnoreCase(key)) {
-	// list.add(x);
-	// }
-	// }
-	// Collections.sort(list);
-	// }
-	// return list;
-	// }
 
 	public static List<G_Property> getPropertiesByTags(final G_Entity entity, final G_PropertyTag... tags) {
 		final List<G_Property> list = new ArrayList<G_Property>(1);
@@ -133,10 +77,17 @@ public class EntityHelper extends G_Entity {
 			final G_Property prop = entity.getProperties().get(key);
 
 			if (prop != null) {
-				if (prop.getRange() instanceof G_SingletonRange) {
-					return SingletonRangeHelper.rangeValue(prop.getRange());
+				if (ValidationUtils.isValid(prop.getSingletonRange())) {
+					return prop.getSingletonRange().getValue();
+				} else if (ValidationUtils.isValid(prop.getListRange())) {
+					return prop.getListRange().getValues();
+				} else if (ValidationUtils.isValid(prop.getBoundedRange())) {
+					return prop.getBoundedRange();
+				} else if (ValidationUtils.isValid(prop.getBoundedRange())) {
+					return prop.getDistributionRange();
 				} else {
-					return ListRangeHelper.rangeValue(prop.getRange());
+					// error
+					return null;
 				}
 			}
 		}
@@ -197,33 +148,21 @@ public class EntityHelper extends G_Entity {
 		}));
 	}
 
-	/**
-	 * You should not use this because the storage of the properties is not in
-	 * insertion order (i.e. the order is random). So getting the first property
-	 * is not significant.
-	 * 
-	 * 
-	 * @param key
-	 * @return
-	 */
-	@Deprecated
-	public PropertyHelper getFirstProperty(final String key) {
-		for (final G_Property property : getProperties().values()) {
-			if (property.getKey().equals(key)) {
-				return PropertyHelper.from(property);
-			}
-		}
-		return null;
-	}
-
 	public String getId() {
 		return getUid();
 	}
 
-	public String getLabel() {
-		final PropertyHelper label = getFirstProperty(G_PropertyTag.LABEL.name());
-		return (String) (label != null ? label.getValue() : null);
-	}
+	// public String getLabel() {
+	// PropertyHelper label = null;
+	// for (final G_Property r : getProperties().values()) {
+	// if (r.getTags().contains(G_PropertyTag.LABEL)) {
+	// label = PropertyHelper.from(r);
+	// }
+	// }
+	// // final PropertyHelper label =
+	// // getFirstProperty(G_PropertyTag.LABEL.name());
+	// return (String) (label != null ? label.getValue() : null);
+	// }
 
 	public String toJson() throws IOException {
 		return SerializationHelper.toJson(this);

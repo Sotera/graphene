@@ -23467,3 +23467,9 @@ transform
 .dontsplit { 
 	padding: 5px; 
 }
+
+#globalsearchform > .form-group {
+	margin-right: 6px;
+	margin-top: 4px;
+	margin-bottom: 4px !important;
+}

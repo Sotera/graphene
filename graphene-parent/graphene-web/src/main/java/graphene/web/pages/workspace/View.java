@@ -10,17 +10,15 @@ import graphene.model.idl.G_UserSpaceRelationshipType;
 import graphene.model.idl.G_VisualType;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idl.UnauthorizedActionException;
+import graphene.model.idlhelper.RangeHelper;
 //import graphene.model.query.EntityQuery;
 import graphene.util.ExceptionUtil;
-import graphene.util.StringUtils;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
 import graphene.web.pages.CombinedEntitySearchPage;
 import graphene.web.pages.SimpleBasePage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
@@ -119,16 +117,7 @@ public class View extends SimpleBasePage {
 	private G_EntityQuery selectedQuery;
 
 	public String getCurrentPMDValues() {
-		final Map<String, Object> range = (Map<String, Object>) currentPmd.getRange();
-		if (range.containsKey("values")) {
-			final ArrayList<String> a = ((ArrayList<String>) range.get("values"));
-			return StringUtils.toDelimitedString(a.toArray(), " ");
-		} else if (range.containsKey("value")) {
-			return (String) range.get("value");
-		} else {
-			return null;
-		}
-
+		return RangeHelper.toString(currentPmd);
 	}
 
 	// Generally useful bits and pieces
