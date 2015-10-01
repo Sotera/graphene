@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>graphene-augment</groupId>
 		<artifactId>graphene-augment</artifactId>
-		<version>4.2.0-SNAPSHOT</version>
+		<version>4.2.0</version>
 	</parent>
 
 	<artifactId>graphene-augment-mitie</artifactId>

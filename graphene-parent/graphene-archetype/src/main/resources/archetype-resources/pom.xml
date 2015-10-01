@@ -11,7 +11,7 @@
 		<java.version>1.7</java.version>
 		<!-- properties for dependencies (usually versions) -->
 
-		<base.project.version>4.2.0-SNAPSHOT</base.project.version>
+		<base.project.version>4.2.0</base.project.version>
 		<base.project.groupId>graphene</base.project.groupId>
 
 		<!-- Properties for this instance of the app -->

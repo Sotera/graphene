@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>graphene</groupId>
 	<artifactId>graphene-parent</artifactId>
-	<version>4.2.0-SNAPSHOT</version>
+	<version>4.2.0</version>
 	<packaging>pom</packaging>
 	<prerequisites>
 		<maven>3.0.4</maven>
@@ -47,7 +47,7 @@
 		<querydsl.version>3.3.1</querydsl.version>
 
 		<!-- properties for dependencies that are utilities -->
-		<vande.version>4.2.0-SNAPSHOT</vande.version>
+		<vande.version>4.2.0</vande.version>
 		<jackson2.version>2.2.1	</jackson2.version>
 		<!-- <jackson2.version>2.3.0</jackson2.version> 2.3.0 does not work with 
 			resteasy 3.0.5.Final or 3.0.6.Final. -->

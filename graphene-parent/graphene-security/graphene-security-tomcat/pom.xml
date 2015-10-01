@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>graphene-security</groupId>
 		<artifactId>graphene-security</artifactId>
-		<version>4.2.0-SNAPSHOT</version>
+		<version>4.2.0</version>
 	</parent>
 	<groupId>graphene-security</groupId>
 	<artifactId>graphene-security-tomcat</artifactId>
