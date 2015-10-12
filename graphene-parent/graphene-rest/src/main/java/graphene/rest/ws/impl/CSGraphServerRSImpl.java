@@ -4,6 +4,7 @@ import graphene.dao.HyperGraphBuilder;
 import graphene.dao.LoggingDAO;
 import graphene.dao.WorkspaceDAO;
 import graphene.model.graph.G_PersistedGraph;
+import graphene.model.idl.G_EntityQueryEvent;
 import graphene.model.idl.G_GraphViewEvent;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_User;

@@ -174,12 +174,6 @@ public abstract class AbstractGraphBuilder implements G_CallBack, HyperGraphBuil
 					try {
 						// Get a bunch of records
 						searchResults = getDAO().search(eq);
-                        
-                        //TODO: this is where the QAL needs to be done.
-                        //Questions: what about graph retrieved from the server, how do we find all the queries
-                        // it took to reach that point?						
-						G_EntityQueryEvent qe = new G_EntityQueryEvent(eq, (long)searchResults.getResults().size());
-						loggingDao.recordQueryEvent(qe);
 						
 						for (final G_SearchResult t : searchResults.getResults()) {
 							if (ValidationUtils.isValid(t.getResult())) {

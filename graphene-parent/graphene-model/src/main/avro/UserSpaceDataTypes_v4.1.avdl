@@ -117,7 +117,7 @@ protocol G_UserSpaceDataTypes {
 			
 	record G_EntityQueryEvent {
 		G_EntityQuery q = null;
-		long numResults;
+		G_SearchResults results;
 	}
 	
 	record G_Workspace {
