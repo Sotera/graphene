@@ -4,17 +4,23 @@ import graphene.augment.mitie.dao.MitieDAO;
 import graphene.augment.mitie.model.MitieEntity;
 import graphene.augment.mitie.model.MitieResponse;
 import graphene.business.commons.exception.DataAccessException;
+import graphene.model.idl.G_Constraint;
+import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_VisualType;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.annotations.PluginPage;
+import graphene.web.pages.CombinedEntitySearchPage;
 import graphene.web.pages.SimpleBasePage;
 
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -38,7 +44,14 @@ public class EntityExtraction extends SimpleBasePage {
 	@Property
 	@Persist(PersistenceConstants.FLASH)
 	private String textAreaValue;
-
+	
+    @Inject
+    @Symbol(G_SymbolConstants.DEFAULT_MAX_SEARCH_RESULTS)
+    private Integer defaultMaxResults;
+    
+    @InjectPage
+    private CombinedEntitySearchPage searchPage;
+    
 	@Property
 	@Persist
 	private MitieResponse r;
@@ -76,21 +89,28 @@ public class EntityExtraction extends SimpleBasePage {
 			return "" + results + " entities extracted";
 		}
 	}
+	
+    public Link getNamePivotLink(final String term) {
+        logger.debug("getNamePivotLink");
+        // XXX: pick the right search type based on the link value
+        final Link l = searchPage.set(null, null, G_Constraint.EQUALS.name(), term, defaultMaxResults);
+        return l;
+    }
 
 	public String getStyleIcon() {
 		String style;
-		switch (currentEntity.getTag()) {
+		switch (currentEntity.getTag().toLowerCase()) {
 
-		case "ORGANIZATION":
+		case "organization":
 			style = "fa fa-lg fa-fw fa-building";
 			break;
-		case "PERSON":
+		case "person":
 			style = "fa fa-lg fa-fw fa-user";
 			break;
-		case "LOCATION":
+		case "location":
 			style = "fa fa-lg fa-fw fa-map-marker";
 			break;
-		case "MISC":
+		case "misc":
 			style = "fa fa-lg fa-fw fa-question-circle";
 			break;
 		default:

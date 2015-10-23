@@ -60,14 +60,11 @@
 									<div>${numberOfEntitiesExtracted}</div>
 									<t:loop source="r.entities" value="currententity">
 										<div>
-											<button type="button"
-												class="btn btn-labeled  bg-color-orange  txt-color-white"
-												t:type="pagelink" page="graphene/CombinedEntitySearchPage" context="currententity.text">
-												<span class="btn-label">
-													<i class="${styleIcon}" />
-												</span>
-												${currententity.text}
-											</button>
+											<a class="btn btn-labeled  bg-color-orange  txt-color-white" href="${getNamePivotLink(currententity?.text)}">
+											<span class="btn-label">
+												<i class="${styleIcon}" />
+											</span>
+											${currententity.text}</a>
 										</div>
 										<br />
 									</t:loop>
