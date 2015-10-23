@@ -25,6 +25,7 @@ import mil.darpa.vande.interactions.TemporalGraphQuery;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -72,6 +73,15 @@ public class LoggingDAODefaultESImpl extends BasicESDAO implements LoggingDAO {
 		this.c = c;
 		mapper = new ObjectMapper(); // can reuse, share globally
 		this.logger = logger;
+	}
+	
+	@PostInjection
+	public void listenForShutdown(RegistryShutdownHub hub) {
+		hub.addRegistryShutdownListener(new Runnable() {
+			public void run() {
+				executor.shutdown();
+			}
+		});
 	}
 
 	@Override
