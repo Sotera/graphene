@@ -105,16 +105,16 @@ public class WorkspaceList {
 
 	public List<G_Workspace> getListOfWorkspaces() {
 		if (userExists) {
-			if (!workspacesExists) {
+//			if (!workspacesExists) {
 				try {
 					logger.debug("Updating list of workspaces");
 					workspaces = userDataAccess.getWorkspacesForUser(user.getId());
 				} catch (final AvroRemoteException e) {
 					logger.error(e.getMessage());
 				}
-			} else {
-				logger.debug("List of workspaces already exists.");
-			}
+//			} else {
+//				logger.debug("List of workspaces already exists.");
+//			}
 		} else {
 			logger.error("No user name to get workspaces for.");
 			workspaces = null;
