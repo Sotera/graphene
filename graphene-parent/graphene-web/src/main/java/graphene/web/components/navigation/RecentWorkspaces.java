@@ -134,9 +134,8 @@ public class RecentWorkspaces {
 
 	private void selectMostRecentWorkspace() {
 		// logger.debug("Selecting most recent workspace");
-		if (workspaces.size() > 1) {
+		if (workspaces.size() > 0) {
 			// already sorted, just grab the top one.
-//			currentSelectedWorkspace = workspaces.get(0);
             currentSelectedWorkspace = workspaces.get(workspaces.size() - 1);
 		} else {
 			currentSelectedWorkspace = null;
