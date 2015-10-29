@@ -400,12 +400,12 @@ public class UserServiceImpl implements G_UserDataAccess {
 			logger.debug("User has permission to save to this workspace.");
 			workspace.setModified(DateTime.now().getMillis());
 			return wDao.save(workspace);
-		} else {
-			final String errorStr = "User " + userId + " did not have permission to save Workspace "
-					+ workspace.getId() + ".";
-			logger.error(errorStr);
-			throw new UnauthorizedActionException(errorStr);
 		}
+		
+		final String errorStr = "User " + userId + " did not have permission to save Workspace "
+				+ workspace.getId() + ".";
+		logger.error(errorStr);
+		throw new UnauthorizedActionException(errorStr);
 	}
 
 	@Override

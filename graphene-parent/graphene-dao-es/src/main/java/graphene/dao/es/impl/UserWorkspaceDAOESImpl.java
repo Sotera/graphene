@@ -228,7 +228,14 @@ public class UserWorkspaceDAOESImpl extends BasicESDAO implements UserWorkspaceD
 			logger.debug("Deleting user-workspace relation " + r.getId());
 			success = delete(r.getId());
 		}
-
+        if (success && ES_READ_DELAY_MS > 0) {
+            try {
+                Thread.sleep(ES_READ_DELAY_MS);
+            }
+            catch (Exception e) {
+                logger.error("removeUserPermissionFromWorkspace " + e.getMessage());
+            }
+        }
 		return success;
 	}
 
@@ -242,6 +249,7 @@ public class UserWorkspaceDAOESImpl extends BasicESDAO implements UserWorkspaceD
 				success = delete(r.getId());
 			}
 		}
+
 		return success;
 	}
 
