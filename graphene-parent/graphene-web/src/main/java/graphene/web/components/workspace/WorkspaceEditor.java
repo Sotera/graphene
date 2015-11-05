@@ -11,6 +11,7 @@ import graphene.util.ExceptionUtil;
 import graphene.util.time.JodaTimeUtil;
 import graphene.util.validator.ValidationUtils;
 import graphene.web.components.CustomForm;
+import graphene.web.pages.workspace.Manage;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -21,8 +22,10 @@ import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
+import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
@@ -64,7 +67,10 @@ public class WorkspaceEditor {
 
 	@Inject
 	private ComponentResources componentResources;
-
+	
+	@InjectContainer
+	private Manage managePage;
+	   
 	// Parameters
 
 	@Component
@@ -219,8 +225,6 @@ public class WorkspaceEditor {
 	// CONFIRM DELETE - used only when JavaScript is disabled.
 	// /////////////////////////////////////////////////////////////////////
 
-	// Handle event "cancelConfirmDelete"
-
 	public boolean isModeUpdate() {
 		return mode == Mode.UPDATE;
 	}
@@ -236,26 +240,22 @@ public class WorkspaceEditor {
 		return false;
 	}
 
-	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_SUBMIT event
-	// during form submission
-
-	boolean onCancelCreate() {
+	Object onCancelCreate() {
 		// Return false, which means we haven't handled the event so bubble it
 		// up.
 		// This method is here solely as documentation, because without this
 		// method the event would bubble up anyway.
-		return false;
+	    mode = null;
+	    return managePage;
 	}
 
-	// Component "confirmDeleteForm" bubbles up the VALIDATE event when it is
-	// submitted
-
-	boolean onCancelUpdate(final String workspaceId) {
+	Object onCancelUpdate(final String workspaceId) {
 		// Return false, which means we haven't handled the event so bubble it
 		// up.
 		// This method is here solely as documentation, because without this
 		// method the event would bubble up anyway.
-		return false;
+	    mode = Mode.REVIEW;
+	    return managePage;
 	}
 
 	// Component "confirmDeleteForm" bubbles up SUCCESS or FAILURE when it is
@@ -272,7 +272,7 @@ public class WorkspaceEditor {
 	 * @param workspaceVersion
 	 * @return
 	 */
-	boolean onDelete(final String workspaceId) {
+	Object onDelete(final String workspaceId) {
 		this.workspaceId = workspaceId;
 
 		// If request is AJAX then the user has pressed Delete..., was presented
@@ -284,32 +284,29 @@ public class WorkspaceEditor {
 			if (!enableDelete) {
 				deleteMessage = "Sorry, but Delete is not allowed at this time.";
 			} else {
-
 				try {
 					// TODO: It would be a wise idea to allow revisions of the
 					// workspaces, for history's sake.
 					successfulDelete = userDataAccess.removeUserFromWorkspace(user.getId(), workspaceId);
-					if (userDataAccess.deleteWorkspaceIfUnused(null, workspaceId)) {
+ 					if (userDataAccess.deleteWorkspaceIfUnused(null, workspaceId)) {
 						logger.debug("Deleted workspace because it was unused.");
 					}
-
+            
 				} catch (final Exception e) {
 					// Display the cause. In a real system we would try harder
 					// to get a user-friendly message.
 					logger.error(e.getMessage());
 					deleteMessage = "Unable to delete at this time.";
 				}
-
 			}
 
 			if (successfulDelete) {
-				// Trigger new event "successfulDelete" (which in this example
-				// will bubble up to the page).
-				componentResources.triggerEvent(SUCCESSFUL_DELETE, new Object[] { workspaceId }, null);
+			    mode = null;
+	            this.workspaceId = null;
+			    boolean deletedCurrentlySelected = currentSelectedWorkspace.getId().equals(workspaceId);
+			    managePage.updateOnSuccessfulDeleteFromEditor(deletedCurrentlySelected);
 			} else {
-				// Trigger new event "failedDelete" (which in this example will
-				// bubble up to the page).
-				componentResources.triggerEvent(FAILED_DELETE, new Object[] { workspaceId }, null);
+			    mode = Mode.REVIEW;
 			}
 		}
 
@@ -322,26 +319,17 @@ public class WorkspaceEditor {
 			componentResources.triggerEvent(TO_CONFIRM_DELETE, new Object[] { workspaceId }, null);
 		}
 
-		// We don't want "delete" to bubble up, so we return true to say we've
-		// handled it.
-		return true;
+		// Need to refresh the whole page
+		return managePage;
 	}
 
-	boolean onFailureFromConfirmDeleteForm() {
+	void onFailureFromConfirmDeleteForm() {
 		if (ValidationUtils.isValid(workspace)) {
 			// versionFlash = workspace.getVersion();
 			dateFlash = JodaTimeUtil.toDateTime(workspace.getModified());
-			// Rather than letting "failure" bubble up which doesn't say what
-			// you
-			// were trying to do, we trigger new event
-			// "failedDelete". It will bubble up because we don't have a handler
-			// method for it.
-			componentResources.triggerEvent(FAILED_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
-			// We don't want "failure" to bubble up, so we return true to say
-			// we've
-			// handled it.
+
+			mode = Mode.CONFIRM_DELETE;
 		}
-		return true;
 	}
 
 	// /////////////////////////////////////////////////////////////////////
@@ -350,26 +338,12 @@ public class WorkspaceEditor {
 
 	// Getters
 
-	boolean onFailureFromCreateForm() {
-		// Rather than letting "failure" bubble up which doesn't say what you
-		// were trying to do, we trigger new event
-		// "failedCreate". It will bubble up because we don't have a handler
-		// method for it.
-		componentResources.triggerEvent(FAILED_CREATE, null, null);
-		// We don't want "failure" to bubble up, so we return true to say we've
-		// handled it.
-		return true;
+	void onFailureFromCreateForm() {
+	    mode = Mode.CREATE;
 	}
 
-	boolean onFailureFromUpdateForm() {
-		// Rather than letting "failure" bubble up which doesn't say what you
-		// were trying to do, we trigger new event
-		// "failedUpdate". It will bubble up because we don't have a handler
-		// method for it.
-		componentResources.triggerEvent(FAILED_UPDATE, new Object[] { workspaceId }, null);
-		// We don't want "failure" to bubble up, so we return true to say we've
-		// handled it.
-		return true;
+	void onFailureFromUpdateForm() {
+	    mode = Mode.UPDATE;
 	}
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
@@ -407,7 +381,6 @@ public class WorkspaceEditor {
 				logger.error(e.getMessage());
 			}
 		}
-
 	}
 
 	void onPrepareForSubmitFromConfirmDeleteForm() {
@@ -461,7 +434,7 @@ public class WorkspaceEditor {
 				if (currentSelectedWorkspaceExists && currentSelectedWorkspace.getId().equals(workspace.getId())) {
 					currentSelectedWorkspace = null;
 				}
-				componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE, new Object[] { workspace.getId() }, null);
+				mode = null;
 			} catch (final AvroRemoteException e) {
 				logger.error(ExceptionUtil.getRootCauseMessage(e));
 				// TODO: Add a popup alert
@@ -470,17 +443,13 @@ public class WorkspaceEditor {
 				// TODO: Add a popup alert
 				componentResources.triggerEvent(FAILED_DELETE, new Object[] { workspace.getId() }, null);
 			}
-			// We don't want "success" to bubble up, so we return true to say
-			// we've
-			// handled it.
-			return true;
-		} else {
-			logger.error("Tried to delete a null workspace, or user does not exist");
-			// We don't want "success" to bubble up, so we return true to say
-			// we've
-			// handled it.
-			return true;
-		}
+		} 
+		logger.error("Tried to delete a null workspace, or user does not exist");
+		
+		// We don't want "success" to bubble up, so we return true to say
+		// we've
+		// handled it.
+		return true;
 	}
 
 	// public String getWorkspaceRegion() {
@@ -489,29 +458,26 @@ public class WorkspaceEditor {
 	// + workspace.getRegion().name());
 	// }
 
-	boolean onSuccessFromCreateForm() {
+	Object onSuccessFromCreateForm() {
 		// We want to tell our containing page explicitly what workspace we've
 		// created, so we trigger new event
 		// "successfulCreate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
 		if (ValidationUtils.isValid(workspace)) {
-			componentResources.triggerEvent(SUCCESSFUL_CREATE, new Object[] { workspace.getId() }, null);
+		    mode = Mode.REVIEW;
+		    workspaceId = workspace.getId();
+		    
+		    managePage.updateOnSuccessfulCreateFromEditor(workspaceId);
 		}
-		// We don't want "success" to bubble up, so we return true to say we've
-		// handled it.
-
-		return true;
+		// Need to refresh the whole page
+		return managePage;
 	}
 
-	boolean onSuccessFromUpdateForm() {
-		// We want to tell our containing page explicitly what workspace we've
-		// updated, so we trigger new event
-		// "successfulUpdate" with a parameter. It will bubble up because we
-		// don't have a handler method for it.
-		componentResources.triggerEvent(SUCCESSFUL_UPDATE, new Object[] { workspaceId }, null);
-		// We don't want "success" to bubble up, so we return true to say we've
-		// handled it.
-		return true;
+	Object onSuccessFromUpdateForm() {
+	    mode = Mode.REVIEW;
+		
+		// Need to refresh the whole page
+	    return managePage;
 	}
 
 	boolean onToUpdate(final String workspaceId) {
@@ -547,9 +513,7 @@ public class WorkspaceEditor {
 				confirmDeleteForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 				alertManager.alert(Duration.TRANSIENT, Severity.ERROR, "Failed to delete workspace");
 			}
-
 		}
-
 	}
 
 	void onValidateFromCreateForm() {
@@ -644,6 +608,5 @@ public class WorkspaceEditor {
 						"User was not logged in, but needs to be logged in to view this page.");
 			}
 		}
-
 	}
 }

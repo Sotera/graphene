@@ -5,6 +5,7 @@ import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 import graphene.model.idlhelper.AuthenticatorHelper;
+import graphene.web.components.navigation.Header;
 
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +15,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.func.Tuple;
@@ -94,9 +96,16 @@ public class Layout {
 	private boolean workspacesExists;
 	@Inject
 	private RequestGlobals rq;
+    
+    @InjectComponent
+    private Header header;
 
 	void afterRender() {
 		jss.addInitializerCall("makeLogout", "logout");
+	}
+	
+	public Header getHeader() {
+	    return header;
 	}
 
 	public JSONObject getJgrowlParams() {

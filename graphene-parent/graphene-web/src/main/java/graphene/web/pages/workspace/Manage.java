@@ -2,6 +2,8 @@ package graphene.web.pages.workspace;
 
 import graphene.model.idl.G_VisualType;
 import graphene.web.annotations.PluginPage;
+import graphene.web.components.Layout;
+import graphene.web.components.navigation.RecentWorkspaces;
 import graphene.web.components.workspace.WorkspaceEditor.Mode;
 import graphene.web.pages.SimpleBasePage;
 
@@ -38,7 +40,10 @@ public class Manage extends SimpleBasePage {
 
 	@InjectComponent
 	private Zone listZone;
-
+    
+    @InjectComponent
+    private Layout layout;
+  
 	@Property
 	// If we use @ActivationRequestParameter instead of @Persist, then our
 	// handler for filter form success would have
@@ -64,7 +69,8 @@ public class Manage extends SimpleBasePage {
 	void onActivate() {
 		listWorkspaceId = editorWorkspaceId;
 	}
-
+	
+    // Handle event "cancelConfirmDelete" from component "editor"
 	Object onCancelConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
@@ -72,98 +78,18 @@ public class Manage extends SimpleBasePage {
 		return null;
 	}
 
-	void onCancelCreateFromEditor() {
-		editorMode = null;
-		editorWorkspaceId = null;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// CREATE
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "toCreate" from this page
-
-	void onCancelUpdateFromEditor(final String workspaceId) {
-		editorMode = Mode.REVIEW;
-		editorWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// Handle event "cancelCreate" from component "editor"
-
-	void onFailedConfirmDeleteFromEditor(final String workspaceId) {
-		editorMode = Mode.CONFIRM_DELETE;
-		editorWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// Handle event "successfulCreate" from component "editor"
-
-	void onFailedCreateFromEditor() {
-		editorMode = Mode.CREATE;
-		editorWorkspaceId = null;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// Handle event "failedCreate" from component "editor"
-
-	void onFailedDeleteFromEditor(final String workspaceId) {
-		editorMode = Mode.REVIEW;
-		editorWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// REVIEW
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "selected" from component "list"
-
-	void onFailedUpdateFromEditor(final String workspaceId) {
-		editorMode = Mode.UPDATE;
-		editorWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// UPDATE
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "toUpdate" from component "editor"
-
 	// /////////////////////////////////////////////////////////////////////
 	// FILTER
 	// /////////////////////////////////////////////////////////////////////
 
 	// Handle event "filter" from component "list"
-
 	void onFilterFromList() {
 		if (request.isXHR()) {
 			ajaxResponseRenderer.addRender(listZone);
 		}
 	}
 
-	// Handle event "successfulUpdate" from component "editor"
-
+    // Handle event "selected" from component "list"
 	void onSelectedFromList(final String workspaceId) {
 		editorMode = Mode.REVIEW;
 		editorWorkspaceId = workspaceId;
@@ -174,62 +100,16 @@ public class Manage extends SimpleBasePage {
 		}
 	}
 
-	// Handle event "failedUpdate" from component "editor"
-
-	void onSuccessfulConfirmDeleteFromEditor(final String workspaceId) {
-		editorMode = null;
-		editorWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(editorZone);
-		}
-	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// DELETE
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "successfulDelete" from component "editor"
-
-	void onSuccessfulCreateFromEditor(final String workspaceId) {
-		editorMode = Mode.REVIEW;
-		editorWorkspaceId = workspaceId;
+	public void updateOnSuccessfulCreateFromEditor(final String workspaceId) {
 		listWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
-		}
 	}
 
-	// Handle event "failedDelete" from component "editor"
-
-	void onSuccessfulDeleteFromEditor(final String workspaceId) {
-		editorMode = null;
-		editorWorkspaceId = null;
+	public void updateOnSuccessfulDeleteFromEditor(boolean deletedCurrentlySelected) {
 		listWorkspaceId = null;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
-		}
+		
+		if (deletedCurrentlySelected)
+		    layout.getHeader().getRecentWorkspaces().selectMostRecentWorkspace();
 	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// CONFIRM DELETE - used only when JavaScript is disabled.
-	// /////////////////////////////////////////////////////////////////////
-
-	// Handle event "toConfirmDelete" from component "editor"
-
-	void onSuccessfulUpdateFromEditor(final String workspaceId) {
-		editorMode = Mode.REVIEW;
-		editorWorkspaceId = workspaceId;
-		listWorkspaceId = workspaceId;
-
-		if (request.isXHR()) {
-			ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
-		}
-	}
-
-	// Handle event "cancelConfirmDelete" from component "editor"
 
 	void onToConfirmDeleteFromEditor(final String workspaceId) {
 		editorMode = Mode.CONFIRM_DELETE;
@@ -237,12 +117,11 @@ public class Manage extends SimpleBasePage {
 		editorMode = null;
 		editorWorkspaceId = null;
 		listWorkspaceId = null;
+
 		if (request.isXHR()) {
 			ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
 		}
 	}
-
-	// Handle event "successfulConfirmDelete" from component "editor"
 
 	void onToCreate() {
 		editorMode = Mode.CREATE;
@@ -253,8 +132,6 @@ public class Manage extends SimpleBasePage {
 			ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
 		}
 	}
-
-	// Handle event "failedConfirmDelete" from component "editor"
 
 	void onToUpdateFromEditor(final String workspaceId) {
 		editorMode = Mode.UPDATE;

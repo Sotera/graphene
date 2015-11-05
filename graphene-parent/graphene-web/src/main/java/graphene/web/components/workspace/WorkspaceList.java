@@ -4,6 +4,7 @@ import graphene.model.idl.G_ReportViewEvent;
 import graphene.model.idl.G_User;
 import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
+import graphene.web.pages.workspace.Manage;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -48,7 +50,7 @@ public class WorkspaceList {
 
 	@InjectComponent
 	private Zone listZone;
-
+    
 	@Inject
 	private Logger logger;
 	// The code
@@ -93,28 +95,21 @@ public class WorkspaceList {
 	@SessionState
 	private List<G_Workspace> workspaces;
 
-	private boolean workspacesExists;
-
 	public String getLinkCSSClass() {
-		if ((workspace != null) && (workspace.getId().equals(selectedWorkspaceId))) {
+		if ((workspace != null) && (workspace.getId().equals(selectedWorkspaceId)))
 			return "active";
-		} else {
-			return "";
-		}
+
+		return "";
 	}
 
 	public List<G_Workspace> getListOfWorkspaces() {
 		if (userExists) {
-//			if (!workspacesExists) {
-				try {
-					logger.debug("Updating list of workspaces");
-					workspaces = userDataAccess.getWorkspacesForUser(user.getId());
-				} catch (final AvroRemoteException e) {
-					logger.error(e.getMessage());
-				}
-//			} else {
-//				logger.debug("List of workspaces already exists.");
-//			}
+			try {
+				logger.debug("Updating list of workspaces");
+				workspaces = userDataAccess.getWorkspacesForUser(user.getId());
+			} catch (final AvroRemoteException e) {
+				logger.error(e.getMessage());
+			}
 		} else {
 			logger.error("No user name to get workspaces for.");
 			workspaces = null;
@@ -187,7 +182,7 @@ public class WorkspaceList {
 		// up.
 		// This method is here solely as documentation, because without this
 		// method the event would bubble up anyway.
+
 		return false;
 	}
-
 }

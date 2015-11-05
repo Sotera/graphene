@@ -3,6 +3,7 @@ package graphene.web.components.navigation;
 import graphene.model.idl.G_SymbolConstants;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -25,4 +26,11 @@ public class Header {
 	@Inject
 	@Symbol(G_SymbolConstants.APPLICATION_VERSION)
 	private String appVersion;
+	
+    @InjectComponent
+    private RecentWorkspaces recentWorkspaces;
+
+    public RecentWorkspaces getRecentWorkspaces() {
+        return recentWorkspaces;
+    }
 }

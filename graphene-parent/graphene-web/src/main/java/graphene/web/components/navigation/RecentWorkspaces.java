@@ -79,9 +79,8 @@ public class RecentWorkspaces {
 
 		if (userExists) {
 			updateListOfWorkspaces();
-			if ((!currentSelectedWorkspaceExists || !workspacesExists)) {
-				selectMostRecentWorkspace();
-			}
+			if ((!currentSelectedWorkspaceExists || !workspacesExists))
+			    selectMostRecentWorkspace();
 		} else {
 			currentSelectedWorkspace = null;
 			workspaces = null;
@@ -132,7 +131,7 @@ public class RecentWorkspaces {
 		}
 	}
 
-	private void selectMostRecentWorkspace() {
+	public void selectMostRecentWorkspace() {
 		// logger.debug("Selecting most recent workspace");
 		if (workspaces.size() > 0) {
 			// already sorted, just grab the top one.
@@ -142,7 +141,7 @@ public class RecentWorkspaces {
 		}
 	}
 
-	private void updateListOfWorkspaces() {
+	public void updateListOfWorkspaces() {
 		try {
 			// already sorted for us
 			workspaces = userDataAccess.getLatestWorkspacesForUser(user.getId(), 10);
