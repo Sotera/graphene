@@ -98,10 +98,6 @@ public class View extends SimpleBasePage {
 	@Inject
 	private DataSourceListDAO dao;
 
-	private List<String> reportViewIds;
-
-	private List<String> reportIds;
-
 	@InjectComponent
 	private Zone reportViewListZone;
 	@InjectComponent
@@ -295,11 +291,10 @@ public class View extends SimpleBasePage {
 	// onPassivate() is called by Tapestry to get the activation context to put
 	// in the id.
 	String onPassivate() {
-		if (currentSelectedWorkspaceExists) {
+		if (currentSelectedWorkspaceExists)
 			return currentSelectedWorkspace.getId();
-		} else {
-			return null;
-		}
+
+		return null;
 	}
 
 	public Object onSearch(final G_EntityQuery q) {
