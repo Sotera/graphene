@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>graphene</groupId>
 	<artifactId>graphene-parent</artifactId>
-	<version>4.2.1-SNAPSHOT</version>
+	<version>4.2.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<prerequisites>
 		<maven>3.0.4</maven>
@@ -30,6 +30,11 @@
 		<module>graphene-extraction</module>
     <module>graphene-security</module>
   </modules>
+  
+  <scm>
+  	<url>https://github.com/Sotera/graphene</url>
+	<connection>scm:git:git://github.com/Sotera/graphene.git</connection>
+  </scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -648,7 +653,7 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.9</version>
 					<configuration>
-						<dependencySourceExcludes/>
+						<dependencySourceExcludes />
 						<failOnError>false</failOnError>
 					</configuration>
 				</plugin>
