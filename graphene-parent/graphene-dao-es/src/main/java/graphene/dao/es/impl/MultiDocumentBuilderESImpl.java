@@ -53,19 +53,21 @@ public class MultiDocumentBuilderESImpl implements DocumentBuilder {
 							logger.error("Could not find the score of result. There may be something wrong with your ElasticSearch instance");
 						}
 
-						final G_Entity entity = delegate.buildEntityFromDocument(hit, sq);
-						if (entity != null) {
-
-							entity.getProperties().put(G_Parser.SCORE,
-									new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
-							entity.getProperties()
-									.put(G_Parser.CARDINAL_ORDER,
-											new PropertyHelper(G_Parser.CARDINAL_ORDER, new Long(index + 1),
-													G_PropertyTag.STAT));
-
-							sr = new G_SearchResult(score.asDouble(0.0d), entity);
-						} else {
-							logger.error("Delegate was unable to build entity from document.");
+						synchronized (delegate) {
+						    final G_Entity entity = delegate.buildEntityFromDocument(hit, sq);
+    						if (entity != null) {
+    
+    							entity.getProperties().put(G_Parser.SCORE,
+    									new PropertyHelper(G_Parser.SCORE, score.asDouble(0.0d), G_PropertyTag.STAT));
+    							entity.getProperties()
+    									.put(G_Parser.CARDINAL_ORDER,
+    											new PropertyHelper(G_Parser.CARDINAL_ORDER, new Long(index + 1),
+    													G_PropertyTag.STAT));
+    
+    							sr = new G_SearchResult(score.asDouble(0.0d), entity);
+    						} else {
+    							logger.error("Delegate was unable to build entity from document.");
+    						}
 						}
 
 					} else {

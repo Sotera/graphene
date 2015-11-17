@@ -5,6 +5,7 @@ import graphene.model.idl.G_PropertyMatchDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.joda.time.DateTime;
 
@@ -19,7 +20,8 @@ public class QueryHelper extends G_EntityQuery {
 		setSearchFreeText(true);
 		setTargetSchema("");
 		setTimeInitiated(DateTime.now().getMillis());
-		setId("" + DateTime.now().getMillis());
+//		setId("" + DateTime.now().getMillis());
+		setId(UUID.randomUUID().toString());
 		setUserId("Unknown");
 		setUsername("Unknown");
 		final List<G_PropertyMatchDescriptor> list = new ArrayList<G_PropertyMatchDescriptor>();
