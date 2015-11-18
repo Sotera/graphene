@@ -48,7 +48,6 @@ public class EntityQueryList extends BasicDataTable {
 
 	@SetupRender
 	private void loadQueries() {
-//		list = loggingDao.getQueries(null, null, 0, 200000);
-		list = loggingDao.getQueries(null, null, 0, 1000);
+		list = loggingDao.getQueries(null, null, 0, 200000);
 	}
 }
