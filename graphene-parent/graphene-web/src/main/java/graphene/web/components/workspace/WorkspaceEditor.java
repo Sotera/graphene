@@ -15,6 +15,7 @@ import graphene.web.pages.workspace.Manage;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.tapestry5.ComponentResources;
@@ -89,7 +90,11 @@ public class WorkspaceEditor {
 	@Inject
 	@Symbol(G_SymbolConstants.ENABLE_DELETE_WORKSPACES)
 	private boolean enableDelete;
-
+    
+    @Property
+    @SessionState(create = false)
+    private List<G_Workspace> workspaces;
+    
 	// Work fields
 
 	@Inject
@@ -290,6 +295,12 @@ public class WorkspaceEditor {
 					successfulDelete = userDataAccess.removeUserFromWorkspace(user.getId(), workspaceId);
  					if (userDataAccess.deleteWorkspaceIfUnused(null, workspaceId)) {
 						logger.debug("Deleted workspace because it was unused.");
+						for (G_Workspace workspace : workspaces) {
+						    if (workspace.getId().equals(workspaceId)) {
+						        workspaces.remove(workspace);
+						        break;
+						    }
+						}
 					}
             
 				} catch (final Exception e) {
