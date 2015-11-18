@@ -252,7 +252,7 @@ public class View extends SimpleBasePage {
 	}
 
 	void onDeleteQuery(final long timeInitiated) {
-		for (int i = 1; i < currentSelectedWorkspace.getQueryObjects().size(); i++) {
+		for (int i = 0; i < currentSelectedWorkspace.getQueryObjects().size(); i++) {
 			if (currentSelectedWorkspace.getQueryObjects().get(i).getTimeInitiated() == timeInitiated) {
 				currentSelectedWorkspace.getQueryObjects().remove(i);
 				break;
