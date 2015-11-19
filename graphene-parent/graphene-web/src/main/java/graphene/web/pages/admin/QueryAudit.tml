@@ -42,7 +42,7 @@
 					<div class="widget-body">
 						<!-- content -->
 						<div id="myTabContent" class="tab-content">
-							<div class="tab-pane fade" id="s0">
+							<div class="tab-pane active" id="s0">
 								<t:graphene.admin.systemstatus />
 							</div>
 							<div class="tab-pane fade" id="s1">
