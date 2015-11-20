@@ -586,7 +586,7 @@ public class BasicESDAO implements G_DataAccess {
 			// Use the match phrase query so it doesn't tokenize the value.
 			searchSourceBuilder.query(QueryBuilders.matchPhraseQuery(field, value));
 			final Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type)
-					.setParameter("timeout", defaultESTimeout).build();
+					.setParameter("timeout", defaultESTimeout).setParameter("size", 1000).build();
 			logger.debug(searchSourceBuilder.toString());
 
 			try {
