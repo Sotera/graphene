@@ -23,6 +23,7 @@ import graphene.model.idl.G_SearchResults;
 import graphene.model.idl.G_SymbolConstants;
 import graphene.model.idl.G_TransactionResults;
 import graphene.util.validator.ValidationUtils;
+import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 
 import java.io.IOException;
@@ -156,8 +157,10 @@ public class CombinedDAOESImpl extends BasicESDAO implements G_DataAccess {
 		JestResult jestResult = new JestResult(null);
 		try {
 			final io.searchbox.core.Search.Builder action = buildSearchAction(pq);
-
-			jestResult = c.getClient().execute(action.build());
+			JestClient jestClient = c.getClient();
+			synchronized(jestClient) {
+			    jestResult = jestClient.execute(action.build());
+			}
 		} catch (final DataAccessException e) {
 			e.printStackTrace();
 		} catch (final Exception e) {
