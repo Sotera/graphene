@@ -394,6 +394,7 @@ public class UserServiceImpl implements G_UserDataAccess {
 	@Override
 	public G_Workspace saveWorkspace(final String userId, final G_Workspace workspace)
 			throws UnauthorizedActionException {
+	    logger.debug("**********Thread: " + Thread.currentThread().getName() + " workspaceId: " + workspace.getId());
 		// save the workspace
 		if (uwDao.hasRelationship(userId, workspace.getId(), G_UserSpaceRelationshipType.CREATOR_OF,
 				G_UserSpaceRelationshipType.EDITOR_OF)) {

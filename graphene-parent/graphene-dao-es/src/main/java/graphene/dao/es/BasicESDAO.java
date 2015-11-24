@@ -921,6 +921,7 @@ public class BasicESDAO implements G_DataAccess {
 	@Override
 	public String saveObject(final Object g, final String id, final String indexName, final String type,
 			final boolean useDelay) {
+	    logger.debug("********Thread: " + Thread.currentThread().getName() + " saveObject called: " + id);
 		Index saveAction;
 		if (!ValidationUtils.isValid(id)) {
 			// saving without an id.
@@ -950,6 +951,11 @@ public class BasicESDAO implements G_DataAccess {
 		} catch (final Exception e) {
 			logger.error("saveObject " + e.getMessage());
 		}
+		if (!generatedId.equals(id))
+		    logger.debug("********Thread: " + Thread.currentThread().getName() + " id has changed to " + generatedId);
+		else
+		    logger.debug("********Thread: " + Thread.currentThread().getName() + " id is the same");
+		
 		return generatedId;
 	}
 
