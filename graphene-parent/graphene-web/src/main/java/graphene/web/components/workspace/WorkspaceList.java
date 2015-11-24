@@ -6,6 +6,8 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 import graphene.web.pages.workspace.Manage;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
@@ -110,7 +112,7 @@ public class WorkspaceList {
 			} catch (final AvroRemoteException e) {
 				logger.error(e.getMessage());
 			}
-		} else {
+        } else {
 			logger.error("No user name to get workspaces for.");
 			workspaces = null;
 		}
@@ -158,8 +160,8 @@ public class WorkspaceList {
 				"true",
 				"sDom",
 				"<\"col-sm-4\"f><\"col-sm-4\"i><\"col-sm-4\"l><\"row\"<\"col-sm-12\"p><\"col-sm-12\"r>><\"row\"<\"col-sm-12\"t>><\"row\"<\"col-sm-12\"ip>>");
-		// Sort by score then by date.
-		json.put("aaSorting", new JSONArray().put(new JSONArray().put(1).put("desc")));
+		// Sorts the columns of workspace tables.
+		json.put("aaSorting", new JSONArray().put(new JSONArray().put(0).put("asc")));
 		// new JSONObject().put("aTargets", new JSONArray().put(0, 4));
 		// final JSONObject sortType = new JSONObject("sType", "formatted-num");
 		// final JSONArray columnArray = new JSONArray();
