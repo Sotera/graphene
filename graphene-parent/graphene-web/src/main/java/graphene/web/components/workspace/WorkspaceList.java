@@ -96,7 +96,7 @@ public class WorkspaceList {
 	private List<G_Workspace> workspaces;
 
 	public String getLinkCSSClass() {
-		if ((workspace != null) && (workspace.getId().equals(selectedWorkspaceId)))
+		if ((workspace != null) && (workspace.getId() != null) && (workspace.getId().equals(selectedWorkspaceId)))
 			return "active";
 
 		return "";
