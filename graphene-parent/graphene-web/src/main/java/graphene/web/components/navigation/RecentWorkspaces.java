@@ -5,6 +5,8 @@ import graphene.model.idl.G_UserDataAccess;
 import graphene.model.idl.G_Workspace;
 import graphene.util.ExceptionUtil;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.avro.AvroRemoteException;
@@ -144,10 +146,16 @@ public class RecentWorkspaces {
 	public void updateListOfWorkspaces() {
 		try {
 			// already sorted for us
-			workspaces = userDataAccess.getLatestWorkspacesForUser(user.getId(), 10);
+            workspaces = userDataAccess.getLatestWorkspacesForUser(user.getId(), 10);
+//            Collections.sort(workspaces, new Comparator<G_Workspace>() {
+//                public int compare(G_Workspace o1, G_Workspace o2) {
+//                    return o2.getModified().compareTo(o1.getModified());
+//                }
+//            });
 		} catch (final AvroRemoteException e) {
 			workspaces = null;
 			logger.error(e.getMessage());
 		}
 	}
+
 }

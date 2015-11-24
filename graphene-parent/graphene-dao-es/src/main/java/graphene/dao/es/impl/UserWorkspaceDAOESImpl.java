@@ -143,7 +143,7 @@ public class UserWorkspaceDAOESImpl extends BasicESDAO implements UserWorkspaceD
 		Collections.sort(returnValue, new Comparator<G_Workspace>() {
 			@Override
 			public int compare(final G_Workspace o1, final G_Workspace o2) {
-				return o1.getModified().compareTo(o2.getModified());
+				return o2.getModified().compareTo(o1.getModified());
 			}
 		});
 
@@ -178,7 +178,9 @@ public class UserWorkspaceDAOESImpl extends BasicESDAO implements UserWorkspaceD
 		 * first.
 		 */
 		final Set<String> workspaceIds = new HashSet<String>();
-		for (final G_UserWorkspace r : getByUserId(userId)) {
+
+        List<G_UserWorkspace> ws = getByUserId(userId);
+		for (final G_UserWorkspace r : ws) {
 			workspaceIds.add(r.getWorkspaceId());
 		}
 		if (workspaceIds.isEmpty()) {
