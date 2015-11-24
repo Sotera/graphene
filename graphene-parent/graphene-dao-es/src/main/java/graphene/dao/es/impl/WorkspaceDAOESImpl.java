@@ -133,7 +133,9 @@ public class WorkspaceDAOESImpl extends BasicESDAO implements WorkspaceDAO {
 		if (ValidationUtils.isValid(g)) {
 			g.setModified(getModifiedTime());
 			if (g.getId() == null) {
-				g.setId(saveObject(g, g.getId(), indexName, type, false));
+//			    String wid = saveObject(g, g.getId(), indexName, type, false);
+			    String wid = saveObject(g, g.getId(), indexName, type, true);
+				g.setId(wid);
 			}
 			saveObject(g, g.getId(), indexName, type, true);
 			returnVal = g;
