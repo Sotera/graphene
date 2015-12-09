@@ -1,2 +1,0 @@
-Tapestry-Module-Classes: graphene.dao.neo4j.DAONeo4JModule
-
