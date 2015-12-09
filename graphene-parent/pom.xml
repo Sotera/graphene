@@ -503,6 +503,7 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		<!--  
 		<repository>
 			<id>batch-insert-graphene-mvn-repo</id>
 			<url>https://raw.github.com/danieljue/batch-import-graphene/mvn-repo/</url>
@@ -511,6 +512,7 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		-->
 		<!-- T5 Jquery integration (only needed for <= 5.3.x) -->
 		<repository>
 			<snapshots>
@@ -631,6 +633,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
 					<executions>
 						<execution>
 							<id>surefire</id>

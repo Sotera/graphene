@@ -17,6 +17,7 @@
 			<id>mvn-neo4j</id>
 			<url>http://m2.neo4j.org/content/groups/everything</url>
 		</repository>
+		<!--  
 		<repository>
 			<id>batch-insert-graphene-mvn-repo</id>
 			<url>https://raw.github.com/danieljue/batch-import-graphene/mvn-repo/</url>
@@ -25,13 +26,14 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		-->
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>batch-import</artifactId><!-- Note that for now, this is being 
 				manually synced to the neo4j version used elsewhere. -->
-			<version>2.0.1</version>
+			<version>${neo4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>ch.qos.logback</groupId>
@@ -50,6 +52,7 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-rest-graphdb</artifactId>
+			<version>${neo4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
@@ -71,12 +74,6 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-kernel</artifactId>
-			<version>${neo4j.version}</version>
-		</dependency>
-		<!-- Needed for querying non embedded databases via rest -->
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-rest-graphdb</artifactId>
 			<version>${neo4j.version}</version>
 		</dependency>
 		<!-- Needed for batch inserts, part of enterprise -->
